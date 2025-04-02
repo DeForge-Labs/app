@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #fefceaff;
+  --foreground: #ededed;
+  --primary: #fefceaff;
+  --secondary: #ebe9d8;
+  --text: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #fefceaff;
+    --foreground: #ededed;
+  }
+}
+
+.react-flow__node {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+body {
+  color: var(--text);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.hide-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.link-btn {
+  @apply block w-full bg-gray-100 text-black py-2.5 rounded-xl text-sm hover:bg-gray-300 transition-[colors,transform] text-center active:scale-95;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
