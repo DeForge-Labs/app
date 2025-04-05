@@ -2,13 +2,25 @@
 
 import { useState } from "react";
 import { Button, Input, InputOtp } from "@heroui/react";
-import { Mail, User } from "lucide-react";
+import { Loader2, Mail, User } from "lucide-react";
+import useOnboard from "@/hooks/useOnboard";
 
 export default function LoginForm() {
   const [isOTPWindow, setIsOTPWindow] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
+  const [otp, setOtp] = useState("");
+
+  const [isRequestingSignUp, setIsRequestingSignUp] = useState(false);
+  const [isRequestingLogin, setIsRequestingLogin] = useState(false);
+
+  const [timeout, setTimeout] = useState(0);
+
+  const { requestLogin, requestSignUp, verifyLogin, verifySignUp } =
+    useOnboard();
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, setIsResending] = useState(false);
 
   if (isOTPWindow) {
     return (
@@ -62,21 +74,43 @@ export default function LoginForm() {
             ],
           }}
           radius="lg"
+          value={otp}
+          onChange={(e) => setOtp(e.target.value)}
         />
 
         <div className="mt-1 flex w-full gap-2">
-          <Button className="w-full rounded-full p-7">Verify</Button>
+          <Button
+            className="w-full rounded-full p-7"
+            onPress={() => {
+              if (isSignUp) {
+                verifySignUp(email, otp, username, setIsVerifying);
+              } else {
+                verifyLogin(email, otp, setIsVerifying);
+              }
+            }}
+            isDisabled={isVerifying || isResending}
+          >
+            {isVerifying ? <Loader2 className="animate-spin" /> : "Verify"}
+          </Button>
           <Button
             className="w-full rounded-full p-7 border border-black/40 "
             variant="outline"
+            onPress={() => {
+              // TODO : resend OTP
+            }}
+            isDisabled={isResending || isVerifying}
           >
-            Resend
+            {isResending ? <Loader2 className="animate-spin" /> : "Resend"}
           </Button>
         </div>
 
         <div
           className="mt-3 ml-1 flex w-full text-black/60 hover:text-black/80 hover:underline cursor-pointer text-xs"
-          onClick={() => setIsOTPWindow(false)}
+          onClick={() => {
+            if (isVerifying || isResending) return;
+
+            setIsOTPWindow(false);
+          }}
         >
           Not you?
         </div>
@@ -103,21 +137,35 @@ export default function LoginForm() {
           <Button
             className="w-full rounded-full p-7"
             onPress={() => {
-              setIsOTPWindow(true);
-              setIsSignUp(false);
+              requestLogin(
+                email,
+                setIsOTPWindow,
+                setIsRequestingLogin,
+                setIsSignUp
+              );
             }}
+            isDisabled={isRequestingSignUp || isRequestingLogin}
           >
-            Login
+            {isRequestingLogin ? <Loader2 className="animate-spin" /> : "Login"}
           </Button>
           <Button
             className="w-full rounded-full p-7 border border-black/40 "
             variant="outline"
             onPress={() => {
-              setIsSignUp(true);
-              setIsOTPWindow(true);
+              requestSignUp(
+                email,
+                setIsOTPWindow,
+                setIsRequestingSignUp,
+                setIsSignUp
+              );
             }}
+            isDisabled={isRequestingLogin || isRequestingSignUp}
           >
-            Sign Up
+            {isRequestingSignUp ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "Sign Up"
+            )}
           </Button>
         </div>
       </>
