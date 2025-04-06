@@ -49,26 +49,27 @@ export default function TeamList() {
                 No teams found
               </p>
             )}
-            {teams.map((team) => (
-              <Button
-                key={team.teamId}
-                className="w-full mb-2 rounded-xl py-9 px-4 border border-black/40 justify-between"
-                variant="outline"
-                onPress={() => router.push(`/dashboard/${team.teamId}`)}
-              >
-                <div className="flex flex-col items-start">
-                  <p className="font-semibold text-black/80 text-lg">
-                    {team.team.name}
-                  </p>
-                  <p className="text-black/60 text-xs">
-                    Joined at {new Date(team.joinedAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <div className="flex items-center capitalize bg-black/70 p-2 py-1 rounded-md text-xs text-[var(--primary)]">
-                  {team.role.toLowerCase()}
-                </div>
-              </Button>
-            ))}
+            {teams &&
+              teams.map((team) => (
+                <Button
+                  key={team.teamId}
+                  className="w-full mb-2 rounded-xl py-9 px-4 border border-black/40 justify-between"
+                  variant="outline"
+                  onPress={() => router.push(`/dashboard/${team.teamId}`)}
+                >
+                  <div className="flex flex-col items-start">
+                    <p className="font-semibold text-black/80 text-lg">
+                      {team.team.name}
+                    </p>
+                    <p className="text-black/60 text-xs">
+                      Joined at {new Date(team.joinedAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="flex items-center capitalize bg-black/70 p-2 py-1 rounded-md text-xs text-[var(--primary)]">
+                    {team.role.toLowerCase()}
+                  </div>
+                </Button>
+              ))}
           </div>
         )}
       </div>
