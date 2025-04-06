@@ -1,11 +1,65 @@
 "use client";
 
+import useTeams from "@/hooks/useTeams";
 import { Tab, Tabs, Input, Button } from "@heroui/react";
-import { Asterisk, Plus, UsersRound } from "lucide-react";
+import { Asterisk, Loader2, UsersRound } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function TeamForm() {
   const [tab, setTab] = useState("create");
+  const router = useRouter();
+  const { createTeam, skipTeam } = useTeams();
+  const [name, setName] = useState("");
+  const [invitationCode, setInvitationCode] = useState("");
+
+  const [isCreating, setIsCreating] = useState(false);
+  const [isSkipping, setIsSkipping] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
+
+  const handleCreateTeam = async (name) => {
+    try {
+      setIsCreating(true);
+
+      if (!name) {
+        toast("Please enter a team name");
+        setIsCreating(false);
+        return;
+      }
+
+      const response = await createTeam(name);
+      if (response.success) {
+        toast.success("Team created successfully");
+        router.push("/team");
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      toast.error("Failed to create team");
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleSkipTeam = async () => {
+    try {
+      setIsSkipping(true);
+
+      const response = await skipTeam();
+
+      if (response) {
+        router.push("/team");
+      } else {
+        toast.error("Something went wrong");
+      }
+    } catch (error) {
+      toast.error("Failed to skip team");
+    } finally {
+      setIsSkipping(false);
+    }
+  };
+
   return (
     <>
       <Tabs
@@ -37,6 +91,8 @@ export default function TeamForm() {
             variant="outline"
             startContent={<UsersRound className="text-black/40" />}
             isClearable
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
 
           <div className="mt-3 rounded-2xl p-4 border border-black/40">
@@ -52,12 +108,20 @@ export default function TeamForm() {
           </div>
 
           <div className="mt-3 flex w-full gap-2">
-            <Button className="w-full rounded-full p-7">Create</Button>
+            <Button
+              className="w-full rounded-full p-7"
+              onPress={() => handleCreateTeam(name)}
+              isDisabled={isCreating || isSkipping}
+            >
+              {isCreating ? <Loader2 className="animate-spin" /> : "Create"}
+            </Button>
             <Button
               className="w-full rounded-full p-7 border border-black/40 "
               variant="outline"
+              isDisabled={isCreating || isSkipping}
+              onPress={handleSkipTeam}
             >
-              Skip
+              {isSkipping ? <Loader2 className="animate-spin" /> : "Skip"}
             </Button>
           </div>
         </>
@@ -84,12 +148,19 @@ export default function TeamForm() {
           </div>
 
           <div className="mt-3 flex w-full gap-2">
-            <Button className="w-full rounded-full p-7">Join</Button>
+            <Button
+              className="w-full rounded-full p-7"
+              isDisabled={isJoining || isSkipping}
+            >
+              Join
+            </Button>
             <Button
               className="w-full rounded-full p-7 border border-black/40 "
               variant="outline"
+              onPress={handleSkipTeam}
+              isDisabled={isJoining || isSkipping}
             >
-              Skip
+              {isSkipping ? <Loader2 className="animate-spin" /> : "Skip"}
             </Button>
           </div>
         </>

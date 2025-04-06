@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Input, InputOtp } from "@heroui/react";
 import { Loader2, Mail, User } from "lucide-react";
 import useOnboard from "@/hooks/useOnboard";
@@ -17,10 +17,20 @@ export default function LoginForm() {
 
   const [timeout, setTimeout] = useState(0);
 
-  const { requestLogin, requestSignUp, verifyLogin, verifySignUp } =
+  const { requestLogin, requestSignUp, verifyLogin, verifySignUp, resend } =
     useOnboard();
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
+
+  useEffect(() => {
+    if (timeout > 0) {
+      const interval = setInterval(() => {
+        setTimeout((prev) => prev - 1);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [timeout]);
 
   if (isOTPWindow) {
     return (
@@ -96,11 +106,17 @@ export default function LoginForm() {
             className="w-full rounded-full p-7 border border-black/40 "
             variant="outline"
             onPress={() => {
-              // TODO : resend OTP
+              resend(email, setIsResending, isSignUp, setTimeout);
             }}
-            isDisabled={isResending || isVerifying}
+            isDisabled={isResending || isVerifying || timeout > 0}
           >
-            {isResending ? <Loader2 className="animate-spin" /> : "Resend"}
+            {timeout > 0 ? (
+              `Resend in ${timeout}`
+            ) : isResending ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "Resend"
+            )}
           </Button>
         </div>
 

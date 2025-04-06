@@ -1,8 +1,13 @@
 import axios from "axios";
 import { toast } from "sonner";
 import { z } from "zod";
+import useTeams from "./useTeams";
+import { useRouter } from "next/navigation";
 
 export default function useOnboard() {
+  const { getTeams } = useTeams();
+  const router = useRouter();
+
   const requestLogin = async (
     email,
     setIsOTPWindow,
@@ -92,13 +97,24 @@ export default function useOnboard() {
       if (response.data.success) {
         toast.success("Login successful");
 
-        // TODO : redirect to dashboard
-
         localStorage.setItem("token", response.data.token);
+
+        try {
+          const teams = await getTeams();
+          if (teams.length === 0) {
+            router.push("/team/create");
+          } else {
+            router.push("/team");
+          }
+        } catch (error) {
+          toast.error("Failed to get teams");
+          router.push("/team");
+        }
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
+      console.log(error);
       toast.error("Failed to verify OTP");
     } finally {
       setIsVerifying(false);
@@ -131,9 +147,9 @@ export default function useOnboard() {
       if (response.data.success) {
         toast.success("Sign up successful");
 
-        // TODO : redirect to dashboard
-
         localStorage.setItem("token", response.data.token);
+
+        router.push("/team/create");
       } else {
         toast.error(response.data.message);
       }
@@ -144,10 +160,45 @@ export default function useOnboard() {
     }
   };
 
+  const resend = async (email, setIsResending, isSignUp, setTimeout) => {
+    try {
+      setIsResending(true);
+
+      if (isSignUp) {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/request/signup`,
+          { email }
+        );
+        if (response.data.success) {
+          toast.success("OTP sent successfully");
+          setTimeout(20);
+        } else {
+          toast.error(response.data.message);
+        }
+      } else {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/request/login`,
+          { email }
+        );
+        if (response.data.success) {
+          toast.success("OTP sent successfully");
+          setTimeout(20);
+        } else {
+          toast.error(response.data.message);
+        }
+      }
+    } catch (error) {
+      toast.error("Failed to send OTP");
+    } finally {
+      setIsResending(false);
+    }
+  };
+
   return {
     requestLogin,
     requestSignUp,
     verifyLogin,
     verifySignUp,
+    resend,
   };
 }
