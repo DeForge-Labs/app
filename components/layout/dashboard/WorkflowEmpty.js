@@ -1,7 +1,5 @@
-"use client";
-
-import { Button } from "@heroui/react";
-import { FilePlus, Plus } from "lucide-react";
+import { FilePlus } from "lucide-react";
+import CreateWorkflowButton from "./CreateWorkflowButton";
 
 export default function WorkflowEmptyState() {
   return (
@@ -10,18 +8,11 @@ export default function WorkflowEmptyState() {
         <FilePlus className="h-10 w-10 text-black" />
       </div>
       <h3 className="text-lg font-medium">No workflows yet</h3>
-      <p className="text-muted-foreground mt-2 max-w-md">
+      <p className="text-muted-foreground mt-2 max-w-md mb-5">
         Create your first AI agent workflow to automate tasks, process data, or
         connect to external APIs.
       </p>
-      <Button
-        variant="outline"
-        size="md"
-        className="bg-black/80 rounded-lg text-background text-xs mt-4"
-      >
-        <Plus size={16} />
-        Create New Workflow
-      </Button>
+      <CreateWorkflowButton />
     </div>
   );
 }

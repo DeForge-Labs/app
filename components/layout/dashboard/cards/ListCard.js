@@ -9,6 +9,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { Button } from "@heroui/react";
+import DeleteButton from "./DeleteButton";
 
 export default function ListCard({ flow }) {
   const timeAgo = formatDistanceToNow(flow.createdAt, { addSuffix: true });
@@ -26,7 +27,7 @@ export default function ListCard({ flow }) {
             <span>Created {timeAgo}</span>
             <span className="mx-2">•</span>
             <span>
-              {flow.nodes.length} nodes, {flow.edges.length} connections
+              {flow.workflowNodeCount} nodes, {flow.connectionCount} connections
             </span>
           </div>
         </div>
@@ -43,13 +44,7 @@ export default function ListCard({ flow }) {
         >
           <Copy className="h-3 w-3" />
         </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="border-black/80 border p-2 rounded-lg"
-        >
-          <Trash2 className="h-3 w-3" />
-        </Button>
+        <DeleteButton workflowId={flow.id} />
       </div>
     </div>
   );

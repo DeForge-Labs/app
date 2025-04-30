@@ -6,6 +6,8 @@ const teamSlice = createSlice({
   initialState: {
     team: null,
     isTeamInitializing: true,
+    isWorkflowInitializing: true,
+    workflows: null,
   },
 
   reducers: {
@@ -15,9 +17,20 @@ const teamSlice = createSlice({
     setIsTeamInitializing: (state, action) => {
       state.isTeamInitializing = action.payload;
     },
+    setIsWorkflowInitializing: (state, action) => {
+      state.isWorkflowInitializing = action.payload;
+    },
+    setWorkflows: (state, action) => {
+      state.workflows = action.payload;
+    },
   },
 });
 
-export const { setTeam, setIsTeamInitializing } = teamSlice.actions;
+export const {
+  setTeam,
+  setIsTeamInitializing,
+  setIsWorkflowInitializing,
+  setWorkflows,
+} = teamSlice.actions;
 
 export default teamSlice.reducer;

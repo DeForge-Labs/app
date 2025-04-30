@@ -44,11 +44,12 @@ export default function TeamList() {
           </div>
         ) : (
           <div className="flex flex-col gap-2 overflow-y-auto h-full hide-scroll">
-            {teams.length === 0 && (
-              <p className="flex items-center justify-center h-full text-center text-black/60">
-                No teams found
-              </p>
-            )}
+            {!teams ||
+              (teams?.length === 0 && (
+                <p className="flex items-center justify-center h-full text-center text-black/60">
+                  No teams found
+                </p>
+              ))}
             {teams &&
               teams.map((team) => (
                 <Button

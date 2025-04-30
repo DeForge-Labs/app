@@ -4,6 +4,7 @@ import { Button } from "@heroui/react";
 import { ChevronRight, Loader2, Plus } from "lucide-react";
 import Image from "next/image";
 import { useSelector } from "react-redux";
+import CreateWorkflowButton from "./CreateWorkflowButton";
 
 export default function Navbar() {
   const isTeamInitializing = useSelector(
@@ -27,14 +28,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="md"
-            className="bg-black/80 rounded-lg text-background text-xs"
-          >
-            <Plus size={16} />
-            Create New Workflow
-          </Button>
+          <CreateWorkflowButton />
         </div>
       </div>
     </header>

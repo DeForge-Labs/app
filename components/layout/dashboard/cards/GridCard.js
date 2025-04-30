@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Button } from "@heroui/react";
 import { formatDistanceToNow } from "date-fns";
+import DeleteButton from "./DeleteButton";
 
 export default function GridCard({ flow }) {
   const timeAgo = formatDistanceToNow(flow.createdAt, { addSuffix: true });
@@ -27,7 +28,7 @@ export default function GridCard({ flow }) {
           <div className="flex flex-col items-center text-muted-foreground">
             <FileLineChartIcon className="h-8 w-8 mb-2" />
             <div className="text-sm">
-              {flow.nodes.length} nodes, {flow.edges.length} connections
+              {flow.workflowNodeCount} nodes, {flow.connectionCount} connections
             </div>
           </div>
         </div>
@@ -45,13 +46,7 @@ export default function GridCard({ flow }) {
           >
             <Copy className="h-3 w-3" />
           </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="border-black/80 border p-2 rounded-lg"
-          >
-            <Trash2 className="h-3 w-3" />
-          </Button>
+          <DeleteButton workflowId={flow.id} />
         </div>
       </CardFooter>
     </Card>
