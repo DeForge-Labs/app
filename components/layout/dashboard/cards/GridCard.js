@@ -9,9 +9,11 @@ import {
 import { Button } from "@heroui/react";
 import { formatDistanceToNow } from "date-fns";
 import DeleteButton from "./DeleteButton";
+import { useRouter } from "next/navigation";
 
 export default function GridCard({ flow }) {
   const timeAgo = formatDistanceToNow(flow.createdAt, { addSuffix: true });
+  const router = useRouter();
   return (
     <Card className="overflow-hidden text-black/80 transition-all hover:shadow-md bg-transparent shadow-none border border-black/80">
       <CardHeader className="p-4 pb-2 flex flex-col items-start">
@@ -34,7 +36,12 @@ export default function GridCard({ flow }) {
         </div>
       </CardBody>
       <CardFooter className="p-4 pt-0 flex justify-between">
-        <Button variant="outline" size="sm" className="border-black/80 border">
+        <Button
+          variant="outline"
+          size="sm"
+          className="border-black/80 border"
+          onPress={() => router.push(`/editor/${flow.id}`)}
+        >
           <Edit className="h-3 w-3" />
           Edit
         </Button>

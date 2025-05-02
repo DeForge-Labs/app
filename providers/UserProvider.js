@@ -1,6 +1,6 @@
 "use client";
 
-import StartContainer from "@/components/layout/ui/StartContainer";
+import StartContainer from "@/components/ui/StartContainer";
 import useInitialize from "@/hooks/useInitialize";
 import { Loader2 } from "lucide-react";
 import { useSelector } from "react-redux";

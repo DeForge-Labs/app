@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import LoginForm from "@/components/layout/onboard/LoginForm";
-import StartContainer from "@/components/layout/ui/StartContainer";
+import StartContainer from "@/components/ui/StartContainer";
 
 export default function Home() {
   return (

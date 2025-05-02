@@ -5,6 +5,13 @@ import {
   setWorkflows,
 } from "@/redux/slice/TeamSlice";
 import { setIsInitializing, setUser } from "@/redux/slice/UserSlice";
+import {
+  setWorkflow,
+  setIsWorkflowInitializing as setWorkflowInitializing,
+  setNodes,
+  setConnections,
+  setTeam as setTeamWorkflow,
+} from "@/redux/slice/WorkflowSlice";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
@@ -94,5 +101,37 @@ export default function useInitialize() {
     }
   };
 
-  return { loadUser, loadTeam, loadWorkflow };
+  const loadWorkflowById = async (workflowId) => {
+    try {
+      dispatch(setWorkflowInitializing(true));
+      const headers = {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      };
+
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/workflow/get/${workflowId}`,
+        {},
+        { headers }
+      );
+
+      if (response.data.success) {
+        dispatch(setWorkflow(response.data.workflow));
+        dispatch(setNodes(response.data.workflow.nodes));
+        dispatch(setConnections(response.data.workflow.connections));
+        dispatch(setTeamWorkflow(response.data.workflow.team));
+      } else {
+        toast.error(response.data.message);
+        if (response.data.status === 404 || response.data.status === 401) {
+          router.push("/");
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to load workflow");
+    } finally {
+      dispatch(setWorkflowInitializing(false));
+    }
+  };
+
+  return { loadUser, loadTeam, loadWorkflow, loadWorkflowById };
 }

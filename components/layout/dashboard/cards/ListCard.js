@@ -1,18 +1,14 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import {
-  CalendarRange,
-  FileLineChartIcon,
-  Edit,
-  Copy,
-  Trash2,
-} from "lucide-react";
+import { CalendarRange, FileLineChartIcon, Edit, Copy } from "lucide-react";
 import { Button } from "@heroui/react";
 import DeleteButton from "./DeleteButton";
+import { useRouter } from "next/navigation";
 
 export default function ListCard({ flow }) {
   const timeAgo = formatDistanceToNow(flow.createdAt, { addSuffix: true });
+  const router = useRouter();
 
   return (
     <div className="flex items-center justify-between p-3 border border-black/80 rounded-lg hover:shadow-md transition-colors">
@@ -33,7 +29,12 @@ export default function ListCard({ flow }) {
         </div>
       </div>
       <div className="flex space-x-2">
-        <Button variant="outline" size="sm" className="border-black/80 border">
+        <Button
+          variant="outline"
+          size="sm"
+          className="border-black/80 border"
+          onPress={() => router.push(`/editor/${flow.id}`)}
+        >
           <Edit className="h-3 w-3" />
           Edit
         </Button>
