@@ -22,7 +22,7 @@ export default function EditorWindow() {
       </div>
 
       {paneRight && (
-        <div className="w-80 border-l bg-black/5 border-black/50 p-4 overflow-y-auto hide-scroll">
+        <div className="w-80 border-l bg-black/5 border-black/50 relative overflow-y-auto hide-scroll">
           <CustomizerPanel />
         </div>
       )}

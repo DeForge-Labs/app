@@ -18,7 +18,7 @@ export default function CustomizerPanel() {
 
   if (!selectedNode) {
     return (
-      <div className="flex h-full items-center justify-center text-center text-muted-foreground">
+      <div className="flex h-full items-center justify-center text-center text-muted-foreground p-4 opacity-50">
         <div>
           <p>Select a node to customize its properties</p>
         </div>
@@ -36,7 +36,7 @@ export default function CustomizerPanel() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 absolute p-4 w-full">
       <h2 className="font-semibold">Node Properties</h2>
       <Card className="border-black/50">
         <CardHeader className="p-4 pb-2">
