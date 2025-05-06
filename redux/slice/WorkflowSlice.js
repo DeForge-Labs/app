@@ -1,22 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit";
-
 import { applyNodeChanges, applyEdgeChanges, addEdge } from "reactflow";
-import { getDefaultDataForNodeType } from "@/lib/node-registry";
+import {
+  getDefaultDataForNodeType,
+  getNodeTypeByType,
+} from "@/lib/node-registry";
+
+const initialState = {
+  workflow: null,
+  isWorkflowInitializing: false,
+  nodes: [], // Changed from null to empty array
+  connections: [], // Changed from null to empty array
+  team: null,
+  selectedNode: null,
+  paneLeft: true,
+  paneRight: true,
+};
 
 const workflowSlice = createSlice({
   name: "workflow",
-
-  initialState: {
-    workflow: null,
-    isWorkflowInitializing: false,
-    nodes: null,
-    connections: null,
-    team: null,
-    paneLeft: true,
-    paneRight: true,
-  },
-
+  initialState,
   reducers: {
+    // Original actions
     setWorkflow: (state, action) => {
       state.workflow = action.payload;
     },
@@ -32,12 +36,8 @@ const workflowSlice = createSlice({
     setTeam: (state, action) => {
       state.team = action.payload;
     },
-    setPaneLeft: (state, action) => {
-      state.paneLeft = action.payload;
-    },
-    setPaneRight: (state, action) => {
-      state.paneRight = action.payload;
-    },
+
+    // New actions for the node editor
     setSelectedNode: (state, action) => {
       state.selectedNode = action.payload;
     },
@@ -81,14 +81,29 @@ const workflowSlice = createSlice({
 
       const { type, position, data } = action.payload;
 
+      // Get the node type definition
+      const nodeType = getNodeTypeByType(type);
+
       // Get default data for this node type
-      const defaultData = data || getDefaultDataForNodeType(type);
+      const defaultData = getDefaultDataForNodeType(type);
+
+      // If we have a node type definition, ensure all field values are set
+      if (nodeType) {
+        nodeType.fields.forEach((field) => {
+          if (defaultData[field.name] === undefined) {
+            defaultData[field.name] = field.value;
+          }
+        });
+      }
+
+      // Merge provided data with default data
+      const mergedData = data ? { ...defaultData, ...data } : defaultData;
 
       const newNode = {
         id: `${type}-${Date.now()}`,
         type,
         position,
-        data: defaultData,
+        data: mergedData,
       };
 
       state.nodes.push(newNode);
@@ -162,6 +177,23 @@ const workflowSlice = createSlice({
       }
     },
 
+    // New action to delete an edge
+    deleteEdge: (state, action) => {
+      if (!state.connections) return;
+
+      const edgeId = action.payload;
+
+      // Delete the edge
+      state.connections = state.connections.filter(
+        (edge) => edge.id !== edgeId
+      );
+
+      // Update workflow timestamp
+      if (state.workflow) {
+        state.workflow.updatedAt = new Date().toISOString();
+      }
+    },
+
     duplicateNode: (state, action) => {
       if (!state.nodes) return;
 
@@ -192,15 +224,55 @@ const workflowSlice = createSlice({
         state.workflow.updatedAt = new Date().toISOString();
       }
     },
+
+    createNewWorkflow: (state, action) => {
+      const { name, description } = action.payload;
+
+      state.workflow = {
+        id: Date.now().toString(),
+        name,
+        description: description || "",
+        isPublic: false,
+        version: 1,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      state.nodes = [];
+      state.connections = [];
+      state.selectedNode = null;
+      state.isWorkflowInitializing = false;
+    },
+
+    updateWorkflowMetadata: (state, action) => {
+      if (state.workflow) {
+        state.workflow = {
+          ...state.workflow,
+          ...action.payload,
+          updatedAt: new Date().toISOString(),
+        };
+      }
+    },
+
+    setPaneLeft: (state, action) => {
+      state.paneLeft = action.payload;
+    },
+
+    setPaneRight: (state, action) => {
+      state.paneRight = action.payload;
+    },
   },
 });
 
 export const {
+  // Original actions
   setWorkflow,
   setIsWorkflowInitializing,
   setNodes,
   setConnections,
   setTeam,
+
+  // New actions
   setSelectedNode,
   onNodesChange,
   onEdgesChange,
@@ -208,7 +280,11 @@ export const {
   updateNodeData,
   connectNodes,
   deleteNode,
+  deleteEdge,
   duplicateNode,
+  createNewWorkflow,
+  updateWorkflowMetadata,
+
   setPaneLeft,
   setPaneRight,
 } = workflowSlice.actions;

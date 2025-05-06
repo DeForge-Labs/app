@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -8,50 +8,124 @@ import ReactFlow, {
   useReactFlow,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { InputNode } from "./nodes/InputNode";
-import { FunctionNode } from "./nodes/FunctionNode";
-import { APINode } from "./nodes/APINode";
-import { getDefaultDataForNodeType } from "@/lib/node-registry";
 import { useDispatch, useSelector } from "react-redux";
-import NodeContextMenu from "./NodeContextMenu";
 import {
   onNodesChange,
   onEdgesChange,
   setSelectedNode,
+  addNode,
   connectNodes,
   deleteNode,
   duplicateNode,
-  addNode,
+  deleteEdge,
 } from "@/redux/slice/WorkflowSlice";
-
-// Define node types registry
-const nodeTypes = {
-  inputNode: InputNode,
-  functionNode: FunctionNode,
-  apiNode: APINode,
-  // Add more node types as needed
-};
+import {
+  getDefaultDataForNodeType,
+  getNodeTypeByType,
+  nodeRegistry as sampleNodes,
+} from "@/lib/node-registry";
+import NodeContextMenu from "./NodeContextMenu";
+import EdgeContextMenu from "./EdgeContextMenu";
+import { GenericNode } from "./GenericNode";
 
 function Flow() {
   const reactFlowWrapper = useRef(null);
   const dispatch = useDispatch();
-  const nodes = useSelector((state) => state.workflow.nodes) || [];
-  const edges = useSelector((state) => state.workflow.connections) || [];
-  const { project } = useReactFlow();
+  const nodes = useSelector((state) => state.workflow?.nodes || []);
+  const edges = useSelector((state) => state.workflow?.connections || []);
 
-  // Context menu state
-  const [contextMenu, setContextMenu] = useState({
+  const { project } = useReactFlow();
+  // const nodeRegistry = useSelector(
+  //   (state) => state.library?.nodeRegistry || []
+  // );
+
+  const nodeRegistry = sampleNodes;
+
+  // Context menu state for nodes
+  const [nodeContextMenu, setNodeContextMenu] = useState({
     visible: false,
     x: 0,
     y: 0,
     nodeId: null,
   });
 
+  const [nodeTypes, setNodeTypes] = useState({});
+
+  useEffect(() => {
+    nodeRegistry.forEach((node) => {
+      setNodeTypes((prev) => ({ ...prev, [node.type]: GenericNode }));
+    });
+  }, [nodeRegistry]);
+
+  // Context menu state for edges
+  const [edgeContextMenu, setEdgeContextMenu] = useState({
+    visible: false,
+    x: 0,
+    y: 0,
+    edgeId: null,
+  });
+
+  // Validate connection types
+  const isValidConnection = (connection) => {
+    // Get source and target nodes
+    const sourceNode = nodes.find((node) => node.id === connection.source);
+    const targetNode = nodes.find((node) => node.id === connection.target);
+
+    if (!sourceNode || !targetNode) return false;
+
+    // Check if the target handle already has a connection
+    const targetHandleAlreadyConnected = edges.some(
+      (edge) =>
+        edge.target === connection.target &&
+        edge.targetHandle === connection.targetHandle
+    );
+
+    if (targetHandleAlreadyConnected) {
+      // Show a notification to the user
+      // toast({
+      //   title: "Connection not allowed",
+      //   description: "This input already has a connection. Remove the existing connection first.",
+      //   variant: "destructive",
+      // })
+      return false;
+    }
+
+    // Get node type definitions
+    const sourceNodeType = getNodeTypeByType(sourceNode.type);
+    const targetNodeType = getNodeTypeByType(targetNode.type);
+
+    if (!sourceNodeType || !targetNodeType) return false;
+
+    // Extract output and input types from the handle IDs
+    const sourceHandleParts = connection.sourceHandle?.split("-") || [];
+    const targetHandleParts = connection.targetHandle?.split("-") || [];
+
+    if (sourceHandleParts.length < 3 || targetHandleParts.length < 3)
+      return false;
+
+    // Get the output and input types
+    // Format is "output-name-type" or "input-name-type"
+    const outputType = sourceHandleParts[sourceHandleParts.length - 1];
+    const inputType = targetHandleParts[targetHandleParts.length - 1];
+
+    // Check if types are compatible
+    // For now, we'll consider exact matches and 'any' type as compatible
+    return (
+      outputType === inputType || outputType === "any" || inputType === "any"
+    );
+  };
+
   const onConnect = useCallback(
     (connection) => {
-      dispatch(connectNodes(connection));
+      // Validate connection before adding it
+      if (isValidConnection(connection)) {
+        dispatch(connectNodes(connection));
+      } else {
+        console.warn("Invalid connection: types do not match");
+        // Optionally show a notification to the user
+      }
     },
-    [dispatch]
+    [dispatch, nodes]
   );
 
   const onDragOver = useCallback((event) => {
@@ -89,15 +163,17 @@ function Flow() {
 
       // Create default data based on the node definition if available
       let data = {};
-      if (nodeDefinition && nodeDefinition.fields) {
-        // Extract default values from the node definition
-        Object.entries(nodeDefinition.fields).forEach(([key, field]) => {
-          data[key] = field.default;
-        });
-      } else {
-        // Fallback to basic defaults if no definition is available
-        data = getDefaultDataForNodeType(type);
-      }
+
+      // Extract default values from the node definition
+      data = { label: nodeDefinition.title };
+
+      nodeDefinition.fields.forEach((field) => {
+        if (field.type === "select") {
+          data[field.name] = field.value;
+        } else {
+          data[field.name] = null;
+        }
+      });
 
       dispatch(
         addNode({
@@ -113,10 +189,11 @@ function Flow() {
   const onNodeClick = useCallback(
     (_, node) => {
       dispatch(setSelectedNode(node));
-      // Hide context menu if it's open
-      setContextMenu({ ...contextMenu, visible: false });
+      // Hide context menus if they're open
+      setNodeContextMenu({ ...nodeContextMenu, visible: false });
+      setEdgeContextMenu({ ...edgeContextMenu, visible: false });
     },
-    [dispatch, contextMenu]
+    [dispatch, nodeContextMenu, edgeContextMenu]
   );
 
   const onNodeContextMenu = useCallback(
@@ -125,64 +202,107 @@ function Flow() {
       event.preventDefault();
 
       // Show our custom context menu
-      setContextMenu({
+      setNodeContextMenu({
         visible: true,
         x: event.clientX,
         y: event.clientY,
         nodeId: node.id,
       });
 
+      // Hide edge context menu if it's open
+      setEdgeContextMenu({ ...edgeContextMenu, visible: false });
+
       // Set the selected node
       dispatch(setSelectedNode(node));
     },
-    [dispatch]
+    [dispatch, edgeContextMenu]
   );
 
-  // Hide context menu when clicking on the canvas
+  const onEdgeContextMenu = useCallback(
+    (event, edge) => {
+      // Prevent default context menu
+      event.preventDefault();
+
+      // Show our custom context menu
+      setEdgeContextMenu({
+        visible: true,
+        x: event.clientX,
+        y: event.clientY,
+        edgeId: edge.id,
+      });
+
+      // Hide node context menu if it's open
+      setNodeContextMenu({ ...nodeContextMenu, visible: false });
+    },
+    [nodeContextMenu]
+  );
+
+  // Hide context menus when clicking on the canvas
   const onPaneClick = useCallback(() => {
-    setContextMenu({ ...contextMenu, visible: false });
-  }, [contextMenu]);
+    setNodeContextMenu({ ...nodeContextMenu, visible: false });
+    setEdgeContextMenu({ ...edgeContextMenu, visible: false });
+  }, [nodeContextMenu, edgeContextMenu]);
 
   return (
-    <div className="h-full w-full" ref={reactFlowWrapper}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={(changes) => dispatch(onNodesChange(changes))}
-        onEdgesChange={(changes) => dispatch(onEdgesChange(changes))}
-        onConnect={onConnect}
-        onDrop={onDrop}
-        onDragOver={onDragOver}
-        onNodeClick={onNodeClick}
-        onNodeContextMenu={onNodeContextMenu}
-        onPaneClick={onPaneClick}
-        nodeTypes={nodeTypes}
-        fitView
-        proOptions={{
-          hideAttribution: true,
-        }}
-      >
-        <Background />
-        <Controls />
-      </ReactFlow>
+    Object.keys(nodeTypes).length > 0 && (
+      <div className="h-full w-full" ref={reactFlowWrapper}>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={(changes) => dispatch(onNodesChange(changes))}
+          onEdgesChange={(changes) => dispatch(onEdgesChange(changes))}
+          onConnect={onConnect}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          onNodeClick={onNodeClick}
+          onNodeContextMenu={onNodeContextMenu}
+          onEdgeContextMenu={onEdgeContextMenu}
+          onPaneClick={onPaneClick}
+          nodeTypes={nodeTypes}
+          fitView
+          proOptions={{
+            hideAttribution: true,
+          }}
+        >
+          <Background />
+          <Controls />
+        </ReactFlow>
 
-      {contextMenu.visible && contextMenu.nodeId && (
-        <NodeContextMenu
-          x={contextMenu.x}
-          y={contextMenu.y}
-          nodeId={contextMenu.nodeId}
-          onDelete={() => {
-            dispatch(deleteNode(contextMenu.nodeId));
-            setContextMenu({ ...contextMenu, visible: false });
-          }}
-          onDuplicate={() => {
-            dispatch(duplicateNode(contextMenu.nodeId));
-            setContextMenu({ ...contextMenu, visible: false });
-          }}
-          onClose={() => setContextMenu({ ...contextMenu, visible: false })}
-        />
-      )}
-    </div>
+        {nodeContextMenu.visible && nodeContextMenu.nodeId && (
+          <NodeContextMenu
+            x={nodeContextMenu.x}
+            y={nodeContextMenu.y}
+            nodeId={nodeContextMenu.nodeId}
+            onDelete={() => {
+              dispatch(deleteNode(nodeContextMenu.nodeId));
+              setNodeContextMenu({ ...nodeContextMenu, visible: false });
+            }}
+            onDuplicate={() => {
+              dispatch(duplicateNode(nodeContextMenu.nodeId));
+              setNodeContextMenu({ ...nodeContextMenu, visible: false });
+            }}
+            onClose={() =>
+              setNodeContextMenu({ ...nodeContextMenu, visible: false })
+            }
+          />
+        )}
+
+        {edgeContextMenu.visible && edgeContextMenu.edgeId && (
+          <EdgeContextMenu
+            x={edgeContextMenu.x}
+            y={edgeContextMenu.y}
+            edgeId={edgeContextMenu.edgeId}
+            onDelete={() => {
+              dispatch(deleteEdge(edgeContextMenu.edgeId));
+              setEdgeContextMenu({ ...edgeContextMenu, visible: false });
+            }}
+            onClose={() =>
+              setEdgeContextMenu({ ...edgeContextMenu, visible: false })
+            }
+          />
+        )}
+      </div>
+    )
   );
 }
 
