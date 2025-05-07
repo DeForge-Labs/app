@@ -115,9 +115,14 @@ export default function useInitialize() {
       );
 
       if (response.data.success) {
-        dispatch(setWorkflow(response.data.workflow));
-        dispatch(setNodes(response.data.workflow.nodes));
-        dispatch(setConnections(response.data.workflow.connections));
+        dispatch(
+          setWorkflow({
+            workflow: response.data.workflow,
+            nodes: response.data.workflow.nodes,
+            connections: response.data.workflow.edges,
+          })
+        );
+
         dispatch(setTeamWorkflow(response.data.workflow.team));
       } else {
         toast.error(response.data.message);

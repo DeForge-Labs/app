@@ -172,6 +172,8 @@ export default function CustomizerPanel() {
                 variant="outline"
                 className="border-black/50 border rounded-lg"
               />
+
+              <div className="text-[10px]">{nodeType.desc}</div>
             </div>
 
             {/* Show all fields based on node type */}
@@ -194,8 +196,6 @@ export default function CustomizerPanel() {
                       matchingInput?.type.split("[]")[0].toLowerCase()
                   )
                 : totalConnectedInputs;
-
-              console.log(totalValidConnections);
 
               // Render the field based on its type
               switch (field.type) {
@@ -241,6 +241,8 @@ export default function CustomizerPanel() {
                         className="border-black/50 border rounded-lg"
                         variant="outline"
                       />
+
+                      <div className="text-[10px]">{field.desc}</div>
                     </div>
                   );
 
@@ -290,6 +292,8 @@ export default function CustomizerPanel() {
                         variant="outline"
                         disabled={isInput && isConnected}
                       />
+
+                      <div className="text-[10px]">{field.desc}</div>
                     </div>
                   );
 
@@ -334,6 +338,8 @@ export default function CustomizerPanel() {
                         variant="outline"
                         disabled={isInput && isConnected}
                       />
+
+                      <div className="text-[10px]">{field.desc}</div>
                     </div>
                   );
 
@@ -392,6 +398,8 @@ export default function CustomizerPanel() {
                           ))}
                         </SelectContent>
                       </Select>
+
+                      <div className="text-[10px]">{field.desc}</div>
                     </div>
                   );
 
@@ -459,6 +467,8 @@ export default function CustomizerPanel() {
                           <p className="mt-2 text-xs">No connections yet.</p>
                         )}
                       </div>
+
+                      <div className="text-[10px]">{field.desc}</div>
                     </div>
                   );
 
@@ -498,6 +508,8 @@ export default function CustomizerPanel() {
                         onChange={(value) => handleChange(field.name, value)}
                         disabled={isInput && isConnected}
                       />
+
+                      <div className="text-[10px]">{field.desc}</div>
                     </div>
                   );
 

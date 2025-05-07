@@ -12,6 +12,8 @@ const initialState = {
   connections: [], // Changed from null to empty array
   team: null,
   selectedNode: null,
+  hasUnsavedChanges: false,
+  lastSavedState: null,
   paneLeft: true,
   paneRight: true,
 };
@@ -22,16 +24,28 @@ const workflowSlice = createSlice({
   reducers: {
     // Original actions
     setWorkflow: (state, action) => {
-      state.workflow = action.payload;
+      state.workflow = action.payload.workflow;
+      state.nodes = action.payload.nodes;
+      state.connections = action.payload.connections;
+      state.lastSavedState = {
+        nodes: state.nodes ? deepCloneNodes(state.nodes) : null,
+        connections: state.connections
+          ? deepCloneConnections(state.connections)
+          : null,
+        workflow: state.workflow ? { ...state.workflow } : null,
+      };
+      state.hasUnsavedChanges = false;
     },
     setIsWorkflowInitializing: (state, action) => {
       state.isWorkflowInitializing = action.payload;
     },
     setNodes: (state, action) => {
       state.nodes = action.payload;
+      state.hasUnsavedChanges = checkForUnsavedChanges(state);
     },
     setConnections: (state, action) => {
       state.connections = action.payload;
+      state.hasUnsavedChanges = checkForUnsavedChanges(state);
     },
     setTeam: (state, action) => {
       state.team = action.payload;
@@ -61,6 +75,8 @@ const workflowSlice = createSlice({
       if (state.workflow) {
         state.workflow.updatedAt = new Date().toISOString();
       }
+
+      state.hasUnsavedChanges = checkForUnsavedChanges(state);
     },
 
     onEdgesChange: (state, action) => {
@@ -72,6 +88,8 @@ const workflowSlice = createSlice({
       if (state.workflow) {
         state.workflow.updatedAt = new Date().toISOString();
       }
+
+      state.hasUnsavedChanges = checkForUnsavedChanges(state);
     },
 
     addNode: (state, action) => {
@@ -112,6 +130,8 @@ const workflowSlice = createSlice({
       if (state.workflow) {
         state.workflow.updatedAt = new Date().toISOString();
       }
+
+      state.hasUnsavedChanges = checkForUnsavedChanges(state);
     },
 
     updateNodeData: (state, action) => {
@@ -136,6 +156,8 @@ const workflowSlice = createSlice({
           state.workflow.updatedAt = new Date().toISOString();
         }
       }
+
+      state.hasUnsavedChanges = checkForUnsavedChanges(state);
     },
 
     connectNodes: (state, action) => {
@@ -151,6 +173,8 @@ const workflowSlice = createSlice({
       if (state.workflow) {
         state.workflow.updatedAt = new Date().toISOString();
       }
+
+      state.hasUnsavedChanges = checkForUnsavedChanges(state);
     },
 
     deleteNode: (state, action) => {
@@ -175,6 +199,8 @@ const workflowSlice = createSlice({
       if (state.workflow) {
         state.workflow.updatedAt = new Date().toISOString();
       }
+
+      state.hasUnsavedChanges = checkForUnsavedChanges(state);
     },
 
     // New action to delete an edge
@@ -192,6 +218,8 @@ const workflowSlice = createSlice({
       if (state.workflow) {
         state.workflow.updatedAt = new Date().toISOString();
       }
+
+      state.hasUnsavedChanges = checkForUnsavedChanges(state);
     },
 
     duplicateNode: (state, action) => {
@@ -223,35 +251,8 @@ const workflowSlice = createSlice({
       if (state.workflow) {
         state.workflow.updatedAt = new Date().toISOString();
       }
-    },
 
-    createNewWorkflow: (state, action) => {
-      const { name, description } = action.payload;
-
-      state.workflow = {
-        id: Date.now().toString(),
-        name,
-        description: description || "",
-        isPublic: false,
-        version: 1,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      state.nodes = [];
-      state.connections = [];
-      state.selectedNode = null;
-      state.isWorkflowInitializing = false;
-    },
-
-    updateWorkflowMetadata: (state, action) => {
-      if (state.workflow) {
-        state.workflow = {
-          ...state.workflow,
-          ...action.payload,
-          updatedAt: new Date().toISOString(),
-        };
-      }
+      state.hasUnsavedChanges = checkForUnsavedChanges(state);
     },
 
     setPaneLeft: (state, action) => {
@@ -263,6 +264,171 @@ const workflowSlice = createSlice({
     },
   },
 });
+
+// Helper function to deep clone nodes
+function deepCloneNodes(nodes) {
+  return nodes.map((node) => ({
+    ...node,
+    data: node.data ? { ...node.data } : null,
+    position: node.position ? { ...node.position } : null,
+  }));
+}
+
+// Helper function to deep clone connections
+function deepCloneConnections(connections) {
+  return connections.map((edge) => ({ ...edge }));
+}
+
+// Helper function to check if there are unsaved changes
+function checkForUnsavedChanges(state) {
+  if (!state.lastSavedState) return true;
+
+  // Check if nodes or connections are null in either state
+  if (
+    (state.nodes === null && state.lastSavedState.nodes !== null) ||
+    (state.nodes !== null && state.lastSavedState.nodes === null) ||
+    (state.connections === null && state.lastSavedState.connections !== null) ||
+    (state.connections !== null && state.lastSavedState.connections === null)
+  ) {
+    return true;
+  }
+
+  // Compare nodes
+  if (state.nodes && state.lastSavedState.nodes) {
+    // Check if the number of nodes has changed
+    if (state.nodes.length !== state.lastSavedState.nodes.length) {
+      return true;
+    }
+
+    // Check each node for changes
+    for (let i = 0; i < state.nodes.length; i++) {
+      const currentNode = state.nodes[i];
+
+      // Find the corresponding node in the saved state
+      const savedNode = state.lastSavedState.nodes.find(
+        (n) => n.id === currentNode.id
+      );
+
+      // If the node doesn't exist in the saved state, there are unsaved changes
+      if (!savedNode) {
+        return true;
+      }
+
+      // Check if the node type has changed
+      if (currentNode.type !== savedNode.type) {
+        return true;
+      }
+
+      // Check if the node position has changed
+      if (
+        currentNode.position.x !== savedNode.position.x ||
+        currentNode.position.y !== savedNode.position.y
+      ) {
+        return true;
+      }
+
+      // Check if the node data has changed
+      if (!areObjectsEqual(currentNode.data, savedNode.data)) {
+        return true;
+      }
+    }
+  }
+
+  // Compare connections
+  if (state.connections && state.lastSavedState.connections) {
+    // Check if the number of connections has changed
+    if (state.connections.length !== state.lastSavedState.connections.length) {
+      return true;
+    }
+
+    // Check each connection for changes
+    for (let i = 0; i < state.connections.length; i++) {
+      const currentConnection = state.connections[i];
+
+      // Find the corresponding connection in the saved state
+      const savedConnection = state.lastSavedState.connections.find(
+        (c) => c.id === currentConnection.id
+      );
+
+      // If the connection doesn't exist in the saved state, there are unsaved changes
+      if (!savedConnection) {
+        return true;
+      }
+
+      // Check if the connection properties have changed
+      if (
+        currentConnection.source !== savedConnection.source ||
+        currentConnection.target !== savedConnection.target ||
+        currentConnection.sourceHandle !== savedConnection.sourceHandle ||
+        currentConnection.targetHandle !== savedConnection.targetHandle
+      ) {
+        return true;
+      }
+    }
+  }
+
+  // Compare workflow metadata
+  if (state.workflow && state.lastSavedState.workflow) {
+    if (
+      state.workflow.name !== state.lastSavedState.workflow.name ||
+      state.workflow.description !==
+        state.lastSavedState.workflow.description ||
+      state.workflow.isPublic !== state.lastSavedState.workflow.isPublic
+    ) {
+      return true;
+    }
+  } else if (
+    (state.workflow && !state.lastSavedState.workflow) ||
+    (!state.workflow && state.lastSavedState.workflow)
+  ) {
+    return true;
+  }
+
+  // If we've made it this far, there are no unsaved changes
+  return false;
+}
+
+// Helper function to compare objects deeply
+function areObjectsEqual(obj1, obj2) {
+  // If either object is null or undefined, check if they're both the same
+  if (obj1 == null || obj2 == null) {
+    return obj1 === obj2;
+  }
+
+  // Get the keys of both objects
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  // If the number of keys is different, the objects are not equal
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+
+  // Check each key in obj1
+  for (const key of keys1) {
+    const val1 = obj1[key];
+    const val2 = obj2[key];
+
+    // Check if the values are objects
+    const areObjects = isObject(val1) && isObject(val2);
+
+    // If both values are objects, recursively compare them
+    // Otherwise, compare the values directly
+    if (
+      (areObjects && !areObjectsEqual(val1, val2)) ||
+      (!areObjects && val1 !== val2)
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// Helper function to check if a value is an object
+function isObject(obj) {
+  return obj != null && typeof obj === "object" && !Array.isArray(obj);
+}
 
 export const {
   // Original actions
@@ -282,8 +448,6 @@ export const {
   deleteNode,
   deleteEdge,
   duplicateNode,
-  createNewWorkflow,
-  updateWorkflowMetadata,
 
   setPaneLeft,
   setPaneRight,

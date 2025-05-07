@@ -20,13 +20,13 @@ import {
   deleteEdge,
 } from "@/redux/slice/WorkflowSlice";
 import {
-  getDefaultDataForNodeType,
   getNodeTypeByType,
   nodeRegistry as sampleNodes,
 } from "@/lib/node-registry";
 import NodeContextMenu from "./NodeContextMenu";
 import EdgeContextMenu from "./EdgeContextMenu";
 import { GenericNode } from "./GenericNode";
+import LogoAnimation from "@/components/ui/LogoAnimation";
 
 function Flow() {
   const reactFlowWrapper = useRef(null);
@@ -320,6 +320,14 @@ function Flow() {
 }
 
 export default function NodeEditor() {
+  const isWorkflowInitializing = useSelector(
+    (state) => state.workflow.isWorkflowInitializing
+  );
+
+  if (isWorkflowInitializing) {
+    return <LogoAnimation opacity={0.5} />;
+  }
+
   return (
     <ReactFlowProvider>
       <Flow />
