@@ -73,23 +73,6 @@ function Flow() {
 
     if (!sourceNode || !targetNode) return false;
 
-    // Check if the target handle already has a connection
-    const targetHandleAlreadyConnected = edges.some(
-      (edge) =>
-        edge.target === connection.target &&
-        edge.targetHandle === connection.targetHandle
-    );
-
-    if (targetHandleAlreadyConnected) {
-      // Show a notification to the user
-      // toast({
-      //   title: "Connection not allowed",
-      //   description: "This input already has a connection. Remove the existing connection first.",
-      //   variant: "destructive",
-      // })
-      return false;
-    }
-
     // Get node type definitions
     const sourceNodeType = getNodeTypeByType(sourceNode.type);
     const targetNodeType = getNodeTypeByType(targetNode.type);
@@ -108,11 +91,41 @@ function Flow() {
     const outputType = sourceHandleParts[sourceHandleParts.length - 1];
     const inputType = targetHandleParts[targetHandleParts.length - 1];
 
+    const isArrayInput = inputType.endsWith("[]");
+
+    // Check if the target handle already has a connection
+    const targetHandleAlreadyConnected = edges.some(
+      (edge) =>
+        edge.target === connection.target &&
+        edge.targetHandle === connection.targetHandle
+    );
+
+    if (targetHandleAlreadyConnected && !isArrayInput) {
+      // Show a notification to the user
+      // toast({
+      //   title: "Connection not allowed",
+      //   description: "This input already has a connection. Remove the existing connection first.",
+      //   variant: "destructive",
+      // })
+      return false;
+    }
+
     // Check if types are compatible
     // For now, we'll consider exact matches and 'any' type as compatible
-    return (
-      outputType === inputType || outputType === "any" || inputType === "any"
-    );
+    if (isArrayInput) {
+      // For array inputs, check if the output type matches the array element type
+      const arrayElementType = inputType.slice(0, -2); // Remove the [] suffix
+      return (
+        outputType === arrayElementType ||
+        outputType === "any" ||
+        arrayElementType === "any"
+      );
+    } else {
+      // For non-array inputs, check exact match or 'any' type
+      return (
+        outputType === inputType || outputType === "any" || inputType === "any"
+      );
+    }
   };
 
   const onConnect = useCallback(

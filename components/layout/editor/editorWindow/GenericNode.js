@@ -12,7 +12,11 @@ import {
 } from "@/components/ui/select";
 import { useDispatch } from "react-redux";
 import { updateNodeData } from "@/redux/slice/WorkflowSlice";
-import { getNodeTypeByType, getCategoryColor } from "@/lib/node-registry";
+import {
+  getNodeTypeByType,
+  getCategoryColor,
+  isArrayType,
+} from "@/lib/node-registry";
 import { FileWarning } from "lucide-react";
 import MapFieldEditor from "./MapFieldEditor";
 import { Input, Textarea } from "@heroui/react";
@@ -22,6 +26,7 @@ export function GenericNode({ id, type, data }) {
   const dispatch = useDispatch();
   const edges = useEdges();
   const [connectedInputs, setConnectedInputs] = useState(new Set());
+  const [totalConnectedInputs, setTotalConnectedInputs] = useState([]);
 
   // Get the node type definition
   const nodeType = getNodeTypeByType(type);
@@ -32,15 +37,22 @@ export function GenericNode({ id, type, data }) {
   // Track which inputs are connected
   useEffect(() => {
     const connected = new Set();
+    const totalConnected = [];
     edges.forEach((edge) => {
       if (edge.target === id) {
         // Extract the input name from the handle ID
         const inputName = edge.targetHandle?.split("-")[1];
+        const sourceName = edge.sourceHandle?.split("-")[2];
+        if (sourceName) {
+          totalConnected.push(sourceName);
+        }
         if (inputName) {
           connected.add(inputName);
         }
       }
     });
+
+    setTotalConnectedInputs(totalConnected);
     setConnectedInputs(connected);
   }, [edges, id]);
 
@@ -78,8 +90,18 @@ export function GenericNode({ id, type, data }) {
       (input) => input.name === field.name
     );
 
+    const isArrayInput = matchingInput && isArrayType(matchingInput.type);
+
     // Get current value or use default from field definition
     const currentValue = data[field.name] !== undefined ? data[field.name] : "";
+
+    const totalValidConnections = isArrayInput
+      ? totalConnectedInputs.filter(
+          (input) =>
+            input.toLowerCase() ===
+            matchingInput?.type.split("[]")[0].toLowerCase()
+        ).length
+      : totalConnectedInputs.length;
 
     switch (field.type) {
       case "Text":
@@ -237,6 +259,52 @@ export function GenericNode({ id, type, data }) {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+          </div>
+        );
+
+      case "JSON[]":
+      case "json[]":
+        return (
+          <div key={field.name} className="mb-2">
+            <div className="text-xs font-medium mb-1 flex justify-between items-center capitalize">
+              <span>{field.name}</span>
+              <div className="text-xs">
+                {totalValidConnections} connection
+                {totalValidConnections !== 1 ? "s" : ""}
+              </div>
+            </div>
+            <div className="flex items-center">
+              <Handle
+                type="target"
+                position={Position.Left}
+                id={`input-${field.name}-${field.type}`}
+                style={{
+                  left: -4,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  backgroundColor: getColorByType(
+                    isArrayInput
+                      ? matchingInput?.type.split("[]")[0].toLowerCase()
+                      : matchingInput?.type.toLowerCase()
+                  ),
+                  width: "8px",
+                  height: "8px",
+                }}
+              />
+              <div className="w-full border border-black/50 rounded-md p-2 bg-black/5 text-xs mt-1">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">
+                    Array input - accepts multiple connections
+                  </span>
+                </div>
+                {totalValidConnections > 0 && (
+                  <div className="mt-1 pt-1 border-t border-black/50 text-xs text-muted-foreground">
+                    {totalValidConnections} connection
+                    {totalValidConnections !== 1 ? "s" : ""} active
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         );

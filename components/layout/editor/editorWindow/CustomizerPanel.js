@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link2Off, Save } from "lucide-react";
-import { getNodeTypeByType } from "@/lib/node-registry";
+import { getNodeTypeByType, isArrayType } from "@/lib/node-registry";
 import { useEffect, useState } from "react";
 import MapFieldEditor from "./MapFieldEditor";
 import getColorByType from "@/lib/color-profile";
@@ -22,24 +22,39 @@ export default function CustomizerPanel() {
   const selectedNode = useSelector((state) => state.workflow?.selectedNode);
   const edges = useSelector((state) => state.workflow?.connections || []);
   const [connectedInputs, setConnectedInputs] = useState(new Map());
+  const nodes = useSelector((state) => state.workflow?.nodes || []);
+  const [totalConnectedInputs, setTotalConnectedInputs] = useState([]);
   const [envValues, setEnvValues] = useState({});
   const [isSubmitting, setIsSubmitting] = useState({});
 
-  // Track which inputs are connected and store their edge IDs
   useEffect(() => {
     if (!selectedNode) return;
 
     const connected = new Map();
+    const totalConnectedInputs = [];
     edges.forEach((edge) => {
       if (edge.target === selectedNode.id) {
         // Extract the input name from the handle ID
         const inputName = edge.targetHandle?.split("-")[1];
+        const sourceName = edge.sourceHandle?.split("-")[2];
+
+        if (sourceName) {
+          totalConnectedInputs.push({
+            inputName,
+            sourceName,
+            sourceId: edge.source,
+            sourceHandle: edge.sourceHandle,
+            edgeId: edge.id,
+          });
+        }
+
         if (inputName) {
           connected.set(inputName, edge.id);
         }
       }
     });
     setConnectedInputs(connected);
+    setTotalConnectedInputs(totalConnectedInputs);
   }, [edges, selectedNode]);
 
   // Initialize env values when selected node changes
@@ -120,6 +135,19 @@ export default function CustomizerPanel() {
     }
   };
 
+  const handleDisconnectExact = (inputName, edgeId) => {
+    dispatch(deleteEdge(edgeId));
+  };
+
+  const handleDisconnectAll = (inputName) => {
+    const edgeIds = totalConnectedInputs.filter(
+      (input) => input.inputName === inputName
+    );
+    edgeIds.forEach((edgeId) => {
+      dispatch(deleteEdge(edgeId.edgeId));
+    });
+  };
+
   return (
     <div className="space-y-4 absolute p-4 w-full">
       <h2 className="font-semibold">Node Properties</h2>
@@ -148,10 +176,26 @@ export default function CustomizerPanel() {
 
             {/* Show all fields based on node type */}
             {nodeType.fields.map((field) => {
-              const isConnected = connectedInputs.has(field.name);
-              const isInput = nodeType.inputs.some(
+              // Check if this field corresponds to an input
+              const matchingInput = nodeType.inputs.find(
                 (input) => input.name === field.name
               );
+              const isInput = !!matchingInput;
+
+              const isConnected = connectedInputs.has(field.name);
+
+              const isArrayInput =
+                matchingInput && isArrayType(matchingInput.type);
+
+              const totalValidConnections = isArrayInput
+                ? totalConnectedInputs.filter(
+                    (input) =>
+                      input.sourceName.toLowerCase() ===
+                      matchingInput?.type.split("[]")[0].toLowerCase()
+                  )
+                : totalConnectedInputs;
+
+              console.log(totalValidConnections);
 
               // Render the field based on its type
               switch (field.type) {
@@ -223,8 +267,8 @@ export default function CustomizerPanel() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="h-6 px-2 text-xs"
-                            onClick={() => handleDisconnect(field.name)}
+                            className="h-6 px-2 text-xs bg-black/80 text-background"
+                            onPress={() => handleDisconnect(field.name)}
                           >
                             <Link2Off className="h-3 w-3 mr-1" />
                             Disconnect
@@ -241,6 +285,9 @@ export default function CustomizerPanel() {
                             Number.parseFloat(e.target.value)
                           )
                         }
+                        placeholder={field.value?.toString()}
+                        className="mt-2 border border-black/50 rounded-lg"
+                        variant="outline"
                         disabled={isInput && isConnected}
                       />
                     </div>
@@ -345,6 +392,73 @@ export default function CustomizerPanel() {
                           ))}
                         </SelectContent>
                       </Select>
+                    </div>
+                  );
+
+                case "JSON[]":
+                case "json[]":
+                  return (
+                    <div key={field.name} className="space-y-2">
+                      <div className="flex flex-col">
+                        <div className="text-sm font-medium capitalize">
+                          {field.name}
+                          <span className="ml-2 text-xs text-black/50">
+                            (Array Input)
+                          </span>
+                        </div>
+                        {totalValidConnections.length > 0 && (
+                          <div className="flex items-center justify-between mt-2 mb-1">
+                            <div className="text-sm">
+                              {totalValidConnections.length} connection
+                              {totalValidConnections.length !== 1 ? "s" : ""}
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-6 px-2 text-xs bg-black/80 text-background"
+                              onPress={() => handleDisconnectAll(field.name)}
+                            >
+                              <Link2Off className="h-3 w-3 mr-1" />
+                              Disconnect All
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                      <div className="border rounded-md p-3 bg-black/5 border-black/50 text-xs">
+                        <p className="">
+                          This is an array input that accepts multiple
+                          connections.
+                        </p>
+                        {totalValidConnections.length > 0 ? (
+                          <div className="mt-2 space-y-1">
+                            {totalConnectedInputs.map((edgeId, index) => {
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex justify-between items-center text-xs"
+                                >
+                                  <span>Connection {index + 1}</span>
+                                  <Button
+                                    variant="icon"
+                                    size="icon"
+                                    className="h-5 w-5 p-0 bg-black/80 text-background rounded-md"
+                                    onPress={() =>
+                                      handleDisconnectExact(
+                                        field.name,
+                                        edgeId.edgeId
+                                      )
+                                    }
+                                  >
+                                    <Link2Off className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <p className="mt-2 text-xs">No connections yet.</p>
+                        )}
+                      </div>
                     </div>
                   );
 
@@ -491,16 +605,19 @@ export default function CustomizerPanel() {
               <div className="space-y-2">
                 {nodeType.outputs.map((output) => (
                   <div key={output.name} className="">
-                    <div className="flex justify-between">
-                      <span className="text-sm">{output.type}</span>
-                      <div
-                        className="h-3 w-3 rounded-full"
-                        style={{
-                          backgroundColor: getColorByType(
-                            output.type.toLowerCase()
-                          ),
-                        }}
-                      />
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm capitalize">{output.name}</span>
+                      <div className="flex items-center gap-2 border border-black/50 rounded-md p-1">
+                        <span className="text-xs">{output.type}</span>
+                        <div
+                          className="h-3 w-3 rounded-full"
+                          style={{
+                            backgroundColor: getColorByType(
+                              output.type.toLowerCase()
+                            ),
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 ))}
