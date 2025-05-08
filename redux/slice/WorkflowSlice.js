@@ -16,6 +16,7 @@ const initialState = {
   lastSavedState: null,
   paneLeft: true,
   paneRight: true,
+  workflowEnv: null,
 };
 
 const workflowSlice = createSlice({
@@ -262,6 +263,10 @@ const workflowSlice = createSlice({
     setPaneRight: (state, action) => {
       state.paneRight = action.payload;
     },
+
+    setWorkflowEnv: (state, action) => {
+      state.workflowEnv = action.payload;
+    },
   },
 });
 
@@ -451,6 +456,7 @@ export const {
 
   setPaneLeft,
   setPaneRight,
+  setWorkflowEnv,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

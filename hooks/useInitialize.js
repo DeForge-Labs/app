@@ -8,18 +8,18 @@ import { setIsInitializing, setUser } from "@/redux/slice/UserSlice";
 import {
   setWorkflow,
   setIsWorkflowInitializing as setWorkflowInitializing,
-  setNodes,
-  setConnections,
   setTeam as setTeamWorkflow,
 } from "@/redux/slice/WorkflowSlice";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
+import useEnv from "./useEnv";
 
 export default function useInitialize() {
   const dispatch = useDispatch();
   const router = useRouter();
+  const { getEnv } = useEnv();
 
   const loadUser = async () => {
     try {
@@ -122,6 +122,8 @@ export default function useInitialize() {
             connections: response.data.workflow.edges,
           })
         );
+
+        await getEnv(workflowId);
 
         dispatch(setTeamWorkflow(response.data.workflow.team));
       } else {

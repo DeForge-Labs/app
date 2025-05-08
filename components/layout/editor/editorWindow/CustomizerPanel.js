@@ -16,6 +16,7 @@ import { getNodeTypeByType, isArrayType } from "@/lib/node-registry";
 import { useEffect, useState } from "react";
 import MapFieldEditor from "./MapFieldEditor";
 import getColorByType from "@/lib/color-profile";
+import EnvField from "./customizerPanel/EnvField";
 
 export default function CustomizerPanel() {
   const dispatch = useDispatch();
@@ -570,38 +571,7 @@ export default function CustomizerPanel() {
             {nodeType.fields.map((field) => {
               return (
                 field.type === "env" && (
-                  <div key={field.name} className="space-y-2">
-                    <div className="text-sm font-medium">{field.name}</div>
-                    <div className="flex gap-2 items-center">
-                      <Input
-                        id={field.name}
-                        value={envValues[field.name] || ""}
-                        onChange={(e) =>
-                          handleEnvChange(field.name, e.target.value)
-                        }
-                        className="flex-1 border border-black/50 rounded-md"
-                        variant="outline"
-                        placeholder={field.defaultValue}
-                      />
-                      <Button
-                        size="icon"
-                        variant="icon"
-                        className="p-3 rounded-md text-xs bg-black/80 text-background h-full"
-                        onPress={() =>
-                          handleSubmitEnv(
-                            field.name,
-                            envValues[field.name] || ""
-                          )
-                        }
-                        disabled={isSubmitting[field.name]}
-                      >
-                        <Save className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <div className="text-[10px] text-black/50">
-                      {field.desc}
-                    </div>
-                  </div>
+                  <EnvField key={field.name} field={field} />
                 )
               );
             })}

@@ -3,7 +3,6 @@
 import { setPaneLeft, setPaneRight } from "@/redux/slice/WorkflowSlice";
 import { Button } from "@heroui/react";
 import {
-  ArrowLeft,
   ChevronLeft,
   ChevronRight,
   GitBranchPlus,
@@ -78,7 +77,7 @@ export default function EditorNavbar() {
           <Button
             variant="outline"
             size="icon"
-            className="px-2 mr-2 min-h-9 border border-black/80 rounded-lg"
+            className="px-2 min-h-9 border border-black/80 rounded-lg"
             onPress={handlePaneLeftClick}
           >
             <PanelLeft className="h-4 w-4" />
