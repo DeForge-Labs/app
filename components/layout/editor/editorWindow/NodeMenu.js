@@ -2,11 +2,13 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
-import { nodeRegistry } from "@/lib/node-registry";
 import { Input } from "@heroui/react";
 import { Badge } from "@/components/ui/badge";
+import { useSelector } from "react-redux";
+// import { nodeRegistry } from "@/lib/node-registry";
 
 export default function NodeMenu() {
+  const nodeRegistry = useSelector((state) => state.library.nodeRegistry) || [];
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredNodes = nodeRegistry.filter((node) => {

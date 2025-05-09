@@ -17,6 +17,7 @@ const initialState = {
   paneLeft: true,
   paneRight: true,
   workflowEnv: null,
+  panel: 3,
 };
 
 const workflowSlice = createSlice({
@@ -98,13 +99,13 @@ const workflowSlice = createSlice({
         state.nodes = [];
       }
 
-      const { type, position, data } = action.payload;
+      const { type, position, data, nodeRegistry } = action.payload;
 
       // Get the node type definition
-      const nodeType = getNodeTypeByType(type);
+      const nodeType = getNodeTypeByType(type, nodeRegistry);
 
       // Get default data for this node type
-      const defaultData = getDefaultDataForNodeType(type);
+      const defaultData = getDefaultDataForNodeType(type, nodeRegistry);
 
       // If we have a node type definition, ensure all field values are set
       if (nodeType) {
@@ -116,7 +117,9 @@ const workflowSlice = createSlice({
       }
 
       // Merge provided data with default data
-      const mergedData = data ? { ...defaultData, ...data } : defaultData;
+      const mergedData = data
+        ? { ...defaultData, ...data, category: nodeType.category }
+        : defaultData;
 
       const newNode = {
         id: `${type}-${Date.now()}`,
@@ -266,6 +269,10 @@ const workflowSlice = createSlice({
 
     setWorkflowEnv: (state, action) => {
       state.workflowEnv = action.payload;
+    },
+
+    setPanel: (state, action) => {
+      state.panel = action.payload;
     },
   },
 });
@@ -453,6 +460,7 @@ export const {
   deleteNode,
   deleteEdge,
   duplicateNode,
+  setPanel,
 
   setPaneLeft,
   setPaneRight,

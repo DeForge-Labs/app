@@ -27,6 +27,9 @@ export default function CustomizerPanel() {
   const [totalConnectedInputs, setTotalConnectedInputs] = useState([]);
   const [envValues, setEnvValues] = useState({});
   const [isSubmitting, setIsSubmitting] = useState({});
+  const nodeRegistry = useSelector(
+    (state) => state.library?.nodeRegistry || []
+  );
 
   useEffect(() => {
     if (!selectedNode) return;
@@ -62,7 +65,7 @@ export default function CustomizerPanel() {
   useEffect(() => {
     if (!selectedNode) return;
 
-    const nodeType = getNodeTypeByType(selectedNode.type);
+    const nodeType = getNodeTypeByType(selectedNode.type, nodeRegistry);
     if (!nodeType) return;
 
     const initialEnvValues = {};
@@ -85,7 +88,7 @@ export default function CustomizerPanel() {
   }
 
   // Get the node type definition
-  const nodeType = getNodeTypeByType(selectedNode.type);
+  const nodeType = getNodeTypeByType(selectedNode.type, nodeRegistry);
 
   if (!nodeType) {
     return (
@@ -209,13 +212,11 @@ export default function CustomizerPanel() {
                           {field.name}
                           {isInput && (
                             <span className="ml-1 text-xs text-black/50">
-                              (Input:{" "}
                               {
                                 nodeType.inputs.find(
                                   (i) => i.name === field.name
                                 )?.type
                               }
-                              )
                             </span>
                           )}
                         </div>
@@ -256,13 +257,11 @@ export default function CustomizerPanel() {
                           {field.name}
                           {isInput && (
                             <span className="ml-2 text-xs text-muted-foreground">
-                              (Input:{" "}
                               {
                                 nodeType.inputs.find(
                                   (i) => i.name === field.name
                                 )?.type
                               }
-                              )
                             </span>
                           )}
                         </div>
@@ -306,13 +305,11 @@ export default function CustomizerPanel() {
                           {field.name}
                           {isInput && (
                             <span className="ml-2 text-xs text-black/50">
-                              (Input:{" "}
                               {
                                 nodeType.inputs.find(
                                   (i) => i.name === field.name
                                 )?.type
                               }
-                              )
                             </span>
                           )}
                         </div>
@@ -352,13 +349,11 @@ export default function CustomizerPanel() {
                           {field.name}
                           {isInput && (
                             <span className="ml-2 text-xs text-black/50">
-                              (Input:{" "}
                               {
                                 nodeType.inputs.find(
                                   (i) => i.name === field.name
                                 )?.type
                               }
-                              )
                             </span>
                           )}
                         </div>
@@ -482,13 +477,11 @@ export default function CustomizerPanel() {
                           {field.name}
                           {isInput && (
                             <span className="ml-2 text-xs text-black/50">
-                              (Input:{" "}
                               {
                                 nodeType.inputs.find(
                                   (i) => i.name === field.name
                                 )?.type
                               }
-                              )
                             </span>
                           )}
                         </div>
@@ -578,10 +571,9 @@ export default function CustomizerPanel() {
           </CardContent>
         </Card>
       )}
-
-      <Card className="border border-black/50 shadow-none">
-        <CardContent className="p-4 pt-0 ">
-          {nodeType.outputs.length > 0 && (
+      {nodeType.outputs.length > 0 && (
+        <Card className="border border-black/50 shadow-none">
+          <CardContent className="p-4 pt-0 ">
             <div className="mt-4">
               <h3 className="text-sm font-semibold mb-3">Outputs</h3>
               <div className="space-y-2">
@@ -605,9 +597,9 @@ export default function CustomizerPanel() {
                 ))}
               </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

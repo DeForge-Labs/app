@@ -21,15 +21,18 @@ import { FileWarning } from "lucide-react";
 import MapFieldEditor from "./MapFieldEditor";
 import { Input, Textarea } from "@heroui/react";
 import getColorByType from "@/lib/color-profile";
+import { useSelector } from "react-redux";
 
 export function GenericNode({ id, type, data }) {
   const dispatch = useDispatch();
   const edges = useEdges();
   const [connectedInputs, setConnectedInputs] = useState(new Set());
   const [totalConnectedInputs, setTotalConnectedInputs] = useState([]);
+  const nodeRegistry =
+    useSelector((state) => state.library?.nodeRegistry) || [];
 
   // Get the node type definition
-  const nodeType = getNodeTypeByType(type);
+  const nodeType = getNodeTypeByType(type, nodeRegistry);
   const categoryColor = nodeType
     ? getCategoryColor(nodeType.category)
     : "gray-500";
@@ -208,8 +211,9 @@ export function GenericNode({ id, type, data }) {
                 value={currentValue || ""}
                 onChange={(e) => handleChange(field.name, e.target.value)}
                 placeholder={field.value}
-                className="text-xs min-h-[80px]"
+                className="text-xs min-h-[80px] border border-black/50 rounded-lg"
                 disabled={isDisabled}
+                variant="outline"
               />
             </div>
           </div>
@@ -387,6 +391,14 @@ export function GenericNode({ id, type, data }) {
               id={`input-${input.name}-${input.type}`}
               className={`h-3 w-3 bg-${categoryColor} -ml-1.5`}
               data-type={input.type}
+              style={{
+                backgroundColor: getColorByType(input.type.toLowerCase()),
+                width: "8px",
+                height: "8px",
+                left: -11,
+                top: "50%",
+                transform: "translateY(-50%)",
+              }}
             />
             <div className="h-8 border rounded-md bg-muted/30 text-xs flex items-center justify-between w-full px-2">
               <span>

@@ -7,10 +7,16 @@ import useLibrary from "@/hooks/useLibrary";
 
 export default function WorkflowProvider({ children, params }) {
   const user = useSelector((state) => state.user.user);
+  const nodeRegistry = useSelector((state) => state.library.nodeRegistry);
   const { loadWorkflowById } = useInitialize();
   const { loadNodeRegistry } = useLibrary();
+
   useEffect(() => {
-    if (user) {
+    loadNodeRegistry();
+  }, []);
+
+  useEffect(() => {
+    if (user && nodeRegistry && nodeRegistry.length > 0) {
       if (!params?.value) return;
 
       const parsedValue = JSON.parse(params.value);
@@ -19,9 +25,8 @@ export default function WorkflowProvider({ children, params }) {
       if (!id) return;
 
       loadWorkflowById(id);
-      loadNodeRegistry();
     }
-  }, [user, params]);
+  }, [user, params, nodeRegistry]);
 
   return <>{children}</>;
 }

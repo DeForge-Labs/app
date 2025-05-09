@@ -19,10 +19,7 @@ import {
   duplicateNode,
   deleteEdge,
 } from "@/redux/slice/WorkflowSlice";
-import {
-  getNodeTypeByType,
-  nodeRegistry as sampleNodes,
-} from "@/lib/node-registry";
+import { getNodeTypeByType } from "@/lib/node-registry";
 import NodeContextMenu from "./NodeContextMenu";
 import EdgeContextMenu from "./EdgeContextMenu";
 import { GenericNode } from "./GenericNode";
@@ -33,13 +30,14 @@ function Flow() {
   const dispatch = useDispatch();
   const nodes = useSelector((state) => state.workflow?.nodes || []);
   const edges = useSelector((state) => state.workflow?.connections || []);
+  const nodeRegistry = useSelector(
+    (state) => state.library?.nodeRegistry || []
+  );
 
   const { project } = useReactFlow();
   // const nodeRegistry = useSelector(
   //   (state) => state.library?.nodeRegistry || []
   // );
-
-  const nodeRegistry = sampleNodes;
 
   // Context menu state for nodes
   const [nodeContextMenu, setNodeContextMenu] = useState({
@@ -74,8 +72,8 @@ function Flow() {
     if (!sourceNode || !targetNode) return false;
 
     // Get node type definitions
-    const sourceNodeType = getNodeTypeByType(sourceNode.type);
-    const targetNodeType = getNodeTypeByType(targetNode.type);
+    const sourceNodeType = getNodeTypeByType(sourceNode.type, nodeRegistry);
+    const targetNodeType = getNodeTypeByType(targetNode.type, nodeRegistry);
 
     if (!sourceNodeType || !targetNodeType) return false;
 
@@ -193,6 +191,7 @@ function Flow() {
           type,
           position,
           data,
+          nodeRegistry,
         })
       );
     },
@@ -214,11 +213,20 @@ function Flow() {
       // Prevent default context menu
       event.preventDefault();
 
+      const containerRect =
+        reactFlowWrapper.current?.getBoundingClientRect() || {
+          left: 0,
+          top: 0,
+        };
+
+      const x = event.clientX - containerRect.left;
+      const y = event.clientY - containerRect.top;
+
       // Show our custom context menu
       setNodeContextMenu({
         visible: true,
-        x: event.clientX,
-        y: event.clientY,
+        x,
+        y,
         nodeId: node.id,
       });
 
@@ -236,11 +244,20 @@ function Flow() {
       // Prevent default context menu
       event.preventDefault();
 
+      const containerRect =
+        reactFlowWrapper.current?.getBoundingClientRect() || {
+          left: 0,
+          top: 0,
+        };
+
+      const x = event.clientX - containerRect.left;
+      const y = event.clientY - containerRect.top;
+
       // Show our custom context menu
       setEdgeContextMenu({
         visible: true,
-        x: event.clientX,
-        y: event.clientY,
+        x,
+        y,
         edgeId: edge.id,
       });
 
@@ -258,7 +275,7 @@ function Flow() {
 
   return (
     Object.keys(nodeTypes).length > 0 && (
-      <div className="h-full w-full" ref={reactFlowWrapper}>
+      <div className="h-full w-full relative" ref={reactFlowWrapper}>
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -278,7 +295,7 @@ function Flow() {
           }}
         >
           <Background />
-          <Controls />
+          <Controls position="top-left" />
         </ReactFlow>
 
         {nodeContextMenu.visible && nodeContextMenu.nodeId && (

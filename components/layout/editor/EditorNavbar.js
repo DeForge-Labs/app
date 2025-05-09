@@ -97,9 +97,10 @@ export default function EditorNavbar() {
           <Button
             variant="outline"
             size="icon"
-            className="px-4 min-h-9 bg-black/80 text-background rounded-lg flex items-center gap-2 text-sm"
+            className="px-4 min-h-9 border border-black/80 gap-2 text-sm rounded-lg"
           >
-            <GitBranchPlus className="h-4 w-4" /> Deploy Flow
+            <div className="h-4 w-4 rounded-full bg-red-500/80"></div>
+            Testing
           </Button>
         </div>
       </div>

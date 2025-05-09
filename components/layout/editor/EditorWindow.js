@@ -4,10 +4,12 @@ import NodeMenu from "./editorWindow/NodeMenu";
 import NodeEditor from "./editorWindow/NodeEditor";
 import CustomizerPanel from "./editorWindow/CustomizerPanel";
 import { useSelector } from "react-redux";
+import ToolPanel from "./ToolPanel";
 
 export default function EditorWindow() {
   const paneLeft = useSelector((state) => state.workflow.paneLeft);
   const paneRight = useSelector((state) => state.workflow.paneRight);
+  const panel = useSelector((state) => state.workflow.panel);
 
   return (
     <div className="flex flex-1">
@@ -17,8 +19,10 @@ export default function EditorWindow() {
         </div>
       )}
 
-      <div className="flex-1">
-        <NodeEditor />
+      <div className="flex-1 relative">
+        {panel === 3 && <NodeEditor />}
+
+        <ToolPanel />
       </div>
 
       {paneRight && (

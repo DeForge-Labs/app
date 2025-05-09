@@ -4,7 +4,7 @@ const librarySlice = createSlice({
   name: "library",
 
   initialState: {
-    nodeRegistry: null,
+    nodeRegistry: [],
     isNodeRegistryInitializing: true,
   },
 
