@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link2Off, Save } from "lucide-react";
+import { Link2Off, Lock, Save } from "lucide-react";
 import { getNodeTypeByType, isArrayType } from "@/lib/node-registry";
 import { useEffect, useState } from "react";
 import MapFieldEditor from "./MapFieldEditor";
@@ -23,13 +23,11 @@ export default function CustomizerPanel() {
   const selectedNode = useSelector((state) => state.workflow?.selectedNode);
   const edges = useSelector((state) => state.workflow?.connections || []);
   const [connectedInputs, setConnectedInputs] = useState(new Map());
-  const nodes = useSelector((state) => state.workflow?.nodes || []);
   const [totalConnectedInputs, setTotalConnectedInputs] = useState([]);
-  const [envValues, setEnvValues] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState({});
   const nodeRegistry = useSelector(
     (state) => state.library?.nodeRegistry || []
   );
+  const workflow = useSelector((state) => state.workflow?.workflow || null);
 
   useEffect(() => {
     if (!selectedNode) return;
@@ -61,22 +59,6 @@ export default function CustomizerPanel() {
     setTotalConnectedInputs(totalConnectedInputs);
   }, [edges, selectedNode]);
 
-  // Initialize env values when selected node changes
-  useEffect(() => {
-    if (!selectedNode) return;
-
-    const nodeType = getNodeTypeByType(selectedNode.type, nodeRegistry);
-    if (!nodeType) return;
-
-    const initialEnvValues = {};
-    nodeType.fields.forEach((field) => {
-      if (field.type === "env") {
-        initialEnvValues[field.name] = "";
-      }
-    });
-    setEnvValues(initialEnvValues);
-  }, [selectedNode]);
-
   if (!selectedNode) {
     return (
       <div className="flex h-full items-center justify-center text-center text-muted-foreground p-4 opacity-50">
@@ -101,6 +83,9 @@ export default function CustomizerPanel() {
   }
 
   const handleChange = (key, value) => {
+    if (workflow?.status === "LIVE") {
+      return;
+    }
     dispatch(
       updateNodeData({
         nodeId: selectedNode.id,
@@ -109,30 +94,10 @@ export default function CustomizerPanel() {
     );
   };
 
-  const handleEnvChange = (name, value) => {
-    setEnvValues((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmitEnv = async (name, value) => {
-    setIsSubmitting((prev) => ({ ...prev, [name]: true }));
-
-    try {
-      // This would be replaced with your actual API call
-      // Example: await fetch('/api/env-variables', { method: 'POST', body: JSON.stringify({ name, value }) })
-
-      // Simulate API call with a delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    } catch (error) {
-      console.error("Error updating environment variable:", error);
-    } finally {
-      setIsSubmitting((prev) => ({ ...prev, [name]: false }));
-    }
-  };
-
   const handleDisconnect = (inputName) => {
+    if (workflow?.status === "LIVE") {
+      return;
+    }
     const edgeId = connectedInputs.get(inputName);
     if (edgeId) {
       dispatch(deleteEdge(edgeId));
@@ -140,10 +105,16 @@ export default function CustomizerPanel() {
   };
 
   const handleDisconnectExact = (inputName, edgeId) => {
+    if (workflow?.status === "LIVE") {
+      return;
+    }
     dispatch(deleteEdge(edgeId));
   };
 
   const handleDisconnectAll = (inputName) => {
+    if (workflow?.status === "LIVE") {
+      return;
+    }
     const edgeIds = totalConnectedInputs.filter(
       (input) => input.inputName === inputName
     );
@@ -154,7 +125,14 @@ export default function CustomizerPanel() {
 
   return (
     <div className="space-y-4 absolute p-4 w-full">
-      <h2 className="font-semibold">Node Properties</h2>
+      <div className="flex items-center justify-between">
+        <div className="font-semibold">Node Properties</div>
+        {workflow?.status === "LIVE" && (
+          <div className="bg-black h-6 w-6 rounded-full flex items-center justify-center text-background">
+            <Lock className="h-3 w-3" />
+          </div>
+        )}
+      </div>
       <Card className="border-black/50">
         <CardHeader className="p-4 pb-2">
           <CardTitle className="text-sm flex items-center">

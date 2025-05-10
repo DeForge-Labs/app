@@ -24,6 +24,7 @@ import NodeContextMenu from "./NodeContextMenu";
 import EdgeContextMenu from "./EdgeContextMenu";
 import { GenericNode } from "./GenericNode";
 import LogoAnimation from "@/components/ui/LogoAnimation";
+import { toast } from "sonner";
 
 function Flow() {
   const reactFlowWrapper = useRef(null);
@@ -33,6 +34,7 @@ function Flow() {
   const nodeRegistry = useSelector(
     (state) => state.library?.nodeRegistry || []
   );
+  const workflow = useSelector((state) => state.workflow?.workflow || null);
 
   const { project } = useReactFlow();
   // const nodeRegistry = useSelector(
@@ -65,6 +67,10 @@ function Flow() {
 
   // Validate connection types
   const isValidConnection = (connection) => {
+    if (workflow?.status === "LIVE") {
+      return false;
+    }
+
     // Get source and target nodes
     const sourceNode = nodes.find((node) => node.id === connection.source);
     const targetNode = nodes.find((node) => node.id === connection.target);
@@ -148,6 +154,11 @@ function Flow() {
     (event) => {
       event.preventDefault();
 
+      if (workflow?.status === "LIVE") {
+        toast.error("Workflow is live. You cannot add nodes.");
+        return;
+      }
+
       const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect();
       if (!reactFlowBounds) return;
 
@@ -195,7 +206,7 @@ function Flow() {
         })
       );
     },
-    [project, dispatch]
+    [project, dispatch, workflow]
   );
 
   const onNodeClick = useCallback(
@@ -212,6 +223,10 @@ function Flow() {
     (event, node) => {
       // Prevent default context menu
       event.preventDefault();
+
+      if (workflow?.status === "LIVE") {
+        return;
+      }
 
       const containerRect =
         reactFlowWrapper.current?.getBoundingClientRect() || {
@@ -236,13 +251,17 @@ function Flow() {
       // Set the selected node
       dispatch(setSelectedNode(node));
     },
-    [dispatch, edgeContextMenu]
+    [dispatch, edgeContextMenu, workflow]
   );
 
   const onEdgeContextMenu = useCallback(
     (event, edge) => {
       // Prevent default context menu
       event.preventDefault();
+
+      if (workflow?.status === "LIVE") {
+        return;
+      }
 
       const containerRect =
         reactFlowWrapper.current?.getBoundingClientRect() || {
@@ -264,7 +283,7 @@ function Flow() {
       // Hide node context menu if it's open
       setNodeContextMenu({ ...nodeContextMenu, visible: false });
     },
-    [nodeContextMenu]
+    [nodeContextMenu, workflow]
   );
 
   // Hide context menus when clicking on the canvas
@@ -289,6 +308,8 @@ function Flow() {
           onEdgeContextMenu={onEdgeContextMenu}
           onPaneClick={onPaneClick}
           nodeTypes={nodeTypes}
+          nodesDraggable={workflow?.status !== "LIVE"}
+          nodesConnectable={workflow?.status !== "LIVE"}
           fitView
           proOptions={{
             hideAttribution: true,

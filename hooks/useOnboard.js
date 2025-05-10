@@ -39,6 +39,7 @@ export default function useOnboard() {
         setIsRequestingLogin(false);
       }
     } catch (error) {
+      console.log(error);
       toast.error("Failed to send OTP");
       setIsRequestingLogin(false);
     }
@@ -75,7 +76,8 @@ export default function useOnboard() {
         setIsRequestingSignUp(false);
       }
     } catch (error) {
-      toast("Failed to send OTP");
+      console.log(error);
+      toast.error("Failed to send OTP");
       setIsRequestingSignUp(false);
     }
   };

@@ -19,13 +19,23 @@ export default function SaveButton() {
   const { isOpen, setIsOpen, isSavingWorkflow, handleSaveWorkflow } =
     useSaveWorkflow();
 
+  const isWorkflowInitializing = useSelector(
+    (state) => state.workflow.isWorkflowInitializing
+  );
+
+  const workflow = useSelector((state) => state.workflow.workflow);
+
   return (
     <>
       <Button
         variant="outline"
         size="icon"
         className="px-4 min-h-9 border border-black/80 rounded-lg flex items-center gap-2 text-sm"
-        isDisabled={!hasUnsavedChanges}
+        isDisabled={
+          !hasUnsavedChanges ||
+          isWorkflowInitializing ||
+          workflow?.status === "LIVE"
+        }
         onPress={() => {
           setIsOpen(true);
         }}

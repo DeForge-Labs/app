@@ -19,6 +19,7 @@ export default function EnvField({ field }) {
   const [value, setValue] = useState(field.value);
   const workflowEnv = useSelector((state) => state.workflow.workflowEnv);
   const [defaultValue, setDefaultValue] = useState(field.defaultValue);
+  const workflow = useSelector((state) => state.workflow.workflow);
 
   useEffect(() => {
     if (workflowEnv) {
@@ -45,7 +46,7 @@ export default function EnvField({ field }) {
             onPress={() => {
               setIsOpen(true);
             }}
-            disabled={!value}
+            isDisabled={!value || workflow?.status === "LIVE"}
           >
             <Save className="h-4 w-4" />
           </Button>

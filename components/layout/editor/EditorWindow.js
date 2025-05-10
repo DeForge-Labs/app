@@ -20,7 +20,7 @@ export default function EditorWindow() {
       )}
 
       <div className="flex-1 relative">
-        {panel === 3 && <NodeEditor />}
+        {panel === 1 && <NodeEditor />}
 
         <ToolPanel />
       </div>

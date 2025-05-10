@@ -22,6 +22,8 @@ import MapFieldEditor from "./MapFieldEditor";
 import { Input, Textarea } from "@heroui/react";
 import getColorByType from "@/lib/color-profile";
 import { useSelector } from "react-redux";
+import { Lock } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function GenericNode({ id, type, data }) {
   const dispatch = useDispatch();
@@ -30,6 +32,8 @@ export function GenericNode({ id, type, data }) {
   const [totalConnectedInputs, setTotalConnectedInputs] = useState([]);
   const nodeRegistry =
     useSelector((state) => state.library?.nodeRegistry) || [];
+
+  const workflow = useSelector((state) => state.workflow?.workflow || null);
 
   // Get the node type definition
   const nodeType = getNodeTypeByType(type, nodeRegistry);
@@ -61,6 +65,10 @@ export function GenericNode({ id, type, data }) {
 
   const handleChange = useCallback(
     (name, value) => {
+      if (workflow?.status === "LIVE") {
+        return;
+      }
+
       dispatch(
         updateNodeData({
           nodeId: id,
@@ -416,8 +424,17 @@ export function GenericNode({ id, type, data }) {
   };
 
   return (
-    <Card className={`w-64 border-black/50 bg-background `}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3">
+    <Card
+      className={`w-64 border-black/50 bg-background relative ${cn(
+        workflow?.status === "LIVE" && "border-red-500"
+      )} `}
+    >
+      {workflow?.status === "LIVE" && (
+        <div className="absolute -top-2 -right-3 bg-black h-6 w-6 rounded-full flex items-center justify-center text-background">
+          <Lock className="h-3 w-3" />
+        </div>
+      )}
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 ">
         <CardTitle className="text-sm font-medium">
           <div className="flex items-center">
             {data.label || nodeType.title}

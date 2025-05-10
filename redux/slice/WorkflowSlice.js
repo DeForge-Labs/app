@@ -17,7 +17,7 @@ const initialState = {
   paneLeft: true,
   paneRight: true,
   workflowEnv: null,
-  panel: 3,
+  panel: 1,
 };
 
 const workflowSlice = createSlice({

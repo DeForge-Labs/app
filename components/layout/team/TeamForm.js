@@ -36,6 +36,7 @@ export default function TeamForm() {
         toast.error(response.message);
       }
     } catch (error) {
+      console.log(error);
       toast.error("Failed to create team");
     } finally {
       setIsCreating(false);
@@ -54,6 +55,7 @@ export default function TeamForm() {
         toast.error("Something went wrong");
       }
     } catch (error) {
+      console.log(error);
       toast.error("Failed to skip team");
     } finally {
       setIsSkipping(false);
