@@ -1,10 +1,11 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import { CalendarRange, FileLineChartIcon, Edit, Copy } from "lucide-react";
+import { CalendarRange, FileLineChartIcon, Edit } from "lucide-react";
 import { Button } from "@heroui/react";
 import DeleteButton from "./DeleteButton";
 import { useRouter } from "next/navigation";
+import DuplicateButton from "./DuplicateButton";
 
 export default function ListCard({ flow }) {
   const timeAgo = formatDistanceToNow(flow.createdAt, { addSuffix: true });
@@ -38,13 +39,7 @@ export default function ListCard({ flow }) {
           <Edit className="h-3 w-3" />
           Edit
         </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="border-black/80 border p-2 rounded-lg"
-        >
-          <Copy className="h-3 w-3" />
-        </Button>
+        <DuplicateButton workflow={flow} />
         <DeleteButton workflowId={flow.id} />
       </div>
     </div>

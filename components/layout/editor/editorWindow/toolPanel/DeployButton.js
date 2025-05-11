@@ -12,10 +12,15 @@ import {
 import { cn } from "@/lib/utils";
 import { GitBranchPlus, Loader2 } from "lucide-react";
 import useDeployWorkflow from "@/hooks/useDeployWorkflow";
+import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 export default function DeployButton() {
   const { isOpen, setIsOpen, isDeploying, handleDeployWorkflow } =
     useDeployWorkflow();
+  const hasUnsavedChanges = useSelector(
+    (state) => state.workflow.hasUnsavedChanges
+  );
   return (
     <>
       <Tooltip
@@ -28,7 +33,11 @@ export default function DeployButton() {
       >
         <Button
           onPress={() => {
-            setIsOpen(true);
+            if (!hasUnsavedChanges) {
+              setIsOpen(true);
+            } else {
+              toast.info("Please save your changes before deploying");
+            }
           }}
           variant="icon"
           className={cn(

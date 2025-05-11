@@ -1,15 +1,10 @@
 import { Card, CardBody, CardHeader, CardFooter } from "@heroui/react";
-import {
-  CalendarRange,
-  FileLineChartIcon,
-  Edit,
-  Copy,
-  Trash2,
-} from "lucide-react";
+import { CalendarRange, FileLineChartIcon, Edit } from "lucide-react";
 import { Button } from "@heroui/react";
 import { formatDistanceToNow } from "date-fns";
 import DeleteButton from "./DeleteButton";
 import { useRouter } from "next/navigation";
+import DuplicateButton from "./DuplicateButton";
 
 export default function GridCard({ flow }) {
   const timeAgo = formatDistanceToNow(flow.createdAt, { addSuffix: true });
@@ -46,13 +41,7 @@ export default function GridCard({ flow }) {
           Edit
         </Button>
         <div className="flex space-x-2">
-          <Button
-            variant="outline"
-            size="icon"
-            className="border-black/80 border p-2 rounded-lg"
-          >
-            <Copy className="h-3 w-3" />
-          </Button>
+          <DuplicateButton workflow={flow} />
           <DeleteButton workflowId={flow.id} />
         </div>
       </CardFooter>
