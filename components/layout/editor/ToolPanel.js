@@ -58,7 +58,7 @@ export default function ToolPanel({ className, onChange }) {
     !isWorkflowInitializing && (
       <div
         className={cn(
-          "flex flex-wrap items-center gap-2 absolute bottom-0 left-1/2 -translate-x-1/2 rounded-t-lg w-fit border bg-white p-2 px-3 border-black/50 border-b-0 shadow-sm z-10",
+          "flex items-center justify-center gap-2 absolute bottom-0 left-1/2 -translate-x-1/2 rounded-t-lg border bg-white p-2 px-3 border-black/50 border-b-0 shadow-sm z-10",
           className
         )}
       >

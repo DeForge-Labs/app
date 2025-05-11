@@ -5,6 +5,7 @@ import NodeEditor from "./editorWindow/NodeEditor";
 import CustomizerPanel from "./editorWindow/CustomizerPanel";
 import { useSelector } from "react-redux";
 import ToolPanel from "./ToolPanel";
+import DeploymentTab from "./editorWindow/DeploymentTab";
 
 export default function EditorWindow() {
   const paneLeft = useSelector((state) => state.workflow.paneLeft);
@@ -21,6 +22,7 @@ export default function EditorWindow() {
 
       <div className="flex-1 relative">
         {panel === 1 && <NodeEditor />}
+        {panel === 2 && <DeploymentTab />}
 
         <ToolPanel />
       </div>
