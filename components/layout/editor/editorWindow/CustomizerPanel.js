@@ -2,21 +2,21 @@
 
 import { useDispatch, useSelector } from "react-redux";
 import { updateNodeData, deleteEdge } from "@/redux/slice/WorkflowSlice";
-import { Input, Textarea, Button } from "@heroui/react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Input } from "@heroui/react";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link2Off, Lock, Save } from "lucide-react";
+import { Lock } from "lucide-react";
 import { getNodeTypeByType, isArrayType } from "@/lib/node-registry";
 import { useEffect, useState } from "react";
-import MapFieldEditor from "./MapFieldEditor";
-import getColorByType from "@/lib/color-profile";
-import EnvField from "./customizerPanel/EnvField";
+import EnvField from "./nodes/customizer/EnvField";
+import TextField from "./nodes/customizer/TextField";
+import NumberField from "./nodes/customizer/NumberField";
+import TextAreaField from "./nodes/customizer/TextAreaField";
+import SelectField from "./nodes/customizer/SelectField";
+import JSONArrayField from "./nodes/customizer/JSONArrayField";
+import MapField from "./nodes/customizer/MapField";
+import StandaloneField from "./nodes/customizer/StandaloneField";
+import OutputField from "./nodes/customizer/OutputField";
 
 export default function CustomizerPanel() {
   const dispatch = useDispatch();
@@ -104,7 +104,7 @@ export default function CustomizerPanel() {
     }
   };
 
-  const handleDisconnectExact = (inputName, edgeId) => {
+  const handleDisconnectExact = (edgeId) => {
     if (workflow?.status === "LIVE") {
       return;
     }
@@ -184,305 +184,86 @@ export default function CustomizerPanel() {
                 case "Text":
                 case "text":
                   return (
-                    <div key={field.name} className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <div className="text-sm font-medium capitalize">
-                          {field.name}
-                          {isInput && (
-                            <span className="ml-1 text-xs text-black/50">
-                              {
-                                nodeType.inputs.find(
-                                  (i) => i.name === field.name
-                                )?.type
-                              }
-                            </span>
-                          )}
-                        </div>
-                        {isInput && isConnected && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-6 px-2 text-xs bg-black/80 text-background"
-                            onPress={() => handleDisconnect(field.name)}
-                          >
-                            <Link2Off className="h-3 w-3" />
-                            Disconnect
-                          </Button>
-                        )}
-                      </div>
-                      <Input
-                        id={field.name}
-                        value={selectedNode.data[field.name] || ""}
-                        onChange={(e) =>
-                          handleChange(field.name, e.target.value)
-                        }
-                        placeholder={field.value}
-                        disabled={isInput && isConnected}
-                        className="border-black/50 border rounded-lg"
-                        variant="outline"
-                      />
-
-                      <div className="text-[10px]">{field.desc}</div>
-                    </div>
+                    <TextField
+                      key={field.name}
+                      field={field}
+                      isInput={isInput}
+                      isConnected={isConnected}
+                      selectedNode={selectedNode}
+                      handleChange={handleChange}
+                      handleDisconnect={handleDisconnect}
+                      nodeType={nodeType}
+                    />
                   );
 
                 case "Number":
                 case "number":
                   return (
-                    <div key={field.name} className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <div className="text-sm font-medium">
-                          {field.name}
-                          {isInput && (
-                            <span className="ml-2 text-xs text-muted-foreground">
-                              {
-                                nodeType.inputs.find(
-                                  (i) => i.name === field.name
-                                )?.type
-                              }
-                            </span>
-                          )}
-                        </div>
-                        {isInput && isConnected && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-6 px-2 text-xs bg-black/80 text-background"
-                            onPress={() => handleDisconnect(field.name)}
-                          >
-                            <Link2Off className="h-3 w-3 mr-1" />
-                            Disconnect
-                          </Button>
-                        )}
-                      </div>
-                      <Input
-                        id={field.name}
-                        type="number"
-                        value={selectedNode.data[field.name] || field.value}
-                        onChange={(e) =>
-                          handleChange(
-                            field.name,
-                            Number.parseFloat(e.target.value)
-                          )
-                        }
-                        placeholder={field.value?.toString()}
-                        className="mt-2 border border-black/50 rounded-lg"
-                        variant="outline"
-                        disabled={isInput && isConnected}
-                      />
-
-                      <div className="text-[10px]">{field.desc}</div>
-                    </div>
+                    <NumberField
+                      key={field.name}
+                      field={field}
+                      isInput={isInput}
+                      isConnected={isConnected}
+                      selectedNode={selectedNode}
+                      handleChange={handleChange}
+                      handleDisconnect={handleDisconnect}
+                      nodeType={nodeType}
+                    />
                   );
 
                 case "textArea":
                   return (
-                    <div key={field.name} className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <div className="text-sm font-medium capitalize">
-                          {field.name}
-                          {isInput && (
-                            <span className="ml-2 text-xs text-black/50">
-                              {
-                                nodeType.inputs.find(
-                                  (i) => i.name === field.name
-                                )?.type
-                              }
-                            </span>
-                          )}
-                        </div>
-                        {isInput && isConnected && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-6 px-2 text-xs bg-black/80 text-background"
-                            onPress={() => handleDisconnect(field.name)}
-                          >
-                            <Link2Off className="h-3 w-3 mr-1" />
-                            Disconnect
-                          </Button>
-                        )}
-                      </div>
-                      <Textarea
-                        id={field.name}
-                        value={selectedNode.data[field.name] || ""}
-                        onChange={(e) =>
-                          handleChange(field.name, e.target.value)
-                        }
-                        placeholder={field.value}
-                        className="border-black/50 border rounded-lg"
-                        variant="outline"
-                        disabled={isInput && isConnected}
-                      />
-
-                      <div className="text-[10px]">{field.desc}</div>
-                    </div>
+                    <TextAreaField
+                      key={field.name}
+                      field={field}
+                      isInput={isInput}
+                      isConnected={isConnected}
+                      selectedNode={selectedNode}
+                      handleChange={handleChange}
+                      handleDisconnect={handleDisconnect}
+                      nodeType={nodeType}
+                    />
                   );
 
                 case "select":
                   return (
-                    <div key={field.name} className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <div className="text-sm font-medium capitalize">
-                          {field.name}
-                          {isInput && (
-                            <span className="ml-2 text-xs text-black/50">
-                              {
-                                nodeType.inputs.find(
-                                  (i) => i.name === field.name
-                                )?.type
-                              }
-                            </span>
-                          )}
-                        </div>
-                        {isInput && isConnected && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-6 px-2 text-xs bg-black/80 text-background"
-                            onPress={() => handleDisconnect(field.name)}
-                          >
-                            <Link2Off className="h-3 w-3 mr-1" />
-                            Disconnect
-                          </Button>
-                        )}
-                      </div>
-                      <Select
-                        value={selectedNode.data[field.name] || field.value}
-                        onValueChange={(value) =>
-                          handleChange(field.name, value)
-                        }
-                        disabled={isInput && isConnected}
-                      >
-                        <SelectTrigger
-                          id={field.name}
-                          className="border-black/50 border rounded-lg"
-                        >
-                          <SelectValue placeholder={`Select ${field.name}`} />
-                        </SelectTrigger>
-                        <SelectContent className="border-black/50 border rounded-lg bg-background">
-                          {field.options?.map((option) => (
-                            <SelectItem
-                              key={option}
-                              value={option}
-                              className="hover:bg-black/5 rounded-md"
-                            >
-                              {option}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-
-                      <div className="text-[10px]">{field.desc}</div>
-                    </div>
+                    <SelectField
+                      key={field.name}
+                      field={field}
+                      isInput={isInput}
+                      isConnected={isConnected}
+                      selectedNode={selectedNode}
+                      handleChange={handleChange}
+                      handleDisconnect={handleDisconnect}
+                      nodeType={nodeType}
+                    />
                   );
 
                 case "JSON[]":
                 case "json[]":
                   return (
-                    <div key={field.name} className="space-y-2">
-                      <div className="flex flex-col">
-                        <div className="text-sm font-medium capitalize">
-                          {field.name}
-                          <span className="ml-2 text-xs text-black/50">
-                            (Array Input)
-                          </span>
-                        </div>
-                        {totalValidConnections.length > 0 && (
-                          <div className="flex items-center justify-between mt-2 mb-1">
-                            <div className="text-sm">
-                              {totalValidConnections.length} connection
-                              {totalValidConnections.length !== 1 ? "s" : ""}
-                            </div>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-6 px-2 text-xs bg-black/80 text-background"
-                              onPress={() => handleDisconnectAll(field.name)}
-                            >
-                              <Link2Off className="h-3 w-3 mr-1" />
-                              Disconnect All
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                      <div className="border rounded-md p-3 bg-black/5 border-black/50 text-xs">
-                        <p className="">
-                          This is an array input that accepts multiple
-                          connections.
-                        </p>
-                        {totalValidConnections.length > 0 ? (
-                          <div className="mt-2 space-y-1">
-                            {totalConnectedInputs.map((edgeId, index) => {
-                              return (
-                                <div
-                                  key={index}
-                                  className="flex justify-between items-center text-xs"
-                                >
-                                  <span>Connection {index + 1}</span>
-                                  <Button
-                                    variant="icon"
-                                    size="icon"
-                                    className="h-5 w-5 p-0 bg-black/80 text-background rounded-md"
-                                    onPress={() =>
-                                      handleDisconnectExact(
-                                        field.name,
-                                        edgeId.edgeId
-                                      )
-                                    }
-                                  >
-                                    <Link2Off className="h-3 w-3" />
-                                  </Button>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        ) : (
-                          <p className="mt-2 text-xs">No connections yet.</p>
-                        )}
-                      </div>
-
-                      <div className="text-[10px]">{field.desc}</div>
-                    </div>
+                    <JSONArrayField
+                      field={field}
+                      key={field.name}
+                      totalValidConnections={totalValidConnections}
+                      totalConnectedInputs={totalConnectedInputs}
+                      handleDisconnectAll={handleDisconnectAll}
+                      handleDisconnectExact={handleDisconnectExact}
+                    />
                   );
 
                 case "Map":
                 case "map":
                   return (
-                    <div key={field.name} className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <div className="text-sm font-medium capitalize">
-                          {field.name}
-                          {isInput && (
-                            <span className="ml-2 text-xs text-black/50">
-                              {
-                                nodeType.inputs.find(
-                                  (i) => i.name === field.name
-                                )?.type
-                              }
-                            </span>
-                          )}
-                        </div>
-                        {isInput && isConnected && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-6 px-2 text-xs bg-black/80 text-background"
-                            onPress={() => handleDisconnect(field.name)}
-                          >
-                            <Link2Off className="h-3 w-3 mr-1" />
-                            Disconnect
-                          </Button>
-                        )}
-                      </div>
-                      <MapFieldEditor
-                        value={selectedNode.data[field.name] || {}}
-                        onChange={(value) => handleChange(field.name, value)}
-                        disabled={isInput && isConnected}
-                      />
-
-                      <div className="text-[10px]">{field.desc}</div>
-                    </div>
+                    <MapField
+                      field={field}
+                      isInput={isInput}
+                      isConnected={isConnected}
+                      selectedNode={selectedNode}
+                      handleChange={handleChange}
+                      handleDisconnect={handleDisconnect}
+                      nodeType={nodeType}
+                    />
                   );
 
                 default:
@@ -500,33 +281,12 @@ export default function CustomizerPanel() {
                 const isConnected = connectedInputs.has(input.name);
 
                 return (
-                  <div key={input.name} className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <div className="text-sm font-medium capitalize">
-                        {input.name}
-                        <span className="ml-2 text-xs text-muted-foreground">
-                          (Input: {input.type})
-                        </span>
-                      </div>
-                      {isConnected && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-6 px-2 text-xs bg-black/80 text-background"
-                          onPress={() => handleDisconnect(input.name)}
-                        >
-                          <Link2Off className="h-3 w-3 mr-1" />
-                          Disconnect
-                        </Button>
-                      )}
-                    </div>
-                    <div className="h-10 border rounded-md bg-muted/30 text-xs flex items-center justify-between px-3">
-                      <span>{isConnected ? "Connected" : "Not connected"}</span>
-                      <span className="text-muted-foreground">
-                        {input.type}
-                      </span>
-                    </div>
-                  </div>
+                  <StandaloneField
+                    key={input.name}
+                    input={input}
+                    isConnected={isConnected}
+                    handleDisconnect={handleDisconnect}
+                  />
                 );
               })}
           </div>
@@ -556,22 +316,7 @@ export default function CustomizerPanel() {
               <h3 className="text-sm font-semibold mb-3">Outputs</h3>
               <div className="space-y-2">
                 {nodeType.outputs.map((output) => (
-                  <div key={output.name} className="">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm capitalize">{output.name}</span>
-                      <div className="flex items-center gap-2 border border-black/50 rounded-md p-1">
-                        <span className="text-xs">{output.type}</span>
-                        <div
-                          className="h-3 w-3 rounded-full"
-                          style={{
-                            backgroundColor: getColorByType(
-                              output.type.toLowerCase()
-                            ),
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
+                  <OutputField key={output.name} output={output} />
                 ))}
               </div>
             </div>

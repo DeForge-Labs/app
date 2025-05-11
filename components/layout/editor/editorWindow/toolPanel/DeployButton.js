@@ -10,7 +10,7 @@ import {
   ModalFooter,
 } from "@heroui/react";
 import { cn } from "@/lib/utils";
-import { GitBranchPlus, Loader2 } from "lucide-react";
+import { Loader2, Rocket } from "lucide-react";
 import useDeployWorkflow from "@/hooks/useDeployWorkflow";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
@@ -45,7 +45,7 @@ export default function DeployButton() {
           )}
           size="icon"
         >
-          <GitBranchPlus size={16} />
+          <Rocket size={16} />
           Deploy
         </Button>
       </Tooltip>

@@ -28,9 +28,9 @@ export default function SaveButton() {
   return (
     <>
       <Button
-        variant="outline"
+        variant="icon"
         size="icon"
-        className="px-4 min-h-9 border border-black/80 rounded-lg flex items-center gap-2 text-sm"
+        className="w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4 "
         isDisabled={
           !hasUnsavedChanges ||
           isWorkflowInitializing ||
@@ -40,7 +40,7 @@ export default function SaveButton() {
           setIsOpen(true);
         }}
       >
-        <Save className="h-4 w-4" /> Save Flow
+        <Save className="h-4 w-4" /> Save
       </Button>
 
       <Modal

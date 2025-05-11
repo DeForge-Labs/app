@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
-import SaveButton from "./editorWindow/navbar/SaveButton";
 import { useRouter } from "next/navigation";
 import useInitialize from "@/hooks/useInitialize";
 import { useState } from "react";
@@ -138,8 +137,6 @@ export default function EditorNavbar() {
           >
             <PanelRight className="h-4 w-4" />
           </Button>
-
-          <SaveButton />
 
           <Button
             variant="outline"

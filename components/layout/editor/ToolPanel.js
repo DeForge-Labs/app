@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPanel } from "@/redux/slice/WorkflowSlice";
 import DeployButton from "./editorWindow/toolPanel/DeployButton";
 import FallbackButton from "./editorWindow/toolPanel/FallbackButton";
+import SaveButton from "./editorWindow/toolPanel/SaveButton";
 
 const tabs = [
   { type: "separator" },
@@ -42,6 +43,9 @@ export default function ToolPanel({ className, onChange }) {
   const panel = useSelector((state) => state.workflow.panel);
   const isWorkflowInitializing = useSelector(
     (state) => state.workflow.isWorkflowInitializing
+  );
+  const hasUnsavedChanges = useSelector(
+    (state) => state.workflow.hasUnsavedChanges
   );
   const workflow = useSelector((state) => state.workflow.workflow);
 
@@ -82,7 +86,9 @@ export default function ToolPanel({ className, onChange }) {
           </Button>
         </Tooltip>
 
-        {workflow?.status !== "LIVE" && <DeployButton />}
+        {workflow?.status !== "LIVE" && hasUnsavedChanges && <SaveButton />}
+
+        {workflow?.status !== "LIVE" && !hasUnsavedChanges && <DeployButton />}
         {workflow?.status === "LIVE" && <FallbackButton />}
 
         {tabs.map((tab, index) => {

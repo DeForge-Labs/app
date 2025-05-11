@@ -20,7 +20,7 @@ export default function EditorWindow() {
         </div>
       )}
 
-      <div className="flex-1 relative">
+      <div className="flex-1 relative flex flex-col">
         {panel === 1 && <NodeEditor />}
         {panel === 2 && <DeploymentTab />}
 

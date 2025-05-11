@@ -3,13 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Handle, Position, useEdges } from "reactflow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useDispatch } from "react-redux";
 import { updateNodeData } from "@/redux/slice/WorkflowSlice";
 import {
@@ -18,12 +11,17 @@ import {
   isArrayType,
 } from "@/lib/node-registry";
 import { FileWarning } from "lucide-react";
-import MapFieldEditor from "./MapFieldEditor";
-import { Input, Textarea } from "@heroui/react";
 import getColorByType from "@/lib/color-profile";
 import { useSelector } from "react-redux";
 import { Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import TextField from "./nodes/generic/TextField";
+import NumberField from "./nodes/generic/NumberField";
+import TextAreaField from "./nodes/generic/TextAreaField";
+import SelectField from "./nodes/generic/SelectField";
+import JSONArrayField from "./nodes/generic/JSONArrayField";
+import MapField from "./nodes/generic/MapField";
+import StandaloneField from "./nodes/generic/StandaloneField";
 
 export function GenericNode({ id, type, data }) {
   const dispatch = useDispatch();
@@ -118,243 +116,85 @@ export function GenericNode({ id, type, data }) {
       case "Text":
       case "text":
         return (
-          <div key={field.name} className="mb-2 relative">
-            <div className="text-xs font-medium capitalize">{field.name}</div>
-            <div className="flex items-center relative">
-              {/* Handle is positioned within the relative container */}
-              {nodeType.inputs.some((input) => input.name === field.name) && (
-                <Handle
-                  type="target"
-                  position={Position.Left}
-                  id={`input-${field.name}-${matchingInput?.type || "any"}`}
-                  style={{
-                    left: -17,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    backgroundColor: getColorByType(
-                      matchingInput?.type.toLowerCase()
-                    ),
-                    width: "8px",
-                    height: "8px",
-                  }}
-                />
-              )}
-              <Input
-                value={currentValue || ""}
-                variant="outline"
-                onChange={(e) => handleChange(field.name, e.target.value)}
-                placeholder={field.value}
-                className="mt-2 border border-black/50 rounded-lg"
-                disabled={isDisabled}
-              />
-            </div>
-          </div>
+          <TextField
+            key={index}
+            field={field}
+            nodeType={nodeType}
+            isDisabled={isDisabled}
+            currentValue={currentValue}
+            handleChange={handleChange}
+            matchingInput={matchingInput}
+          />
         );
 
       case "Number":
       case "number":
         return (
-          <div key={field.name} className="mb-2 relative">
-            <div className="text-xs font-medium mb-1 capitalize">
-              {field.name}
-            </div>
-            <div className="flex items-center relative">
-              {nodeType.inputs.some((input) => input.name === field.name) && (
-                <Handle
-                  type="target"
-                  position={Position.Left}
-                  id={`input-${field.name}-${matchingInput?.type || "any"}`}
-                  style={{
-                    left: -17,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    backgroundColor: getColorByType(
-                      matchingInput?.type.toLowerCase()
-                    ),
-                    width: "8px",
-                    height: "8px",
-                  }}
-                />
-              )}
-              <Input
-                type="number"
-                variant="outline"
-                value={currentValue || 0}
-                onChange={(e) =>
-                  handleChange(field.name, Number.parseFloat(e.target.value))
-                }
-                placeholder={field.value?.toString()}
-                className="mt-2 border border-black/50 rounded-lg"
-                disabled={isDisabled}
-              />
-            </div>
-          </div>
+          <NumberField
+            key={index}
+            field={field}
+            nodeType={nodeType}
+            isDisabled={isDisabled}
+            currentValue={currentValue}
+            handleChange={handleChange}
+            matchingInput={matchingInput}
+          />
         );
 
       case "textArea":
         return (
-          <div key={field.name} className="mb-2 relative">
-            <div className="text-xs font-medium mb-1 capitalize">
-              {field.name}
-            </div>
-            <div className="flex items-center relative">
-              {nodeType.inputs.some((input) => input.name === field.name) && (
-                <Handle
-                  type="target"
-                  position={Position.Left}
-                  id={`input-${field.name}-${matchingInput?.type || "any"}`}
-                  style={{
-                    left: -17,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    backgroundColor: getColorByType(
-                      matchingInput?.type.toLowerCase()
-                    ),
-                    width: "8px",
-                    height: "8px",
-                  }}
-                />
-              )}
-              <Textarea
-                value={currentValue || ""}
-                onChange={(e) => handleChange(field.name, e.target.value)}
-                placeholder={field.value}
-                className="text-xs min-h-[80px] border border-black/50 rounded-lg"
-                disabled={isDisabled}
-                variant="outline"
-              />
-            </div>
-          </div>
+          <TextAreaField
+            key={index}
+            field={field}
+            nodeType={nodeType}
+            isDisabled={isDisabled}
+            currentValue={currentValue}
+            handleChange={handleChange}
+            matchingInput={matchingInput}
+          />
         );
 
       case "select":
         return (
-          <div key={field.name} className="mb-2 relative">
-            <div className="text-xs font-medium mb-1 capitalize">
-              {field.name}
-            </div>
-            <div className="flex items-center relative">
-              {nodeType.inputs.some((input) => input.name === field.name) && (
-                <Handle
-                  type="target"
-                  position={Position.Left}
-                  id={`input-${field.name}-${matchingInput?.type || "any"}`}
-                  style={{
-                    left: -17,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    backgroundColor: getColorByType(
-                      matchingInput?.type.toLowerCase()
-                    ),
-                    width: "8px",
-                    height: "8px",
-                  }}
-                />
-              )}
-              <Select
-                value={currentValue || field.value}
-                onValueChange={(value) => handleChange(field.name, value)}
-                disabled={isDisabled}
-              >
-                <SelectTrigger className="text-xs border border-black/50 rounded-lg">
-                  <SelectValue placeholder={field.value} />
-                </SelectTrigger>
-                <SelectContent className="text-xs border border-black/50 rounded-lg bg-background">
-                  {field.options?.map((option) => (
-                    <SelectItem
-                      key={option}
-                      value={option}
-                      className="hover:bg-black/5 rounded-md"
-                    >
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <SelectField
+            key={index}
+            field={field}
+            nodeType={nodeType}
+            isDisabled={isDisabled}
+            currentValue={currentValue}
+            handleChange={handleChange}
+            matchingInput={matchingInput}
+          />
         );
 
       case "JSON[]":
       case "json[]":
         return (
-          <div key={field.name} className="mb-2">
-            <div className="text-xs font-medium mb-1 flex justify-between items-center capitalize">
-              <span>{field.name}</span>
-              <div className="text-xs">
-                {totalValidConnections} connection
-                {totalValidConnections !== 1 ? "s" : ""}
-              </div>
-            </div>
-            <div className="flex items-center">
-              <Handle
-                type="target"
-                position={Position.Left}
-                id={`input-${field.name}-${field.type}`}
-                style={{
-                  left: -4,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  backgroundColor: getColorByType(
-                    isArrayInput
-                      ? matchingInput?.type.split("[]")[0].toLowerCase()
-                      : matchingInput?.type.toLowerCase()
-                  ),
-                  width: "8px",
-                  height: "8px",
-                }}
-              />
-              <div className="w-full border border-black/50 rounded-md p-2 bg-black/5 text-xs mt-1">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">
-                    Array input - accepts multiple connections
-                  </span>
-                </div>
-                {totalValidConnections > 0 && (
-                  <div className="mt-1 pt-1 border-t border-black/50 text-xs text-muted-foreground">
-                    {totalValidConnections} connection
-                    {totalValidConnections !== 1 ? "s" : ""} active
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+          <JSONArrayField
+            key={index}
+            field={field}
+            nodeType={nodeType}
+            isDisabled={isDisabled}
+            currentValue={currentValue}
+            handleChange={handleChange}
+            matchingInput={matchingInput}
+            totalValidConnections={totalValidConnections}
+            isArrayInput={isArrayInput}
+          />
         );
 
       case "Map":
       case "map":
         return (
-          <div key={field.name} className="mb-2 relative">
-            <div className="text-xs font-medium mb-2 capitalize">
-              {field.name}
-            </div>
-            <div className="flex items-center relative">
-              {nodeType.inputs.some((input) => input.name === field.name) && (
-                <Handle
-                  type="target"
-                  position={Position.Left}
-                  id={`input-${field.name}-${matchingInput?.type || "any"}`}
-                  style={{
-                    left: -17,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    backgroundColor: getColorByType(
-                      matchingInput?.type.toLowerCase()
-                    ),
-                    width: "8px",
-                    height: "8px",
-                  }}
-                />
-              )}
-              <div className="w-full">
-                <MapFieldEditor
-                  value={currentValue || {}}
-                  onChange={(value) => handleChange(field.name, value)}
-                  disabled={isDisabled}
-                />
-              </div>
-            </div>
-          </div>
+          <MapField
+            key={index}
+            field={field}
+            nodeType={nodeType}
+            isDisabled={isDisabled}
+            currentValue={currentValue}
+            handleChange={handleChange}
+            matchingInput={matchingInput}
+          />
         );
 
       default:
@@ -375,6 +215,9 @@ export function GenericNode({ id, type, data }) {
               backgroundColor: getColorByType(output.type.toLowerCase()),
               width: "8px",
               height: "8px",
+              right: "-5px",
+              top: `${40 + index * 10}%`,
+              transform: "translateY(-50%)",
             }}
             data-type={output.type}
           />
@@ -390,36 +233,12 @@ export function GenericNode({ id, type, data }) {
         (input) => !nodeType.fields.some((field) => field.name === input.name)
       )
       .map((input) => (
-        <div key={input.name} className="mb-2 relative">
-          <div className="text-xs font-medium mb-1">{input.name}</div>
-          <div className="flex items-center">
-            <Handle
-              type="target"
-              position={Position.Left}
-              id={`input-${input.name}-${input.type}`}
-              className={`h-3 w-3 bg-${categoryColor} -ml-1.5`}
-              data-type={input.type}
-              style={{
-                backgroundColor: getColorByType(input.type.toLowerCase()),
-                width: "8px",
-                height: "8px",
-                left: -11,
-                top: "50%",
-                transform: "translateY(-50%)",
-              }}
-            />
-            <div className="h-8 border rounded-md bg-muted/30 text-xs flex items-center justify-between w-full px-2">
-              <span>
-                {connectedInputs.has(input.name)
-                  ? "Connected"
-                  : "Not connected"}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                {input.type}
-              </span>
-            </div>
-          </div>
-        </div>
+        <StandaloneField
+          key={input.name}
+          input={input}
+          categoryColor={categoryColor}
+          connectedInputs={connectedInputs}
+        />
       ));
   };
 
