@@ -8,6 +8,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  Tooltip,
 } from "@heroui/react";
 import { Loader2, Save } from "lucide-react";
 import { useSelector } from "react-redux";
@@ -27,21 +28,30 @@ export default function SaveButton() {
 
   return (
     <>
-      <Button
-        variant="icon"
-        size="icon"
-        className="w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4 "
-        isDisabled={
-          !hasUnsavedChanges ||
-          isWorkflowInitializing ||
-          workflow?.status === "LIVE"
+      <Tooltip
+        className="bg-white border-black/50 border mb-3 rounded-lg shadow-none"
+        content={
+          <div className="p-2 text-xs">
+            <p>Unsaved Changes, Click to save</p>
+          </div>
         }
-        onPress={() => {
-          setIsOpen(true);
-        }}
       >
-        <Save className="h-4 w-4" /> Save
-      </Button>
+        <Button
+          variant="icon"
+          size="icon"
+          className="w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4 "
+          isDisabled={
+            !hasUnsavedChanges ||
+            isWorkflowInitializing ||
+            workflow?.status === "LIVE"
+          }
+          onPress={() => {
+            setIsOpen(true);
+          }}
+        >
+          <Save className="h-4 w-4" /> Save
+        </Button>
+      </Tooltip>
 
       <Modal
         isOpen={isOpen}

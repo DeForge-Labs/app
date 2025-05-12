@@ -13,33 +13,47 @@ import { cn } from "@/lib/utils";
 import { FlaskConical, Loader2 } from "lucide-react";
 import useFallbackWorkflow from "@/hooks/useFallbackWorkflow";
 
-export default function FallbackButton() {
+export default function FallbackButton({ className, showTooltip = true }) {
   const { isOpen, setIsOpen, isFallbacking, handleFallbackWorkflow } =
     useFallbackWorkflow();
   return (
     <>
-      <Tooltip
-        className="bg-white border-black/50 border mb-3 rounded-lg shadow-none"
-        content={
-          <div className="p-2 text-xs">
-            <p>Revert to Testing Environment</p>
-          </div>
-        }
-      >
+      {showTooltip && (
+        <Tooltip
+          className="bg-white border-black/50 border mb-3 rounded-lg shadow-none"
+          content={
+            <div className="p-2 text-xs">
+              <p>Revert to Testing Environment</p>
+            </div>
+          }
+        >
+          <Button
+            onPress={() => {
+              setIsOpen(true);
+            }}
+            variant="icon"
+            className={cn(className)}
+            size="icon"
+          >
+            <FlaskConical size={16} />
+            Rollback
+          </Button>
+        </Tooltip>
+      )}
+
+      {!showTooltip && (
         <Button
           onPress={() => {
             setIsOpen(true);
           }}
           variant="icon"
-          className={cn(
-            "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4 "
-          )}
+          className={cn(className)}
           size="icon"
         >
           <FlaskConical size={16} />
           Rollback
         </Button>
-      </Tooltip>
+      )}
 
       <Modal
         isOpen={isOpen}

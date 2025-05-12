@@ -216,7 +216,8 @@ export function GenericNode({ id, type, data }) {
               width: "8px",
               height: "8px",
               right: "-5px",
-              top: `${40 + index * 10}%`,
+              top: "30%",
+              marginTop: `${index * 30}px`,
               transform: "translateY(-50%)",
             }}
             data-type={output.type}

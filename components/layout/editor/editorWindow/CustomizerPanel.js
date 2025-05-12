@@ -159,7 +159,7 @@ export default function CustomizerPanel() {
             </div>
 
             {/* Show all fields based on node type */}
-            {nodeType.fields.map((field) => {
+            {nodeType.fields.map((field, index) => {
               // Check if this field corresponds to an input
               const matchingInput = nodeType.inputs.find(
                 (input) => input.name === field.name
@@ -185,7 +185,7 @@ export default function CustomizerPanel() {
                 case "text":
                   return (
                     <TextField
-                      key={field.name}
+                      key={index}
                       field={field}
                       isInput={isInput}
                       isConnected={isConnected}
@@ -200,7 +200,7 @@ export default function CustomizerPanel() {
                 case "number":
                   return (
                     <NumberField
-                      key={field.name}
+                      key={index}
                       field={field}
                       isInput={isInput}
                       isConnected={isConnected}
@@ -214,7 +214,7 @@ export default function CustomizerPanel() {
                 case "textArea":
                   return (
                     <TextAreaField
-                      key={field.name}
+                      key={index}
                       field={field}
                       isInput={isInput}
                       isConnected={isConnected}
@@ -228,7 +228,7 @@ export default function CustomizerPanel() {
                 case "select":
                   return (
                     <SelectField
-                      key={field.name}
+                      key={index}
                       field={field}
                       isInput={isInput}
                       isConnected={isConnected}
@@ -244,7 +244,7 @@ export default function CustomizerPanel() {
                   return (
                     <JSONArrayField
                       field={field}
-                      key={field.name}
+                      key={index}
                       totalValidConnections={totalValidConnections}
                       totalConnectedInputs={totalConnectedInputs}
                       handleDisconnectAll={handleDisconnectAll}
@@ -257,6 +257,7 @@ export default function CustomizerPanel() {
                   return (
                     <MapField
                       field={field}
+                      key={index}
                       isInput={isInput}
                       isConnected={isConnected}
                       selectedNode={selectedNode}
@@ -277,12 +278,12 @@ export default function CustomizerPanel() {
                 (input) =>
                   !nodeType.fields.some((field) => field.name === input.name)
               )
-              .map((input) => {
+              .map((input, index) => {
                 const isConnected = connectedInputs.has(input.name);
 
                 return (
                   <StandaloneField
-                    key={input.name}
+                    key={index}
                     input={input}
                     isConnected={isConnected}
                     handleDisconnect={handleDisconnect}
@@ -299,11 +300,9 @@ export default function CustomizerPanel() {
             <CardTitle className="text-sm">Environment Variables</CardTitle>
           </CardHeader>
           <CardContent className="p-4">
-            {nodeType.fields.map((field) => {
+            {nodeType.fields.map((field, index) => {
               return (
-                field.type === "env" && (
-                  <EnvField key={field.name} field={field} />
-                )
+                field.type === "env" && <EnvField key={index} field={field} />
               );
             })}
           </CardContent>

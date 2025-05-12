@@ -7,7 +7,7 @@ import {
 
 const initialState = {
   workflow: null,
-  isWorkflowInitializing: false,
+  isWorkflowInitializing: true,
   nodes: [], // Changed from null to empty array
   connections: [], // Changed from null to empty array
   team: null,

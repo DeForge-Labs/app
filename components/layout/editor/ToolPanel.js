@@ -88,8 +88,12 @@ export default function ToolPanel({ className, onChange }) {
 
         {workflow?.status !== "LIVE" && hasUnsavedChanges && <SaveButton />}
 
-        {workflow?.status !== "LIVE" && !hasUnsavedChanges && <DeployButton />}
-        {workflow?.status === "LIVE" && <FallbackButton />}
+        {workflow?.status !== "LIVE" && !hasUnsavedChanges && (
+          <DeployButton className="w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4" />
+        )}
+        {workflow?.status === "LIVE" && (
+          <FallbackButton className="w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4" />
+        )}
 
         {tabs.map((tab, index) => {
           if (tab.type === "separator") {

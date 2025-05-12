@@ -15,7 +15,7 @@ import useDeployWorkflow from "@/hooks/useDeployWorkflow";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 
-export default function DeployButton() {
+export default function DeployButton({ className, showTooltip = true }) {
   const { isOpen, setIsOpen, isDeploying, handleDeployWorkflow } =
     useDeployWorkflow();
   const hasUnsavedChanges = useSelector(
@@ -23,14 +23,34 @@ export default function DeployButton() {
   );
   return (
     <>
-      <Tooltip
-        className="bg-white border-black/50 border mb-3 rounded-lg shadow-none"
-        content={
-          <div className="p-2 text-xs">
-            <p>Deploy workflow To Production</p>
-          </div>
-        }
-      >
+      {showTooltip && (
+        <Tooltip
+          className="bg-white border-black/50 border mb-3 rounded-lg shadow-none"
+          content={
+            <div className="p-2 text-xs">
+              <p>Deploy workflow To Production</p>
+            </div>
+          }
+        >
+          <Button
+            onPress={() => {
+              if (!hasUnsavedChanges) {
+                setIsOpen(true);
+              } else {
+                toast.info("Please save your changes before deploying");
+              }
+            }}
+            variant="icon"
+            className={cn(className)}
+            size="icon"
+          >
+            <Rocket size={16} />
+            Deploy
+          </Button>
+        </Tooltip>
+      )}
+
+      {!showTooltip && (
         <Button
           onPress={() => {
             if (!hasUnsavedChanges) {
@@ -40,15 +60,13 @@ export default function DeployButton() {
             }
           }}
           variant="icon"
-          className={cn(
-            "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4 "
-          )}
+          className={cn(className)}
           size="icon"
         >
           <Rocket size={16} />
           Deploy
         </Button>
-      </Tooltip>
+      )}
 
       <Modal
         isOpen={isOpen}
