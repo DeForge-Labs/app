@@ -9,6 +9,8 @@ import {
   setWorkflow,
   setIsWorkflowInitializing as setWorkflowInitializing,
   setTeam as setTeamWorkflow,
+  setIsLogInitializing,
+  setLogs,
 } from "@/redux/slice/WorkflowSlice";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -140,5 +142,34 @@ export default function useInitialize() {
     }
   };
 
-  return { loadUser, loadTeam, loadWorkflow, loadWorkflowById };
+  const loadLogs = async (workflowId) => {
+    try {
+      dispatch(setIsLogInitializing(true));
+      const headers = {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      };
+
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/workflow/logs/${workflowId}`,
+        {},
+        { headers }
+      );
+
+      if (response.data.success) {
+        dispatch(setLogs(response.data.logs));
+      } else {
+        toast.error(response.data.message);
+        if (response.data.status === 404 || response.data.status === 401) {
+          router.push("/");
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to load logs");
+    } finally {
+      dispatch(setIsLogInitializing(false));
+    }
+  };
+
+  return { loadUser, loadTeam, loadWorkflow, loadWorkflowById, loadLogs };
 }

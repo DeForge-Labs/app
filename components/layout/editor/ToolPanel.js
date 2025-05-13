@@ -10,6 +10,7 @@ import { setPanel } from "@/redux/slice/WorkflowSlice";
 import DeployButton from "./editorWindow/toolPanel/DeployButton";
 import FallbackButton from "./editorWindow/toolPanel/FallbackButton";
 import SaveButton from "./editorWindow/toolPanel/SaveButton";
+import RunButton from "./editorWindow/toolPanel/RunButton";
 
 const tabs = [
   { type: "separator" },
@@ -66,25 +67,7 @@ export default function ToolPanel({ className, onChange }) {
           className
         )}
       >
-        <Tooltip
-          className="bg-white border-black/50 border mb-3 rounded-lg shadow-none"
-          content={
-            <div className="p-2 text-xs">
-              <p>Run workflow</p>
-            </div>
-          }
-        >
-          <Button
-            onPress={() => {}}
-            variant="icon"
-            className={cn(
-              "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-2 "
-            )}
-            size="icon"
-          >
-            <Play size={16} />
-          </Button>
-        </Tooltip>
+        <RunButton />
 
         {workflow?.status !== "LIVE" && hasUnsavedChanges && <SaveButton />}
 

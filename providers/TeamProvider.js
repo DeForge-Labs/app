@@ -19,7 +19,7 @@ export default function TeamProvider({ children, params }) {
 
       loadTeam(id);
     }
-  }, [user, params]);
+  }, [user]);
 
   useEffect(() => {
     if (team?.id) {

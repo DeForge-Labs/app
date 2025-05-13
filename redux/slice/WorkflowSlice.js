@@ -8,8 +8,10 @@ import {
 const initialState = {
   workflow: null,
   isWorkflowInitializing: true,
-  nodes: [], // Changed from null to empty array
-  connections: [], // Changed from null to empty array
+  nodes: [],
+  connections: [],
+  logs: [],
+  isLogInitializing: true,
   team: null,
   selectedNode: null,
   hasUnsavedChanges: false,
@@ -52,7 +54,15 @@ const workflowSlice = createSlice({
     setTeam: (state, action) => {
       state.team = action.payload;
     },
-
+    setLogs: (state, action) => {
+      state.logs = action.payload;
+    },
+    addLog: (state, action) => {
+      state.logs = [action.payload, ...state.logs];
+    },
+    setIsLogInitializing: (state, action) => {
+      state.isLogInitializing = action.payload;
+    },
     // New actions for the node editor
     setSelectedNode: (state, action) => {
       state.selectedNode = action.payload;
@@ -449,6 +459,9 @@ export const {
   setNodes,
   setConnections,
   setTeam,
+  setLogs,
+  addLog,
+  setIsLogInitializing,
 
   // New actions
   setSelectedNode,

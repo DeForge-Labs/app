@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   ChevronUp,
@@ -9,96 +9,29 @@ import {
   CheckCircle,
   XCircle,
   Terminal,
+  Loader,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@heroui/react";
-
-// Mock execution logs based on WorkflowExecution schema
-const mockExecutions = [
-  {
-    id: "exec-1",
-    workflowId: "workflow-1",
-    startedAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(), // 5 minutes ago
-    endedAt: new Date(Date.now() - 1000 * 60 * 4).toISOString(), // 4 minutes ago
-    status: "completed",
-    logs: [
-      {
-        time: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-        message: "Execution started",
-        level: "info",
-      },
-      {
-        time: new Date(Date.now() - 1000 * 60 * 4.8).toISOString(),
-        message: "Processing input node",
-        level: "info",
-      },
-      {
-        time: new Date(Date.now() - 1000 * 60 * 4.5).toISOString(),
-        message: "Processing function node",
-        level: "info",
-      },
-      {
-        time: new Date(Date.now() - 1000 * 60 * 4.2).toISOString(),
-        message: "API call successful",
-        level: "success",
-      },
-      {
-        time: new Date(Date.now() - 1000 * 60 * 4).toISOString(),
-        message: "Execution completed",
-        level: "success",
-      },
-    ],
-    result: { success: true, processingTime: "1.2s", nodesProcessed: 3 },
-  },
-  {
-    id: "exec-2",
-    workflowId: "workflow-1",
-    startedAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(), // 15 minutes ago
-    endedAt: new Date(Date.now() - 1000 * 60 * 14).toISOString(), // 14 minutes ago
-    status: "failed",
-    logs: [
-      {
-        time: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-        message: "Execution started",
-        level: "info",
-      },
-      {
-        time: new Date(Date.now() - 1000 * 60 * 14.8).toISOString(),
-        message: "Processing input node",
-        level: "info",
-      },
-      {
-        time: new Date(Date.now() - 1000 * 60 * 14.5).toISOString(),
-        message: "Processing function node",
-        level: "info",
-      },
-      {
-        time: new Date(Date.now() - 1000 * 60 * 14.2).toISOString(),
-        message: "API call failed: 404 Not Found",
-        level: "error",
-      },
-      {
-        time: new Date(Date.now() - 1000 * 60 * 14).toISOString(),
-        message: "Execution failed",
-        level: "error",
-      },
-    ],
-    result: {
-      success: false,
-      error: "API endpoint not found",
-      failedNodeId: "api-node-1",
-    },
-  },
-];
+import { useSelector } from "react-redux";
 
 export default function ExecutionLogsPanel() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedExecution, setSelectedExecution] = useState(null);
+  const logs = useSelector((state) => state.workflow.logs);
+  const isLogInitializing = useSelector(
+    (state) => state.workflow.isLogInitializing
+  );
 
   // Get the selected execution details
-  const execution = mockExecutions.find(
-    (exec) => exec.id === selectedExecution
-  );
+  const execution = logs.find((exec) => exec.id === selectedExecution);
+
+  useEffect(() => {
+    if (isLogInitializing) {
+      setIsExpanded(false);
+      setSelectedExecution(null);
+    }
+  }, [isLogInitializing]);
 
   return (
     <div
@@ -107,15 +40,34 @@ export default function ExecutionLogsPanel() {
       }`}
     >
       {/* Header bar */}
-      <div className="flex items-center justify-between bg-black/5 border-black/50 border-t px-4 h-12 border-b">
+      <div
+        className="flex items-center justify-between bg-black/5 border-black/50 border-t px-4 h-12 border-b  cursor-pointer"
+        onClick={() => {
+          if (!isLogInitializing) {
+            setIsExpanded(!isExpanded);
+          } else {
+            setIsExpanded(false);
+          }
+        }}
+      >
         <div className="flex items-center">
-          <Terminal className="h-4 w-4 mr-2" />
+          {isLogInitializing ? (
+            <Loader className="h-4 w-4 mr-2 animate-spin" />
+          ) : (
+            <Terminal className="h-4 w-4 mr-2" />
+          )}
           <span className="font-medium text-sm">Execution Logs</span>
         </div>
         <Button
           variant="outline"
           size="icon"
-          onPress={() => setIsExpanded(!isExpanded)}
+          onPress={() => {
+            if (!isLogInitializing) {
+              setIsExpanded(!isExpanded);
+            } else {
+              setIsExpanded(false);
+            }
+          }}
         >
           {isExpanded ? (
             <ChevronDown className="h-4 w-4" />
@@ -133,7 +85,7 @@ export default function ExecutionLogsPanel() {
             <h3 className="text-sm font-medium pb-2 pl-2 border-b border-black/20">
               Recent Executions
             </h3>
-            {mockExecutions.map((exec) => (
+            {logs.map((exec) => (
               <div
                 key={exec.id}
                 className={`p-2 cursor-pointer hover:bg-muted border-b border-black/20 ${
@@ -198,11 +150,33 @@ export default function ExecutionLogsPanel() {
                       )}
                     </div>
                   </div>
-                  {execution.status === "completed" && (
-                    <div className="text-xs mt-1">
-                      Processing time: {execution.result.processingTime}
-                    </div>
-                  )}
+                  <div className="flex items-center mt-1 gap-2">
+                    {execution.status === "completed" && (
+                      <div className="text-xs">
+                        Processing time: {execution.result.processingTime}
+                      </div>
+                    )}
+
+                    <Badge
+                      className="text-xs capitalize"
+                      style={{
+                        backgroundColor:
+                          execution.type === "live"
+                            ? "#C8E6C9"
+                            : execution.type === "test"
+                            ? "#FDD8AE"
+                            : "#FBC2C4",
+                        color:
+                          execution.type === "live"
+                            ? "#1B5E20"
+                            : execution.type === "test"
+                            ? "#855C00"
+                            : "#855C00",
+                      }}
+                    >
+                      {execution.type}
+                    </Badge>
+                  </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-3">

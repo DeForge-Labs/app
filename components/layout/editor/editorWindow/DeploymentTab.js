@@ -5,6 +5,7 @@ import { Button, Input } from "@heroui/react";
 import {
   ExternalLink,
   FlaskConical,
+  Loader2,
   Play,
   Rocket,
   TriangleAlert,
@@ -13,12 +14,18 @@ import { useSelector } from "react-redux";
 import DeployButton from "./toolPanel/DeployButton";
 import FallbackButton from "./toolPanel/FallbackButton";
 import LogoAnimation from "@/components/ui/LogoAnimation";
+import useExecution from "@/hooks/useExecution";
 
 export default function DeploymentTab() {
   const workflow = useSelector((state) => state.workflow.workflow);
   const isWorkflowInitializing = useSelector(
     (state) => state.workflow.isWorkflowInitializing
   );
+
+  const isRunning = useSelector((state) => state.run.isRunning);
+  const type = useSelector((state) => state.run.type);
+
+  const { handleTest, handleRun } = useExecution();
 
   if (isWorkflowInitializing) {
     return <LogoAnimation opacity={0.5} />;
@@ -116,20 +123,34 @@ export default function DeploymentTab() {
               className="h-full p-2 border-2 flex-1 border-black/50 rounded-lg gap-2"
               variant="default"
               size="md"
-              onPress={() => {}}
-              isDisabled={workflow?.status !== "TEST"}
+              onPress={() => {
+                handleRun();
+              }}
+              isDisabled={workflow?.status !== "TEST" || isRunning}
             >
-              <Play size={16} /> Run
+              {isRunning && type === "raw" ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Play size={16} />
+              )}
+              Run
             </Button>
 
             <Button
               className="h-full p-2 border-2 flex-1 border-black/50 rounded-lg gap-2"
               variant="default"
               size="md"
-              onPress={() => {}}
-              isDisabled={workflow?.status !== "TEST"}
+              onPress={() => {
+                handleTest();
+              }}
+              isDisabled={workflow?.status !== "TEST" || isRunning}
             >
-              <FlaskConical size={16} /> Test
+              {isRunning && type === "test" ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <FlaskConical size={16} />
+              )}
+              Test
             </Button>
           </div>
         </div>
