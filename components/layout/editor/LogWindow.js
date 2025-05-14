@@ -13,7 +13,8 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@heroui/react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { removeNewLog } from "@/redux/slice/WorkflowSlice";
 
 export default function ExecutionLogsPanel() {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -22,6 +23,8 @@ export default function ExecutionLogsPanel() {
   const isLogInitializing = useSelector(
     (state) => state.workflow.isLogInitializing
   );
+  const newLogs = useSelector((state) => state.workflow.newLogs);
+  const dispatch = useDispatch();
 
   // Get the selected execution details
   const execution = logs.find((exec) => exec.id === selectedExecution);
@@ -57,6 +60,12 @@ export default function ExecutionLogsPanel() {
             <Terminal className="h-4 w-4 mr-2" />
           )}
           <span className="font-medium text-sm">Execution Logs</span>
+
+          {newLogs.length > 0 && (
+            <Badge className="ml-2 text-xs px-1.5 py-0 opacity-70 bg-blue-400 text-white capitalize">
+              {newLogs.length}
+            </Badge>
+          )}
         </div>
         <Button
           variant="outline"
@@ -66,6 +75,7 @@ export default function ExecutionLogsPanel() {
               setIsExpanded(!isExpanded);
             } else {
               setIsExpanded(false);
+              dispatch(removeNewLog());
             }
           }}
         >
@@ -85,42 +95,49 @@ export default function ExecutionLogsPanel() {
             <h3 className="text-sm font-medium pb-2 pl-2 border-b border-black/20">
               Recent Executions
             </h3>
-            {logs.map((exec) => (
-              <div
-                key={exec.id}
-                className={`p-2 cursor-pointer hover:bg-muted border-b border-black/20 ${
-                  selectedExecution === exec.id ? "bg-black/5" : ""
-                }`}
-                onClick={() => setSelectedExecution(exec.id)}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium">
-                    {new Date(exec.startedAt).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                  <Badge
-                    className="text-xs px-1.5 py-0 opacity-70 capitalize"
-                    style={{
-                      backgroundColor:
-                        exec.status === "completed"
-                          ? "#22c55d"
-                          : exec.status === "failed"
-                          ? "#ef4444"
-                          : "#f97316",
-                    }}
-                  >
-                    {exec.status}
-                  </Badge>
+            {logs.map((exec) => {
+              const isNewLog =
+                newLogs.filter((log) => log.id === exec.id).length > 0;
+              return (
+                <div
+                  key={exec.id}
+                  className={`p-2 cursor-pointer hover:bg-muted border-b border-black/20 ${
+                    selectedExecution === exec.id ? "bg-black/5" : ""
+                  } ${isNewLog ? "bg-yellow-500/20" : ""}`}
+                  onClick={() => {
+                    dispatch(removeNewLog(exec));
+                    setSelectedExecution(exec.id);
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium">
+                      {new Date(exec.startedAt).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                    <Badge
+                      className="text-xs px-1.5 py-0 opacity-70 capitalize"
+                      style={{
+                        backgroundColor:
+                          exec.status === "completed"
+                            ? "#22c55d"
+                            : exec.status === "failed"
+                            ? "#ef4444"
+                            : "#f97316",
+                      }}
+                    >
+                      {exec.status}
+                    </Badge>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {exec.status === "completed"
+                      ? `Processed ${exec.result.nodesProcessed} nodes`
+                      : `Failed: ${exec.result.error}`}
+                  </div>
                 </div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  {exec.status === "completed"
-                    ? `Processed ${exec.result.nodesProcessed} nodes`
-                    : `Failed: ${exec.result.error}`}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Execution details */}

@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button, Input } from "@heroui/react";
 import {
+  Copy,
   ExternalLink,
   FlaskConical,
   Loader2,
@@ -15,6 +16,7 @@ import DeployButton from "./toolPanel/DeployButton";
 import FallbackButton from "./toolPanel/FallbackButton";
 import LogoAnimation from "@/components/ui/LogoAnimation";
 import useExecution from "@/hooks/useExecution";
+import { toast } from "sonner";
 
 export default function DeploymentTab() {
   const workflow = useSelector((state) => state.workflow.workflow);
@@ -25,7 +27,9 @@ export default function DeploymentTab() {
   const isRunning = useSelector((state) => state.run.isRunning);
   const type = useSelector((state) => state.run.type);
 
-  const { handleTest, handleRun } = useExecution();
+  const rawUrl = process.env.NEXT_PUBLIC_API_URL.split("/api")[0];
+
+  const { handleTest, handleRun, handleRunLive } = useExecution();
 
   if (isWorkflowInitializing) {
     return <LogoAnimation opacity={0.5} />;
@@ -87,7 +91,7 @@ export default function DeploymentTab() {
               placeholder="Endpoint URL"
               className="w-full border border-black/50 rounded-md"
               variant="outline"
-              value="https://test-api.example.com/workflows/1746981047077"
+              value={`${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`}
               onChange={(e) => {}}
               isDisabled={workflow?.status !== "TEST"}
             />
@@ -95,7 +99,26 @@ export default function DeploymentTab() {
               className="h-full p-2 bg-black/80 text-background rounded-md w-[40px]"
               variant="icon"
               size="icon"
-              onPress={() => {}}
+              onPress={() => {
+                navigator.clipboard.writeText(
+                  `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`
+                );
+                toast("Endpoint URL copied to clipboard");
+              }}
+              isDisabled={workflow?.status !== "TEST"}
+            >
+              <Copy size={16} />
+            </Button>
+            <Button
+              className="h-full p-2 bg-black/80 text-background rounded-md w-[40px]"
+              variant="icon"
+              size="icon"
+              onPress={() => {
+                window.open(
+                  `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`,
+                  "_blank"
+                );
+              }}
               isDisabled={workflow?.status !== "TEST"}
             >
               <ExternalLink size={16} />
@@ -208,7 +231,7 @@ export default function DeploymentTab() {
               placeholder="Endpoint URL"
               className="w-full border border-black/50 rounded-md"
               variant="outline"
-              value="https://test-api.example.com/workflows/1746981047077"
+              value={`${rawUrl}/live/${workflow?.id}`}
               onChange={(e) => {}}
               isDisabled={workflow?.status !== "LIVE"}
             />
@@ -216,7 +239,21 @@ export default function DeploymentTab() {
               className="h-full p-2 bg-black/80 text-background rounded-md w-[40px]"
               variant="icon"
               size="icon"
-              onPress={() => {}}
+              onPress={() => {
+                navigator.clipboard.writeText(`${rawUrl}/live/${workflow?.id}`);
+                toast("Endpoint URL copied to clipboard");
+              }}
+              isDisabled={workflow?.status !== "LIVE"}
+            >
+              <Copy size={16} />
+            </Button>
+            <Button
+              className="h-full p-2 bg-black/80 text-background rounded-md w-[40px]"
+              variant="icon"
+              size="icon"
+              onPress={() => {
+                window.open(`${rawUrl}/live/${workflow?.id}`, "_blank");
+              }}
               isDisabled={workflow?.status !== "LIVE"}
             >
               <ExternalLink size={16} />
@@ -256,22 +293,29 @@ export default function DeploymentTab() {
               className="h-full p-2 border-2 flex-1 border-black/50 rounded-lg gap-2"
               variant="default"
               size="md"
-              onPress={() => {}}
-              isDisabled={workflow?.status !== "LIVE"}
+              onPress={() => {
+                handleRunLive();
+              }}
+              isDisabled={workflow?.status !== "LIVE" || isRunning}
             >
-              <Play size={16} /> Run
+              {isRunning && type === "live" ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Play size={16} />
+              )}
+              Run
             </Button>
 
             {workflow?.status !== "LIVE" && (
               <DeployButton
-                className="h-full p-2 border-2 flex-1 border-red-500 text-red-500 rounded-lg gap-2 text-sm"
+                className="h-full p-2 border-2 flex-1  bg-red-500 text-background rounded-lg gap-2 text-sm"
                 showTooltip={false}
               />
             )}
 
             {workflow?.status === "LIVE" && (
               <FallbackButton
-                className="h-full p-2 border-2 flex-1 border-red-500 text-red-500 rounded-lg gap-2 text-sm"
+                className="h-full p-2 border-2 flex-1 bg-red-500 text-background rounded-lg gap-2 text-sm"
                 showTooltip={false}
               />
             )}

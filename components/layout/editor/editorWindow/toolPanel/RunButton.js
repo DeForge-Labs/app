@@ -10,7 +10,8 @@ import { useSelector } from "react-redux";
 export default function RunButton() {
   const isRunning = useSelector((state) => state.run.isRunning);
   const type = useSelector((state) => state.run.type);
-  const { handleRun } = useExecution();
+  const workflow = useSelector((state) => state.workflow.workflow);
+  const { handleRun, handleRunLive } = useExecution();
   return (
     <Tooltip
       className="bg-white border-black/50 border mb-3 rounded-lg shadow-none"
@@ -20,21 +21,39 @@ export default function RunButton() {
         </div>
       }
     >
-      <Button
-        onPress={() => handleRun()}
-        variant="icon"
-        className={cn(
-          "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-2 "
-        )}
-        size="icon"
-        isDisabled={isRunning}
-      >
-        {isRunning && type === "raw" ? (
-          <Loader2 size={16} className="animate-spin text-background" />
-        ) : (
-          <Play size={16} />
-        )}
-      </Button>
+      {workflow?.status !== "LIVE" ? (
+        <Button
+          onPress={() => handleRun()}
+          variant="icon"
+          className={cn(
+            "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-2 "
+          )}
+          size="icon"
+          isDisabled={isRunning}
+        >
+          {isRunning && type === "raw" ? (
+            <Loader2 size={16} className="animate-spin text-background" />
+          ) : (
+            <Play size={16} />
+          )}
+        </Button>
+      ) : (
+        <Button
+          onPress={() => handleRunLive()}
+          variant="icon"
+          className={cn(
+            "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-2 "
+          )}
+          size="icon"
+          isDisabled={isRunning}
+        >
+          {isRunning && type === "live" ? (
+            <Loader2 size={16} className="animate-spin text-background" />
+          ) : (
+            <Play size={16} />
+          )}
+        </Button>
+      )}
     </Tooltip>
   );
 }

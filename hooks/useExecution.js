@@ -43,13 +43,8 @@ export default function useExecution() {
       dispatch(setIsRunning(true));
       dispatch(setType("test"));
 
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      };
-
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`,
-        { headers }
+        `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`
       );
 
       if (!response.data.success) {
@@ -68,6 +63,16 @@ export default function useExecution() {
     try {
       dispatch(setIsRunning(true));
       dispatch(setType("live"));
+
+      const url = process.env.NEXT_PUBLIC_API_URL.split("/api")[0];
+
+      const response = await axios.get(`${url}/live/${workflow?.id}`);
+
+      if (!response.data.success) {
+        throw new Error(response.data.message);
+      }
+
+      toast.success("Workflow executed successfully");
     } catch (err) {
       console.log(err);
     } finally {

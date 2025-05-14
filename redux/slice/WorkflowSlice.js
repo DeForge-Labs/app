@@ -11,6 +11,7 @@ const initialState = {
   nodes: [],
   connections: [],
   logs: [],
+  newLogs: [],
   isLogInitializing: true,
   team: null,
   selectedNode: null,
@@ -63,6 +64,17 @@ const workflowSlice = createSlice({
     setIsLogInitializing: (state, action) => {
       state.isLogInitializing = action.payload;
     },
+
+    addNewLog: (state, action) => {
+      state.newLogs = [action.payload, ...state.newLogs];
+    },
+
+    removeNewLog: (state, action) => {
+      state.newLogs = state.newLogs.filter(
+        (log) => log.id !== action.payload.id
+      );
+    },
+
     // New actions for the node editor
     setSelectedNode: (state, action) => {
       state.selectedNode = action.payload;
@@ -462,6 +474,8 @@ export const {
   setLogs,
   addLog,
   setIsLogInitializing,
+  addNewLog,
+  removeNewLog,
 
   // New actions
   setSelectedNode,

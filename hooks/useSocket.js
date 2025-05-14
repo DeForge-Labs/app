@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { io } from "socket.io-client";
 import { useDispatch } from "react-redux";
-import { addLog } from "@/redux/slice/WorkflowSlice";
+import { addLog, addNewLog } from "@/redux/slice/WorkflowSlice";
 
 export default function useSocket() {
   const [socket, setSocket] = useState(null);
@@ -49,6 +49,7 @@ export default function useSocket() {
 
     websocket.on("workflow_execution", (log) => {
       dispatch(addLog(log));
+      dispatch(addNewLog(log));
     });
 
     websocket.on("disconnect", () => {
