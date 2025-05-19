@@ -13,10 +13,12 @@ import TextField from "./nodes/customizer/TextField";
 import NumberField from "./nodes/customizer/NumberField";
 import TextAreaField from "./nodes/customizer/TextAreaField";
 import SelectField from "./nodes/customizer/SelectField";
-import JSONArrayField from "./nodes/customizer/JSONArrayField";
+import ArrayField from "./nodes/customizer/ArrayField";
 import MapField from "./nodes/customizer/MapField";
 import StandaloneField from "./nodes/customizer/StandaloneField";
 import OutputField from "./nodes/customizer/OutputField";
+import CheckBoxField from "./nodes/customizer/CheckBoxField";
+import DateTimeField from "./nodes/customizer/DateTimeField";
 
 export default function CustomizerPanel() {
   const dispatch = useDispatch();
@@ -211,7 +213,8 @@ export default function CustomizerPanel() {
                     />
                   );
 
-                case "textArea":
+                case "TextArea":
+                case "textarea":
                   return (
                     <TextAreaField
                       key={index}
@@ -242,7 +245,20 @@ export default function CustomizerPanel() {
                 case "JSON[]":
                 case "json[]":
                   return (
-                    <JSONArrayField
+                    <ArrayField
+                      field={field}
+                      key={index}
+                      totalValidConnections={totalValidConnections}
+                      totalConnectedInputs={totalConnectedInputs}
+                      handleDisconnectAll={handleDisconnectAll}
+                      handleDisconnectExact={handleDisconnectExact}
+                    />
+                  );
+
+                case "Text[]":
+                case "text[]":
+                  return (
+                    <ArrayField
                       field={field}
                       key={index}
                       totalValidConnections={totalValidConnections}
@@ -256,6 +272,36 @@ export default function CustomizerPanel() {
                 case "map":
                   return (
                     <MapField
+                      field={field}
+                      key={index}
+                      isInput={isInput}
+                      isConnected={isConnected}
+                      selectedNode={selectedNode}
+                      handleChange={handleChange}
+                      handleDisconnect={handleDisconnect}
+                      nodeType={nodeType}
+                    />
+                  );
+
+                case "CheckBox":
+                case "checkbox":
+                  return (
+                    <CheckBoxField
+                      field={field}
+                      key={index}
+                      isInput={isInput}
+                      isConnected={isConnected}
+                      selectedNode={selectedNode}
+                      handleChange={handleChange}
+                      handleDisconnect={handleDisconnect}
+                      nodeType={nodeType}
+                    />
+                  );
+
+                case "Date":
+                case "date":
+                  return (
+                    <DateTimeField
                       field={field}
                       key={index}
                       isInput={isInput}

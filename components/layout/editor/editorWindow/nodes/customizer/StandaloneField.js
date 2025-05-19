@@ -29,9 +29,9 @@ export default function StandaloneField({
           </Button>
         )}
       </div>
-      <div className="h-10 border rounded-md bg-muted/30 text-xs flex items-center justify-between px-3">
+      <div className="h-10 border border-black/50 rounded-md bg-black/5 text-xs flex items-center justify-between px-3">
         <span>{isConnected ? "Connected" : "Not connected"}</span>
-        <span className="text-muted-foreground">{input.type}</span>
+        <span className="text-black/60">{input.type}</span>
       </div>
     </div>
   );

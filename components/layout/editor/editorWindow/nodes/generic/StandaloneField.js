@@ -27,11 +27,11 @@ export default function StandaloneField({
             transform: "translateY(-50%)",
           }}
         />
-        <div className="h-8 border rounded-md bg-muted/30 text-xs flex items-center justify-between w-full px-2">
+        <div className="h-8 border border-black/50 rounded-md bg-black/5 text-xs flex items-center justify-between w-full px-2">
           <span>
             {connectedInputs.has(input.name) ? "Connected" : "Not connected"}
           </span>
-          <span className="text-xs text-muted-foreground">{input.type}</span>
+          <span className="text-xs text-black/60">{input.type}</span>
         </div>
       </div>
     </div>

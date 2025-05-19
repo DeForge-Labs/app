@@ -3,7 +3,7 @@
 import { Button } from "@heroui/react";
 import { Link2Off } from "lucide-react";
 
-export default function JSONArrayField({
+export default function ArrayField({
   field,
   totalValidConnections,
   totalConnectedInputs,

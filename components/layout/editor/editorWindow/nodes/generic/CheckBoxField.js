@@ -1,10 +1,10 @@
 "use client";
 
 import { Handle, Position } from "reactflow";
-import { Textarea } from "@heroui/react";
+import { Checkbox } from "@heroui/react";
 import getColorByType from "@/lib/color-profile";
 
-export default function TextAreaField({
+export default function CheckBoxField({
   field,
   nodeType,
   isDisabled,
@@ -14,7 +14,7 @@ export default function TextAreaField({
 }) {
   return (
     <div key={field.name} className="mb-2 relative">
-      <div className="text-xs font-medium mb-1 capitalize">{field.name}</div>
+      <div className="text-xs font-medium capitalize mb-1">{field.name}</div>
       <div className="flex items-center relative">
         {nodeType.inputs.some((input) => input.name === field.name) && (
           <Handle
@@ -33,14 +33,19 @@ export default function TextAreaField({
             }}
           />
         )}
-        <Textarea
-          value={currentValue || ""}
-          onChange={(e) => handleChange(field.name, e.target.value)}
-          placeholder={field.value}
-          className="text-xs min-h-[80px] border border-black/50 rounded-lg"
+        <Checkbox
           isDisabled={isDisabled}
-          variant="outline"
-        />
+          isSelected={currentValue || false}
+          onValueChange={(value) => handleChange(field.name, value)}
+          className=""
+          classNames={{
+            wrapper: "after:bg-black/80",
+          }}
+        >
+          <p className="text-xs font-medium text-black/80">
+            {currentValue ? "Yes" : "No"}
+          </p>
+        </Checkbox>
       </div>
     </div>
   );

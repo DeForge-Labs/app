@@ -2,9 +2,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
-import { Input } from "@heroui/react";
+import { Button, Input } from "@heroui/react";
 import { Badge } from "@/components/ui/badge";
 import { useSelector } from "react-redux";
+import { TriangleAlert, X } from "lucide-react";
 // import { nodeRegistry } from "@/lib/node-registry";
 
 export default function NodeMenu() {
@@ -31,6 +32,8 @@ export default function NodeMenu() {
       "application/node-definition",
       JSON.stringify(nodeType)
     );
+
+    event.dataTransfer.setData("application/node-category", nodeType.category);
 
     event.dataTransfer.effectAllowed = "move";
   };
@@ -93,6 +96,33 @@ export default function NodeMenu() {
             </CardContent>
           </Card>
         ))}
+
+        {filteredNodes.length === 0 && (
+          <>
+            {" "}
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="rounded-full bg-black/10 p-4 mb-4">
+                <TriangleAlert className="h-5 w-5 text-black" />
+              </div>
+              <h3 className="text-sm font-medium">No nodes found</h3>
+              <p className="text-xs text-muted-foreground mt-2 max-w-md mb-2">
+                No nodes match your search criteria.
+              </p>
+
+              <Button
+                variant="outline"
+                size="md"
+                className="bg-black/80 rounded-lg text-background text-xs"
+                onPress={() => {
+                  setSearchTerm("");
+                }}
+              >
+                <X size={16} />
+                Clear Search
+              </Button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

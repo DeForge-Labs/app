@@ -197,6 +197,23 @@ function Flow() {
         }
       });
 
+      const nodeCategory = event.dataTransfer.getData(
+        "application/node-category"
+      );
+
+      const isTriggerPresent = nodes.some(
+        (node) => node.data.category === "trigger"
+      );
+
+      if (isTriggerPresent) {
+        const isCurrentNodeTrigger = nodeCategory === "trigger";
+
+        if (isCurrentNodeTrigger) {
+          toast.error("Only one trigger node is allowed");
+          return;
+        }
+      }
+
       dispatch(
         addNode({
           type,

@@ -3,12 +3,8 @@
 import { Handle, Position } from "reactflow";
 import getColorByType from "@/lib/color-profile";
 
-export default function JSONArrayField({
+export default function ArrayField({
   field,
-  nodeType,
-  isDisabled,
-  currentValue,
-  handleChange,
   matchingInput,
   totalValidConnections,
   isArrayInput,

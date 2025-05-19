@@ -19,9 +19,11 @@ import TextField from "./nodes/generic/TextField";
 import NumberField from "./nodes/generic/NumberField";
 import TextAreaField from "./nodes/generic/TextAreaField";
 import SelectField from "./nodes/generic/SelectField";
-import JSONArrayField from "./nodes/generic/JSONArrayField";
 import MapField from "./nodes/generic/MapField";
 import StandaloneField from "./nodes/generic/StandaloneField";
+import ArrayField from "./nodes/generic/ArrayField";
+import CheckBoxField from "./nodes/generic/CheckBoxField";
+import DateTimeField from "./nodes/generic/DateTimeField";
 
 export function GenericNode({ id, type, data }) {
   const dispatch = useDispatch();
@@ -141,7 +143,8 @@ export function GenericNode({ id, type, data }) {
           />
         );
 
-      case "textArea":
+      case "TextArea":
+      case "textarea":
         return (
           <TextAreaField
             key={index}
@@ -170,7 +173,23 @@ export function GenericNode({ id, type, data }) {
       case "JSON[]":
       case "json[]":
         return (
-          <JSONArrayField
+          <ArrayField
+            key={index}
+            field={field}
+            nodeType={nodeType}
+            isDisabled={isDisabled}
+            currentValue={currentValue}
+            handleChange={handleChange}
+            matchingInput={matchingInput}
+            totalValidConnections={totalValidConnections}
+            isArrayInput={isArrayInput}
+          />
+        );
+
+      case "Text[]":
+      case "text[]":
+        return (
+          <ArrayField
             key={index}
             field={field}
             nodeType={nodeType}
@@ -187,6 +206,34 @@ export function GenericNode({ id, type, data }) {
       case "map":
         return (
           <MapField
+            key={index}
+            field={field}
+            nodeType={nodeType}
+            isDisabled={isDisabled}
+            currentValue={currentValue}
+            handleChange={handleChange}
+            matchingInput={matchingInput}
+          />
+        );
+
+      case "CheckBox":
+      case "checkbox":
+        return (
+          <CheckBoxField
+            key={index}
+            field={field}
+            nodeType={nodeType}
+            isDisabled={isDisabled}
+            currentValue={currentValue}
+            handleChange={handleChange}
+            matchingInput={matchingInput}
+          />
+        );
+
+      case "Date":
+      case "date":
+        return (
+          <DateTimeField
             key={index}
             field={field}
             nodeType={nodeType}

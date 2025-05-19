@@ -25,6 +25,20 @@ module.exports = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        secondary: {
+          50: "#fefcea",
+          100: "#fefcea",
+          200: "#fefcea",
+          300: "#000",
+          400: "#9ca3af",
+          500: "#fefcea",
+          600: "#000",
+          700: "#000",
+          800: "#000",
+          900: "#000",
+          DEFAULT: "#000",
+          foreground: "#ffffff",
+        },
       },
 
       animation: {
