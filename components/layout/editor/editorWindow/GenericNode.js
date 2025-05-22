@@ -24,6 +24,7 @@ import StandaloneField from "./nodes/generic/StandaloneField";
 import ArrayField from "./nodes/generic/ArrayField";
 import CheckBoxField from "./nodes/generic/CheckBoxField";
 import DateTimeField from "./nodes/generic/DateTimeField";
+import SliderField from "./nodes/generic/SliderField";
 
 export function GenericNode({ id, type, data }) {
   const dispatch = useDispatch();
@@ -234,6 +235,20 @@ export function GenericNode({ id, type, data }) {
       case "date":
         return (
           <DateTimeField
+            key={index}
+            field={field}
+            nodeType={nodeType}
+            isDisabled={isDisabled}
+            currentValue={currentValue}
+            handleChange={handleChange}
+            matchingInput={matchingInput}
+          />
+        );
+
+      case "Slider":
+      case "slider":
+        return (
+          <SliderField
             key={index}
             field={field}
             nodeType={nodeType}

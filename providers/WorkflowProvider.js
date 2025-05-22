@@ -44,7 +44,7 @@ export default function WorkflowProvider({ children, params }) {
 
   // Handle workflow subscription with proper cleanup
   useEffect(() => {
-    if (workflow?.id && socket) {
+    if (workflow?.id && socket?.id) {
       // Subscribe to the workflow
       subscribeToWorkflow(workflow.id);
 
@@ -56,7 +56,7 @@ export default function WorkflowProvider({ children, params }) {
         }
       };
     }
-  }, [workflow?.id, socket]);
+  }, [workflow?.id, socket?.id]);
 
   return <>{children}</>;
 }

@@ -27,10 +27,11 @@ export default function useExecution() {
       );
 
       if (!response.data.success) {
+        toast.error(response.data.message);
         throw new Error(response.data.message);
       }
 
-      toast.success("Workflow executed successfully");
+      toast.success(response.data.message);
     } catch (err) {
       console.log(err);
     } finally {
@@ -48,10 +49,11 @@ export default function useExecution() {
       );
 
       if (!response.data.success) {
+        toast.error(response.data.message);
         throw new Error(response.data.message);
       }
 
-      toast.success("Workflow tested successfully");
+      toast.success(response.data.message);
     } catch (err) {
       console.log(err);
     } finally {
@@ -69,10 +71,11 @@ export default function useExecution() {
       const response = await axios.get(`${url}/live/${workflow?.id}`);
 
       if (!response.data.success) {
+        toast.error(response.data.message);
         throw new Error(response.data.message);
       }
 
-      toast.success("Workflow executed successfully");
+      toast.success(response.data.message);
     } catch (err) {
       console.log(err);
     } finally {

@@ -5,12 +5,15 @@ import { useState } from "react";
 import { Button, Input } from "@heroui/react";
 import { Badge } from "@/components/ui/badge";
 import { useSelector } from "react-redux";
-import { TriangleAlert, X } from "lucide-react";
+import { Loader2, TriangleAlert, X } from "lucide-react";
 // import { nodeRegistry } from "@/lib/node-registry";
 
 export default function NodeMenu() {
   const nodeRegistry = useSelector((state) => state.library.nodeRegistry) || [];
   const [searchTerm, setSearchTerm] = useState("");
+  const isNodeRegistryInitializing = useSelector(
+    (state) => state.library.isNodeRegistryInitializing
+  );
 
   const filteredNodes = nodeRegistry.filter((node) => {
     const matchesSearch =
@@ -97,7 +100,13 @@ export default function NodeMenu() {
           </Card>
         ))}
 
-        {filteredNodes.length === 0 && (
+        {isNodeRegistryInitializing && (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <Loader2 className="h-5 w-5 text-black animate-spin" />
+          </div>
+        )}
+
+        {filteredNodes.length === 0 && !isNodeRegistryInitializing && (
           <>
             {" "}
             <div className="flex flex-col items-center justify-center py-12 text-center">

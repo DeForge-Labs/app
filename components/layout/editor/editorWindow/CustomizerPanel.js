@@ -19,6 +19,7 @@ import StandaloneField from "./nodes/customizer/StandaloneField";
 import OutputField from "./nodes/customizer/OutputField";
 import CheckBoxField from "./nodes/customizer/CheckBoxField";
 import DateTimeField from "./nodes/customizer/DateTimeField";
+import SliderField from "./nodes/customizer/SliderField";
 
 export default function CustomizerPanel() {
   const dispatch = useDispatch();
@@ -302,6 +303,21 @@ export default function CustomizerPanel() {
                 case "date":
                   return (
                     <DateTimeField
+                      field={field}
+                      key={index}
+                      isInput={isInput}
+                      isConnected={isConnected}
+                      selectedNode={selectedNode}
+                      handleChange={handleChange}
+                      handleDisconnect={handleDisconnect}
+                      nodeType={nodeType}
+                    />
+                  );
+
+                case "Slider":
+                case "slider":
+                  return (
+                    <SliderField
                       field={field}
                       key={index}
                       isInput={isInput}

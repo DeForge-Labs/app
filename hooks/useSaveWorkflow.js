@@ -45,7 +45,7 @@ export default function useSaveWorkflow() {
       loadWorkflowById(workflow?.id);
       setIsOpen(false);
 
-      toast.success("Workflow saved successfully");
+      toast.success(response.data.message);
       return response.data;
     } catch (error) {
       console.log(error);

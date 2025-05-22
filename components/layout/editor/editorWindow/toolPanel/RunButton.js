@@ -11,7 +11,13 @@ export default function RunButton() {
   const isRunning = useSelector((state) => state.run.isRunning);
   const type = useSelector((state) => state.run.type);
   const workflow = useSelector((state) => state.workflow.workflow);
+  const nodes = useSelector((state) => state.workflow.nodes || []);
   const { handleRun, handleRunLive } = useExecution();
+
+  const isTelegramTriggerPresent = nodes.some(
+    (node) => node.type === "tg_trigger"
+  );
+
   return (
     <Tooltip
       className="bg-white border-black/50 border mb-3 rounded-lg shadow-none"
@@ -29,7 +35,7 @@ export default function RunButton() {
             "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-2 "
           )}
           size="icon"
-          isDisabled={isRunning}
+          isDisabled={isRunning || isTelegramTriggerPresent}
         >
           {isRunning && type === "raw" ? (
             <Loader2 size={16} className="animate-spin text-background" />
@@ -45,7 +51,7 @@ export default function RunButton() {
             "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-2 "
           )}
           size="icon"
-          isDisabled={isRunning}
+          isDisabled={isRunning || isTelegramTriggerPresent}
         >
           {isRunning && type === "live" ? (
             <Loader2 size={16} className="animate-spin text-background" />
