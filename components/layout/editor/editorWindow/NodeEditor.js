@@ -121,13 +121,13 @@ function Flow() {
       const arrayElementType = inputType.slice(0, -2); // Remove the [] suffix
       return (
         outputType === arrayElementType ||
-        outputType === "any" ||
-        arrayElementType === "any"
+        outputType === "Any" ||
+        arrayElementType === "Any"
       );
     } else {
       // For non-array inputs, check exact match or 'any' type
       return (
-        outputType === inputType || outputType === "any" || inputType === "any"
+        outputType === inputType || outputType === "Any" || inputType === "Any"
       );
     }
   };

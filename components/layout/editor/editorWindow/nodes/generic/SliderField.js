@@ -2,6 +2,7 @@
 
 import { Handle, Position } from "reactflow";
 import { Slider } from "@heroui/react";
+import { useEffect, useState } from "react";
 import getColorByType from "@/lib/color-profile";
 
 export default function SliderField({
@@ -12,6 +13,12 @@ export default function SliderField({
   handleChange,
   matchingInput,
 }) {
+  const [value, setValue] = useState(currentValue);
+
+  useEffect(() => {
+    setValue(currentValue);
+  }, [currentValue]);
+
   return (
     <div key={field.name} className="mb-2 relative">
       <div className="flex items-center relative">
@@ -35,7 +42,10 @@ export default function SliderField({
         )}
         <Slider
           value={currentValue || 0}
-          onChange={(value) => handleChange(field.name, value)}
+          onChange={(value) => {
+            setValue(value);
+            handleChange(field.name, value);
+          }}
           defaultValue={field.value}
           maxValue={field.max}
           minValue={field.min}
@@ -47,11 +57,13 @@ export default function SliderField({
                 aria-label="Temperature value"
                 className="px-1 py-0.5 w-10 text-right text-xs bg-black/5 outline-none transition-colors rounded-md border border-transparent hover:border-black focus:border-black"
                 type="text"
-                value={currentValue || 0}
+                value={value || 0}
                 onChange={(e) => {
                   const v = e.target.value;
-
-                  handleChange(field.name, v);
+                  setValue(v);
+                  if (!isNaN(Number(v))) {
+                    handleChange(field.name, Number(v));
+                  }
                 }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !isNaN(Number(currentValue))) {

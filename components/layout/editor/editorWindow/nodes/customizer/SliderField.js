@@ -3,6 +3,7 @@
 import { Button } from "@heroui/react";
 import { Slider } from "@heroui/react";
 import { Link2Off } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function SliderField({
   field,
@@ -13,6 +14,12 @@ export default function SliderField({
   handleDisconnect,
   nodeType,
 }) {
+  const [value, setValue] = useState(selectedNode.data[field.name] || 0);
+
+  useEffect(() => {
+    setValue(selectedNode.data[field.name] || 0);
+  }, [selectedNode.data[field.name]]);
+
   return (
     <div key={field.name} className="space-y-2">
       <div className="flex justify-between items-center">
@@ -38,7 +45,10 @@ export default function SliderField({
       </div>
       <Slider
         value={selectedNode.data[field.name] || 0}
-        onChange={(value) => handleChange(field.name, value)}
+        onChange={(value) => {
+          setValue(value);
+          handleChange(field.name, value);
+        }}
         defaultValue={field.value}
         maxValue={field.max}
         minValue={field.min}
@@ -50,11 +60,13 @@ export default function SliderField({
               aria-label="Temperature value"
               className="px-1 py-0.5 w-10 text-right text-xs bg-black/5 outline-none transition-colors rounded-md border border-transparent hover:border-black focus:border-black"
               type="text"
-              value={selectedNode.data[field.name] || 0}
+              value={value || 0}
               onChange={(e) => {
                 const v = e.target.value;
-
-                handleChange(field.name, v);
+                setValue(v);
+                if (!isNaN(Number(v))) {
+                  handleChange(field.name, Number(v));
+                }
               }}
               onKeyDown={(e) => {
                 if (
