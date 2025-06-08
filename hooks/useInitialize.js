@@ -3,6 +3,8 @@ import {
   setTeam,
   setIsWorkflowInitializing,
   setWorkflows,
+  setIsMembersInitializing,
+  setMembers,
 } from "@/redux/slice/TeamSlice";
 import { setIsInitializing, setUser } from "@/redux/slice/UserSlice";
 import {
@@ -171,5 +173,40 @@ export default function useInitialize() {
     }
   };
 
-  return { loadUser, loadTeam, loadWorkflow, loadWorkflowById, loadLogs };
+  const loadMembers = async (teamId) => {
+    try {
+      dispatch(setIsMembersInitializing(true));
+      const headers = {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      };
+
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/team/members/${teamId}`,
+        { headers }
+      );
+
+      if (response.data.success) {
+        dispatch(setMembers(response.data.members));
+      } else {
+        toast.error(response.data.message);
+        if (response.data.status === 404 || response.data.status === 401) {
+          router.push("/");
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to load members");
+    } finally {
+      dispatch(setIsMembersInitializing(false));
+    }
+  };
+
+  return {
+    loadUser,
+    loadTeam,
+    loadWorkflow,
+    loadWorkflowById,
+    loadLogs,
+    loadMembers,
+  };
 }

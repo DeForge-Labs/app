@@ -1,6 +1,6 @@
 import { Loader2 } from "lucide-react";
 
-export default function WorkflowLoading() {
+export default function MemberLoading() {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <div className="rounded-full bg-black/10 p-4 mb-4">
@@ -8,7 +8,7 @@ export default function WorkflowLoading() {
       </div>
       <h3 className="text-lg font-medium">Loading...</h3>
       <p className="text-muted-foreground mt-2 max-w-md">
-        Please wait while we load your workflows.
+        Please wait while we load your members.
       </p>
     </div>
   );

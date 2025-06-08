@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 export default function TeamForm() {
   const [tab, setTab] = useState("create");
   const router = useRouter();
-  const { createTeam, skipTeam } = useTeams();
+  const { createTeam, skipTeam, joinTeam } = useTeams();
   const [name, setName] = useState("");
   const [invitationCode, setInvitationCode] = useState("");
 
@@ -59,6 +59,25 @@ export default function TeamForm() {
       toast.error("Failed to skip team");
     } finally {
       setIsSkipping(false);
+    }
+  };
+
+  const handleJoinTeam = async (invitationCode) => {
+    try {
+      setIsJoining(true);
+
+      const response = await joinTeam(invitationCode);
+
+      if (response) {
+        router.push("/team");
+      } else {
+        toast.error("Something went wrong");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to join team");
+    } finally {
+      setIsJoining(false);
     }
   };
 
@@ -141,6 +160,8 @@ export default function TeamForm() {
             variant="outline"
             startContent={<Asterisk className="text-black/40" />}
             isClearable
+            value={invitationCode}
+            onChange={(e) => setInvitationCode(e.target.value)}
           />
 
           <div className="mt-3 rounded-2xl p-4 border border-black/40">
@@ -152,9 +173,10 @@ export default function TeamForm() {
           <div className="mt-3 flex w-full gap-2">
             <Button
               className="w-full rounded-full p-7"
+              onPress={() => handleJoinTeam(invitationCode)}
               isDisabled={isJoining || isSkipping}
             >
-              Join
+              {isJoining ? <Loader2 className="animate-spin" /> : "Join"}
             </Button>
             <Button
               className="w-full rounded-full p-7 border border-black/40 "

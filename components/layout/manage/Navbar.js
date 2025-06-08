@@ -1,15 +1,11 @@
 "use client";
 
-import { ChevronRight, Loader2, Settings, Users } from "lucide-react";
+import { ChevronRight, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useSelector } from "react-redux";
-import Link from "next/link";
-import { Button } from "@heroui/react";
-import { useRouter } from "next/navigation";
-import LogoutButton from "./LogoutButton";
+import DashboardButton from "./DashboardButton";
 
 export default function Navbar() {
-  const router = useRouter();
   const isTeamInitializing = useSelector(
     (state) => state.team.isTeamInitializing
   );
@@ -27,31 +23,13 @@ export default function Navbar() {
             ) : (
               <>
                 <p>{team?.name}</p>
-                <Link
-                  href={`/manage/${team?.id}`}
-                  className="text-black/60 text-xs hover:animate-spin mt-0.5"
-                >
-                  <Settings size={16} />
-                </Link>
               </>
             )}
           </span>
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="md"
-            className="border border-black/50 h-9 rounded-lg text-black/80 text-xs"
-            onPress={() => {
-              router.push(`/team`);
-            }}
-          >
-            <Users size={16} />
-            Teams
-          </Button>
-
-          <LogoutButton />
+          <DashboardButton />
         </div>
       </div>
     </header>

@@ -4,9 +4,9 @@ import useInitialize from "@/hooks/useInitialize";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
-export default function TeamProvider({ children, params }) {
+export default function ManageProvider({ children, params }) {
   const user = useSelector((state) => state.user.user);
-  const { loadTeam, loadWorkflow } = useInitialize();
+  const { loadTeam, loadMembers } = useInitialize();
   const team = useSelector((state) => state.team.team);
   useEffect(() => {
     if (user && !team?.id) {
@@ -23,7 +23,7 @@ export default function TeamProvider({ children, params }) {
 
   useEffect(() => {
     if (team?.id) {
-      loadWorkflow(team.id);
+      loadMembers(team.id);
     }
   }, [team]);
 

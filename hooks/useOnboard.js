@@ -33,7 +33,7 @@ export default function useOnboard() {
       if (response.data.success) {
         setIsOTPWindow(true);
         setIsRequestingLogin(false);
-        setIsSignUp(false);
+        setIsSignUp(response.data.isSignup);
       } else {
         toast(response.data.message);
         setIsRequestingLogin(false);
@@ -42,43 +42,6 @@ export default function useOnboard() {
       console.log(error);
       toast.error("Failed to send OTP");
       setIsRequestingLogin(false);
-    }
-  };
-
-  const requestSignUp = async (
-    email,
-    setIsOTPWindow,
-    setIsRequestingSignUp,
-    setIsSignUp
-  ) => {
-    try {
-      setIsRequestingSignUp(true);
-
-      const emailSchema = z.string().email();
-      const result = emailSchema.safeParse(email);
-
-      if (!result.success) {
-        toast("Please enter a valid email");
-        setIsRequestingSignUp(false);
-        return;
-      }
-
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/request/signup`,
-        { email }
-      );
-      if (response.data.success) {
-        setIsOTPWindow(true);
-        setIsRequestingSignUp(false);
-        setIsSignUp(true);
-      } else {
-        toast.error(response.data.message);
-        setIsRequestingSignUp(false);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to send OTP");
-      setIsRequestingSignUp(false);
     }
   };
 
@@ -198,7 +161,7 @@ export default function useOnboard() {
 
   return {
     requestLogin,
-    requestSignUp,
+
     verifyLogin,
     verifySignUp,
     resend,

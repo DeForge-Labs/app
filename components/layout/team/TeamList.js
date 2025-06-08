@@ -82,7 +82,7 @@ export default function TeamList() {
           router.push("/team/create");
         }}
       >
-        <Plus className="mr-2" /> Create Team
+        <Plus className="mr-2" /> Create or Join Team
       </Button>
     </>
   );

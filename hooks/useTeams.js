@@ -63,9 +63,24 @@ export default function useTeams() {
     return teams[0];
   };
 
+  const joinTeam = async (invitationCode) => {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    };
+
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/teams/join/${invitationCode}`,
+      {},
+      { headers }
+    );
+
+    return response.data;
+  };
+
   return {
     getTeams,
     createTeam,
     skipTeam,
+    joinTeam,
   };
 }

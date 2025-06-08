@@ -12,13 +12,11 @@ export default function LoginForm() {
   const [username, setUsername] = useState("");
   const [otp, setOtp] = useState("");
 
-  const [isRequestingSignUp, setIsRequestingSignUp] = useState(false);
   const [isRequestingLogin, setIsRequestingLogin] = useState(false);
 
   const [timeout, setTimeout] = useState(0);
 
-  const { requestLogin, requestSignUp, verifyLogin, verifySignUp, resend } =
-    useOnboard();
+  const { requestLogin, verifyLogin, verifySignUp, resend } = useOnboard();
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
 
@@ -49,6 +47,7 @@ export default function LoginForm() {
               isClearable
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              onClear={() => setUsername("")}
             />
           </>
         )}
@@ -147,6 +146,7 @@ export default function LoginForm() {
           isClearable
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onClear={() => setEmail("")}
         />
 
         <div className="mt-3 flex w-full gap-2">
@@ -160,27 +160,12 @@ export default function LoginForm() {
                 setIsSignUp
               );
             }}
-            isDisabled={isRequestingSignUp || isRequestingLogin}
+            isDisabled={isRequestingLogin}
           >
-            {isRequestingLogin ? <Loader2 className="animate-spin" /> : "Login"}
-          </Button>
-          <Button
-            className="w-full rounded-full p-7 border border-black/40 "
-            variant="outline"
-            onPress={() => {
-              requestSignUp(
-                email,
-                setIsOTPWindow,
-                setIsRequestingSignUp,
-                setIsSignUp
-              );
-            }}
-            isDisabled={isRequestingLogin || isRequestingSignUp}
-          >
-            {isRequestingSignUp ? (
+            {isRequestingLogin ? (
               <Loader2 className="animate-spin" />
             ) : (
-              "Sign Up"
+              "Continue"
             )}
           </Button>
         </div>

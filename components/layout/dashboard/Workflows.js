@@ -9,10 +9,13 @@ import WorkflowEmptyState from "./WorkflowEmpty";
 import WorkflowLoading from "./WorkflowLoading";
 import { useSelector } from "react-redux";
 import WorkflowEmptySearch from "./WorkflowEmptySearch";
+import CreateWorkflowButton from "./CreateWorkflowButton";
 
 export default function Workflows() {
-  const [view, setView] = useState("grid");
-  const [tab, setTab] = useState("all");
+  const defaultView = localStorage.getItem("defaultView") || "grid";
+  const defaultTab = localStorage.getItem("defaultTab") || "all";
+  const [view, setView] = useState(defaultView);
+  const [tab, setTab] = useState(defaultTab);
   const workflows = useSelector((state) => state.team.workflows);
   const isWorkflowInitializing = useSelector(
     (state) => state.team.isWorkflowInitializing
@@ -41,9 +44,14 @@ export default function Workflows() {
     }
   }, [tab, workflows]);
 
+  useEffect(() => {
+    localStorage.setItem("defaultView", view);
+    localStorage.setItem("defaultTab", tab);
+  }, [view, tab]);
+
   return (
-    <main className="container mx-auto py-8">
-      <div className="flex w-full justify-between">
+    <main className="container mx-auto py-6">
+      <div className="flex w-full justify-between items-center">
         <Input
           variant="outline"
           placeholder="Search Workflows"
@@ -51,11 +59,33 @@ export default function Workflows() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
+
+        <CreateWorkflowButton />
+      </div>
+
+      <div className="flex w-full justify-between items-center mt-4">
+        <Tabs
+          aria-label="Tabs radius"
+          radius={"md"}
+          className=" w-fit"
+          variant="bordered"
+          classNames={{
+            tabList: "relative border-1 h-12",
+            tabContent: "text-black/80 cursor-pointer w-[120px] text-xs",
+            cursor: "h-10 top-1",
+          }}
+          selectedKey={tab}
+          onSelectionChange={setTab}
+        >
+          <Tab key="all" title="All Workflows" className="py-6" />
+          <Tab key="recent" title="Recently Modified" className="py-6" />
+        </Tabs>
+
         <ButtonGroup>
           <Button
             variant="outline"
             size="sm"
-            className="border border-black/80 rounded-lg text-xs rounded-r-none h-full"
+            className="border border-black/80 rounded-lg text-xs rounded-r-none h-11"
             style={{
               backgroundColor: view === "grid" ? "black" : "transparent",
               opacity: view === "grid" ? 0.8 : 1,
@@ -68,7 +98,7 @@ export default function Workflows() {
           <Button
             variant="outline"
             size="sm"
-            className="border border-black/80 rounded-lg text-xs rounded-l-none h-full"
+            className="border border-black/80 rounded-lg text-xs rounded-l-none h-11"
             style={{
               backgroundColor: view === "list" ? "black" : "transparent",
               opacity: view === "list" ? 0.8 : 1,
@@ -80,22 +110,6 @@ export default function Workflows() {
           </Button>
         </ButtonGroup>
       </div>
-
-      <Tabs
-        aria-label="Tabs radius"
-        radius={"md"}
-        className="mt-4 w-fit"
-        variant="bordered"
-        classNames={{
-          tabList: "relative border-1 h-14",
-          tabContent: "text-black/80 cursor-pointer w-[120px] text-xs",
-        }}
-        selectedKey={tab}
-        onSelectionChange={setTab}
-      >
-        <Tab key="all" title="All Workflows" className="py-6" />
-        <Tab key="recent" title="Recently Modified" className="py-6" />
-      </Tabs>
 
       {isWorkflowInitializing && <WorkflowLoading />}
 
