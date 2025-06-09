@@ -7,6 +7,7 @@ import teamSlice from "./slice/TeamSlice.js";
 import workflowSlice from "./slice/WorkflowSlice.js";
 import librarySlice from "./slice/librarySlice.js";
 import runSlice from "./slice/runSlice.js";
+import templateSlice from "./slice/templateSlice.js";
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
     workflow: workflowSlice,
     library: librarySlice,
     run: runSlice,
+    template: templateSlice,
   },
 
   middleware: (getDefaultMiddleware) =>

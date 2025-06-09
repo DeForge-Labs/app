@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 export default function TeamList() {
   const { getTeams } = useTeams();
   const [teams, setTeams] = useState([]);
-  const [isFetching, setIsFetching] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const user = useSelector((state) => state.user.user);
   const router = useRouter();
 

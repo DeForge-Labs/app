@@ -19,13 +19,19 @@ import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import useEnv from "./useEnv";
+import {
+  setIsTeamsInitializing,
+  setIsTemplateInitializing,
+  setTeams,
+  setTemplate,
+} from "@/redux/slice/templateSlice";
 
 export default function useInitialize() {
   const dispatch = useDispatch();
   const router = useRouter();
   const { getEnv } = useEnv();
 
-  const loadUser = async () => {
+  const loadUser = async (force = true) => {
     try {
       const headers = {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -40,13 +46,62 @@ export default function useInitialize() {
       if (response.data.success) {
         dispatch(setUser(response.data.user));
       } else {
-        router.push("/");
+        if (force) {
+          router.push("/");
+        }
       }
     } catch (err) {
       console.log(err);
       router.push("/");
     } finally {
       dispatch(setIsInitializing(false));
+    }
+  };
+
+  const loadUserAndTeams = async () => {
+    try {
+      dispatch(setIsTeamsInitializing(true));
+      const headers = {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      };
+
+      await loadUser(false);
+
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/teams/list`,
+        {},
+        { headers }
+      );
+
+      if (response.data.success) {
+        dispatch(setTeams(response.data.teams));
+      } else {
+        console.log(response.data);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      dispatch(setIsTeamsInitializing(false));
+    }
+  };
+
+  const loadTemplate = async (templateId) => {
+    try {
+      dispatch(setIsTemplateInitializing(true));
+
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/template/get/${templateId}`
+      );
+
+      if (response.data.success) {
+        dispatch(setTemplate(response.data.template));
+      } else {
+        console.log(response.data);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      dispatch(setIsTemplateInitializing(false));
     }
   };
 
@@ -208,5 +263,7 @@ export default function useInitialize() {
     loadWorkflowById,
     loadLogs,
     loadMembers,
+    loadUserAndTeams,
+    loadTemplate,
   };
 }
