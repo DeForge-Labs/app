@@ -8,6 +8,8 @@ const templateSlice = createSlice({
     isTemplateInitializing: true,
     teams: null,
     isTeamsInitializing: true,
+    templates: null,
+    isTemplatesInitializing: true,
   },
 
   reducers: {
@@ -23,6 +25,12 @@ const templateSlice = createSlice({
     setIsTeamsInitializing: (state, action) => {
       state.isTeamsInitializing = action.payload;
     },
+    setTemplates: (state, action) => {
+      state.templates = action.payload;
+    },
+    setIsTemplatesInitializing: (state, action) => {
+      state.isTemplatesInitializing = action.payload;
+    },
   },
 });
 
@@ -31,6 +39,8 @@ export const {
   setIsTemplateInitializing,
   setTeams,
   setIsTeamsInitializing,
+  setTemplates,
+  setIsTemplatesInitializing,
 } = templateSlice.actions;
 
 export default templateSlice.reducer;

@@ -6,8 +6,10 @@ import { useSelector } from "react-redux";
 import TemplateLoading from "./TemplateLoading";
 import NodeVisualizer from "./NodeVisualizer";
 import UseTemplateButton from "./UseTemplateButton";
+import { useRouter } from "next/navigation";
 
 export default function TemplateBody() {
+  const router = useRouter();
   const template = useSelector((state) => state.template.template);
   const isTemplateInitializing = useSelector(
     (state) => state.template.isTemplateInitializing
@@ -34,7 +36,9 @@ export default function TemplateBody() {
         variant="outline"
         size="md"
         className="border border-black/50 h-9 rounded-lg text-black/80 text-xs"
-        onPress={() => {}}
+        onPress={() => {
+          router.push("/templates");
+        }}
       >
         <ArrowLeft size={16} />
         Back to Templates

@@ -10,6 +10,7 @@ import WorkflowLoading from "./WorkflowLoading";
 import { useSelector } from "react-redux";
 import WorkflowEmptySearch from "./WorkflowEmptySearch";
 import CreateWorkflowButton from "./CreateWorkflowButton";
+import { useRouter } from "next/navigation";
 
 export default function Workflows() {
   const defaultView = localStorage.getItem("defaultView") || "grid";
@@ -20,6 +21,7 @@ export default function Workflows() {
   const isWorkflowInitializing = useSelector(
     (state) => state.team.isWorkflowInitializing
   );
+  const router = useRouter();
   const [filteredWorkflows, setFilteredWorkflows] = useState([]);
   const [search, setSearch] = useState("");
 
@@ -60,7 +62,18 @@ export default function Workflows() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <CreateWorkflowButton />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            className="border border-black/50 rounded-lg text-black/80 text-xs"
+            onPress={() => {
+              router.push(`/templates`);
+            }}
+          >
+            Browse Templates
+          </Button>
+          <CreateWorkflowButton />
+        </div>
       </div>
 
       <div className="flex w-full justify-between items-center mt-4">

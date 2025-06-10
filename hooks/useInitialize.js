@@ -22,8 +22,10 @@ import useEnv from "./useEnv";
 import {
   setIsTeamsInitializing,
   setIsTemplateInitializing,
+  setIsTemplatesInitializing,
   setTeams,
   setTemplate,
+  setTemplates,
 } from "@/redux/slice/templateSlice";
 
 export default function useInitialize() {
@@ -102,6 +104,30 @@ export default function useInitialize() {
       console.log(err);
     } finally {
       dispatch(setIsTemplateInitializing(false));
+    }
+  };
+
+  const loadTemplates = async () => {
+    try {
+      dispatch(setIsTemplatesInitializing(true));
+      const headers = {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      };
+
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/template/list`,
+        { headers }
+      );
+
+      if (response.data.success) {
+        dispatch(setTemplates(response.data.templates));
+      } else {
+        console.log(response.data);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      dispatch(setIsTemplatesInitializing(false));
     }
   };
 
@@ -265,5 +291,6 @@ export default function useInitialize() {
     loadMembers,
     loadUserAndTeams,
     loadTemplate,
+    loadTemplates,
   };
 }
