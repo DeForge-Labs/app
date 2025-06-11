@@ -1,7 +1,7 @@
 "use client";
-
 import { Handle, Position } from "reactflow";
 import { Input } from "@heroui/react";
+import { useRef, useEffect } from "react";
 import getColorByType from "@/lib/color-profile";
 
 export default function TextField({
@@ -12,6 +12,30 @@ export default function TextField({
   handleChange,
   matchingInput,
 }) {
+  const inputRef = useRef(null);
+  const cursorPositionRef = useRef(null);
+
+  // Store cursor position before re-render
+  const handleInputChange = (e) => {
+    cursorPositionRef.current = e.target.selectionStart;
+    handleChange(field.name, e.target.value);
+  };
+
+  // Restore cursor position after re-render
+  useEffect(() => {
+    if (inputRef.current && cursorPositionRef.current !== null) {
+      const input = inputRef.current;
+      // For HeroUI Input, we might need to access the actual input element
+      const actualInput = input.querySelector("input") || input;
+      if (actualInput && actualInput.setSelectionRange) {
+        actualInput.setSelectionRange(
+          cursorPositionRef.current,
+          cursorPositionRef.current
+        );
+      }
+    }
+  }, [currentValue]);
+
   return (
     <div key={field.name} className="mb-2 relative">
       <div className="text-xs font-medium capitalize">{field.name}</div>
@@ -35,12 +59,15 @@ export default function TextField({
           />
         )}
         <Input
+          ref={inputRef}
           value={currentValue || ""}
           variant="outline"
-          onChange={(e) => handleChange(field.name, e.target.value)}
+          onChange={handleInputChange}
           placeholder={field.value}
           className="mt-2 border border-black/50 rounded-lg"
           disabled={isDisabled}
+          // Add a stable key to prevent unnecessary re-mounting
+          key={`${field.name}-input`}
         />
       </div>
     </div>
