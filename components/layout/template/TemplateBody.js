@@ -7,6 +7,7 @@ import TemplateLoading from "./TemplateLoading";
 import NodeVisualizer from "./NodeVisualizer";
 import UseTemplateButton from "./UseTemplateButton";
 import { useRouter } from "next/navigation";
+import MarkdownRenderer from "./MarkdownRenderer";
 
 export default function TemplateBody() {
   const router = useRouter();
@@ -84,6 +85,11 @@ export default function TemplateBody() {
                 edges={template?.workflow?.edges}
               />
             </div>
+          </div>
+
+          <div className="prose prose-lg max-w-none">
+            <h2 className="text-2xl font-semibold mb-4">Description</h2>
+            <MarkdownRenderer content={template?.content} />
           </div>
 
           {/* Tags */}
