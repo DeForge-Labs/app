@@ -36,7 +36,9 @@ export default function ArrayField({
             className="w-2 h-2 -left-[16.5px] -top-[4.2px] rounded-full rotate-45 absolute border-opacity-50"
             style={{
               backgroundColor: getColorByType(
-                matchingInput?.type.toLowerCase()
+                isArrayInput
+                  ? matchingInput?.type.split("[]")[0].toLowerCase()
+                  : matchingInput?.type.toLowerCase()
               ),
               borderColor: "black",
               borderWidth: "1px",

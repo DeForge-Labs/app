@@ -133,6 +133,9 @@ export default function useInitialize() {
 
   const loadTeam = async (teamId) => {
     try {
+      dispatch(setTeam(null));
+      dispatch(setIsWorkflowInitializing(true));
+      dispatch(setWorkflows(null));
       dispatch(setIsTeamInitializing(true));
       const headers = {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -159,6 +162,7 @@ export default function useInitialize() {
 
   const loadWorkflow = async (teamId) => {
     try {
+      dispatch(setWorkflows(null));
       dispatch(setIsWorkflowInitializing(true));
       const headers = {
         Authorization: `Bearer ${localStorage.getItem("token")}`,

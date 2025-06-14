@@ -3,29 +3,38 @@
 import useInitialize from "@/hooks/useInitialize";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { setTeam, setWorkflows } from "@/redux/slice/TeamSlice";
+import { useParams } from "next/navigation";
 
-export default function TeamProvider({ children, params }) {
+export default function TeamProvider({ children }) {
   const user = useSelector((state) => state.user.user);
   const { loadTeam, loadWorkflow } = useInitialize();
   const team = useSelector((state) => state.team.team);
+  const dispatch = useDispatch();
+  const params = useParams();
   useEffect(() => {
-    if (user && !team?.id) {
-      if (!params?.value) return;
+    if (user) {
+      if (!params?.id) return;
 
-      const parsedValue = JSON.parse(params.value);
-      const id = parsedValue.id;
-
-      if (!id) return;
-
-      loadTeam(id);
+      loadTeam(params.id);
     }
-  }, [user, team?.id]);
+
+    return () => {
+      dispatch(setTeam(null));
+      dispatch(setWorkflows(null));
+    };
+  }, [user, params]);
 
   useEffect(() => {
     if (team?.id) {
       loadWorkflow(team.id);
     }
-  }, [team]);
+
+    return () => {
+      dispatch(setWorkflows(null));
+    };
+  }, [team?.id]);
 
   return <>{children}</>;
 }
