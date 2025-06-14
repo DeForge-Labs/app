@@ -19,23 +19,30 @@ export default function ArrayField({
         </div>
       </div>
       <div className="flex items-center">
-        <Handle
-          type="target"
-          position={Position.Left}
-          id={`input-${field.name}-${field.type}`}
-          style={{
-            left: -4,
-            top: "50%",
-            transform: "translateY(-50%)",
-            backgroundColor: getColorByType(
-              isArrayInput
-                ? matchingInput?.type.split("[]")[0].toLowerCase()
-                : matchingInput?.type.toLowerCase()
-            ),
-            width: "8px",
-            height: "8px",
-          }}
-        />
+        <div className="relative">
+          <Handle
+            type="target"
+            position={Position.Left}
+            id={`input-${field.name}-${field.type}`}
+            style={{
+              zIndex: 10,
+              border: "none",
+              left: "-15.3px",
+              backgroundColor: "transparent",
+            }}
+          />
+
+          <div
+            className="w-2 h-2 -left-[16.5px] -top-[4.2px] rounded-full rotate-45 absolute border-opacity-50"
+            style={{
+              backgroundColor: getColorByType(
+                matchingInput?.type.toLowerCase()
+              ),
+              borderColor: "black",
+              borderWidth: "1px",
+            }}
+          ></div>
+        </div>
         <div className="w-full border border-black/50 rounded-md p-2 bg-black/5 text-xs mt-1">
           <div className="flex justify-between items-center">
             <span className="font-medium">

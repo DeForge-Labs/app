@@ -22,23 +22,6 @@ export default function SelectField({
     <div key={field.name} className="mb-2 relative">
       <div className="text-xs font-medium mb-1 capitalize">{field.name}</div>
       <div className="flex items-center relative">
-        {nodeType.inputs.some((input) => input.name === field.name) && (
-          <Handle
-            type="target"
-            position={Position.Left}
-            id={`input-${field.name}-${matchingInput?.type || "any"}`}
-            style={{
-              left: -17,
-              top: "50%",
-              transform: "translateY(-50%)",
-              backgroundColor: getColorByType(
-                matchingInput?.type.toLowerCase()
-              ),
-              width: "8px",
-              height: "8px",
-            }}
-          />
-        )}
         <Select
           value={currentValue || field.value}
           onValueChange={(value) => handleChange(field.name, value)}

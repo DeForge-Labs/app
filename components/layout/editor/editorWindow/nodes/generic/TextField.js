@@ -42,21 +42,31 @@ export default function TextField({
       <div className="flex items-center relative">
         {/* Handle is positioned within the relative container */}
         {nodeType.inputs.some((input) => input.name === field.name) && (
-          <Handle
-            type="target"
-            position={Position.Left}
-            id={`input-${field.name}-${matchingInput?.type || "any"}`}
-            style={{
-              left: -17,
-              top: "50%",
-              transform: "translateY(-50%)",
-              backgroundColor: getColorByType(
-                matchingInput?.type.toLowerCase()
-              ),
-              width: "8px",
-              height: "8px",
-            }}
-          />
+          <div className="relative">
+            <Handle
+              type="target"
+              position={Position.Left}
+              id={`input-${field.name}-${matchingInput?.type || "any"}`}
+              style={{
+                zIndex: 10,
+                border: "none",
+                left: "-15.3px",
+                backgroundColor: "transparent",
+              }}
+            />
+
+            <div
+              className="w-2 h-2 -left-[16.5px] -top-[4.5px] rounded-full rotate-45 absolute border-opacity-50"
+              style={{
+                backgroundColor: getColorByType(
+                  matchingInput?.type.toLowerCase()
+                ),
+
+                borderColor: "black",
+                borderWidth: "1px",
+              }}
+            ></div>
+          </div>
         )}
         <Input
           ref={inputRef}
