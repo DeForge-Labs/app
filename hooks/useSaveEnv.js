@@ -34,7 +34,7 @@ export default function useSaveEnv() {
 
       setValue("");
 
-      toast.success("Environment saved successfully");
+      toast.success(response.data.message);
       setIsOpen(false);
       return response.data;
     } catch (error) {

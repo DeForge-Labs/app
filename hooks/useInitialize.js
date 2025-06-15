@@ -13,6 +13,7 @@ import {
   setTeam as setTeamWorkflow,
   setIsLogInitializing,
   setLogs,
+  setSelectedNode,
 } from "@/redux/slice/WorkflowSlice";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -193,6 +194,7 @@ export default function useInitialize() {
   const loadWorkflowById = async (workflowId) => {
     try {
       dispatch(setWorkflowInitializing(true));
+      dispatch(setSelectedNode(null));
       const headers = {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       };
