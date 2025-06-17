@@ -15,6 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@heroui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { removeNewLog } from "@/redux/slice/WorkflowSlice";
+import JsonViewer from "./JSONViewer";
+import LogViewer from "./LogViewer";
 
 export default function ExecutionLogsPanel() {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -197,36 +199,9 @@ export default function ExecutionLogsPanel() {
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-3">
-                  <h3 className="text-sm font-medium mb-2">Logs</h3>
-                  <div className="border rounded-md p-2 bg-muted/30 text-xs font-mono">
-                    {execution.logs.map((log, index) => (
-                      <div key={index} className="py-1">
-                        <span className="text-muted-foreground">
-                          [{new Date(log.time).toLocaleTimeString()}]
-                        </span>{" "}
-                        <span
-                          className={
-                            log.level === "success"
-                              ? "text-green-500"
-                              : log.level === "error"
-                              ? "text-red-500"
-                              : ""
-                          }
-                        >
-                          {log.message}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                  <LogViewer logs={execution.logs} />
 
-                  <h3 className="text-sm font-medium mb-2 mt-3">Result</h3>
-                  <Card className="bg-muted/30">
-                    <CardContent className="p-3">
-                      <pre className="text-xs overflow-x-auto">
-                        {JSON.stringify(execution.result, null, 2)}
-                      </pre>
-                    </CardContent>
-                  </Card>
+                  <JsonViewer data={execution.result} />
                 </div>
               </>
             ) : (
