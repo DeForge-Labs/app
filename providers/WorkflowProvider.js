@@ -24,23 +24,23 @@ export default function WorkflowProvider({ children, params }) {
   }, []);
 
   // Load workflow when user, params, and nodeRegistry are available
-  // useEffect(() => {
-  //   if (user && nodeRegistry && nodeRegistry.length > 0) {
-  //     if (!params?.value) return;
+  useEffect(() => {
+    if (user && nodeRegistry && nodeRegistry.length > 0) {
+      if (!params?.value) return;
 
-  //     try {
-  //       const parsedValue = JSON.parse(params.value);
-  //       const id = parsedValue.id;
-  //       if (!id) return;
+      try {
+        const parsedValue = JSON.parse(params.value);
+        const id = parsedValue.id;
+        if (!id) return;
 
-  //       loadWorkflowById(id);
-  //       loadLogs(id);
-  //       initializeWebSocket();
-  //     } catch (error) {
-  //       console.error("Error parsing params value:", error);
-  //     }
-  //   }
-  // }, [user, params, nodeRegistry]);
+        loadWorkflowById(id);
+        loadLogs(id);
+        initializeWebSocket();
+      } catch (error) {
+        console.error("Error parsing params value:", error);
+      }
+    }
+  }, [user, params, nodeRegistry]);
 
   // Handle workflow subscription with proper cleanup
   useEffect(() => {
