@@ -32,7 +32,16 @@ export default function LoginForm() {
 
   if (isOTPWindow) {
     return (
-      <>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (isSignUp) {
+            verifySignUp(email, otp, username, setIsVerifying);
+          } else {
+            verifyLogin(email, otp, setIsVerifying);
+          }
+        }}
+      >
         {isSignUp && (
           <>
             <p className="mt-5 text-sm">What should we call you?</p>
@@ -90,13 +99,7 @@ export default function LoginForm() {
         <div className="mt-1 flex w-full gap-2">
           <Button
             className="w-full rounded-full p-7"
-            onPress={() => {
-              if (isSignUp) {
-                verifySignUp(email, otp, username, setIsVerifying);
-              } else {
-                verifyLogin(email, otp, setIsVerifying);
-              }
-            }}
+            type="submit"
             isDisabled={isVerifying || isResending}
           >
             {isVerifying ? <Loader2 className="animate-spin" /> : "Verify"}
@@ -104,6 +107,7 @@ export default function LoginForm() {
           <Button
             className="w-full rounded-full p-7 border border-black/40 "
             variant="outline"
+            type="button"
             onPress={() => {
               resend(email, setIsResending, isSignUp, setTimeout);
             }}
@@ -129,11 +133,21 @@ export default function LoginForm() {
         >
           Not you?
         </div>
-      </>
+      </form>
     );
   } else {
     return (
-      <>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          requestLogin(
+            email,
+            setIsOTPWindow,
+            setIsRequestingLogin,
+            setIsSignUp
+          );
+        }}
+      >
         <p className="mt-5 text-sm">Enter your email to access your account</p>
 
         <Input
@@ -152,14 +166,7 @@ export default function LoginForm() {
         <div className="mt-3 flex w-full gap-2">
           <Button
             className="w-full rounded-full p-7"
-            onPress={() => {
-              requestLogin(
-                email,
-                setIsOTPWindow,
-                setIsRequestingLogin,
-                setIsSignUp
-              );
-            }}
+            type="submit"
             isDisabled={isRequestingLogin}
           >
             {isRequestingLogin ? (
@@ -169,7 +176,7 @@ export default function LoginForm() {
             )}
           </Button>
         </div>
-      </>
+      </form>
     );
   }
 }

@@ -20,16 +20,22 @@ export default function TemplateBody() {
     return <TemplateLoading />;
   }
 
-  const createdDate = new Date(template.createdAt).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-  const updatedDate = new Date(template.updatedAt).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const createdDate = new Date(template?.createdAt).toLocaleDateString(
+    "en-US",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }
+  );
+  const updatedDate = new Date(template?.updatedAt).toLocaleDateString(
+    "en-US",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }
+  );
 
   return (
     <main className="container mx-auto py-6">
@@ -53,21 +59,21 @@ export default function TemplateBody() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Chip className="rounded-lg text-xs text-background bg-black/70">
-                  <span className="font-medium">{template.category}</span>
+                  <span className="font-medium">{template?.category}</span>
                 </Chip>
               </div>
               <h1 className="text-3xl md:text-4xl font-bold">
-                {template.name}
+                {template?.name}
               </h1>
               <p className="text-lg text-muted-foreground">
-                {template.description}
+                {template?.description}
               </p>
             </div>
 
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4" />
-                <span>{template.author}</span>
+                <span>{template?.author}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
@@ -96,7 +102,7 @@ export default function TemplateBody() {
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold">Tags</h2>
             <div className="flex flex-wrap gap-2">
-              {template.tags.map((tag) => (
+              {template?.tags?.map((tag) => (
                 <Chip
                   key={tag}
                   className="rounded-lg text-xs text-black/70 bg-black/10"
@@ -133,9 +139,9 @@ export default function TemplateBody() {
                 <User className="h-4 w-4" />
               </div>
               <div>
-                <p className="font-medium">{template.author}</p>
+                <p className="font-medium">{template?.author}</p>
                 <p className="text-sm text-muted-foreground">
-                  {template.author === "Team Deforge"
+                  {template?.author === "Team Deforge"
                     ? "Core Team"
                     : "Community Member"}
                 </p>
@@ -149,7 +155,9 @@ export default function TemplateBody() {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Category</span>
-                <span className="text-sm font-medium">{template.category}</span>
+                <span className="text-sm font-medium">
+                  {template?.category}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Created</span>
