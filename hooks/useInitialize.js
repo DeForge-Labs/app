@@ -34,10 +34,10 @@ export default function useInitialize() {
   const router = useRouter();
   const { getEnv } = useEnv();
 
-  const loadUser = async (force = true) => {
+  const loadUser = async (force = true, token = null) => {
     try {
       const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token || localStorage.getItem("token")}`,
       };
 
       const response = await axios.post(

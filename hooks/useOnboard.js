@@ -3,10 +3,12 @@ import { toast } from "sonner";
 import { z } from "zod";
 import useTeams from "./useTeams";
 import { useRouter } from "next/navigation";
+import useInitialize from "./useInitialize";
 
 export default function useOnboard() {
   const { getTeams } = useTeams();
   const router = useRouter();
+  const { loadUser } = useInitialize();
 
   const requestLogin = async (
     email,
@@ -64,6 +66,8 @@ export default function useOnboard() {
 
         localStorage.setItem("token", response.data.token);
 
+        await loadUser(false, response.data.token);
+
         try {
           const teams = await getTeams();
           if (teams.length === 0) {
@@ -113,6 +117,8 @@ export default function useOnboard() {
         toast.success("Sign up successful");
 
         localStorage.setItem("token", response.data.token);
+
+        await loadUser(false, response.data.token);
 
         router.push("/team/create");
       } else {

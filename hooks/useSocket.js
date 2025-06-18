@@ -19,18 +19,15 @@ export default function useSocket() {
 
     const token = `Bearer ${localStorage.getItem("token")}`;
 
-    const websocket = io(
-      process.env.NEXT_PUBLIC_API_URL.split("/api")[0] + "/",
-      {
-        reconnection: true,
-        reconnectionAttempts: 5,
-        reconnectionDelay: 1000,
-        reconnectionDelayMax: 5000,
-        timeout: 20000,
-        auth: { token },
-        transports: ["websocket", "polling"],
-      }
-    );
+    const websocket = io(process.env.NEXT_PUBLIC_API_URL.slice(0, -4) + "/", {
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      timeout: 20000,
+      auth: { token },
+      transports: ["websocket", "polling"],
+    });
 
     setSocket(websocket);
 
