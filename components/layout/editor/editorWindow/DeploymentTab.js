@@ -27,7 +27,7 @@ export default function DeploymentTab() {
   const isRunning = useSelector((state) => state.run.isRunning);
   const type = useSelector((state) => state.run.type);
 
-  const rawUrl = process.env.NEXT_PUBLIC_API_URL.split("/api")[0];
+  const rawUrl = process.env.NEXT_PUBLIC_API_URL.slice(0, -4);
 
   const { handleTest, handleRun, handleRunLive } = useExecution();
 

@@ -15,7 +15,7 @@ export default function EditorWindow() {
   return (
     <div className="flex flex-1">
       {paneLeft && (
-        <div className="w-80 border-r bg-black/5 border-black/50 relative overflow-y-auto hide-scroll">
+        <div className="lg:w-80 w-64 border-r bg-black/5 border-black/50 relative overflow-y-auto hide-scroll">
           <NodeMenu />
         </div>
       )}
@@ -28,7 +28,7 @@ export default function EditorWindow() {
       </div>
 
       {paneRight && (
-        <div className="w-80 border-l bg-black/5 border-black/50 relative overflow-y-auto hide-scroll">
+        <div className="lg:w-80 w-64 border-l bg-black/5 border-black/50 relative overflow-y-auto hide-scroll">
           <CustomizerPanel />
         </div>
       )}

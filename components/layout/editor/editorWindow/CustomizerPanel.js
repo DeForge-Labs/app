@@ -2,10 +2,10 @@
 
 import { useDispatch, useSelector } from "react-redux";
 import { updateNodeData, deleteEdge } from "@/redux/slice/WorkflowSlice";
-import { Input } from "@heroui/react";
+import { Button } from "@heroui/react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lock } from "lucide-react";
+import { Lock, StickyNote } from "lucide-react";
 import { getNodeTypeByType, isArrayType } from "@/lib/node-registry";
 import { useEffect, useState } from "react";
 import EnvField from "./nodes/customizer/EnvField";
@@ -138,26 +138,29 @@ export default function CustomizerPanel() {
       </div>
       <Card className="border-black/50">
         <CardHeader className="p-4 pb-2">
-          <CardTitle className="text-sm flex items-center">
-            {nodeType.reactIcon && (
-              <span className="mr-2">{nodeType.reactIcon}</span>
-            )}
+          <CardTitle className="text-sm flex flex-col gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              className="border border-black/50 text-xs"
+              onPress={() =>
+                window.open(
+                  "https://docs.deforge.io/docs/nodes/" + nodeType.type,
+                  "_blank"
+                )
+              }
+            >
+              <StickyNote className="h-3 w-3" />
+              Docs
+            </Button>
+
             {nodeType.title}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 pt-0">
           <div className="space-y-4">
             {/* Node label */}
-            <div className="space-y-2">
-              <div className="text-sm font-medium">Label</div>
-              <Input
-                id="label"
-                value={selectedNode.data.label || ""}
-                onChange={() => {}}
-                variant="outline"
-                className="border-black/50 border rounded-lg"
-              />
-
+            <div className="-mt-1">
               <div className="text-[10px]">{nodeType.desc}</div>
             </div>
 
