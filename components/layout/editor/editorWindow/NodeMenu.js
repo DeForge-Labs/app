@@ -83,6 +83,8 @@ export default function NodeMenu() {
         onChange={(e) => setSearchTerm(e.target.value)}
         className=" border border-black/50 rounded-lg w-full"
         variant="outline"
+        isClearable
+        onClear={() => setSearchTerm("")}
       />
 
       <div className="space-y-2">

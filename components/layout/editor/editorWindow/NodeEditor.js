@@ -18,6 +18,8 @@ import {
   deleteNode,
   duplicateNode,
   deleteEdge,
+  setSelectedHandle,
+  setSelectedNodeId,
 } from "@/redux/slice/WorkflowSlice";
 import { getNodeTypeByType } from "@/lib/node-registry";
 import NodeContextMenu from "./NodeContextMenu";
@@ -37,9 +39,6 @@ function Flow() {
   const workflow = useSelector((state) => state.workflow?.workflow || null);
 
   const { project } = useReactFlow();
-  // const nodeRegistry = useSelector(
-  //   (state) => state.library?.nodeRegistry || []
-  // );
 
   // Context menu state for nodes
   const [nodeContextMenu, setNodeContextMenu] = useState({
@@ -65,72 +64,75 @@ function Flow() {
     edgeId: null,
   });
 
-  // Validate connection types
-  const isValidConnection = (connection) => {
-    if (workflow?.status === "LIVE") {
-      return false;
-    }
+  // Move isValidConnection inside the component to access latest edges
+  const isValidConnection = useCallback(
+    (connection) => {
+      if (workflow?.status === "LIVE") {
+        return false;
+      }
 
-    // Get source and target nodes
-    const sourceNode = nodes.find((node) => node.id === connection.source);
-    const targetNode = nodes.find((node) => node.id === connection.target);
+      // Get source and target nodes
+      const sourceNode = nodes.find((node) => node.id === connection.source);
+      const targetNode = nodes.find((node) => node.id === connection.target);
 
-    if (!sourceNode || !targetNode) return false;
+      if (connection.source === connection.target) {
+        return false;
+      }
 
-    // Get node type definitions
-    const sourceNodeType = getNodeTypeByType(sourceNode.type, nodeRegistry);
-    const targetNodeType = getNodeTypeByType(targetNode.type, nodeRegistry);
+      if (!sourceNode || !targetNode) return false;
 
-    if (!sourceNodeType || !targetNodeType) return false;
+      // Get node type definitions
+      const sourceNodeType = getNodeTypeByType(sourceNode.type, nodeRegistry);
+      const targetNodeType = getNodeTypeByType(targetNode.type, nodeRegistry);
 
-    // Extract output and input types from the handle IDs
-    const sourceHandleParts = connection.sourceHandle?.split("-") || [];
-    const targetHandleParts = connection.targetHandle?.split("-") || [];
+      if (!sourceNodeType || !targetNodeType) return false;
 
-    if (sourceHandleParts.length < 3 || targetHandleParts.length < 3)
-      return false;
+      // Extract output and input types from the handle IDs
+      const sourceHandleParts = connection.sourceHandle?.split("-") || [];
+      const targetHandleParts = connection.targetHandle?.split("-") || [];
 
-    // Get the output and input types
-    // Format is "output-name-type" or "input-name-type"
-    const outputType = sourceHandleParts[sourceHandleParts.length - 1];
-    const inputType = targetHandleParts[targetHandleParts.length - 1];
+      if (sourceHandleParts.length < 3 || targetHandleParts.length < 3)
+        return false;
 
-    const isArrayInput = inputType.endsWith("[]");
+      // Get the output and input types
+      // Format is "output-name-type" or "input-name-type"
+      const outputType = sourceHandleParts[sourceHandleParts.length - 1];
+      const inputType = targetHandleParts[targetHandleParts.length - 1];
 
-    // Check if the target handle already has a connection
-    const targetHandleAlreadyConnected = edges.some(
-      (edge) =>
-        edge.target === connection.target &&
-        edge.targetHandle === connection.targetHandle
-    );
+      const isArrayInput = inputType.endsWith("[]");
 
-    if (targetHandleAlreadyConnected && !isArrayInput) {
-      // Show a notification to the user
-      // toast({
-      //   title: "Connection not allowed",
-      //   description: "This input already has a connection. Remove the existing connection first.",
-      //   variant: "destructive",
-      // })
-      return false;
-    }
-
-    // Check if types are compatible
-    // For now, we'll consider exact matches and 'any' type as compatible
-    if (isArrayInput) {
-      // For array inputs, check if the output type matches the array element type
-      const arrayElementType = inputType.slice(0, -2); // Remove the [] suffix
-      return (
-        outputType === arrayElementType ||
-        outputType === "Any" ||
-        arrayElementType === "Any"
+      // Check if the target handle already has a connection - now using latest edges
+      const targetHandleAlreadyConnected = edges.some(
+        (edge) =>
+          edge.target === connection.target &&
+          edge.targetHandle === connection.targetHandle
       );
-    } else {
-      // For non-array inputs, check exact match or 'any' type
-      return (
-        outputType === inputType || outputType === "Any" || inputType === "Any"
-      );
-    }
-  };
+
+      if (targetHandleAlreadyConnected && !isArrayInput) {
+        return false;
+      }
+
+      // Check if types are compatible
+      // For now, we'll consider exact matches and 'any' type as compatible
+      if (isArrayInput) {
+        // For array inputs, check if the output type matches the array element type
+        const arrayElementType = inputType.slice(0, -2); // Remove the [] suffix
+        return (
+          outputType === arrayElementType ||
+          outputType === "Any" ||
+          arrayElementType === "Any"
+        );
+      } else {
+        // For non-array inputs, check exact match or 'any' type
+        return (
+          outputType === inputType ||
+          outputType === "Any" ||
+          inputType === "Any"
+        );
+      }
+    },
+    [edges, nodes, nodeRegistry, workflow]
+  );
 
   const onConnect = useCallback(
     (connection) => {
@@ -142,12 +144,22 @@ function Flow() {
         // Optionally show a notification to the user
       }
     },
-    [dispatch, nodes]
+    [dispatch, isValidConnection]
   );
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
+  }, []);
+
+  const onConnectStart = useCallback((event, connection) => {
+    dispatch(setSelectedHandle(connection.handleId));
+    dispatch(setSelectedNodeId(connection.nodeId));
+  }, []);
+
+  const onConnectEnd = useCallback((event) => {
+    dispatch(setSelectedHandle(null));
+    dispatch(setSelectedNodeId(null));
   }, []);
 
   const onDrop = useCallback(
@@ -323,6 +335,8 @@ function Flow() {
           onNodeClick={onNodeClick}
           onNodeContextMenu={onNodeContextMenu}
           onEdgeContextMenu={onEdgeContextMenu}
+          onConnectStart={onConnectStart}
+          onConnectEnd={onConnectEnd}
           onPaneClick={onPaneClick}
           nodeTypes={nodeTypes}
           nodesDraggable={workflow?.status !== "LIVE"}

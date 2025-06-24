@@ -73,3 +73,17 @@ body {
     stroke-dashoffset: 36000;
   }
 }
+
+@keyframes ping-rotated {
+  75%, 100% {
+    transform: rotate(45deg) scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-ping-rotated {
+  animation: ping-rotated 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+
+

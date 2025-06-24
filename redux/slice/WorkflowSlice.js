@@ -15,6 +15,8 @@ const initialState = {
   isLogInitializing: true,
   team: null,
   selectedNode: null,
+  selectedHandle: null,
+  selectedNodeId: null,
   hasUnsavedChanges: false,
   lastSavedState: null,
   paneLeft: true,
@@ -73,6 +75,14 @@ const workflowSlice = createSlice({
       state.newLogs = state.newLogs.filter(
         (log) => log.id !== action.payload.id
       );
+    },
+
+    setSelectedHandle: (state, action) => {
+      state.selectedHandle = action.payload;
+    },
+
+    setSelectedNodeId: (state, action) => {
+      state.selectedNodeId = action.payload;
     },
 
     // New actions for the node editor
@@ -479,6 +489,8 @@ export const {
 
   // New actions
   setSelectedNode,
+  setSelectedHandle,
+  setSelectedNodeId,
   onNodesChange,
   onEdgesChange,
   addNode,

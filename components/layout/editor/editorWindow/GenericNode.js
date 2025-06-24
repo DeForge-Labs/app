@@ -30,11 +30,14 @@ export function GenericNode({ id, type, data }) {
   const dispatch = useDispatch();
   const edges = useEdges();
   const [connectedInputs, setConnectedInputs] = useState(new Set());
+  const [connectedOutputs, setConnectedOutputs] = useState(new Set());
   const [totalConnectedInputs, setTotalConnectedInputs] = useState([]);
+  const [totalConnectedOutputs, setTotalConnectedOutputs] = useState([]);
   const nodeRegistry =
     useSelector((state) => state.library?.nodeRegistry) || [];
 
   const workflow = useSelector((state) => state.workflow?.workflow || null);
+  const selectedNodeId = useSelector((state) => state.workflow?.selectedNodeId);
 
   // Get the node type definition
   const nodeType = getNodeTypeByType(type, nodeRegistry);
@@ -62,6 +65,27 @@ export function GenericNode({ id, type, data }) {
 
     setTotalConnectedInputs(totalConnected);
     setConnectedInputs(connected);
+  }, [edges, id]);
+
+  useEffect(() => {
+    const connected = new Set();
+    const totalConnected = [];
+    edges.forEach((edge) => {
+      if (edge.source === id) {
+        // Extract the output name from the handle ID
+        const outputName = edge.sourceHandle?.split("-")[1];
+        const targetName = edge.targetHandle?.split("-")[2];
+        if (targetName) {
+          totalConnected.push(targetName);
+        }
+        if (outputName) {
+          connected.add(outputName);
+        }
+      }
+    });
+
+    setConnectedOutputs(connected);
+    setTotalConnectedOutputs(totalConnected);
   }, [edges, id]);
 
   const handleChange = useCallback(
@@ -127,6 +151,8 @@ export function GenericNode({ id, type, data }) {
             currentValue={currentValue}
             handleChange={handleChange}
             matchingInput={matchingInput}
+            isConnected={isConnected}
+            isSameNode={selectedNodeId === id}
           />
         );
 
@@ -141,6 +167,8 @@ export function GenericNode({ id, type, data }) {
             currentValue={currentValue}
             handleChange={handleChange}
             matchingInput={matchingInput}
+            isConnected={isConnected}
+            isSameNode={selectedNodeId === id}
           />
         );
 
@@ -155,6 +183,8 @@ export function GenericNode({ id, type, data }) {
             currentValue={currentValue}
             handleChange={handleChange}
             matchingInput={matchingInput}
+            isConnected={isConnected}
+            isSameNode={selectedNodeId === id}
           />
         );
 
@@ -184,6 +214,7 @@ export function GenericNode({ id, type, data }) {
             matchingInput={matchingInput}
             totalValidConnections={totalValidConnections}
             isArrayInput={isArrayInput}
+            isSameNode={selectedNodeId === id}
           />
         );
 
@@ -200,6 +231,7 @@ export function GenericNode({ id, type, data }) {
             matchingInput={matchingInput}
             totalValidConnections={totalValidConnections}
             isArrayInput={isArrayInput}
+            isSameNode={selectedNodeId === id}
           />
         );
 
@@ -214,6 +246,8 @@ export function GenericNode({ id, type, data }) {
             currentValue={currentValue}
             handleChange={handleChange}
             matchingInput={matchingInput}
+            isConnected={isConnected}
+            isSameNode={selectedNodeId === id}
           />
         );
 
@@ -228,6 +262,8 @@ export function GenericNode({ id, type, data }) {
             currentValue={currentValue}
             handleChange={handleChange}
             matchingInput={matchingInput}
+            isConnected={isConnected}
+            isSameNode={selectedNodeId === id}
           />
         );
 
@@ -241,7 +277,9 @@ export function GenericNode({ id, type, data }) {
             isDisabled={isDisabled}
             currentValue={currentValue}
             handleChange={handleChange}
+            isConnected={isConnected}
             matchingInput={matchingInput}
+            isSameNode={selectedNodeId === id}
           />
         );
 
@@ -256,6 +294,8 @@ export function GenericNode({ id, type, data }) {
             currentValue={currentValue}
             handleChange={handleChange}
             matchingInput={matchingInput}
+            isConnected={isConnected}
+            isSameNode={selectedNodeId === id}
           />
         );
 
@@ -266,38 +306,66 @@ export function GenericNode({ id, type, data }) {
 
   // Render output handles
   const renderOutputs = (outputs) => {
-    return outputs.map((output, index) => (
-      <div key={output.name} className="mb-2 relative">
-        <div className="text-xs font-medium text-right capitalize">
-          {output.name}
-        </div>
-        <div className="flex items-center relative">
-          <Handle
-            type="source"
-            position={Position.Right}
-            id={`output-${output.name}-${output.type}`}
-            className=""
-            style={{
-              right: "-15.3px",
-              top: "-8px",
-              zIndex: 10,
-              backgroundColor: "transparent",
-              border: "none",
-            }}
-            data-type={output.type}
-          ></Handle>
+    const selectedHandle = useSelector(
+      (state) => state.workflow?.selectedHandle
+    );
+    const isSameNode = selectedNodeId === id;
 
-          <div
-            className="w-2 h-2 -right-[16.5px] -top-[12px] rounded-none rotate-45 absolute border-opacity-50"
-            style={{
-              backgroundColor: getColorByType(output.type.toLowerCase()),
-              borderColor: "black",
-              borderWidth: "1px",
-            }}
-          ></div>
+    return outputs.map((output, index) => {
+      return (
+        <div key={output.name} className="mb-2 relative">
+          <div className="text-xs font-medium text-right capitalize">
+            {output.name}
+          </div>
+          <div className="flex items-center relative">
+            <Handle
+              type="source"
+              position={Position.Right}
+              id={`output-${output.name}-${output.type}`}
+              className=""
+              style={{
+                right: "-15.3px",
+                top: "-8px",
+                zIndex: 10,
+                backgroundColor: "transparent",
+                border: "none",
+              }}
+              data-type={output.type}
+            ></Handle>
+
+            <div
+              className={`w-2 h-2 -right-[16.5px] -top-[12px] rounded-none rotate-45 absolute border-opacity-50 ${
+                selectedHandle?.split("-")[0] === "input" &&
+                selectedHandle?.split("-")[2]?.toLowerCase() ===
+                  (output?.type.toLowerCase() || "any") &&
+                !isSameNode
+                  ? "animate-ping-rotated"
+                  : ""
+              }`}
+              style={{
+                backgroundColor: getColorByType(output.type.toLowerCase()),
+                borderColor: "black",
+                borderWidth: "1px",
+              }}
+            ></div>
+
+            {selectedHandle?.split("-")[0] === "input" &&
+              selectedHandle?.split("-")[2]?.toLowerCase() ===
+                (output?.type.toLowerCase() || "any") &&
+              !isSameNode && (
+                <div
+                  className={`w-2 h-2 -right-[16.5px] -top-[12px] rounded-none rotate-45 absolute border-opacity-50`}
+                  style={{
+                    backgroundColor: getColorByType(output?.type.toLowerCase()),
+                    borderColor: "black",
+                    borderWidth: "1px",
+                  }}
+                ></div>
+              )}
+          </div>
         </div>
-      </div>
-    ));
+      );
+    });
   };
 
   // Render standalone inputs (inputs that don't have corresponding fields)
@@ -312,6 +380,7 @@ export function GenericNode({ id, type, data }) {
           input={input}
           categoryColor={categoryColor}
           connectedInputs={connectedInputs}
+          isConnected={connectedInputs.has(input.name)}
         />
       ));
   };

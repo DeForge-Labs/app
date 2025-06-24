@@ -3,6 +3,7 @@ import { Handle, Position } from "reactflow";
 import { Input } from "@heroui/react";
 import { useRef, useEffect } from "react";
 import getColorByType from "@/lib/color-profile";
+import { useSelector } from "react-redux";
 
 export default function TextField({
   field,
@@ -11,9 +12,12 @@ export default function TextField({
   currentValue,
   handleChange,
   matchingInput,
+  isConnected,
+  isSameNode,
 }) {
   const inputRef = useRef(null);
   const cursorPositionRef = useRef(null);
+  const selectedHandle = useSelector((state) => state.workflow?.selectedHandle);
 
   // Store cursor position before re-render
   const handleInputChange = (e) => {
@@ -56,7 +60,15 @@ export default function TextField({
             />
 
             <div
-              className="w-2 h-2 -left-[16.5px] -top-[4.5px] rounded-full rotate-45 absolute border-opacity-50"
+              className={`w-2 h-2 -left-[16.5px] -top-[4.5px] rounded-full rotate-45 absolute border-opacity-50 ${
+                selectedHandle?.split("-")[0] === "output" &&
+                selectedHandle?.split("-")[2]?.toLowerCase() ===
+                  (matchingInput?.type.toLowerCase() || "Any") &&
+                !isConnected &&
+                !isSameNode
+                  ? "animate-ping"
+                  : ""
+              }`}
               style={{
                 backgroundColor: getColorByType(
                   matchingInput?.type.toLowerCase()
@@ -66,6 +78,23 @@ export default function TextField({
                 borderWidth: "1px",
               }}
             ></div>
+
+            {selectedHandle?.split("-")[0] === "output" &&
+              selectedHandle?.split("-")[2]?.toLowerCase() ===
+                (matchingInput?.type.toLowerCase() || "any") &&
+              !isConnected &&
+              !isSameNode && (
+                <div
+                  className={`w-2 h-2 -left-[16.5px] -top-[4.5px] rounded-full rotate-45 absolute border-opacity-50 `}
+                  style={{
+                    backgroundColor: getColorByType(
+                      matchingInput?.type.toLowerCase()
+                    ),
+                    borderColor: "black",
+                    borderWidth: "1px",
+                  }}
+                ></div>
+              )}
           </div>
         )}
         <Input
