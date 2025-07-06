@@ -28,11 +28,13 @@ import {
   setTemplate,
   setTemplates,
 } from "@/redux/slice/templateSlice";
+import useSocial from "./useSocial";
 
 export default function useInitialize() {
   const dispatch = useDispatch();
   const router = useRouter();
   const { getEnv } = useEnv();
+  const { getSocial } = useSocial();
 
   const loadUser = async (force = true, token = null) => {
     try {
@@ -218,6 +220,8 @@ export default function useInitialize() {
         );
 
         await getEnv(workflowId);
+
+        await getSocial(workflowId);
 
         dispatch(setTeamWorkflow(response.data.workflow.team));
       } else {

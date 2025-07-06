@@ -22,6 +22,7 @@ const initialState = {
   paneLeft: true,
   paneRight: true,
   workflowEnv: null,
+  workflowSocial: null,
   panel: 1,
 };
 
@@ -65,6 +66,10 @@ const workflowSlice = createSlice({
     },
     setIsLogInitializing: (state, action) => {
       state.isLogInitializing = action.payload;
+    },
+
+    setWorkflowSocial: (state, action) => {
+      state.workflowSocial = action.payload;
     },
 
     addNewLog: (state, action) => {
@@ -486,6 +491,7 @@ export const {
   setIsLogInitializing,
   addNewLog,
   removeNewLog,
+  setWorkflowSocial,
 
   // New actions
   setSelectedNode,

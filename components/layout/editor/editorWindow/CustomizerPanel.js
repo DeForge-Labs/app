@@ -20,6 +20,7 @@ import OutputField from "./nodes/customizer/OutputField";
 import CheckBoxField from "./nodes/customizer/CheckBoxField";
 import DateTimeField from "./nodes/customizer/DateTimeField";
 import SliderField from "./nodes/customizer/SliderField";
+import SocialField from "./nodes/customizer/SocialField";
 
 export default function CustomizerPanel() {
   const dispatch = useDispatch();
@@ -373,6 +374,24 @@ export default function CustomizerPanel() {
           </CardContent>
         </Card>
       )}
+
+      {nodeType.fields.some((field) => field.type === "social") && (
+        <Card className="border border-black/50 shadow-none">
+          <CardHeader className="p-4 pb-0">
+            <CardTitle className="text-sm">Connections</CardTitle>
+          </CardHeader>
+          <CardContent className="p-4">
+            {nodeType.fields.map((field, index) => {
+              return (
+                field.type === "social" && (
+                  <SocialField key={index} field={field} />
+                )
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
+
       {nodeType.outputs.length > 0 && (
         <Card className="border border-black/50 shadow-none">
           <CardContent className="p-4 pt-0 ">

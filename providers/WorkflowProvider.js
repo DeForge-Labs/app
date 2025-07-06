@@ -4,8 +4,9 @@ import { useSelector } from "react-redux";
 import useInitialize from "@/hooks/useInitialize";
 import useLibrary from "@/hooks/useLibrary";
 import useSocket from "@/hooks/useSocket";
+import { useParams } from "next/navigation";
 
-export default function WorkflowProvider({ children, params }) {
+export default function WorkflowProvider({ children }) {
   const user = useSelector((state) => state.user.user);
   const nodeRegistry = useSelector((state) => state.library.nodeRegistry);
   const { loadWorkflowById, loadLogs } = useInitialize();
@@ -17,6 +18,7 @@ export default function WorkflowProvider({ children, params }) {
     unsubscribeFromWorkflow,
     socket,
   } = useSocket();
+  const params = useParams();
 
   // Load node registry once on component mount
   useEffect(() => {
@@ -26,11 +28,10 @@ export default function WorkflowProvider({ children, params }) {
   // Load workflow when user, params, and nodeRegistry are available
   useEffect(() => {
     if (user && nodeRegistry && nodeRegistry.length > 0) {
-      if (!params?.value) return;
+      if (!params?.id) return;
 
       try {
-        const parsedValue = JSON.parse(params.value);
-        const id = parsedValue.id;
+        const id = params.id;
         if (!id) return;
 
         loadWorkflowById(id);
@@ -40,7 +41,7 @@ export default function WorkflowProvider({ children, params }) {
         console.error("Error parsing params value:", error);
       }
     }
-  }, [user, params, nodeRegistry]);
+  }, [user, params?.id, nodeRegistry]);
 
   // Handle workflow subscription with proper cleanup
   useEffect(() => {

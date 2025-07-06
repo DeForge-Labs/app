@@ -10,7 +10,7 @@ import {
   getCategoryColor,
   isArrayType,
 } from "@/lib/node-registry";
-import { FileWarning } from "lucide-react";
+import { FileWarning, Link2 } from "lucide-react";
 import getColorByType from "@/lib/color-profile";
 import { useSelector } from "react-redux";
 import { Lock } from "lucide-react";
@@ -418,6 +418,17 @@ export function GenericNode({ id, type, data }) {
           {/* Render fields with their handles */}
           {nodeType.fields.map(renderField)}
         </div>
+
+        {/* Render Connection Warning */}
+        {nodeType.fields.some((field) => field.type === "social") && (
+          <div className="text-xs text-blue-500 flex pb-2">
+            <Link2 className="mr-2 h-7 w-7" />
+            <span className="text-xs w-fit">
+              This Node requires Connections, Select this node to customize its
+              properties
+            </span>
+          </div>
+        )}
 
         {/* Render Environment Warning */}
         {nodeType.fields.some((field) => field.type === "env") && (
