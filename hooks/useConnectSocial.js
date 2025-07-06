@@ -195,6 +195,8 @@ export default function useConnectSocial() {
 
       await getSocial(workflow?.id);
 
+      setIsOpen(false);
+
       toast.success(`Successfully disconnected from ${key}!`);
 
       return response.data.social;
