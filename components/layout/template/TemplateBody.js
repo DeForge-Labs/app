@@ -42,7 +42,7 @@ export default function TemplateBody() {
       <Button
         variant="outline"
         size="md"
-        className="border border-black/50 h-9 rounded-lg text-black/80 text-xs"
+        className="border border-black/50 h-9 rounded-lg text-black/80 text-xs dark:text-background dark:border-background dark:hover:bg-background dark:hover:text-black"
         onPress={() => {
           router.push("/templates");
         }}
@@ -51,21 +51,21 @@ export default function TemplateBody() {
         Back to Templates
       </Button>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-6 dark:text-background">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
           {/* Template Header */}
           <div className="space-y-6">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <Chip className="rounded-lg text-xs text-background bg-black/70">
+                <Chip className="rounded-lg text-xs text-background bg-black/70 dark:bg-background dark:text-black">
                   <span className="font-medium">{template?.category}</span>
                 </Chip>
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold">
+              <h1 className="text-3xl md:text-4xl font-bold dark:text-background">
                 {template?.name}
               </h1>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-muted-foreground dark:text-background">
                 {template?.description}
               </p>
             </div>
@@ -85,7 +85,7 @@ export default function TemplateBody() {
           {/* Template Preview */}
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold">Template Preview</h2>
-            <div className="aspect-video bg-muted rounded-lg overflow-hidden border border-black/30">
+            <div className="aspect-video bg-muted rounded-lg overflow-hidden border border-black/30 dark:border-background">
               <NodeVisualizer
                 nodes={template?.workflow?.nodes}
                 edges={template?.workflow?.edges}
@@ -105,7 +105,7 @@ export default function TemplateBody() {
               {template?.tags?.map((tag) => (
                 <Chip
                   key={tag}
-                  className="rounded-lg text-xs text-black/70 bg-black/10"
+                  className="rounded-lg text-xs text-black/70 bg-black/10 dark:text-background dark:bg-background dark:text-black"
                 >
                   <div className="flex items-center gap-2">
                     <Tag className="h-4 w-4" />
@@ -120,23 +120,23 @@ export default function TemplateBody() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Use Template Card */}
-          <div className="border rounded-lg p-6 space-y-4 border-black/30">
+          <div className="border rounded-lg p-6 space-y-4 border-black/30 dark:border-background ">
             <h3 className="font-semibold">Get This Template</h3>
             <div className="space-y-3">
               <UseTemplateButton />
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground dark:text-background">
               Click the button above to duplicate this template to your team
               workspace and start using it.
             </p>
           </div>
 
           {/* Author Card */}
-          <div className="border rounded-lg p-6 space-y-4 border-black/30">
+          <div className="border rounded-lg p-6 space-y-4 border-black/30 dark:border-background ">
             <h3 className="font-semibold">Created by</h3>
             <div className="flex items-center gap-3">
-              <div className="h-8 w-8  rounded-md flex text-black bg-black/5  items-center justify-center">
-                <User className="h-4 w-4" />
+              <div className="h-8 w-8  rounded-md flex text-black bg-black/5 dark:bg-white/5 items-center justify-center">
+                <User className="h-4 w-4 dark:text-background" />
               </div>
               <div>
                 <p className="font-medium">{template?.author}</p>
@@ -150,24 +150,28 @@ export default function TemplateBody() {
           </div>
 
           {/* Template Info */}
-          <div className="border rounded-lg p-6 space-y-4 border-black/30">
+          <div className="border rounded-lg p-6 space-y-4 border-black/30 dark:border-background ">
             <h3 className="font-semibold">Template Info</h3>
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Category</span>
-                <span className="text-sm font-medium">
+                <span className="text-sm font-medium dark:text-background">
                   {template?.category}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Created</span>
-                <span className="text-sm font-medium">{createdDate}</span>
+                <span className="text-sm font-medium dark:text-background">
+                  {createdDate}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">
                   Last Updated
                 </span>
-                <span className="text-sm font-medium">{updatedDate}</span>
+                <span className="text-sm font-medium dark:text-background">
+                  {updatedDate}
+                </span>
               </div>
             </div>
           </div>
