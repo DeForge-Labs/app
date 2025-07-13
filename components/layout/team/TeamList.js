@@ -36,8 +36,8 @@ export default function TeamList() {
 
   return (
     <>
-      <p className="mt-5 text-sm">Your Teams</p>
-      <div className="h-[350px] relative w-full mt-3 overflow-hidden">
+      <p className="mt-5 text-sm dark:text-background">Your Teams</p>
+      <div className="h-[350px] relative w-full mt-3 overflow-hidden dark:text-background">
         {isFetching ? (
           <div className="flex items-center justify-center h-full">
             <Loader2 className="animate-spin" />
@@ -46,7 +46,7 @@ export default function TeamList() {
           <div className="flex flex-col gap-2 overflow-y-auto h-full hide-scroll">
             {!teams ||
               (teams?.length === 0 && (
-                <p className="flex items-center justify-center h-full text-center text-black/60">
+                <p className="flex items-center justify-center h-full text-center text-black/60 dark:text-background">
                   No teams found
                 </p>
               ))}
@@ -54,19 +54,19 @@ export default function TeamList() {
               teams.map((team) => (
                 <Button
                   key={team.teamId}
-                  className="w-full mb-2 rounded-xl py-9 px-4 border border-black/40 justify-between"
+                  className="w-full mb-2 rounded-xl py-9 px-4 border border-black/40 justify-between dark:border-background dark:text-background"
                   variant="outline"
                   onPress={() => router.push(`/dashboard/${team.teamId}`)}
                 >
                   <div className="flex flex-col items-start">
-                    <p className="font-semibold text-black/80 text-lg">
+                    <p className="font-semibold text-black/80 text-lg dark:text-background">
                       {team.team.name}
                     </p>
-                    <p className="text-black/60 text-xs">
+                    <p className="text-black/60 text-xs dark:text-background">
                       Joined at {new Date(team.joinedAt).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="flex items-center capitalize bg-black/70 p-2 py-1 rounded-md text-xs text-[var(--primary)]">
+                  <div className="flex items-center capitalize bg-black/70 p-2 py-1 rounded-md text-xs text-[var(--primary)] dark:bg-background dark:text-black">
                     {team.role.toLowerCase()}
                   </div>
                 </Button>
@@ -76,7 +76,7 @@ export default function TeamList() {
       </div>
 
       <Button
-        className="w-full mt-3 rounded-full p-7 border border-black/40 "
+        className="w-full mt-3 rounded-full p-7 border border-black/40 dark:border-background dark:text-background"
         variant="outline"
         onPress={() => {
           router.push("/team/create");

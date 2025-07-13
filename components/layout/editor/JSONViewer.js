@@ -163,7 +163,7 @@ export default function JsonViewer({ data, title = "Result" }) {
         <Button
           variant="outline"
           size="sm"
-          className="px-2 h-7 border border-black/50"
+          className="px-2 h-7 border border-black/50 dark:border-background"
           onPress={copyToClipboard}
         >
           {copied ? (

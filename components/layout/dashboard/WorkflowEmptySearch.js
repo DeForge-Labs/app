@@ -5,8 +5,8 @@ import { Button } from "@heroui/react";
 
 export default function WorkflowEmptySearch({ setSearch }) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-center">
-      <div className="rounded-full bg-black/10 p-4 mb-4">
+    <div className="flex flex-col items-center justify-center py-12 text-center dark:text-background">
+      <div className="rounded-full bg-black/10 p-4 mb-4 dark:bg-background">
         <FileLineChartIcon className="h-10 w-10 text-black" />
       </div>
       <h3 className="text-lg font-medium">No workflows found</h3>
@@ -17,7 +17,7 @@ export default function WorkflowEmptySearch({ setSearch }) {
       <Button
         variant="outline"
         size="md"
-        className="bg-black/80 rounded-lg text-background text-xs"
+        className="bg-black/80 rounded-lg text-background text-xs dark:bg-background dark:text-black"
         onPress={() => {
           setSearch("");
         }}

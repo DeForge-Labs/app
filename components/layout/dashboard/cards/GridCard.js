@@ -10,7 +10,7 @@ export default function GridCard({ flow }) {
   const timeAgo = formatDistanceToNow(flow.createdAt, { addSuffix: true });
   const router = useRouter();
   return (
-    <Card className="overflow-hidden text-black/80 transition-all hover:shadow-md bg-transparent shadow-none border border-black/80">
+    <Card className="overflow-hidden text-black/80 transition-all hover:shadow-md bg-transparent shadow-none border border-black/80 dark:border-background dark:text-background">
       <CardHeader className="p-4 pb-2 flex flex-col items-start">
         <div className="flex items-center justify-between">
           <span className="truncate font-bold">{flow.name}</span>
@@ -21,7 +21,7 @@ export default function GridCard({ flow }) {
         </div>
       </CardHeader>
       <CardBody className="p-4 pt-2">
-        <div className="h-32 bg-black/5 rounded-md flex items-center justify-center">
+        <div className="h-32 bg-black/5 dark:bg-white/5 rounded-md flex items-center justify-center">
           <div className="flex flex-col items-center text-muted-foreground">
             <FileLineChartIcon className="h-8 w-8 mb-2" />
             <div className="text-sm">
@@ -34,7 +34,7 @@ export default function GridCard({ flow }) {
         <Button
           variant="outline"
           size="sm"
-          className="border-black/80 border"
+          className="border-black/80 border dark:border-background dark:text-background"
           onPress={() => router.push(`/editor/${flow.id}`)}
         >
           <Edit className="h-3 w-3" />

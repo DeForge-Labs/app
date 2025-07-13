@@ -32,7 +32,7 @@ export default function Members() {
         <Input
           variant="outline"
           placeholder="Search Members"
-          className="w-[350px] shadow-none border-black/50 border rounded-lg"
+          className="w-[350px] shadow-none border-black/50 border rounded-lg dark:border-background dark:text-background"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />

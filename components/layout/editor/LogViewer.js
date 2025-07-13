@@ -60,7 +60,7 @@ const LogViewer = ({ logs, title = "Execution Logs" }) => {
   const renderLogEntry = (entry, index) => (
     <div
       key={index}
-      className="flex items-start gap-2 py-1 border-b border-amber-100 last:border-b-0"
+      className="flex items-start gap-2 py-1 border-b border-amber-300 last:border-b-0 dark:border-amber-100/10"
     >
       <div className="flex items-center gap-2 shrink-0">
         {getLogIcon(entry.level)}
@@ -138,7 +138,7 @@ const LogViewer = ({ logs, title = "Execution Logs" }) => {
         <Button
           variant="outline"
           size="sm"
-          className="px-2 h-7 border border-black/50"
+          className="px-2 h-7 border border-black/50 dark:border-background"
           onPress={copyToClipboard}
         >
           {copied ? (

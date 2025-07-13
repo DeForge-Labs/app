@@ -21,11 +21,11 @@ export default function SelectField({
 }) {
   return (
     <div key={field.name} className="space-y-2">
-      <div className="flex justify-between items-center">
-        <div className="text-sm font-medium capitalize">
+      <div className="flex justify-between items-center dark:text-background dark:border-background">
+        <div className="text-sm font-medium capitalize dark:text-background">
           {field.name}
           {isInput && (
-            <span className="ml-2 text-xs text-black/50">
+            <span className="ml-2 text-xs text-black/50 dark:text-background">
               {nodeType.inputs.find((i) => i.name === field.name)?.type}
             </span>
           )}
@@ -34,7 +34,7 @@ export default function SelectField({
           <Button
             variant="outline"
             size="sm"
-            className="h-6 px-2 text-xs bg-black/80 text-background"
+            className="h-6 px-2 text-xs bg-black/80 text-background dark:bg-background dark:text-black"
             onPress={() => handleDisconnect(field.name)}
           >
             <Link2Off className="h-3 w-3 mr-1" />
@@ -49,16 +49,16 @@ export default function SelectField({
       >
         <SelectTrigger
           id={field.name}
-          className="border-black/50 border rounded-lg"
+          className="border-black/50 border rounded-lg dark:border-background dark:text-background"
         >
           <SelectValue placeholder={`Select ${field.name}`} />
         </SelectTrigger>
-        <SelectContent className="border-black/50 border rounded-lg bg-background">
+        <SelectContent className="border-black/50 border rounded-lg bg-background dark:bg-dark">
           {field.options?.map((option) => (
             <SelectItem
               key={option}
               value={option}
-              className="hover:bg-black/5 rounded-md"
+              className="hover:bg-black/5 rounded-md dark:hover:bg-white/5 dark:text-background"
             >
               {option}
             </SelectItem>

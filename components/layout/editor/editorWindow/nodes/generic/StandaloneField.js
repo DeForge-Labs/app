@@ -3,6 +3,7 @@
 import { Handle, Position } from "reactflow";
 import getColorByType from "@/lib/color-profile";
 import { useSelector } from "react-redux";
+import { useTheme } from "next-themes";
 
 export default function StandaloneField({
   input,
@@ -12,6 +13,7 @@ export default function StandaloneField({
 }) {
   const isConnected = connectedInputs.has(input.name);
   const selectedHandle = useSelector((state) => state.workflow?.selectedHandle);
+  const { resolvedTheme } = useTheme();
 
   return (
     <div key={input.name} className="mb-2 relative">
@@ -44,7 +46,7 @@ export default function StandaloneField({
             }`}
             style={{
               backgroundColor: getColorByType(input.type.toLowerCase()),
-              borderColor: "black",
+              borderColor: resolvedTheme === "dark" ? "white" : "black",
               borderWidth: "1px",
             }}
           ></div>
@@ -58,15 +60,17 @@ export default function StandaloneField({
                 className={`w-2 h-2 -left-[16.5px] -top-[12.2px] rounded-full rotate-45 absolute border-opacity-50 `}
                 style={{
                   backgroundColor: getColorByType(input?.type.toLowerCase()),
-                  borderColor: "black",
+                  borderColor: resolvedTheme === "dark" ? "white" : "black",
                   borderWidth: "1px",
                 }}
               ></div>
             )}
         </div>
-        <div className="h-8 border border-black/50 rounded-md bg-black/5 text-xs flex items-center justify-between w-full px-2">
+        <div className="h-8 border border-black/50 rounded-md bg-black/5 text-xs flex items-center justify-between w-full px-2 dark:border-background dark:text-background">
           <span>{isConnected ? "Connected" : "Not connected"}</span>
-          <span className="text-xs text-black/60">{input.type}</span>
+          <span className="text-xs text-black/60 dark:text-background">
+            {input.type}
+          </span>
         </div>
       </div>
     </div>

@@ -29,7 +29,7 @@ export default function InviteMembersButton() {
       <Button
         variant="outline"
         size="md"
-        className="bg-black/80 rounded-lg text-background text-xs"
+        className="bg-black/80 rounded-lg text-background text-xs dark:bg-background dark:text-black"
         onPress={() => {
           setIsOpen(true);
         }}
@@ -40,7 +40,7 @@ export default function InviteMembersButton() {
 
       <Modal
         isOpen={isOpen}
-        className="border border-black bg-background p-1"
+        className="border border-black bg-background p-1 dark:bg-dark dark:border-background dark:text-background"
         onClose={() => setIsOpen(false)}
         closeButton={<div></div>}
         isDismissable={!isInviting}
@@ -49,12 +49,12 @@ export default function InviteMembersButton() {
       >
         <ModalContent>
           <ModalHeader>
-            <h3 className="text-xl font-medium">Invite Members</h3>
+            <h3 className="text-xl font-medium ">Invite Members</h3>
           </ModalHeader>
           <ModalBody className="-mt-3">
             {!invitation && (
               <>
-                <p className="text-sm text-black/80">
+                <p className="text-sm text-black/80 dark:text-background">
                   Invite members to your team by sending them an invitation
                   code.
                 </p>
@@ -66,8 +66,11 @@ export default function InviteMembersButton() {
                   variant="bordered"
                   classNames={{
                     tabList: "relative border-1 h-12",
-                    tabContent: "text-black/80 cursor-pointer w-[96px] text-xs",
-                    cursor: "h-10 top-1",
+                    tabList:
+                      "relative border-1 border-black/50 dark:border-background",
+                    tabContent:
+                      "w-[96px] text-black/80 cursor-pointer dark:text-background dark:border-background dark:group-data-[selected=true]:text-black/80 group-data-[selected=true]:text-background",
+                    cursor: " h-11 top-0.5 dark:bg-background bg-black/80",
                   }}
                   selectedKey={role}
                   onSelectionChange={setRole}
@@ -82,13 +85,13 @@ export default function InviteMembersButton() {
 
             {invitation && (
               <>
-                <p className="text-sm text-black/80">
+                <p className="text-sm text-black/80 dark:text-background">
                   Copy the invitation code and send it to the member.
                 </p>
                 <Input
                   variant="outline"
                   placeholder="Enter invitation code"
-                  className="w-full shadow-none border-black/50 font-mono border rounded-lg"
+                  className="w-full shadow-none border-black/50 font-mono border rounded-lg dark:border-background dark:text-background"
                   value={invitation.inviteCode}
                   readOnly
                 />
@@ -98,7 +101,7 @@ export default function InviteMembersButton() {
           <ModalFooter className="-mt-2 flex w-full gap-2">
             <Button
               variant="outline"
-              className="w-full rounded-full border border-black/80 p-7"
+              className="w-full rounded-full border border-black/80 p-7 dark:border-background"
               onPress={() => setIsOpen(false)}
               isDisabled={isInviting}
             >
@@ -106,12 +109,12 @@ export default function InviteMembersButton() {
             </Button>
             {!invitation && (
               <Button
-                className="w-full rounded-full p-7"
+                className="w-full rounded-full p-7 dark:bg-background dark:text-black bg-black/80 text-background"
                 onPress={handleInviteMember}
                 isDisabled={isInviting || !role}
               >
                 {isInviting ? (
-                  <Loader2 className="animate-spin text-background" />
+                  <Loader2 className="animate-spin text-background dark:text-black" />
                 ) : (
                   "Invite"
                 )}
@@ -120,7 +123,7 @@ export default function InviteMembersButton() {
 
             {invitation && (
               <Button
-                className="w-full rounded-full p-7"
+                className="w-full rounded-full p-7 dark:bg-background dark:text-black bg-black/80 text-background"
                 onPress={() => {
                   navigator.clipboard.writeText(invitation.inviteCode);
                   toast.success("Invitation code copied to clipboard");

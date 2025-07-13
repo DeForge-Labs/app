@@ -36,15 +36,15 @@ export default function DeploymentTab() {
   }
 
   return (
-    <div className="overflow-y-auto hide-scroll flex-1 relative">
+    <div className="overflow-y-auto hide-scroll flex-1 relative dark:text-background">
       <div className="flex-1 flex flex-col p-4 absolute w-full pb-16">
         <h1 className="font-semibold text-xl">Deployments</h1>
 
-        <div className="w-full border border-black/50 bg-black/5 p-4 rounded-lg mt-4 flex flex-col gap-2">
+        <div className="w-full border border-black/50 dark:border-background bg-black/5 p-4 rounded-lg mt-4 flex flex-col gap-2">
           <div className="flex justify-between">
             <div>
               <h3 className="font-semibold">Test Environment</h3>
-              <p className="text-xs text-black/60">
+              <p className="text-xs text-black/60 dark:text-background">
                 Test your workflow on the test environment for Validation
               </p>
             </div>
@@ -73,12 +73,12 @@ export default function DeploymentTab() {
           </div>
 
           {workflow?.status !== "TEST" && (
-            <div className="bg-black/5 p-4 rounded-lg flex flex-col items-center justify-center mt-1">
+            <div className="bg-black/5 dark:bg-white/5 p-4 rounded-lg flex flex-col items-center justify-center mt-1">
               <div className="p-4 rounded-full text-yellow-500 bg-background">
                 <FlaskConical size={24} />
               </div>
               <div className="text-xs font-medium mt-4">Test Deployment</div>
-              <p className="text-xs text-black/60 mt-1 max-w-[400px] text-wrap text-center">
+              <p className="text-xs text-black/60 dark:text-background mt-1 max-w-[400px] text-wrap text-center">
                 Production Deployment is active. Not sure about the changes?
                 Click on Rollback to revert to Test Deployment
               </p>
@@ -89,14 +89,14 @@ export default function DeploymentTab() {
           <div className="flex items-center gap-2 justify-between h-[40px]">
             <Input
               placeholder="Endpoint URL"
-              className="w-full border border-black/50 rounded-md"
+              className="w-full border border-black/50 rounded-md dark:border-background"
               variant="outline"
               value={`${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`}
               onChange={(e) => {}}
               isDisabled={workflow?.status !== "TEST"}
             />
             <Button
-              className="h-full p-2 bg-black/80 text-background rounded-md w-[40px]"
+              className="h-full p-2 bg-black/80 text-background rounded-md w-[40px] dark:bg-background dark:text-black"
               variant="icon"
               size="icon"
               onPress={() => {
@@ -110,7 +110,7 @@ export default function DeploymentTab() {
               <Copy size={16} />
             </Button>
             <Button
-              className="h-full p-2 bg-black/80 text-background rounded-md w-[40px]"
+              className="h-full p-2 bg-black/80 text-background rounded-md w-[40px] dark:bg-background dark:text-black"
               variant="icon"
               size="icon"
               onPress={() => {
@@ -125,7 +125,7 @@ export default function DeploymentTab() {
             </Button>
           </div>
 
-          <div className="text-xs text-black/60 mt-2 flex gap-2 items-center">
+          <div className="text-xs text-black/60 mt-2 flex gap-2 items-center dark:text-background">
             <Play className="w-[13px] h-[13px]" />
             <p className="text-wrap flex-1">
               Click on Run to check the output of the workflow, without Saving
@@ -133,7 +133,7 @@ export default function DeploymentTab() {
             </p>
           </div>
 
-          <div className="text-xs text-black/60 flex gap-2 items-center">
+          <div className="text-xs text-black/60 flex gap-2 items-center dark:text-background">
             <FlaskConical className="w-[13px] h-[13px]" />
             <p className="text-wrap flex-1">
               Click on Test to check the endpoint URL, the endpoint url checks
@@ -143,7 +143,7 @@ export default function DeploymentTab() {
 
           <div className="flex items-center w-full gap-2 mt-2">
             <Button
-              className="h-full p-2 border-2 flex-1 border-black/50 rounded-lg gap-2"
+              className="h-full p-2 border-2 flex-1 border-black/50 rounded-lg gap-2 dark:border-background dark:text-background"
               variant="default"
               size="md"
               onPress={() => {
@@ -160,7 +160,7 @@ export default function DeploymentTab() {
             </Button>
 
             <Button
-              className="h-full p-2 border-2 flex-1 border-black/50 rounded-lg gap-2"
+              className="h-full p-2 border-2 flex-1 border-black/50 rounded-lg gap-2 dark:border-background dark:text-background"
               variant="default"
               size="md"
               onPress={() => {
@@ -178,11 +178,11 @@ export default function DeploymentTab() {
           </div>
         </div>
 
-        <div className="w-full border border-black/50 bg-black/5 p-4 rounded-lg mt-4 flex flex-col gap-2">
-          <div className="flex justify-between">
+        <div className="w-full border border-black/50 bg-black/5 p-4 rounded-lg mt-4 flex flex-col gap-2 dark:border-background dark:text-background">
+          <div className="flex justify-between dark:text-background">
             <div className="">
               <h3 className="font-semibold">Production Environment</h3>
-              <p className="text-xs text-black/60">
+              <p className="text-xs text-black/60 dark:text-background">
                 Deploy your workflow on the production environment for live use
               </p>
             </div>
@@ -211,14 +211,14 @@ export default function DeploymentTab() {
           </div>
 
           {workflow?.status !== "LIVE" && (
-            <div className="bg-black/5 p-4 rounded-lg flex flex-col items-center justify-center mt-1">
+            <div className="bg-black/5 dark:bg-white/5 p-4 rounded-lg flex flex-col items-center justify-center mt-1">
               <div className="p-4 rounded-full text-yellow-500 bg-background">
                 <TriangleAlert size={24} />
               </div>
               <div className="text-xs font-medium mt-4">
                 Production Deployment
               </div>
-              <p className="text-xs text-black/60 mt-1 max-w-[400px] text-wrap text-center">
+              <p className="text-xs text-black/60 mt-1 max-w-[400px] dark:text-background text-wrap text-center">
                 Deploy to production only after thorough testing, errors in
                 production can cause loss of credits.
               </p>
@@ -229,14 +229,14 @@ export default function DeploymentTab() {
           <div className="flex items-center gap-2 justify-between h-[40px]">
             <Input
               placeholder="Endpoint URL"
-              className="w-full border border-black/50 rounded-md"
+              className="w-full border border-black/50 rounded-md dark:border-background"
               variant="outline"
               value={`${rawUrl}/live/${workflow?.id}`}
               onChange={(e) => {}}
               isDisabled={workflow?.status !== "LIVE"}
             />
             <Button
-              className="h-full p-2 bg-black/80 text-background rounded-md w-[40px]"
+              className="h-full p-2 bg-black/80 text-background rounded-md w-[40px] dark:bg-background dark:text-black"
               variant="icon"
               size="icon"
               onPress={() => {
@@ -248,7 +248,7 @@ export default function DeploymentTab() {
               <Copy size={16} />
             </Button>
             <Button
-              className="h-full p-2 bg-black/80 text-background rounded-md w-[40px]"
+              className="h-full p-2 bg-black/80 text-background rounded-md w-[40px] dark:bg-background dark:text-black"
               variant="icon"
               size="icon"
               onPress={() => {
@@ -260,7 +260,7 @@ export default function DeploymentTab() {
             </Button>
           </div>
 
-          <div className="text-xs text-black/60 mt-2 flex gap-2 items-center">
+          <div className="text-xs text-black/60 mt-2 flex gap-2 items-center dark:text-background">
             <Play className="w-[13px] h-[13px]" />
             <p className="text-wrap flex-1">
               Click on Run to check the output of the workflow through the
@@ -269,7 +269,7 @@ export default function DeploymentTab() {
           </div>
 
           {workflow?.status !== "LIVE" && (
-            <div className="text-xs text-black/60 flex gap-2 items-center">
+            <div className="text-xs text-black/60 flex gap-2 items-center dark:text-background">
               <Rocket className="w-[13px] h-[13px]" />
               <p className="text-wrap flex-1">
                 Click on Deploy to deploy the workflow to the production
@@ -279,7 +279,7 @@ export default function DeploymentTab() {
           )}
 
           {workflow?.status === "LIVE" && (
-            <div className="text-xs text-black/60 flex gap-2 items-center">
+            <div className="text-xs text-black/60 flex gap-2 items-center dark:text-background">
               <FlaskConical className="w-[13px] h-[13px]" />
               <p className="text-wrap flex-1">
                 Click on Rollback to revert to the testing environment, this
@@ -290,7 +290,7 @@ export default function DeploymentTab() {
 
           <div className="flex items-center w-full gap-2 mt-2">
             <Button
-              className="h-full p-2 border-2 flex-1 border-black/50 rounded-lg gap-2"
+              className="h-full p-2 border-2 flex-1 border-black/50 rounded-lg gap-2 dark:border-background dark:text-background"
               variant="default"
               size="md"
               onPress={() => {
@@ -308,14 +308,14 @@ export default function DeploymentTab() {
 
             {workflow?.status !== "LIVE" && (
               <DeployButton
-                className="h-full p-2 border-2 flex-1  bg-red-500 text-background rounded-lg gap-2 text-sm"
+                className="h-full p-2 border-2 flex-1  bg-red-500 text-background border-black/50 rounded-lg gap-2 text-sm dark:border-background dark:text-background"
                 showTooltip={false}
               />
             )}
 
             {workflow?.status === "LIVE" && (
               <FallbackButton
-                className="h-full p-2 border-2 flex-1 bg-red-500 text-background rounded-lg gap-2 text-sm"
+                className="h-full p-2 border-2 flex-1 bg-red-500 text-background border-black/50 rounded-lg gap-2 text-sm dark:border-background dark:text-background"
                 showTooltip={false}
               />
             )}

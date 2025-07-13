@@ -14,27 +14,27 @@ export default function NodeContextMenu({
 }) {
   return (
     <Card
-      className="absolute z-10 w-48 shadow-lg bg-background border-black/50"
+      className="absolute z-10 w-48 shadow-lg bg-background border-black/50 dark:border-background dark:text-background dark:bg-dark"
       style={{
         left: `${x}px`,
         top: `${y}px`,
       }}
     >
       <div className="flex flex-col p-2">
-        <div className="flex items-center justify-between border-b p-2 px-1">
+        <div className="flex items-center justify-between border-b dark:border-b-0 p-2 px-1">
           <span className="text-xs font-medium">Node Options</span>
           <Button
             variant="outline"
             size="icon"
-            className="h-5 w-5 rounded-md border border-black/50"
+            className="h-5 w-5 rounded-md border border-black/50 dark:border-background dark:text-background"
             onPress={onClose}
           >
-            <X className="h-3 w-3 text-black/50" />
+            <X className="h-3 w-3 text-black/50 dark:text-background" />
           </Button>
         </div>
         <Button
           variant="outline"
-          className="flex justify-start px-2 py-1.5 text-sm border border-black/50"
+          className="flex justify-start px-2 py-1.5 text-sm border border-black/50 dark:border-background dark:text-background"
           onPress={onDuplicate}
         >
           <Copy className="mr-2 h-4 w-4" />

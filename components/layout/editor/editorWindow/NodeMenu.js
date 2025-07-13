@@ -76,12 +76,14 @@ export default function NodeMenu() {
 
   return (
     <div className="flex flex-col gap-4 absolute p-4 w-full">
-      <h2 className="font-semibold text-xl">Node Library</h2>
+      <h2 className="font-semibold text-xl dark:text-background">
+        Node Library
+      </h2>
       <Input
         placeholder="Search nodes..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className=" border border-black/50 rounded-lg w-full"
+        className=" border border-black/50 rounded-lg w-full dark:border-background dark:text-background"
         variant="outline"
         isClearable
         onClear={() => setSearchTerm("")}
@@ -96,21 +98,21 @@ export default function NodeMenu() {
             <div key={category} className={`rounded-lg -mt-2`}>
               {/* Category Header */}
               <div
-                className="flex items-center justify-between p-3 mb-2 px-0 cursor-pointer hover:bg-black/5 rounded-lg"
+                className="flex items-center justify-between p-3 mb-2 px-0 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:border-background dark:text-background "
                 onClick={() => toggleCategory(category)}
               >
                 <div className="flex items-center space-x-2 px-2">
                   {isCollapsed ? (
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4 dark:text-background" />
                   ) : (
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="h-4 w-4 dark:text-background" />
                   )}
-                  <h3 className="font-medium text-sm">
+                  <h3 className="font-medium text-sm dark:text-background">
                     {getCategoryDisplayName(category)}
                   </h3>
                   <Badge
                     variant="secondary"
-                    className="text-xs bg-black/10 text-black border-none hover:bg-black/5"
+                    className="text-xs bg-black/10 dark:bg-white/10 text-black dark:text-black border-none hover:bg-black/5 dark:border-background dark:text-background"
                   >
                     {categoryNodes.length}
                   </Badge>
@@ -123,24 +125,24 @@ export default function NodeMenu() {
                   {categoryNodes.map((node) => (
                     <Card
                       key={node.type}
-                      className="cursor-grab bg-background border border-black/50 hover:shadow-md"
+                      className="cursor-grab bg-background border border-black/50 hover:shadow-md dark:border-background dark:text-background dark:bg-zinc-900"
                       draggable
                       onDragStart={(e) => onDragStart(e, node)}
                     >
-                      <CardHeader className="p-3">
-                        <CardTitle className="flex items-center text-sm">
+                      <CardHeader className="p-3 opacity-90">
+                        <CardTitle className="flex items-center text-sm dark:text-background">
                           {node.title}
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className="p-3 pt-0">
-                        <p className="text-xs text-muted-foreground mb-2">
+                      <CardContent className="p-3 pt-0 opacity-90">
+                        <p className="text-xs text-muted-foreground mb-2 dark:text-background">
                           {node.desc}
                         </p>
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex flex-wrap gap-1 opacity-90">
                           {node.tags.map((tag) => (
                             <Badge
                               key={tag}
-                              className="text-xs border-black/50 border bg-transparent text-black hover:bg-black/5"
+                              className="text-xs border-black/50 border bg-transparent text-black hover:bg-black/5 dark:border-background dark:text-background"
                             >
                               {tag}
                             </Badge>
@@ -182,18 +184,20 @@ export default function NodeMenu() {
 
         {filteredNodes.length === 0 && !isNodeRegistryInitializing && (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="rounded-full bg-black/10 p-4 mb-4">
+            <div className="rounded-full bg-black/10 p-4 mb-4 dark:bg-background">
               <TriangleAlert className="h-5 w-5 text-black" />
             </div>
-            <h3 className="text-sm font-medium">No nodes found</h3>
-            <p className="text-xs text-muted-foreground mt-2 max-w-md mb-2">
+            <h3 className="text-sm font-medium dark:text-background">
+              No nodes found
+            </h3>
+            <p className="text-xs text-muted-foreground mt-2 max-w-md mb-2 dark:text-background">
               No nodes match your search criteria.
             </p>
 
             <Button
               variant="outline"
               size="md"
-              className="bg-black/80 rounded-lg text-background text-xs"
+              className="bg-black/80 rounded-lg text-background text-xs dark:bg-background dark:text-black"
               onPress={() => {
                 setSearchTerm("");
               }}

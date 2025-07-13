@@ -41,20 +41,20 @@ export default function MapFieldEditor({ value, onChange, disabled = false }) {
     <div className="space-y-2">
       {/* Existing key-value pairs */}
       {entries.length > 0 && !disabled ? (
-        <Card className="border-dashed border-black/50 shadow-none">
+        <Card className="border-dashed border-black/50 shadow-none dark:border-background dark:text-background">
           <CardContent className="p-2 space-y-2">
             {entries.map(([key, val]) => (
               <div key={key} className="flex items-center gap-2">
                 <Input
                   value={key}
                   disabled
-                  className="flex-1 bg-muted text-xs border border-black/50 rounded-lg"
+                  className="flex-1 bg-muted text-xs border border-black/50 rounded-lg dark:border-background dark:text-background"
                   variant="outline"
                 />
                 <Input
                   value={val}
                   onChange={(e) => handleUpdateValue(key, e.target.value)}
-                  className="flex-1 text-xs border border-black/50 rounded-lg"
+                  className="flex-1 text-xs border border-black/50 rounded-lg dark:border-background dark:text-background"
                   variant="outline"
                   disabled={disabled}
                 />
@@ -63,9 +63,9 @@ export default function MapFieldEditor({ value, onChange, disabled = false }) {
                     variant="outline"
                     size="icon"
                     onPress={() => handleRemoveEntry(key)}
-                    className="h-full bg-black/80 rounded-full p-2"
+                    className="h-full bg-black/80 rounded-full p-2 dark:bg-background dark:text-black"
                   >
-                    <Trash2 className="h-2 w-2 text-background" />
+                    <Trash2 className="h-2 w-2 text-background dark:text-black" />
                   </Button>
                 )}
               </div>
@@ -74,14 +74,14 @@ export default function MapFieldEditor({ value, onChange, disabled = false }) {
         </Card>
       ) : (
         !disabled && (
-          <div className="text-xs border border-dashed border-black/50 rounded-md text-center p-2">
+          <div className="text-xs border border-dashed border-black/50 rounded-md text-center p-2 dark:border-background dark:text-background">
             No entries yet. Add a key-value pair below.
           </div>
         )
       )}
 
       {disabled && (
-        <div className="text-xs border border-dashed border-black/50 rounded-md text-center p-2">
+        <div className="text-xs border border-dashed border-black/50 rounded-md text-center p-2 dark:border-background dark:text-background">
           Entries are disabled, node is connected to input.
         </div>
       )}
@@ -94,23 +94,23 @@ export default function MapFieldEditor({ value, onChange, disabled = false }) {
             onChange={(e) => setNewKey(e.target.value)}
             placeholder="Key"
             variant="outline"
-            className="flex-1 border border-black/50 rounded-lg"
+            className="flex-1 border border-black/50 rounded-lg dark:border-background dark:text-background"
           />
           <Input
             value={newValue}
             onChange={(e) => setNewValue(e.target.value)}
             placeholder="Value"
             variant="outline"
-            className="flex-1 border border-black/50 rounded-lg"
+            className="flex-1 border border-black/50 rounded-lg dark:border-background dark:text-background"
           />
           <Button
             variant="outline"
             size="icon"
             onPress={handleAddEntry}
-            className="h-full bg-black/80 rounded-full p-1"
+            className="h-full bg-black/80 rounded-full p-1 dark:bg-background dark:text-black"
             disabled={!newKey.trim()}
           >
-            <Plus className="h-3 w-3 text-background" />
+            <Plus className="h-3 w-3 text-background dark:text-black" />
           </Button>
         </div>
       )}

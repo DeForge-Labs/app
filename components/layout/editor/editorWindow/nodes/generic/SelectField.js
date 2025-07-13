@@ -27,15 +27,15 @@ export default function SelectField({
           onValueChange={(value) => handleChange(field.name, value)}
           disabled={isDisabled}
         >
-          <SelectTrigger className="text-xs border border-black/50 rounded-lg">
+          <SelectTrigger className="text-xs border border-black/50 rounded-lg dark:border-background dark:text-background">
             <SelectValue placeholder={field.value} />
           </SelectTrigger>
-          <SelectContent className="text-xs border border-black/50 rounded-lg bg-background">
+          <SelectContent className="text-xs border border-black/50 rounded-lg bg-background dark:bg-dark dark:border-background">
             {field.options?.map((option) => (
               <SelectItem
                 key={option}
                 value={option}
-                className="hover:bg-black/5 rounded-md"
+                className="hover:bg-black/5 rounded-md dark:hover:bg-white/5 dark:text-background"
               >
                 {option}
               </SelectItem>

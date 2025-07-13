@@ -4,6 +4,7 @@ import { Input } from "@heroui/react";
 import { useRef, useEffect } from "react";
 import getColorByType from "@/lib/color-profile";
 import { useSelector } from "react-redux";
+import { useTheme } from "next-themes";
 
 export default function TextField({
   field,
@@ -18,6 +19,7 @@ export default function TextField({
   const inputRef = useRef(null);
   const cursorPositionRef = useRef(null);
   const selectedHandle = useSelector((state) => state.workflow?.selectedHandle);
+  const { resolvedTheme } = useTheme();
 
   // Store cursor position before re-render
   const handleInputChange = (e) => {
@@ -74,7 +76,7 @@ export default function TextField({
                   matchingInput?.type.toLowerCase()
                 ),
 
-                borderColor: "black",
+                borderColor: resolvedTheme === "dark" ? "white" : "black",
                 borderWidth: "1px",
               }}
             ></div>
@@ -85,12 +87,12 @@ export default function TextField({
               !isConnected &&
               !isSameNode && (
                 <div
-                  className={`w-2 h-2 -left-[16.5px] -top-[4.5px] rounded-full rotate-45 absolute border-opacity-50 `}
+                  className={`w-2 h-2 -left-[16.5px] -top-[4.5px] rounded-full rotate-45 absolute border-opacity-50  `}
                   style={{
                     backgroundColor: getColorByType(
                       matchingInput?.type.toLowerCase()
                     ),
-                    borderColor: "black",
+                    borderColor: resolvedTheme === "dark" ? "white" : "black",
                     borderWidth: "1px",
                   }}
                 ></div>
@@ -103,7 +105,7 @@ export default function TextField({
           variant="outline"
           onChange={handleInputChange}
           placeholder={field.value}
-          className="mt-2 border border-black/50 rounded-lg"
+          className="mt-2 border border-black/50 rounded-lg dark:border-background dark:text-background"
           disabled={isDisabled}
           // Add a stable key to prevent unnecessary re-mounting
           key={`${field.name}-input`}

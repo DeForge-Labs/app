@@ -55,7 +55,7 @@ export default function SaveButton() {
 
       <Modal
         isOpen={isOpen}
-        className="border border-black bg-background p-1"
+        className="border border-black bg-background p-1 dark:border-background dark:bg-dark dark:text-background"
         onClose={() => setIsOpen(false)}
         closeButton={<div></div>}
         isDismissable={!isSavingWorkflow}
@@ -75,19 +75,19 @@ export default function SaveButton() {
           <ModalFooter className="-mt-2 flex w-full gap-2">
             <Button
               variant="outline"
-              className="w-full rounded-full border border-black/80 p-7"
+              className="w-full rounded-full border border-black/80 p-7 dark:border-background"
               onPress={() => setIsOpen(false)}
               isDisabled={isSavingWorkflow}
             >
               Cancel
             </Button>
             <Button
-              className="w-full rounded-full p-7"
+              className="w-full rounded-full p-7 bg-black/80 text-background dark:bg-background dark:text-black"
               onPress={() => handleSaveWorkflow()}
               isDisabled={isSavingWorkflow}
             >
               {isSavingWorkflow ? (
-                <Loader2 className="animate-spin text-background" />
+                <Loader2 className="animate-spin text-background dark:text-black" />
               ) : (
                 "Save"
               )}

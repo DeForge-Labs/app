@@ -22,11 +22,11 @@ export default function SliderField({
 
   return (
     <div key={field.name} className="space-y-2">
-      <div className="flex justify-between items-center">
-        <div className="text-sm font-medium capitalize">
+      <div className="flex justify-between items-center dark:text-background dark:border-background">
+        <div className="text-sm font-medium capitalize dark:text-background">
           {field.name}
           {isInput && (
-            <span className="ml-1 text-xs text-black/50">
+            <span className="ml-1 text-xs text-black/50 dark:text-background">
               {nodeType.inputs.find((i) => i.name === field.name)?.type}
             </span>
           )}
@@ -35,7 +35,7 @@ export default function SliderField({
           <Button
             variant="outline"
             size="sm"
-            className="h-6 px-2 text-xs bg-black/80 text-background"
+            className="h-6 px-2 text-xs bg-black/80 text-background dark:bg-background dark:text-black"
             onPress={() => handleDisconnect(field.name)}
           >
             <Link2Off className="h-3 w-3" />
@@ -58,7 +58,7 @@ export default function SliderField({
           <output {...props}>
             <input
               aria-label="Temperature value"
-              className="px-1 py-0.5 w-10 text-right text-xs bg-black/5 outline-none transition-colors rounded-md border border-transparent hover:border-black focus:border-black"
+              className="px-1 py-0.5 w-10 text-right text-xs bg-black/5 outline-none transition-colors rounded-md border border-transparent hover:border-black focus:border-background dark:bg-white/5 dark:hover:border-background dark:focus:border-background dark:text-background dark:bg-dark"
               type="text"
               value={value || 0}
               onChange={(e) => {
@@ -84,11 +84,11 @@ export default function SliderField({
         )}
         className="mt-1"
         classNames={{
-          filler: "bg-black/80",
-          label: "text-xs font-medium capitalize",
-          thumb: "bg-black/80",
+          filler: "bg-black/80 dark:bg-background",
+          label: "text-xs font-medium capitalize dark:text-background",
+          thumb: "bg-black/80 dark:bg-background",
           track:
-            "data-[fill-end=true]:border-e-black/80 data-[fill-start=true]:border-s-black/80 border-s-black/80",
+            "data-[fill-end=true]:border-e-black/80 data-[fill-start=true]:border-s-black/80 border-s-black/80 dark:border-s-background",
         }}
         isDisabled={isInput && isConnected}
       />

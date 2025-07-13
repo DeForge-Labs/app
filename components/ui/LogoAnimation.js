@@ -1,7 +1,7 @@
 export default function LogoAnimation({ opacity }) {
   return (
     <div
-      className="flex items-center justify-center h-full w-full"
+      className="flex items-center justify-center h-full w-full dark:invert"
       style={{
         opacity,
       }}

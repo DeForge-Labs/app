@@ -4,6 +4,7 @@ import { Handle, Position } from "reactflow";
 import { Input } from "@heroui/react";
 import getColorByType from "@/lib/color-profile";
 import { useSelector } from "react-redux";
+import { useTheme } from "next-themes";
 
 export default function NumberField({
   field,
@@ -16,6 +17,7 @@ export default function NumberField({
   isSameNode,
 }) {
   const selectedHandle = useSelector((state) => state.workflow?.selectedHandle);
+  const { resolvedTheme } = useTheme();
 
   return (
     <div key={field.name} className="mb-2 relative">
@@ -49,7 +51,7 @@ export default function NumberField({
                 backgroundColor: getColorByType(
                   matchingInput?.type.toLowerCase()
                 ),
-                borderColor: "black",
+                borderColor: resolvedTheme === "dark" ? "white" : "black",
                 borderWidth: "1px",
               }}
             ></div>
@@ -65,7 +67,7 @@ export default function NumberField({
                     backgroundColor: getColorByType(
                       matchingInput?.type.toLowerCase()
                     ),
-                    borderColor: "black",
+                    borderColor: resolvedTheme === "dark" ? "white" : "black",
                     borderWidth: "1px",
                   }}
                 ></div>
@@ -80,7 +82,7 @@ export default function NumberField({
             handleChange(field.name, Number.parseFloat(e.target.value))
           }
           placeholder={field.value?.toString()}
-          className="mt-2 border border-black/50 rounded-lg"
+          className="mt-2 border border-black/50 rounded-lg dark:border-background dark:text-background"
           disabled={isDisabled}
         />
       </div>

@@ -16,10 +16,10 @@ export default function CheckBoxField({
   return (
     <div key={field.name} className="space-y-1">
       <div className="flex justify-between items-center">
-        <div className="text-sm font-medium capitalize">
+        <div className="text-sm font-medium capitalize dark:text-background">
           {field.name}
           {isInput && (
-            <span className="ml-2 text-xs text-black/50">
+            <span className="ml-2 text-xs text-black/50 dark:text-background">
               {nodeType.inputs.find((i) => i.name === field.name)?.type}
             </span>
           )}
@@ -42,15 +42,15 @@ export default function CheckBoxField({
         onValueChange={(value) => handleChange(field.name, value)}
         className=""
         classNames={{
-          wrapper: "after:bg-black/80",
+          wrapper: "after:bg-black/80 dark:invert",
         }}
       >
-        <p className="text-xs font-medium text-black/80">
+        <p className="text-xs font-medium text-black/80 dark:text-background">
           {selectedNode.data[field.name] ? "Yes" : "No"}
         </p>
       </Checkbox>
 
-      <div className="text-[10px]">{field.desc}</div>
+      <div className="text-[10px] dark:text-background">{field.desc}</div>
     </div>
   );
 }

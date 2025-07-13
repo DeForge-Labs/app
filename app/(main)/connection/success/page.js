@@ -104,19 +104,29 @@ export default function ConnectionSuccess() {
 
   return (
     <StartContainer>
-      <div className="flex flex-col w-[350px]">
+      <div className="flex flex-col w-[350px] dark:bg-dark dark:text-background">
         <Link href="/" className="flex items-center justify-center space-x-2">
-          <Image src="/logo/logo-black.svg" alt="Logo" width={27} height={27} />
-          <span className="font-bold inline-block text-4xl">Deforge</span>
+          <Image
+            src="/logo/logo-black.svg"
+            alt="Logo"
+            width={27}
+            height={27}
+            className="dark:invert"
+          />
+          <span className="font-bold inline-block text-4xl dark:text-background">
+            Deforge
+          </span>
         </Link>
 
         <div className="flex flex-col items-center justify-center mt-10 h-[300px]">
-          <div className="text-2xl font-bold">
+          <div className="text-2xl font-bold dark:text-background">
             {isSuccess ? "Success!" : "Error"}
           </div>
-          <div className="text-sm text-gray-500">{message}</div>
+          <div className="text-sm text-gray-500 dark:text-background">
+            {message}
+          </div>
 
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-500 dark:text-background">
             {isProcessing ? (
               <>
                 <p>Processing...</p>

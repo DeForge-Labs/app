@@ -4,6 +4,7 @@ import { Handle, Position } from "reactflow";
 import getColorByType from "@/lib/color-profile";
 import DateTimePicker from "./DateTimePicker";
 import { useSelector } from "react-redux";
+import { useTheme } from "next-themes";
 
 export default function DateTimeField({
   field,
@@ -16,6 +17,7 @@ export default function DateTimeField({
   isSameNode,
 }) {
   const selectedHandle = useSelector((state) => state.workflow?.selectedHandle);
+  const { resolvedTheme } = useTheme();
 
   return (
     <div key={field.name} className="mb-2 relative">
@@ -49,7 +51,7 @@ export default function DateTimeField({
                 backgroundColor: getColorByType(
                   matchingInput?.type.toLowerCase()
                 ),
-                borderColor: "black",
+                borderColor: resolvedTheme === "dark" ? "white" : "black",
                 borderWidth: "1px",
               }}
             ></div>
@@ -65,7 +67,7 @@ export default function DateTimeField({
                     backgroundColor: getColorByType(
                       matchingInput?.type.toLowerCase()
                     ),
-                    borderColor: "black",
+                    borderColor: resolvedTheme === "dark" ? "white" : "black",
                     borderWidth: "1px",
                   }}
                 ></div>

@@ -23,7 +23,7 @@ export default function UserTeamsProvider({ children }) {
   if (isTeamsInitializing) {
     return (
       <StartContainer>
-        <Loader2 className="w-8 h-8 animate-spin opacity-50" />
+        <Loader2 className="w-8 h-8 animate-spin opacity-50 dark:text-background" />
       </StartContainer>
     );
   }

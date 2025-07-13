@@ -23,6 +23,7 @@ module.exports = {
 
     extend: {
       colors: {
+        dark: "var(--dark)",
         background: "var(--background)",
         foreground: "var(--foreground)",
         secondary: {

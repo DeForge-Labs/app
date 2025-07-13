@@ -4,6 +4,7 @@ import { Textarea } from "@heroui/react";
 import { useRef, useEffect } from "react";
 import getColorByType from "@/lib/color-profile";
 import { useSelector } from "react-redux";
+import { useTheme } from "next-themes";
 
 export default function TextAreaField({
   field,
@@ -18,6 +19,7 @@ export default function TextAreaField({
   const textareaRef = useRef(null);
   const cursorPositionRef = useRef(null);
   const selectedHandle = useSelector((state) => state.workflow?.selectedHandle);
+  const { resolvedTheme } = useTheme();
 
   // Store cursor position before re-render
   const handleTextareaChange = (e) => {
@@ -42,7 +44,9 @@ export default function TextAreaField({
 
   return (
     <div key={field.name} className="mb-2 relative">
-      <div className="text-xs font-medium mb-1 capitalize">{field.name}</div>
+      <div className="text-xs font-medium mb-1 capitalize dark:text-background">
+        {field.name}
+      </div>
       <div className="flex items-center relative">
         {nodeType.inputs.some((input) => input.name === field.name) && (
           <div className="relative">
@@ -73,7 +77,7 @@ export default function TextAreaField({
                 backgroundColor: getColorByType(
                   matchingInput?.type.toLowerCase()
                 ),
-                borderColor: "black",
+                borderColor: resolvedTheme === "dark" ? "white" : "black",
                 borderWidth: "1px",
               }}
             ></div>
@@ -89,7 +93,7 @@ export default function TextAreaField({
                     backgroundColor: getColorByType(
                       matchingInput?.type.toLowerCase()
                     ),
-                    borderColor: "black",
+                    borderColor: resolvedTheme === "dark" ? "white" : "black",
                     borderWidth: "1px",
                   }}
                 ></div>
@@ -101,7 +105,7 @@ export default function TextAreaField({
           value={currentValue || ""}
           onChange={handleTextareaChange}
           placeholder={field.value}
-          className="text-xs min-h-[80px] border border-black/50 rounded-lg"
+          className="text-xs min-h-[80px] border border-black/50 rounded-lg dark:border-background dark:text-background"
           isDisabled={isDisabled}
           variant="outline"
           // Add a stable key to prevent unnecessary re-mounting

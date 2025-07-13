@@ -70,7 +70,7 @@ export default function DeployButton({ className, showTooltip = true }) {
 
       <Modal
         isOpen={isOpen}
-        className="border border-black bg-background p-1"
+        className="border border-black bg-background p-1 dark:border-background dark:text-background dark:bg-dark"
         onClose={() => setIsOpen(false)}
         closeButton={<div></div>}
         isDismissable={!isDeploying}
@@ -90,19 +90,19 @@ export default function DeployButton({ className, showTooltip = true }) {
           <ModalFooter className="-mt-2 flex w-full gap-2">
             <Button
               variant="outline"
-              className="w-full rounded-full border border-black/80 p-7"
+              className="w-full rounded-full border border-black/80 p-7 dark:border-background dark:text-background"
               onPress={() => setIsOpen(false)}
               isDisabled={isDeploying}
             >
               Cancel
             </Button>
             <Button
-              className="w-full rounded-full p-7"
+              className="w-full rounded-full p-7 bg-black/80 text-background dark:bg-background dark:text-black"
               onPress={() => handleDeployWorkflow()}
               isDisabled={isDeploying}
             >
               {isDeploying ? (
-                <Loader2 className="animate-spin text-background" />
+                <Loader2 className="animate-spin text-background dark:text-black" />
               ) : (
                 "Deploy"
               )}

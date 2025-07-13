@@ -3,6 +3,7 @@
 import { Handle, Position } from "reactflow";
 import getColorByType from "@/lib/color-profile";
 import { useSelector } from "react-redux";
+import { useTheme } from "next-themes";
 
 export default function ArrayField({
   field,
@@ -12,6 +13,7 @@ export default function ArrayField({
   isSameNode,
 }) {
   const selectedHandle = useSelector((state) => state.workflow?.selectedHandle);
+  const { resolvedTheme } = useTheme();
 
   return (
     <div key={field.name} className="mb-2">
@@ -53,7 +55,7 @@ export default function ArrayField({
                   ? matchingInput?.type.split("[]")[0].toLowerCase()
                   : matchingInput?.type.toLowerCase()
               ),
-              borderColor: "black",
+              borderColor: resolvedTheme === "dark" ? "white" : "black",
               borderWidth: "1px",
             }}
           ></div>
@@ -72,20 +74,20 @@ export default function ArrayField({
                       ? matchingInput?.type.split("[]")[0].toLowerCase()
                       : matchingInput?.type.toLowerCase()
                   ),
-                  borderColor: "black",
+                  borderColor: resolvedTheme === "dark" ? "white" : "black",
                   borderWidth: "1px",
                 }}
               ></div>
             )}
         </div>
-        <div className="w-full border border-black/50 rounded-md p-2 bg-black/5 text-xs mt-1">
+        <div className="w-full border border-black/50 rounded-md p-2 bg-black/5 text-xs mt-1 dark:bg-white/5 dark:border-background">
           <div className="flex justify-between items-center">
             <span className="font-medium">
               Array input - accepts multiple connections
             </span>
           </div>
           {totalValidConnections > 0 && (
-            <div className="mt-1 pt-1 border-t border-black/50 text-xs text-muted-foreground">
+            <div className="mt-1 pt-1 border-t border-black/50 text-xs text-muted-foreground dark:border-background dark:text-background">
               {totalValidConnections} connection
               {totalValidConnections !== 1 ? "s" : ""} active
             </div>

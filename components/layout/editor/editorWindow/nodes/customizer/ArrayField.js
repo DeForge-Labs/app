@@ -13,9 +13,11 @@ export default function ArrayField({
   return (
     <div key={field.name} className="space-y-2">
       <div className="flex flex-col">
-        <div className="text-sm font-medium capitalize">
+        <div className="text-sm font-medium capitalize dark:text-background">
           {field.name}
-          <span className="ml-2 text-xs text-black/50">(Array Input)</span>
+          <span className="ml-2 text-xs text-black/50 dark:text-background">
+            (Array Input)
+          </span>
         </div>
         {totalValidConnections.length > 0 && (
           <div className="flex items-center justify-between mt-2 mb-1">
@@ -26,7 +28,7 @@ export default function ArrayField({
             <Button
               variant="outline"
               size="sm"
-              className="h-6 px-2 text-xs bg-black/80 text-background"
+              className="h-6 px-2 text-xs bg-black/80 text-background dark:bg-background dark:text-black"
               onPress={() => handleDisconnectAll(field.name)}
             >
               <Link2Off className="h-3 w-3 mr-1" />
@@ -35,7 +37,7 @@ export default function ArrayField({
           </div>
         )}
       </div>
-      <div className="border rounded-md p-3 bg-black/5 border-black/50 text-xs">
+      <div className="border rounded-md p-3 bg-black/5 border-black/50 text-xs dark:border-background dark:text-background">
         <p className="">
           This is an array input that accepts multiple connections.
         </p>
@@ -51,7 +53,7 @@ export default function ArrayField({
                   <Button
                     variant="icon"
                     size="icon"
-                    className="h-5 w-5 p-0 bg-black/80 text-background rounded-md"
+                    className="h-5 w-5 p-0 bg-black/80 text-background rounded-md dark:bg-background dark:text-black"
                     onPress={() => handleDisconnectExact(edgeId.edgeId)}
                   >
                     <Link2Off className="h-3 w-3" />
@@ -61,11 +63,13 @@ export default function ArrayField({
             })}
           </div>
         ) : (
-          <p className="mt-2 text-xs">No connections yet.</p>
+          <p className="mt-2 text-xs dark:text-background">
+            No connections yet.
+          </p>
         )}
       </div>
 
-      <div className="text-[10px]">{field.desc}</div>
+      <div className="text-[10px] dark:text-background">{field.desc}</div>
     </div>
   );
 }

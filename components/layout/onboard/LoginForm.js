@@ -44,15 +44,19 @@ export default function LoginForm() {
       >
         {isSignUp && (
           <>
-            <p className="mt-5 text-sm">What should we call you?</p>
+            <p className="mt-5 text-sm dark:text-background">
+              What should we call you?
+            </p>
 
             <Input
               type="text"
               placeholder="Enter your username"
-              className="border border-black/40 rounded-xl mt-3 shadow-none"
+              className="border border-black/40 rounded-xl mt-3 shadow-none dark:border-background dark:text-background"
               size="lg"
               variant="outline"
-              startContent={<User className="text-black/40" />}
+              startContent={
+                <User className="text-black/40 dark:text-background" />
+              }
               isClearable
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -61,10 +65,12 @@ export default function LoginForm() {
           </>
         )}
 
-        <p className="mt-5 text-sm">We sent a code to {email}</p>
+        <p className="mt-5 text-sm dark:text-background">
+          We sent a code to {email}
+        </p>
 
         <InputOtp
-          className="rounded-xl mt-1 shadow-none text-black items-center"
+          className="rounded-xl mt-1 shadow-none text-black items-center dark:text-background"
           size="lg"
           variant="bordered"
           length={"6"}
@@ -98,14 +104,14 @@ export default function LoginForm() {
 
         <div className="mt-1 flex w-full gap-2">
           <Button
-            className="w-full rounded-full p-7"
+            className="w-full rounded-full p-7 dark:bg-background dark:text-black"
             type="submit"
             isDisabled={isVerifying || isResending}
           >
             {isVerifying ? <Loader2 className="animate-spin" /> : "Verify"}
           </Button>
           <Button
-            className="w-full rounded-full p-7 border border-black/40 "
+            className="w-full rounded-full p-7 border border-black/40 dark:border-background dark:text-background"
             variant="outline"
             type="button"
             onPress={() => {
@@ -124,7 +130,7 @@ export default function LoginForm() {
         </div>
 
         <div
-          className="mt-3 ml-1 flex w-full text-black/60 hover:text-black/80 hover:underline cursor-pointer text-xs"
+          className="mt-3 ml-1 flex w-full text-black/60 hover:text-black/80 hover:underline cursor-pointer text-xs dark:text-background"
           onClick={() => {
             if (isVerifying || isResending) return;
 
@@ -148,15 +154,17 @@ export default function LoginForm() {
           );
         }}
       >
-        <p className="mt-5 text-sm">Enter your email to access your account</p>
+        <p className="mt-5 text-sm dark:text-background">
+          Enter your email to access your account
+        </p>
 
         <Input
           type="text"
           placeholder="Enter your email"
-          className="border border-black/40 rounded-xl mt-3 shadow-none"
+          className="border border-black/40 rounded-xl mt-3 shadow-none dark:border-background dark:text-background"
           size="lg"
           variant="outline"
-          startContent={<Mail className="text-black/40" />}
+          startContent={<Mail className="text-black/40 dark:text-background" />}
           isClearable
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -165,7 +173,7 @@ export default function LoginForm() {
 
         <div className="mt-3 flex w-full gap-2">
           <Button
-            className="w-full rounded-full p-7"
+            className="w-full rounded-full p-7 dark:bg-background dark:text-black"
             type="submit"
             isDisabled={isRequestingLogin}
           >

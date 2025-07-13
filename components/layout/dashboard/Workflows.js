@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import WorkflowEmptySearch from "./WorkflowEmptySearch";
 import CreateWorkflowButton from "./CreateWorkflowButton";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 
 export default function Workflows() {
   const defaultView = localStorage.getItem("defaultView") || "grid";
@@ -21,6 +22,7 @@ export default function Workflows() {
   const isWorkflowInitializing = useSelector(
     (state) => state.team.isWorkflowInitializing
   );
+  const { resolvedTheme } = useTheme();
   const router = useRouter();
   const [filteredWorkflows, setFilteredWorkflows] = useState([]);
   const [search, setSearch] = useState("");
@@ -57,7 +59,7 @@ export default function Workflows() {
         <Input
           variant="outline"
           placeholder="Search Workflows"
-          className="w-[350px] shadow-none border-black/50 border rounded-lg"
+          className="w-[350px] shadow-none border-black/50 dark:border-background border rounded-lg dark:text-background"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -65,7 +67,7 @@ export default function Workflows() {
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            className="border border-black/50 rounded-lg text-black/80 text-xs"
+            className="border border-black/50 rounded-lg text-black/80 text-xs dark:text-background dark:border-background"
             onPress={() => {
               router.push(`/templates`);
             }}
@@ -83,9 +85,11 @@ export default function Workflows() {
           className=" w-fit"
           variant="bordered"
           classNames={{
-            tabList: "relative border-1 h-12",
-            tabContent: "text-black/80 cursor-pointer w-[120px] text-xs",
-            cursor: "h-10 top-1",
+            tabList:
+              "relative border-1 h-12 border-black/50 dark:border-background",
+            tabContent:
+              "text-black/80 group-data-[selected=true]:text-background cursor-pointer w-[120px] text-xs dark:text-background dark:group-data-[selected=true]:text-black",
+            cursor: "h-10 top-1 bg-black/80 dark:bg-background",
           }}
           selectedKey={tab}
           onSelectionChange={setTab}
@@ -98,11 +102,24 @@ export default function Workflows() {
           <Button
             variant="outline"
             size="sm"
-            className="border border-black/80 rounded-lg text-xs rounded-r-none h-11"
+            className="border border-black/80 rounded-lg text-xs rounded-r-none h-11 dark:border-background dark:text-background"
             style={{
-              backgroundColor: view === "grid" ? "black" : "transparent",
-              opacity: view === "grid" ? 0.8 : 1,
-              color: view === "grid" ? "white" : "black",
+              backgroundColor:
+                view === "grid"
+                  ? resolvedTheme === "dark"
+                    ? "#fffcea"
+                    : "black"
+                  : "transparent",
+              opacity:
+                view === "grid" ? (resolvedTheme === "dark" ? 1 : 0.8) : 1,
+              color:
+                view === "grid"
+                  ? resolvedTheme === "dark"
+                    ? "black"
+                    : "white"
+                  : resolvedTheme === "dark"
+                  ? "white"
+                  : "black",
             }}
             onPress={() => setView("grid")}
           >
@@ -111,11 +128,24 @@ export default function Workflows() {
           <Button
             variant="outline"
             size="sm"
-            className="border border-black/80 rounded-lg text-xs rounded-l-none h-11"
+            className="border border-black/80 rounded-lg text-xs rounded-l-none h-11 dark:border-background dark:text-background"
             style={{
-              backgroundColor: view === "list" ? "black" : "transparent",
-              opacity: view === "list" ? 0.8 : 1,
-              color: view === "list" ? "white" : "black",
+              backgroundColor:
+                view === "list"
+                  ? resolvedTheme === "dark"
+                    ? "#fffcea"
+                    : "black"
+                  : "transparent",
+              opacity:
+                view === "list" ? (resolvedTheme === "dark" ? 1 : 0.8) : 1,
+              color:
+                view === "list"
+                  ? resolvedTheme === "dark"
+                    ? "black"
+                    : "white"
+                  : resolvedTheme === "dark"
+                  ? "white"
+                  : "black",
             }}
             onPress={() => setView("list")}
           >

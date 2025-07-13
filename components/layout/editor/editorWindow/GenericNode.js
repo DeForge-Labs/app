@@ -25,6 +25,7 @@ import ArrayField from "./nodes/generic/ArrayField";
 import CheckBoxField from "./nodes/generic/CheckBoxField";
 import DateTimeField from "./nodes/generic/DateTimeField";
 import SliderField from "./nodes/generic/SliderField";
+import { useTheme } from "next-themes";
 
 export function GenericNode({ id, type, data }) {
   const dispatch = useDispatch();
@@ -309,6 +310,7 @@ export function GenericNode({ id, type, data }) {
     const selectedHandle = useSelector(
       (state) => state.workflow?.selectedHandle
     );
+    const { resolvedTheme } = useTheme();
     const isSameNode = selectedNodeId === id;
 
     return outputs.map((output, index) => {
@@ -344,7 +346,7 @@ export function GenericNode({ id, type, data }) {
               }`}
               style={{
                 backgroundColor: getColorByType(output.type.toLowerCase()),
-                borderColor: "black",
+                borderColor: resolvedTheme === "dark" ? "white" : "black",
                 borderWidth: "1px",
               }}
             ></div>
@@ -387,7 +389,7 @@ export function GenericNode({ id, type, data }) {
 
   return (
     <Card
-      className={`w-64 border-black/50 bg-background relative ${cn(
+      className={`w-64 border-black/50 bg-background relative dark:border-background dark:text-background dark:bg-zinc-900 ${cn(
         workflow?.status === "LIVE" && "border-red-500"
       )} `}
     >
@@ -396,7 +398,7 @@ export function GenericNode({ id, type, data }) {
           <Lock className="h-3 w-3" />
         </div>
       )}
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 border-b border-black/50 mb-5">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 border-b border-black/50 dark:border-background mb-5">
         <CardTitle className="text-sm font-medium">
           <div className="flex items-center">
             {data.label || nodeType.title}

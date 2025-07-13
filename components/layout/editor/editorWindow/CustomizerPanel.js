@@ -129,21 +129,23 @@ export default function CustomizerPanel() {
 
   return (
     <div className="space-y-4 absolute p-4 w-full">
-      <div className="flex items-center justify-between">
-        <div className="font-semibold">Node Properties</div>
+      <div className="flex items-center justify-between dark:text-background dark:border-background">
+        <div className="font-semibold dark:text-background">
+          Node Properties
+        </div>
         {workflow?.status === "LIVE" && (
-          <div className="bg-black h-6 w-6 rounded-full flex items-center justify-center text-background">
+          <div className="bg-black h-6 w-6 rounded-full flex items-center justify-center text-background dark:bg-background dark:text-black">
             <Lock className="h-3 w-3" />
           </div>
         )}
       </div>
-      <Card className="border-black/50">
+      <Card className="border-black/50 dark:border-background dark:bg-zinc-900">
         <CardHeader className="p-4 pb-2">
           <CardTitle className="text-sm flex flex-col gap-3">
             <Button
               variant="outline"
               size="sm"
-              className="border border-black/50 text-xs"
+              className="border border-black/50 text-xs dark:border-background dark:text-background"
               onPress={() =>
                 window.open(
                   "https://docs.deforge.io/docs/nodes/" + nodeType.type,
@@ -361,9 +363,11 @@ export default function CustomizerPanel() {
       </Card>
 
       {nodeType.fields.some((field) => field.type === "env") && (
-        <Card className="border border-black/50 shadow-none">
+        <Card className="border border-black/50 shadow-none dark:bg-zinc-900 dark:border-background dark:text-background">
           <CardHeader className="p-4 pb-0">
-            <CardTitle className="text-sm">Environment Variables</CardTitle>
+            <CardTitle className="text-sm dark:text-background">
+              Environment Variables
+            </CardTitle>
           </CardHeader>
           <CardContent className="p-4">
             {nodeType.fields.map((field, index) => {
@@ -376,7 +380,7 @@ export default function CustomizerPanel() {
       )}
 
       {nodeType.fields.some((field) => field.type === "social") && (
-        <Card className="border border-black/50 shadow-none">
+        <Card className="border border-black/50 dark:bg-zinc-900 shadow-none dark:border-background dark:text-background">
           <CardHeader className="p-4 pb-0">
             <CardTitle className="text-sm">Connections</CardTitle>
           </CardHeader>
@@ -393,7 +397,7 @@ export default function CustomizerPanel() {
       )}
 
       {nodeType.outputs.length > 0 && (
-        <Card className="border border-black/50 shadow-none">
+        <Card className="border border-black/50 shadow-none dark:bg-zinc-900 dark:border-background dark:text-background">
           <CardContent className="p-4 pt-0 ">
             <div className="mt-4">
               <h3 className="text-sm font-semibold mb-3">Outputs</h3>

@@ -5,6 +5,7 @@ import { Slider } from "@heroui/react";
 import { useEffect, useState } from "react";
 import getColorByType from "@/lib/color-profile";
 import { useSelector } from "react-redux";
+import { useTheme } from "next-themes";
 
 export default function SliderField({
   field,
@@ -17,6 +18,7 @@ export default function SliderField({
   isSameNode,
 }) {
   const selectedHandle = useSelector((state) => state.workflow?.selectedHandle);
+  const { resolvedTheme } = useTheme();
 
   const [value, setValue] = useState(currentValue);
 
@@ -56,7 +58,7 @@ export default function SliderField({
                 backgroundColor: getColorByType(
                   matchingInput?.type.toLowerCase()
                 ),
-                borderColor: "black",
+                borderColor: resolvedTheme === "dark" ? "white" : "black",
                 borderWidth: "1px",
               }}
             ></div>
@@ -72,7 +74,7 @@ export default function SliderField({
                     backgroundColor: getColorByType(
                       matchingInput?.type.toLowerCase()
                     ),
-                    borderColor: "black",
+                    borderColor: resolvedTheme === "dark" ? "white" : "black",
                     borderWidth: "1px",
                   }}
                 ></div>
@@ -94,7 +96,7 @@ export default function SliderField({
             <output {...props}>
               <input
                 aria-label="Temperature value"
-                className="px-1 py-0.5 w-10 text-right text-xs bg-black/5 outline-none transition-colors rounded-md border border-transparent hover:border-black focus:border-black"
+                className="px-1 py-0.5 w-10 text-right text-xs bg-black/5 outline-none transition-colors rounded-md border border-transparent hover:border-black focus:border-black dark:bg-white/5 dark:hover:border-background dark:focus:border-background dark:text-background dark:bg-dark"
                 type="text"
                 value={value || 0}
                 onChange={(e) => {
@@ -114,11 +116,11 @@ export default function SliderField({
           )}
           className="mt-1"
           classNames={{
-            filler: "bg-black/80",
-            label: "text-xs font-medium capitalize",
-            thumb: "bg-black/80",
+            filler: "bg-black/80 dark:bg-background",
+            label: "text-xs font-medium capitalize dark:text-background",
+            thumb: "bg-black/80 dark:bg-background",
             track:
-              "data-[fill-end=true]:border-e-black/80 data-[fill-start=true]:border-s-black/80 border-s-black/80",
+              "data-[fill-end=true]:border-e-black/80 data-[fill-start=true]:border-s-black/80 border-s-black/80 dark:border-s-background",
           }}
           isDisabled={isDisabled}
         />

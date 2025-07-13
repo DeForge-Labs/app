@@ -35,26 +35,29 @@ export default function LogoutButton() {
 
       <Modal
         isOpen={isOpen}
-        className="border border-black bg-background p-1"
+        className="border border-black bg-background p-1 dark:bg-dark dark:border-background"
         onClose={() => setIsOpen(false)}
         closeButton={<div></div>}
       >
         <ModalContent>
           <ModalHeader>
-            <h3 className="text-xl font-medium">Logout</h3>
+            <h3 className="text-xl font-medium dark:text-background">Logout</h3>
           </ModalHeader>
-          <ModalBody className="-mt-3">
+          <ModalBody className="-mt-3 dark:text-background">
             <p>Are you sure you want to logout from this account?</p>
           </ModalBody>
           <ModalFooter className="-mt-2 flex w-full gap-2">
             <Button
               variant="outline"
-              className="w-full rounded-full border border-black/80 p-7"
+              className="w-full rounded-full border border-black/80 p-7 dark:border-background dark:text-background"
               onPress={() => setIsOpen(false)}
             >
               Cancel
             </Button>
-            <Button className="w-full rounded-full p-7" onPress={handleLogout}>
+            <Button
+              className="w-full rounded-full p-7 bg-black/80 text-background dark:bg-background dark:text-black"
+              onPress={handleLogout}
+            >
               Logout
             </Button>
           </ModalFooter>

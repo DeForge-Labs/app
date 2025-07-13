@@ -8,8 +8,12 @@ export default function DateTimePicker({ value, onChange, isDisabled }) {
       granularity="minute"
       className="max-w-xs"
       classNames={{
-        base: "rounded-lg [&>div]:rounded-lg border border-black [&>div]:focus-within:hover:bg-transparent",
-        inputWrapper: "bg-transparent",
+        base: "rounded-lg [&>div]:rounded-lg border border-black [&>div]:focus-within:hover:bg-transparent dark:border-background dark:text-background",
+        inputWrapper:
+          "bg-transparent dark:text-background dark:bg-zinc-900 dark:text-background",
+        innerWrapper: "dark:text-background",
+        segment:
+          "dark:text-background dark:data-[editable=true]:text-background",
       }}
       color="secondary"
       calendarProps={{

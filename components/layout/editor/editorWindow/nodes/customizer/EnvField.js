@@ -35,14 +35,14 @@ export default function EnvField({ field }) {
             id={field.name}
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            className="flex-1 border border-black/50 rounded-md"
+            className="flex-1 border border-black/50 rounded-md dark:border-background dark:text-background"
             variant="outline"
             placeholder={defaultValue}
           />
           <Button
             size="icon"
             variant="icon"
-            className="p-3 rounded-md text-xs bg-black/80 text-background h-full"
+            className="p-3 rounded-md text-xs bg-black/80 text-background h-full dark:bg-background dark:text-black"
             onPress={() => {
               setIsOpen(true);
             }}
@@ -51,12 +51,14 @@ export default function EnvField({ field }) {
             <Save className="h-4 w-4" />
           </Button>
         </div>
-        <div className="text-[10px] text-black/50">{field.desc}</div>
+        <div className="text-[10px] text-black/50 dark:text-background">
+          {field.desc}
+        </div>
       </div>
 
       <Modal
         isOpen={isOpen}
-        className="border border-black bg-background p-1"
+        className="border border-black bg-background p-1 dark:border-background dark:text-background dark:bg-dark"
         onClose={() => setIsOpen(false)}
         closeButton={<div></div>}
         isDismissable={!isSavingEnv}
@@ -70,7 +72,7 @@ export default function EnvField({ field }) {
           <ModalBody className="-mt-3">
             <p>
               Are you sure you want to save this environment variable
-              <span className="text-black mx-1 font-semibold font-mono">
+              <span className="text-black mx-1 font-semibold font-mono dark:text-background">
                 {field.name}
               </span>
               ?
@@ -79,19 +81,19 @@ export default function EnvField({ field }) {
           <ModalFooter className="-mt-2 flex w-full gap-2">
             <Button
               variant="outline"
-              className="w-full rounded-full border border-black/80 p-7"
+              className="w-full rounded-full border border-black/80 p-7 dark:border-background dark:text-background"
               onPress={() => setIsOpen(false)}
               isDisabled={isSavingEnv}
             >
               Cancel
             </Button>
             <Button
-              className="w-full rounded-full p-7"
+              className="w-full rounded-full p-7 dark:bg-background dark:text-black"
               onPress={() => handleSaveEnv(field.name, value, setValue)}
               isDisabled={isSavingEnv || !value}
             >
               {isSavingEnv ? (
-                <Loader2 className="animate-spin text-background" />
+                <Loader2 className="animate-spin text-background dark:text-black" />
               ) : (
                 "Save"
               )}

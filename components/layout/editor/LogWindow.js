@@ -40,13 +40,13 @@ export default function ExecutionLogsPanel() {
 
   return (
     <div
-      className={` bg-background border-t transition-all duration-300 z-10 ${
+      className={` bg-background border-t transition-all duration-300 z-10 dark:bg-dark dark:border-background dark:text-background ${
         isExpanded ? "h-80" : "h-12"
       }`}
     >
       {/* Header bar */}
       <div
-        className="flex items-center justify-between bg-black/5 border-black/50 border-t px-4 h-12 border-b  cursor-pointer"
+        className="flex items-center justify-between bg-black/5 border-black/50 border-t px-4 h-12 border-b  cursor-pointer dark:bg-dark dark:border-background dark:text-background"
         onClick={() => {
           if (!isLogInitializing) {
             setIsExpanded(!isExpanded);
@@ -55,7 +55,7 @@ export default function ExecutionLogsPanel() {
           }
         }}
       >
-        <div className="flex items-center">
+        <div className="flex items-center dark:text-background">
           {isLogInitializing ? (
             <Loader className="h-4 w-4 mr-2 animate-spin" />
           ) : (
@@ -72,6 +72,7 @@ export default function ExecutionLogsPanel() {
         <Button
           variant="outline"
           size="icon"
+          className="dark:text-background"
           onPress={() => {
             if (!isLogInitializing) {
               setIsExpanded(!isExpanded);
@@ -93,8 +94,8 @@ export default function ExecutionLogsPanel() {
       {isExpanded && (
         <div className="flex h-[calc(100%-3rem)] overflow-hidden">
           {/* Executions list */}
-          <div className="w-64 border-r border-black/20 overflow-y-auto py-2">
-            <h3 className="text-sm font-medium pb-2 pl-2 border-b border-black/20">
+          <div className="w-64 border-r border-black/20 overflow-y-auto py-2 dark:border-background">
+            <h3 className="text-sm font-medium pb-2 pl-2 border-b border-black/20 dark:border-background">
               Recent Executions
             </h3>
             {logs.map((exec) => {
@@ -103,7 +104,7 @@ export default function ExecutionLogsPanel() {
               return (
                 <div
                   key={exec.id}
-                  className={`p-2 cursor-pointer hover:bg-muted border-b border-black/20 ${
+                  className={`p-2 cursor-pointer hover:bg-muted border-b border-black/20 dark:border-background ${
                     selectedExecution === exec.id ? "bg-black/5" : ""
                   } ${isNewLog ? "bg-yellow-500/20" : ""}`}
                   onClick={() => {
@@ -143,10 +144,10 @@ export default function ExecutionLogsPanel() {
           </div>
 
           {/* Execution details */}
-          <div className="flex-1 overflow-hidden flex flex-col">
+          <div className="flex-1 overflow-hidden flex flex-col dark:border-background">
             {execution ? (
               <>
-                <div className="p-3 border-b border-black/20">
+                <div className="p-3 border-b border-black/20 dark:border-background">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <Clock className="h-4 w-4 mr-1" />

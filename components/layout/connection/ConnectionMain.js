@@ -84,24 +84,38 @@ export default function ConnectionMain() {
 
   return (
     <>
-      <div className="flex flex-col w-[350px]">
+      <div className="flex flex-col w-[350px] dark:bg-dark dark:text-background">
         <Link href="/" className="flex items-center justify-center space-x-2">
-          <Image src="/logo/logo-black.svg" alt="Logo" width={27} height={27} />
-          <span className="font-bold inline-block text-4xl">Deforge</span>
+          <Image
+            src="/logo/logo-black.svg"
+            alt="Logo"
+            width={27}
+            height={27}
+            className="dark:invert"
+          />
+          <span className="font-bold inline-block text-4xl dark:text-background">
+            Deforge
+          </span>
         </Link>
 
         <div className="flex flex-col items-center justify-center mt-10 h-[300px]">
           {connectionType && connectionType.type === "redirect" ? (
             <div className="flex flex-col items-center justify-center ">
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold dark:text-background">
                 Redirecting to {connectionType.name}
               </div>
-              <div className="text-sm text-gray-500">Please wait...</div>
+              <div className="text-sm text-gray-500 dark:text-background">
+                Please wait...
+              </div>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center ">
-              <div className="text-2xl font-bold">Connection not found</div>
-              <div className="text-sm text-gray-500">Please try again</div>
+              <div className="text-2xl font-bold dark:text-background">
+                Connection not found
+              </div>
+              <div className="text-sm text-gray-500 dark:text-background">
+                Please try again
+              </div>
             </div>
           )}
         </div>

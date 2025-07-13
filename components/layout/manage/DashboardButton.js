@@ -13,7 +13,7 @@ export default function DashboardButton() {
       <Button
         variant="outline"
         size="md"
-        className="border h-9 border-black/50 rounded-lg text-black/80 text-xs"
+        className="border h-9 border-black/50 rounded-lg text-black/80 text-xs dark:text-background dark:border-background"
         onPress={() => {
           router.push(`/dashboard/${team?.id}`);
         }}

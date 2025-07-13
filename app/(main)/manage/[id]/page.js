@@ -3,7 +3,7 @@ import Navbar from "@/components/layout/manage/Navbar";
 
 export default function Manage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen dark:bg-dark">
       <Navbar />
       <Members />
     </div>

@@ -57,7 +57,7 @@ export default function FallbackButton({ className, showTooltip = true }) {
 
       <Modal
         isOpen={isOpen}
-        className="border border-black bg-background p-1"
+        className="border border-black bg-background p-1 dark:border-background dark:text-background dark:bg-dark"
         onClose={() => setIsOpen(false)}
         closeButton={<div></div>}
         isDismissable={!isFallbacking}
@@ -77,19 +77,19 @@ export default function FallbackButton({ className, showTooltip = true }) {
           <ModalFooter className="-mt-2 flex w-full gap-2">
             <Button
               variant="outline"
-              className="w-full rounded-full border border-black/80 p-7"
+              className="w-full rounded-full border border-black/80 p-7 dark:border-background dark:text-background dark:bg-dark"
               onPress={() => setIsOpen(false)}
               isDisabled={isFallbacking}
             >
               Cancel
             </Button>
             <Button
-              className="w-full rounded-full p-7"
+              className="w-full rounded-full bg-black/80 text-background p-7 dark:bg-background dark:text-black"
               onPress={() => handleFallbackWorkflow()}
               isDisabled={isFallbacking}
             >
               {isFallbacking ? (
-                <Loader2 className="animate-spin text-background" />
+                <Loader2 className="animate-spin text-background dark:text-black" />
               ) : (
                 "Rollback"
               )}

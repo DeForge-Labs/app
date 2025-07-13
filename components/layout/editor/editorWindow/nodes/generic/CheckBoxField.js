@@ -4,6 +4,7 @@ import { Handle, Position } from "reactflow";
 import { Checkbox } from "@heroui/react";
 import getColorByType from "@/lib/color-profile";
 import { useSelector } from "react-redux";
+import { useTheme } from "next-themes";
 
 export default function CheckBoxField({
   field,
@@ -16,6 +17,7 @@ export default function CheckBoxField({
   isSameNode,
 }) {
   const selectedHandle = useSelector((state) => state.workflow?.selectedHandle);
+  const { resolvedTheme } = useTheme();
 
   return (
     <div key={field.name} className="mb-2 relative">
@@ -49,7 +51,7 @@ export default function CheckBoxField({
                 backgroundColor: getColorByType(
                   matchingInput?.type.toLowerCase()
                 ),
-                borderColor: "black",
+                borderColor: resolvedTheme === "dark" ? "white" : "black",
                 borderWidth: "1px",
               }}
             ></div>
@@ -65,7 +67,7 @@ export default function CheckBoxField({
                     backgroundColor: getColorByType(
                       matchingInput?.type.toLowerCase()
                     ),
-                    borderColor: "black",
+                    borderColor: resolvedTheme === "dark" ? "white" : "black",
                     borderWidth: "1px",
                   }}
                 ></div>
@@ -78,10 +80,10 @@ export default function CheckBoxField({
           onValueChange={(value) => handleChange(field.name, value)}
           className=""
           classNames={{
-            wrapper: "after:bg-black/80",
+            wrapper: "after:bg-black/80 dark:invert",
           }}
         >
-          <p className="text-xs font-medium text-black/80">
+          <p className="text-xs font-medium text-black/80 dark:text-white/80">
             {currentValue ? "Yes" : "No"}
           </p>
         </Checkbox>

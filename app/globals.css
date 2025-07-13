@@ -8,13 +8,7 @@
   --primary: #fefceaff;
   --secondary: #ebe9d8;
   --text: #000000;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #fefceaff;
-    --foreground: #ededed;
-  }
+  --dark: #1d1f26;
 }
 
 .react-flow__node {

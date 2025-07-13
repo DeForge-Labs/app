@@ -7,7 +7,7 @@ import { Trash2, X } from "lucide-react";
 export default function EdgeContextMenu({ x, y, edgeId, onDelete, onClose }) {
   return (
     <Card
-      className="absolute z-10 w-48 bg-background"
+      className="absolute z-10 w-48 bg-background dark:bg-dark dark:border-background dark:text-background"
       style={{
         left: `${x}px`,
         top: `${y}px`,
@@ -19,10 +19,10 @@ export default function EdgeContextMenu({ x, y, edgeId, onDelete, onClose }) {
           <Button
             variant="outline"
             size="icon"
-            className="h-5 w-5 rounded-md border border-black/50"
+            className="h-5 w-5 rounded-md border border-black/50 dark:border-background dark:text-background"
             onPress={onClose}
           >
-            <X className="h-3 w-3 text-black/50" />
+            <X className="h-3 w-3 text-black/50 dark:text-background" />
           </Button>
         </div>
         <Button

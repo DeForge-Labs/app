@@ -15,11 +15,11 @@ export default function NumberField({
 }) {
   return (
     <div key={field.name} className="space-y-2">
-      <div className="flex justify-between items-center">
-        <div className="text-sm font-medium">
+      <div className="flex justify-between items-center dark:text-background dark:border-background">
+        <div className="text-sm font-medium dark:text-background">
           {field.name}
           {isInput && (
-            <span className="ml-2 text-xs text-muted-foreground">
+            <span className="ml-2 text-xs text-black/50 dark:text-background">
               {nodeType.inputs.find((i) => i.name === field.name)?.type}
             </span>
           )}
@@ -28,7 +28,7 @@ export default function NumberField({
           <Button
             variant="outline"
             size="sm"
-            className="h-6 px-2 text-xs bg-black/80 text-background"
+            className="h-6 px-2 text-xs bg-black/80 text-background dark:bg-background dark:text-black"
             onPress={() => handleDisconnect(field.name)}
           >
             <Link2Off className="h-3 w-3 mr-1" />
@@ -44,7 +44,7 @@ export default function NumberField({
           handleChange(field.name, Number.parseFloat(e.target.value))
         }
         placeholder={field.value?.toString()}
-        className="mt-2 border border-black/50 rounded-lg"
+        className="mt-2 border border-black/50 rounded-lg dark:border-background dark:text-background"
         variant="outline"
         disabled={isInput && isConnected}
       />
