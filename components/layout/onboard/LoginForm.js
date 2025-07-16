@@ -104,7 +104,7 @@ export default function LoginForm() {
 
         <div className="mt-1 flex w-full gap-2">
           <Button
-            className="w-full rounded-full p-7 dark:bg-background dark:text-black"
+            className="w-full rounded-full p-7 dark:bg-background dark:text-black bg-black/80 text-background"
             type="submit"
             isDisabled={isVerifying || isResending}
           >
@@ -173,7 +173,7 @@ export default function LoginForm() {
 
         <div className="mt-3 flex w-full gap-2">
           <Button
-            className="w-full rounded-full p-7 dark:bg-background dark:text-black"
+            className="w-full rounded-full p-7 dark:bg-background dark:text-black bg-black/80 text-background"
             type="submit"
             isDisabled={isRequestingLogin}
           >

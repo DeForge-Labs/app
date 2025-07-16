@@ -32,7 +32,7 @@ export default function TemplateNavbar() {
             <Button
               variant="outline"
               size="md"
-              className="bg-black/80 h-9 rounded-lg text-background text-xs"
+              className="bg-black/80 h-9 rounded-lg text-background text-xs dark:bg-background dark:text-black"
               onPress={() => {
                 router.push(`/`);
               }}

@@ -178,14 +178,14 @@ export default function NodeMenu() {
 
         {isNodeRegistryInitializing && (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Loader2 className="h-5 w-5 text-black animate-spin" />
+            <Loader2 className="h-5 w-5 text-black animate-spin dark:text-background" />
           </div>
         )}
 
         {filteredNodes.length === 0 && !isNodeRegistryInitializing && (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="rounded-full bg-black/10 p-4 mb-4 dark:bg-background">
-              <TriangleAlert className="h-5 w-5 text-black" />
+            <div className="rounded-full bg-black/10 p-4 mb-4 dark:bg-white/10">
+              <TriangleAlert className="h-5 w-5 text-black dark:text-background" />
             </div>
             <h3 className="text-sm font-medium dark:text-background">
               No nodes found

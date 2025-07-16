@@ -19,10 +19,10 @@ export default function TemplateListBody() {
     return (
       <section className="py-16 md:py-20">
         <div className="container h-[561.63px] flex flex-col items-center justify-center">
-          <div className="rounded-full flex items-center justify-center w-16 h-16 bg-black/10">
-            <CopyX className="h-5 w-5 text-black" />
+          <div className="rounded-full flex items-center justify-center w-16 h-16 bg-black/10 dark:bg-white/10">
+            <CopyX className="h-5 w-5 text-black dark:text-background" />
           </div>
-          <p className="text-black/60 mt-4 text-center">
+          <p className="text-black/60 mt-4 text-center dark:text-background">
             Pssst! Quite empty here
             <br />
             Visit again to see some templates
