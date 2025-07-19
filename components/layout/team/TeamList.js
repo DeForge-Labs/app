@@ -56,7 +56,10 @@ export default function TeamList() {
                   key={team.teamId}
                   className="w-full mb-2 rounded-xl py-9 px-4 border border-black/40 justify-between dark:border-background dark:text-background"
                   variant="outline"
-                  onPress={() => router.push(`/dashboard/${team.teamId}`)}
+                  onPress={() => {
+                    router.push(`/dashboard/${team.teamId}`);
+                    localStorage.setItem(`team_${user.id}`, team.teamId);
+                  }}
                 >
                   <div className="flex flex-col items-start">
                     <p className="font-semibold text-black/80 text-lg dark:text-background">

@@ -115,7 +115,7 @@ export default function LoginForm() {
             variant="outline"
             type="button"
             onPress={() => {
-              resend(email, setIsResending, isSignUp, setTimeout);
+              resend(email, setIsResending, setTimeout);
             }}
             isDisabled={isResending || isVerifying || timeout > 0}
           >

@@ -50,9 +50,7 @@ export default function useInitialize() {
 
       if (response.data.success) {
         dispatch(setUser(response.data.user));
-        if (window.location.pathname === "/") {
-          router.push("/team");
-        }
+        return response.data.user;
       } else {
         if (force) {
           router.push("/");

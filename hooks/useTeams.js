@@ -15,9 +15,9 @@ export default function useTeams() {
     return response.data.teams;
   };
 
-  const createTeam = async (name) => {
+  const createTeam = async (name, token = null) => {
     const headers = {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      Authorization: `Bearer ${token || localStorage.getItem("token")}`,
     };
 
     const response = await axios.post(

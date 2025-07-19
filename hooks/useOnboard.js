@@ -9,6 +9,7 @@ export default function useOnboard() {
   const { getTeams } = useTeams();
   const router = useRouter();
   const { loadUser } = useInitialize();
+  const { createTeam } = useTeams();
 
   const requestLogin = async (
     email,
@@ -66,18 +67,30 @@ export default function useOnboard() {
 
         localStorage.setItem("token", response.data.token);
 
-        await loadUser(false, response.data.token);
+        const user = await loadUser(false, response.data.token);
 
         try {
           const teams = await getTeams();
+
           if (teams.length === 0) {
             router.push("/team/create");
           } else {
-            router.push("/team");
+            const lastTeamId = localStorage.getItem(`team_${user.id}`);
+
+            if (lastTeamId) {
+              if (lastTeamId in teams) {
+                router.push(`/dashboard/${lastTeamId}`);
+              } else {
+                router.push(`/dashboard/${teams[0].teamId}`);
+                localStorage.setItem(`team_${user.id}`, teams[0].teamId);
+              }
+            } else {
+              router.push(`/dashboard/${teams[0].teamId}`);
+            }
           }
         } catch (error) {
           toast.error("Failed to get teams");
-          router.push("/team");
+          router.push("/");
         }
       } else {
         toast.error(response.data.message);
@@ -120,7 +133,14 @@ export default function useOnboard() {
 
         await loadUser(false, response.data.token);
 
-        router.push("/team/create");
+        const teamResponse = await createTeam("My Team", response.data.token);
+
+        if (teamResponse.success) {
+          router.push(`/dashboard/${teamResponse.team.id}`);
+        } else {
+          toast.error(teamResponse.message);
+          router.push("/team/create");
+        }
       } else {
         toast.error(response.data.message);
       }
@@ -131,32 +151,19 @@ export default function useOnboard() {
     }
   };
 
-  const resend = async (email, setIsResending, isSignUp, setTimeout) => {
+  const resend = async (email, setIsResending, setTimeout) => {
     try {
       setIsResending(true);
 
-      if (isSignUp) {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/request/signup`,
-          { email }
-        );
-        if (response.data.success) {
-          toast.success("OTP sent successfully");
-          setTimeout(20);
-        } else {
-          toast.error(response.data.message);
-        }
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/request/login`,
+        { email }
+      );
+      if (response.data.success) {
+        toast.success("OTP sent successfully");
+        setTimeout(20);
       } else {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/request/login`,
-          { email }
-        );
-        if (response.data.success) {
-          toast.success("OTP sent successfully");
-          setTimeout(20);
-        } else {
-          toast.error(response.data.message);
-        }
+        toast.error(response.data.message);
       }
     } catch (error) {
       toast.error("Failed to send OTP");

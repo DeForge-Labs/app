@@ -145,9 +145,9 @@ export default function TeamForm() {
               className="w-full rounded-full p-7 border border-black/40 dark:border-background dark:text-background"
               variant="outline"
               isDisabled={isCreating || isSkipping}
-              onPress={handleSkipTeam}
+              onPress={() => router.push("/team")}
             >
-              {isSkipping ? <Loader2 className="animate-spin" /> : "Skip"}
+              {isSkipping ? <Loader2 className="animate-spin" /> : "Back"}
             </Button>
           </div>
         </>
@@ -189,10 +189,12 @@ export default function TeamForm() {
             <Button
               className="w-full rounded-full p-7 border border-black/40 dark:border-background dark:text-background"
               variant="outline"
-              onPress={handleSkipTeam}
+              onPress={() => {
+                router.push("/team");
+              }}
               isDisabled={isJoining || isSkipping}
             >
-              {isSkipping ? <Loader2 className="animate-spin" /> : "Skip"}
+              {isSkipping ? <Loader2 className="animate-spin" /> : "Back"}
             </Button>
           </div>
         </>
