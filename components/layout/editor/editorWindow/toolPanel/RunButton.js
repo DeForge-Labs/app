@@ -14,52 +14,78 @@ export default function RunButton() {
   const nodes = useSelector((state) => state.workflow.nodes || []);
   const { handleRun, handleRunLive } = useExecution();
 
-  const isTelegramTriggerPresent = nodes.some(
-    (node) => node.type === "tg_trigger"
-  );
+  const isTelegramTriggerPresent =
+    nodes.filter((node) => node.type === "tg_trigger").length > 0;
+
+  const isChatBotTriggerPresent =
+    nodes.filter((node) => node.type === "chatbot_trigger").length > 0;
+
+  const isWidgetTriggerPresent =
+    nodes.filter((node) => node.type === "widget_trigger").length > 0;
 
   return (
-    <Tooltip
-      className="bg-white border-black/50 border mb-3 rounded-lg shadow-none"
-      content={
-        <div className="p-2 text-xs">
-          <p>Run workflow</p>
-        </div>
-      }
-    >
-      {workflow?.status !== "LIVE" ? (
-        <Button
-          onPress={() => handleRun()}
-          variant="icon"
-          className={cn(
-            "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-2 "
-          )}
-          size="icon"
-          isDisabled={isRunning || isTelegramTriggerPresent}
-        >
-          {isRunning && type === "raw" ? (
-            <Loader2 size={16} className="animate-spin text-background" />
-          ) : (
-            <Play size={16} />
-          )}
-        </Button>
-      ) : (
-        <Button
-          onPress={() => handleRunLive()}
-          variant="icon"
-          className={cn(
-            "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-2 "
-          )}
-          size="icon"
-          isDisabled={isRunning || isTelegramTriggerPresent}
-        >
-          {isRunning && type === "live" ? (
-            <Loader2 size={16} className="animate-spin text-background" />
-          ) : (
-            <Play size={16} />
-          )}
-        </Button>
-      )}
-    </Tooltip>
+    !isTelegramTriggerPresent &&
+    !isWidgetTriggerPresent && (
+      <Tooltip
+        className="bg-white border-black/50 border mb-3 rounded-lg shadow-none"
+        content={
+          <div className="p-2 text-xs">
+            <p>Run workflow</p>
+          </div>
+        }
+      >
+        {workflow?.status !== "LIVE" ? (
+          <Button
+            onPress={() => {
+              if (isChatBotTriggerPresent) {
+                window.open(
+                  `https://chat.deforge.io/?workflowId=${workflow?.id}&status=test`,
+                  "_blank"
+                );
+              } else {
+                handleRun();
+              }
+            }}
+            variant="icon"
+            className={cn(
+              "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-2 "
+            )}
+            size="icon"
+            isDisabled={isRunning}
+          >
+            {isRunning && type === "raw" ? (
+              <Loader2 size={16} className="animate-spin text-background" />
+            ) : (
+              <Play size={16} />
+            )}
+          </Button>
+        ) : (
+          <Button
+            onPress={() => {
+              if (isChatBotTriggerPresent) {
+                window.open(
+                  `https://chat.deforge.io/?workflowId=${workflow?.id}`,
+                  "_blank"
+                );
+              } else {
+                handleRunLive();
+              }
+            }}
+            variant="icon"
+            className={cn(
+              "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-2 "
+            )}
+            size="icon"
+            isDisabled={isRunning || isTelegramTriggerPresent}
+          >
+            {isRunning && type === "live" ? (
+              <Loader2 size={16} className="animate-spin text-background" />
+            ) : (
+              <Play size={16} />
+            )}
+          </Button>
+        )}
+      </Tooltip>
+    )
   );
 }
