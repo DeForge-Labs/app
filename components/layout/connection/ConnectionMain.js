@@ -13,12 +13,17 @@ export default function ConnectionMain() {
   const key = searchParams.get("key");
   const user = useSelector((state) => state.user.user);
   const isInitializing = useSelector((state) => state.user.isInitializing);
-  const { handleYouTube } = useSocial();
+  const { handleYouTube, handleTwitter } = useSocial();
 
   const connectionTypes = [
     {
       name: "YouTube",
       key: "youtube",
+      type: "redirect",
+    },
+    {
+      name: "Twitter",
+      key: "twitter",
       type: "redirect",
     },
   ];
@@ -63,6 +68,25 @@ export default function ConnectionMain() {
     if (connectionType.key === "youtube") {
       try {
         const response = await handleYouTube(workflowId);
+
+        if (!response.data.success) {
+          throw new Error(response.data.message);
+        }
+
+        window.location.href = response.data.authURL;
+      } catch (error) {
+        console.log(error);
+        window.opener.postMessage(
+          {
+            type: "SOCIAL_AUTH_ERROR",
+            message: error.message,
+          },
+          window.location.origin
+        );
+      }
+    } else if (connectionType.key === "twitter") {
+      try {
+        const response = await handleTwitter(workflowId);
 
         if (!response.data.success) {
           throw new Error(response.data.message);

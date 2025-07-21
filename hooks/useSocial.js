@@ -48,8 +48,27 @@ export default function useSocial() {
     return response;
   };
 
+  const handleTwitter = async (workflowId) => {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    };
+
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/workflow/connectSocial/${workflowId}?social=twitter`,
+      {},
+      { headers }
+    );
+
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+
+    return response;
+  };
+
   return {
     handleYouTube,
+    handleTwitter,
     getSocial,
   };
 }
