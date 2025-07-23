@@ -58,22 +58,13 @@ export default function Workflows() {
       <div className="flex w-full justify-between items-center">
         <Input
           variant="outline"
-          placeholder="Search Workflows"
+          placeholder="Search Workspaces"
           className="w-[350px] shadow-none border-black/50 dark:border-background border rounded-lg dark:text-background"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            className="border border-black/50 rounded-lg text-black/80 text-xs dark:text-background dark:border-background"
-            onPress={() => {
-              router.push(`/templates`);
-            }}
-          >
-            Browse Templates
-          </Button>
           <CreateWorkflowButton />
         </div>
       </div>
@@ -88,14 +79,14 @@ export default function Workflows() {
             tabList:
               "relative border-1 h-12 border-black/50 dark:border-background",
             tabContent:
-              "text-black/80 group-data-[selected=true]:text-background cursor-pointer w-[120px] text-xs dark:text-background dark:group-data-[selected=true]:text-black",
+              "text-black/80 group-data-[selected=true]:text-background cursor-pointer w-[140px] text-xs dark:text-background dark:group-data-[selected=true]:text-black",
             cursor: "h-10 top-1 bg-black/80 dark:bg-background",
           }}
           selectedKey={tab}
           onSelectionChange={setTab}
         >
-          <Tab key="all" title="All Workflows" className="py-6" />
-          <Tab key="recent" title="Recently Modified" className="py-6" />
+          <Tab key="all" title="Your Workspaces" className="py-6" />
+          <Tab key="recent" title="Published Templates" className="py-6" />
         </Tabs>
 
         <ButtonGroup>

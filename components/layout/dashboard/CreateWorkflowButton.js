@@ -8,9 +8,62 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Input,
+  Card,
+  CardHeader,
+  CardBody,
 } from "@heroui/react";
-import { GitBranch, Loader2, Plus } from "lucide-react";
+import { GitBranch, Loader2, Plus, Terminal } from "lucide-react";
+import { useState } from "react";
+import { WorkspaceDetails } from "./WorkspaceDetails";
+import { WorkspaceList } from "./WorkspaceList";
+import { DynamicIcon } from "lucide-react/dynamic";
+
+const categories = [
+  { name: "New Workspace" },
+  { name: "Automation" },
+  { name: "Marketing" },
+  { name: "Sales" },
+  { name: "Human Resources" },
+];
+
+const dummyWorkspaces = [
+  {
+    id: "blank",
+    name: "Blank Workspace",
+    category: "New Workspace",
+    description: "Start with a clean slate, no pre-built templates.",
+  },
+  {
+    id: "auto1",
+    name: "Email Automation",
+    category: "Automation",
+    description: "Automate your email campaigns, no pre-built templates.",
+  },
+  {
+    id: "auto2",
+    name: "Social Media Scheduler",
+    category: "Automation",
+    description: "Schedule posts across platforms, no pre-built templates.",
+  },
+  {
+    id: "market1",
+    name: "Lead Generation",
+    category: "Marketing",
+    description: "Capture and nurture leads, no pre-built templates.",
+  },
+  {
+    id: "sales1",
+    name: "Sales Pipeline",
+    category: "Sales",
+    description: "Manage your sales process, no pre-built templates.",
+  },
+  {
+    id: "hr1",
+    name: "Onboarding Process",
+    category: "Human Resources",
+    description: "Streamline employee onboarding, no pre-built templates.",
+  },
+];
 
 export default function CreateWorkflowButton() {
   const {
@@ -21,6 +74,16 @@ export default function CreateWorkflowButton() {
     setWorkflowName,
     handleCreateWorkflow,
   } = useWorkflow();
+
+  const [selectedWorkspace, setSelectedWorkspace] = useState(
+    dummyWorkspaces[0]
+  );
+
+  const onClose = () => {
+    setIsOpen(false);
+    setSelectedWorkspace(null);
+  };
+
   return (
     <>
       <Button
@@ -32,58 +95,80 @@ export default function CreateWorkflowButton() {
         }}
       >
         <Plus size={16} />
-        Create New Workflow
+        New Agent
       </Button>
 
       <Modal
         isOpen={isOpen}
         className="border border-black bg-background dark:bg-dark dark:border-background p-1"
         onClose={() => setIsOpen(false)}
+        size="5xl"
         closeButton={<div></div>}
         isDismissable={!isCreatingWorkflow}
         isKeyboardDismissDisabled={isCreatingWorkflow}
         hideCloseButton={isCreatingWorkflow}
       >
-        <ModalContent>
-          <ModalHeader>
-            <h3 className="text-xl font-medium dark:text-background">
-              Create New Workflow
+        <ModalContent className="p-0">
+          <ModalHeader className="p-4 flex-col">
+            <h3 className="text-lg font-bold dark:text-background">
+              Choose a Template
             </h3>
+            <p className="text-xs opacity-70 font-normal text-black dark:text-background">
+              Select a template to get started
+            </p>
           </ModalHeader>
-          <ModalBody>
-            <Input
-              type="text"
-              placeholder="Enter workflow name"
-              className="border border-black/40 rounded-xl -mt-3 shadow-none dark:border-background dark:text-background"
-              size="lg"
-              variant="outline"
-              startContent={
-                <GitBranch className="text-black/40 dark:text-background" />
-              }
-              isClearable
-              value={workflowName}
-              onChange={(e) => setWorkflowName(e.target.value)}
-              onClear={() => setWorkflowName("")}
-            />
+          <ModalBody className="p-0 bg-background dark:bg-dark border-y dark:border-background border-black">
+            <div className="flex h-[600px] rounded-none overflow-hidden">
+              <div className="w-1/3 border-r border-black dark:border-background ">
+                <WorkspaceDetails
+                  workspace={selectedWorkspace}
+                  onClose={onClose}
+                />
+              </div>
+              <Card className="flex-1 h-full rounded-none bg-background dark:bg-dark shadow-none">
+                <CardBody className="p-4 hide-scroll">
+                  <div className="space-y-6">
+                    {categories.map((category) => (
+                      <div
+                        key={category.name}
+                        className="gap-2 text-black dark:text-background"
+                      >
+                        <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
+                          <Terminal size={14} />
+                          {category.name}
+                        </h3>
+                        <WorkspaceList
+                          workspaces={dummyWorkspaces.filter(
+                            (w) => w.category === category.name
+                          )}
+                          selectedWorkspace={selectedWorkspace}
+                          onSelectWorkspace={setSelectedWorkspace}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </CardBody>
+              </Card>
+            </div>
           </ModalBody>
-          <ModalFooter className="-mt-2 flex w-full gap-2 mb-1">
+          <ModalFooter className=" flex w-full gap-2 px-4">
             <Button
               variant="outline"
-              className="w-full rounded-full border border-black/80 p-7 dark:border-background dark:text-background"
+              className="w-fit rounded-lg border border-black/80 p-4 dark:border-background dark:text-background"
               onPress={() => setIsOpen(false)}
               isDisabled={isCreatingWorkflow}
             >
               Cancel
             </Button>
             <Button
-              className="w-full rounded-full p-7 bg-black/80 text-background dark:bg-background dark:text-black"
+              className="w-fit rounded-lg p-4 bg-black/80 text-background dark:bg-background dark:text-black"
               onPress={handleCreateWorkflow}
               isDisabled={isCreatingWorkflow || !workflowName}
             >
               {isCreatingWorkflow ? (
                 <Loader2 className="animate-spin text-background dark:text-black" />
               ) : (
-                "Create"
+                "Use This Template"
               )}
             </Button>
           </ModalFooter>
