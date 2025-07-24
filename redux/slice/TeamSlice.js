@@ -10,6 +10,10 @@ const teamSlice = createSlice({
     workflows: null,
     members: null,
     isMembersInitializing: true,
+    workspace: null,
+    templates: null,
+    defaultTemplate: null,
+    isDefaultTemplatesInitializing: true,
   },
 
   reducers: {
@@ -31,6 +35,18 @@ const teamSlice = createSlice({
     setIsMembersInitializing: (state, action) => {
       state.isMembersInitializing = action.payload;
     },
+    setWorkspace: (state, action) => {
+      state.workspace = action.payload;
+    },
+    setTemplates: (state, action) => {
+      state.templates = action.payload;
+    },
+    setDefaultTemplate: (state, action) => {
+      state.defaultTemplate = action.payload;
+    },
+    setIsDefaultTemplatesInitializing: (state, action) => {
+      state.isDefaultTemplatesInitializing = action.payload;
+    },
   },
 });
 
@@ -41,6 +57,10 @@ export const {
   setWorkflows,
   setMembers,
   setIsMembersInitializing,
+  setWorkspace,
+  setTemplates,
+  setDefaultTemplate,
+  setIsDefaultTemplatesInitializing,
 } = teamSlice.actions;
 
 export default teamSlice.reducer;

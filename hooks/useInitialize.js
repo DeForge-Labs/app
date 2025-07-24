@@ -5,6 +5,8 @@ import {
   setWorkflows,
   setIsMembersInitializing,
   setMembers,
+  setIsDefaultTemplatesInitializing,
+  setDefaultTemplate,
 } from "@/redux/slice/TeamSlice";
 import { setIsInitializing, setUser } from "@/redux/slice/UserSlice";
 import {
@@ -293,6 +295,27 @@ export default function useInitialize() {
     }
   };
 
+  const loadDefaultTemplates = async () => {
+    try {
+      dispatch(setIsDefaultTemplatesInitializing(true));
+
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/template/list`
+      );
+
+      if (response.data.success) {
+        dispatch(setDefaultTemplate(response.data.templates));
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to load default templates");
+    } finally {
+      dispatch(setIsDefaultTemplatesInitializing(false));
+    }
+  };
+
   return {
     loadUser,
     loadTeam,
@@ -303,5 +326,6 @@ export default function useInitialize() {
     loadUserAndTeams,
     loadTemplate,
     loadTemplates,
+    loadDefaultTemplates,
   };
 }

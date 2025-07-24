@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 
 export default function TeamProvider({ children }) {
   const user = useSelector((state) => state.user.user);
-  const { loadTeam, loadWorkflow } = useInitialize();
+  const { loadTeam, loadWorkflow, loadDefaultTemplates } = useInitialize();
   const team = useSelector((state) => state.team.team);
   const dispatch = useDispatch();
   const params = useParams();
@@ -18,6 +18,7 @@ export default function TeamProvider({ children }) {
       if (!params?.id) return;
 
       loadTeam(params.id);
+      loadDefaultTemplates();
     }
 
     return () => {

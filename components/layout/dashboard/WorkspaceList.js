@@ -17,18 +17,29 @@ export const WorkspaceList = ({
           isPressable
           isHoverable
           variant="flat"
-          className={`w-[calc(50%-0.5rem)] shadow-none rounded-lg border-black/80 dark:border-white/80 border bg-black/5 ${
+          className={`w-[calc(50%-0.5rem)] shadow-none rounded-lg border-black/80 dark:border-white/80 border relative bg-black/5 ${
             workspace.id === selectedWorkspace.id
               ? "border-primary dark:border-primary"
               : ""
           }`}
           onPress={() => onSelectWorkspace(workspace)}
         >
+          {workspace.id !== "blank" && (
+            <div className="absolute top-0 right-0 bg-black/5 flex items-center gap-1 py-1 rounded-bl-lg p-2">
+              <DynamicIcon
+                name="user"
+                className="text-black dark:text-background w-3 h-3"
+              />
+              <p className="text-xs text-black dark:text-background">
+                {workspace.totalClones}
+              </p>
+            </div>
+          )}
           <CardBody className="p-3">
             <div className="flex items-center gap-2">
               <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-black/5 dark:bg-white/5">
                 <DynamicIcon
-                  name={getCategoryIcon(workspace.category)}
+                  name={workspace.iconId}
                   className="text-black dark:text-background"
                 />
               </div>
@@ -36,7 +47,7 @@ export const WorkspaceList = ({
                 <h3 className="font-medium text-sm text-black dark:text-background">
                   {workspace.name}
                 </h3>
-                <p className="text-tiny text-default-500 dark:text-background">
+                <p className="text-tiny text-default-500 dark:text-background line-clamp-2">
                   {workspace.description}
                 </p>
               </div>
@@ -46,19 +57,4 @@ export const WorkspaceList = ({
       ))}
     </div>
   );
-};
-
-const getCategoryIcon = (category) => {
-  switch (category) {
-    case "Automation":
-      return "zap";
-    case "Marketing":
-      return "megaphone";
-    case "Sales":
-      return "banknote";
-    case "Human Resources":
-      return "users";
-    default:
-      return "layout-template";
-  }
 };

@@ -13,7 +13,7 @@ export default function useWorkflow() {
   const team = useSelector((state) => state.team.team);
   const { loadWorkflow } = useInitialize();
 
-  const handleCreateWorkflow = async () => {
+  const handleCreateWorkflow = async (templateId) => {
     try {
       setIsCreatingWorkflow(true);
 
@@ -22,8 +22,8 @@ export default function useWorkflow() {
       };
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/workflow/create`,
-        { name: workflowName, teamId: team?.id },
+        `${process.env.NEXT_PUBLIC_API_URL}/workspace/create`,
+        { name: workflowName, teamId: team?.id, templateId },
         { headers }
       );
 
@@ -35,7 +35,7 @@ export default function useWorkflow() {
       setIsOpen(false);
       setWorkflowName("");
 
-      toast.success("Workflow created successfully");
+      toast.success("Workspace created successfully");
       return response.data;
     } catch (error) {
       console.log(error);
