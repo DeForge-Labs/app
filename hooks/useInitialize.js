@@ -7,6 +7,8 @@ import {
   setMembers,
   setIsDefaultTemplatesInitializing,
   setDefaultTemplate,
+  setWorkspace,
+  setTemplates as setTemplatesTeam,
 } from "@/redux/slice/TeamSlice";
 import { setIsInitializing, setUser } from "@/redux/slice/UserSlice";
 import {
@@ -31,12 +33,14 @@ import {
   setTemplates,
 } from "@/redux/slice/templateSlice";
 import useSocial from "./useSocial";
+import useTeams from "./useTeams";
 
 export default function useInitialize() {
   const dispatch = useDispatch();
   const router = useRouter();
   const { getEnv } = useEnv();
   const { getSocial } = useSocial();
+  const { getTeams } = useTeams();
 
   const loadUser = async (force = true, token = null) => {
     try {
@@ -52,6 +56,31 @@ export default function useInitialize() {
 
       if (response.data.success) {
         dispatch(setUser(response.data.user));
+        if (window.location.pathname === "/") {
+          const teams = await getTeams();
+
+          if (teams.length === 0) {
+            router.push("/team/create");
+          } else {
+            const lastTeamId = localStorage.getItem(
+              `team_${response.data.user.id}`
+            );
+
+            if (lastTeamId) {
+              if (lastTeamId in teams) {
+                router.push(`/dashboard/${lastTeamId}`);
+              } else {
+                router.push(`/dashboard/${teams[0].teamId}`);
+                localStorage.setItem(
+                  `team_${response.data.user.id}`,
+                  teams[0].teamId
+                );
+              }
+            } else {
+              router.push(`/dashboard/${teams[0].teamId}`);
+            }
+          }
+        }
         return response.data.user;
       } else {
         if (force) {
@@ -141,7 +170,8 @@ export default function useInitialize() {
     try {
       dispatch(setTeam(null));
       dispatch(setIsWorkflowInitializing(true));
-      dispatch(setWorkflows(null));
+      dispatch(setWorkspace(null));
+      dispatch(setTemplatesTeam(null));
       dispatch(setIsTeamInitializing(true));
       const headers = {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -174,14 +204,19 @@ export default function useInitialize() {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       };
 
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/workflow/list/${teamId}`,
-        {},
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/workspace/list/${teamId}`,
         { headers }
       );
 
-      if (response.data.success) {
-        dispatch(setWorkflows(response.data.workflows));
+      const templateResponse = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/template/list/${teamId}`,
+        { headers }
+      );
+
+      if (response.data.success && templateResponse.data.success) {
+        dispatch(setWorkspace(response.data.workspaces));
+        dispatch(setTemplatesTeam(templateResponse.data.templates));
       } else {
         toast.error(response.data.message);
         if (response.data.status === 404 || response.data.status === 401) {
@@ -300,7 +335,7 @@ export default function useInitialize() {
       dispatch(setIsDefaultTemplatesInitializing(true));
 
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/template/list`
+        `${process.env.NEXT_PUBLIC_API_URL}/template/global`
       );
 
       if (response.data.success) {

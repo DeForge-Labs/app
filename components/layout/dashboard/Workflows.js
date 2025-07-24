@@ -18,35 +18,32 @@ export default function Workflows() {
   const defaultTab = localStorage.getItem("defaultTab") || "all";
   const [view, setView] = useState(defaultView);
   const [tab, setTab] = useState(defaultTab);
-  const workflows = useSelector((state) => state.team.workflows);
+  const workspace = useSelector((state) => state.team.workspace);
+  const templates = useSelector((state) => state.team.templates);
   const isWorkflowInitializing = useSelector(
     (state) => state.team.isWorkflowInitializing
   );
   const { resolvedTheme } = useTheme();
   const router = useRouter();
-  const [filteredWorkflows, setFilteredWorkflows] = useState([]);
+  const [filteredWorkspaces, setFilteredWorkspaces] = useState([]);
+  const [filteredTemplates, setFilteredTemplates] = useState([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    if (!workflows) return;
-    const filtered = workflows.filter((workflow) =>
+    if (!workspace) return;
+    const filtered = workspace.filter((workflow) =>
       workflow.name.toLowerCase().includes(search.toLowerCase())
     );
-    setFilteredWorkflows(filtered);
-  }, [search, workflows]);
+    setFilteredWorkspaces(filtered);
+  }, [search, workspace]);
 
   useEffect(() => {
-    if (!workflows) return;
-    if (tab === "recent") {
-      const sorted = [...workflows].sort(
-        (a, b) =>
-          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-      );
-      setFilteredWorkflows(sorted);
-    } else {
-      setFilteredWorkflows(workflows);
-    }
-  }, [tab, workflows]);
+    if (!templates) return;
+    const filtered = templates.filter((template) =>
+      template.name.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredTemplates(filtered);
+  }, [search, templates]);
 
   useEffect(() => {
     localStorage.setItem("defaultView", view);
@@ -58,7 +55,9 @@ export default function Workflows() {
       <div className="flex w-full justify-between items-center">
         <Input
           variant="outline"
-          placeholder="Search Workspaces"
+          placeholder={
+            tab === "workspaces" ? "Search Workspaces" : "Search Templates"
+          }
           className="w-[350px] shadow-none border-black/50 dark:border-background border rounded-lg dark:text-background"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -79,14 +78,14 @@ export default function Workflows() {
             tabList:
               "relative border-1 h-12 border-black/50 dark:border-background",
             tabContent:
-              "text-black/80 group-data-[selected=true]:text-background cursor-pointer w-[140px] text-xs dark:text-background dark:group-data-[selected=true]:text-black",
+              "text-black/80 group-data-[selected=true]:text-background cursor-pointer w-[120px] text-xs dark:text-background dark:group-data-[selected=true]:text-black",
             cursor: "h-10 top-1 bg-black/80 dark:bg-background",
           }}
           selectedKey={tab}
           onSelectionChange={setTab}
         >
-          <Tab key="all" title="Your Workspaces" className="py-6" />
-          <Tab key="recent" title="Published Templates" className="py-6" />
+          <Tab key="workspaces" title="Workspaces" className="py-6" />
+          <Tab key="templates" title="Templates" className="py-6" />
         </Tabs>
 
         <ButtonGroup>
@@ -147,31 +146,73 @@ export default function Workflows() {
 
       {isWorkflowInitializing && <WorkflowLoading />}
 
-      {workflows?.length === 0 && !isWorkflowInitializing && (
-        <WorkflowEmptyState />
+      {workspace?.length === 0 && !isWorkflowInitializing && (
+        <WorkflowEmptyState type="workspace" />
       )}
 
-      {workflows &&
-        workflows?.length > 0 &&
+      {templates?.length === 0 && !isWorkflowInitializing && (
+        <WorkflowEmptyState type="template" />
+      )}
+
+      {workspace &&
+        tab === "workspaces" &&
+        workspace?.length > 0 &&
         !isWorkflowInitializing &&
-        filteredWorkflows?.length === 0 &&
-        search && <WorkflowEmptySearch setSearch={setSearch} />}
+        filteredWorkspaces?.length === 0 &&
+        search && (
+          <WorkflowEmptySearch setSearch={setSearch} type="workspace" />
+        )}
 
-      {view === "grid" && workflows?.length > 0 && !isWorkflowInitializing && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-          {filteredWorkflows.map((workflow) => (
-            <GridCard flow={workflow} key={workflow.id} />
-          ))}
-        </div>
-      )}
+      {templates &&
+        tab === "templates" &&
+        templates?.length > 0 &&
+        !isWorkflowInitializing &&
+        filteredTemplates?.length === 0 &&
+        search && <WorkflowEmptySearch setSearch={setSearch} type="template" />}
 
-      {view === "list" && workflows?.length > 0 && !isWorkflowInitializing && (
-        <div className="space-y-4 mt-4">
-          {filteredWorkflows.map((workflow) => (
-            <ListCard flow={workflow} key={workflow.id} />
-          ))}
-        </div>
-      )}
+      {view === "grid" &&
+        tab === "workspaces" &&
+        workspace?.length > 0 &&
+        !isWorkflowInitializing && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+            {filteredWorkspaces.map((workflow) => (
+              <GridCard flow={workflow} key={workflow.id} type="workspace" />
+            ))}
+          </div>
+        )}
+
+      {view === "grid" &&
+        tab === "templates" &&
+        templates?.length > 0 &&
+        !isWorkflowInitializing && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+            {filteredTemplates.map((template) => (
+              <GridCard flow={template} key={template.id} type="template" />
+            ))}
+          </div>
+        )}
+
+      {view === "list" &&
+        tab === "workspaces" &&
+        workspace?.length > 0 &&
+        !isWorkflowInitializing && (
+          <div className="space-y-4 mt-4">
+            {filteredWorkspaces.map((workflow) => (
+              <ListCard flow={workflow} key={workflow.id} type="workspace" />
+            ))}
+          </div>
+        )}
+
+      {view === "list" &&
+        tab === "templates" &&
+        templates?.length > 0 &&
+        !isWorkflowInitializing && (
+          <div className="space-y-4 mt-4">
+            {filteredTemplates.map((template) => (
+              <ListCard flow={template} key={template.id} type="template" />
+            ))}
+          </div>
+        )}
     </main>
   );
 }

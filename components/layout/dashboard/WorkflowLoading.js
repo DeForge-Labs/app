@@ -8,7 +8,7 @@ export default function WorkflowLoading() {
       </div>
       <h3 className="text-lg font-medium">Loading...</h3>
       <p className="text-muted-foreground mt-2 max-w-md">
-        Please wait while we load your workflows.
+        Please wait while we load your workspaces
       </p>
     </div>
   );
