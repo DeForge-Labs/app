@@ -389,7 +389,7 @@ export function GenericNode({ id, type, data }) {
 
   return (
     <Card
-      className={`w-64 border-black/50 bg-background relative dark:border-background dark:text-background dark:bg-zinc-900 ${cn(
+      className={`w-64 border-black/50 bg-background relative dark:border-background dark:text-background rounded-md dark:bg-zinc-900 ${cn(
         workflow?.status === "LIVE" && "border-red-500"
       )} `}
     >

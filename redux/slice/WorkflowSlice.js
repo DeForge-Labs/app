@@ -28,6 +28,7 @@ const initialState = {
   workflowEnv: null,
   workflowSocial: null,
   panel: 1,
+  mode: "workflow",
 };
 
 const workflowSlice = createSlice({
@@ -113,6 +114,10 @@ const workflowSlice = createSlice({
 
     setForm: (state, action) => {
       state.form = action.payload;
+    },
+
+    setMode: (state, action) => {
+      state.mode = action.payload;
     },
 
     onNodesChange: (state, action) => {
@@ -533,6 +538,7 @@ export const {
   setPaneLeft,
   setPaneRight,
   setWorkflowEnv,
+  setMode,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

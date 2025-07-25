@@ -1,8 +1,13 @@
 "use client";
 
-import { setPaneLeft, setPaneRight } from "@/redux/slice/WorkflowSlice";
+import {
+  setMode,
+  setPaneLeft,
+  setPaneRight,
+} from "@/redux/slice/WorkflowSlice";
 import { Button, Tooltip } from "@heroui/react";
 import {
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Loader2,
@@ -28,6 +33,7 @@ export default function EditorNavbar() {
   const router = useRouter();
   const { loadWorkspaceById } = useInitialize();
   const [isUndoing, setIsUndoing] = useState(false);
+  const mode = useSelector((state) => state.workflow.mode);
 
   const hasUnsavedChanges = useSelector(
     (state) => state.workflow.hasUnsavedChanges
@@ -164,6 +170,30 @@ export default function EditorNavbar() {
             ></div>
             {workspace?.workflow?.status === "LIVE" ? "Production" : "Testing"}
           </Button>
+
+          <div className="flex items-center gap-0.5">
+            <Button
+              variant="outline"
+              size="icon"
+              className="px-4 min-h-9 bg-black/80 text-background text-sm rounded-md rounded-r-none"
+              onPress={() => {
+                if (mode === "workflow") {
+                  dispatch(setMode("form"));
+                } else {
+                  dispatch(setMode("workflow"));
+                }
+              }}
+            >
+              {mode === "workflow" ? "Form Editor" : "Workflow Builder"}
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="min-h-9 bg-black/80 text-background text-sm rounded-md rounded-l-none px-1"
+            >
+              <ChevronDown className="h-3 w-3" />
+            </Button>
+          </div>
         </div>
       </div>
     </header>
