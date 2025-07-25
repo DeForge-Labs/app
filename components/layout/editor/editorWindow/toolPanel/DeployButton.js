@@ -79,7 +79,7 @@ export default function DeployButton({ className, showTooltip = true }) {
       >
         <ModalContent>
           <ModalHeader>
-            <h3 className="text-xl font-medium">Deploy Workflow</h3>
+            <h3 className="text-lg font-medium">Deploy Workflow</h3>
           </ModalHeader>
           <ModalBody className="-mt-3">
             <p>
@@ -87,17 +87,17 @@ export default function DeployButton({ className, showTooltip = true }) {
               updated and run from the Deployments tab.
             </p>
           </ModalBody>
-          <ModalFooter className="-mt-2 flex w-full gap-2">
+          <ModalFooter className="-mt-1 flex w-full gap-2">
             <Button
               variant="outline"
-              className="w-full rounded-full border border-black/80 p-7 dark:border-background dark:text-background"
+              className="w-fit rounded-lg border border-black/80 p-4 dark:border-background dark:text-background"
               onPress={() => setIsOpen(false)}
               isDisabled={isDeploying}
             >
               Cancel
             </Button>
             <Button
-              className="w-full rounded-full p-7 bg-black/80 text-background dark:bg-background dark:text-black"
+              className="w-fit rounded-lg p-4 bg-black/80 text-background dark:bg-background dark:text-black"
               onPress={() => handleDeployWorkflow()}
               isDisabled={isDeploying}
             >

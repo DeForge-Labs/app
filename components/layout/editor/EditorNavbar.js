@@ -19,14 +19,14 @@ import { toast } from "sonner";
 import ThemeChanger from "../dashboard/ThemeChanger";
 
 export default function EditorNavbar() {
-  const isWorkflowInitializing = useSelector(
-    (state) => state.workflow.isWorkflowInitializing
+  const isWorkspaceInitializing = useSelector(
+    (state) => state.workflow.isWorkspaceInitializing
   );
-  const workflow = useSelector((state) => state.workflow.workflow);
+  const workspace = useSelector((state) => state.workflow.workspace);
   const paneLeft = useSelector((state) => state.workflow.paneLeft);
   const paneRight = useSelector((state) => state.workflow.paneRight);
   const router = useRouter();
-  const { loadWorkflowById } = useInitialize();
+  const { loadWorkspaceById } = useInitialize();
   const [isUndoing, setIsUndoing] = useState(false);
 
   const hasUnsavedChanges = useSelector(
@@ -46,10 +46,10 @@ export default function EditorNavbar() {
   const handleUndoClick = async () => {
     try {
       setIsUndoing(true);
-      await loadWorkflowById(workflow?.id);
+      await loadWorkspaceById(workspace?.id);
     } catch (error) {
-      console.error("Error loading workflow:", error);
-      toast.error("Failed to load workflow");
+      console.error("Error loading workspace:", error);
+      toast.error("Failed to load workspace");
     } finally {
       setIsUndoing(false);
     }
@@ -62,7 +62,7 @@ export default function EditorNavbar() {
           <Button
             variant="outline"
             size="icon"
-            className="p-1 mr-2 border border-black/80 rounded-lg dark:border-background dark:text-background"
+            className="p-1 mr-2 border border-black/80 rounded-md dark:border-background dark:text-background"
             onPress={() => {
               router.back();
             }}
@@ -82,17 +82,17 @@ export default function EditorNavbar() {
           </span>
           <ChevronRight size={16} className="mt-1 dark:text-background" />
           <span className="inline-block text-sm mt-0.5 dark:text-background">
-            {isWorkflowInitializing ? (
+            {isWorkspaceInitializing ? (
               <Loader2 className="animate-spin w-4 h-4" />
             ) : (
-              workflow?.name
+              workspace?.name
             )}
           </span>
 
           {hasUnsavedChanges &&
-            !isWorkflowInitializing &&
-            workflow?.status !== "LIVE" && (
-              <div className="flex items-center gap-2 mt-1 text-xs border border-black/80 rounded-lg px-2 py-1 dark:border-background dark:text-background ">
+            !isWorkspaceInitializing &&
+            workspace?.workflow?.status !== "LIVE" && (
+              <div className="flex items-center gap-2 mt-1 text-xs border border-black/80 rounded-md px-2 py-1 dark:border-background dark:text-background ">
                 <div className="h-2 w-2 bg-yellow-400/80 rounded-full"></div>
 
                 <span>Unsaved Changes</span>
@@ -103,7 +103,7 @@ export default function EditorNavbar() {
         <div className="flex items-center gap-2">
           <ThemeChanger />
           <Tooltip
-            className="bg-background border-black/50 border shadow-none dark:border-background dark:text-background dark:bg-dark"
+            className="bg-background border-black/50 border shadow-none dark:border-background rounded-md dark:text-background dark:bg-dark"
             content={
               <div className="p-2 text-xs dark:text-background dark:border-background ">
                 <p>Revert to last saved version</p>
@@ -113,13 +113,13 @@ export default function EditorNavbar() {
             <Button
               variant="outline"
               size="icon"
-              className="px-2 min-h-9 border border-black/80 rounded-lg dark:border-background dark:text-background"
+              className="px-2 min-h-9 border border-black/80 rounded-md dark:border-background dark:text-background"
               onPress={handleUndoClick}
               isDisabled={
                 !hasUnsavedChanges ||
                 isUndoing ||
-                isWorkflowInitializing ||
-                workflow?.status === "LIVE"
+                isWorkspaceInitializing ||
+                workspace?.workflow?.status === "LIVE"
               }
             >
               {isUndoing ? (
@@ -133,7 +133,7 @@ export default function EditorNavbar() {
           <Button
             variant="outline"
             size="icon"
-            className="px-2 min-h-9 border border-black/80 rounded-lg dark:border-background dark:text-background"
+            className="px-2 min-h-9 border border-black/80 rounded-md dark:border-background dark:text-background"
             onPress={handlePaneLeftClick}
           >
             <PanelLeft className="h-4 w-4" />
@@ -142,7 +142,7 @@ export default function EditorNavbar() {
           <Button
             variant="outline"
             size="icon"
-            className="px-2 min-h-9 border border-black/80 rounded-lg dark:border-background dark:text-background"
+            className="px-2 min-h-9 border border-black/80 rounded-md dark:border-background dark:text-background"
             onPress={handlePaneRightClick}
           >
             <PanelRight className="h-4 w-4" />
@@ -151,16 +151,18 @@ export default function EditorNavbar() {
           <Button
             variant="outline"
             size="icon"
-            className="px-4 min-h-9 border border-black/80 gap-2 text-sm rounded-lg dark:border-background dark:text-background"
+            className="px-4 min-h-9 border border-black/80 gap-2 text-sm rounded-md dark:border-background dark:text-background"
           >
             <div
               className="h-4 w-4 rounded-full opacity-70"
               style={{
                 backgroundColor:
-                  workflow?.status === "LIVE" ? "#00FF00" : "#FF0000",
+                  workspace?.workflow?.status === "LIVE"
+                    ? "#00FF00"
+                    : "#FF0000",
               }}
             ></div>
-            {workflow?.status === "LIVE" ? "Production" : "Testing"}
+            {workspace?.workflow?.status === "LIVE" ? "Production" : "Testing"}
           </Button>
         </div>
       </div>

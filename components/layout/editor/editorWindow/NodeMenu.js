@@ -125,7 +125,7 @@ export default function NodeMenu() {
                   {categoryNodes.map((node) => (
                     <Card
                       key={node.type}
-                      className="cursor-grab bg-background border border-black/50 hover:shadow-md dark:border-background dark:text-background dark:bg-zinc-900"
+                      className="cursor-grab bg-background border rounded-lg border-black/50 hover:shadow-md dark:border-background dark:text-background dark:bg-zinc-900"
                       draggable
                       onDragStart={(e) => onDragStart(e, node)}
                     >

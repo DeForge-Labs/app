@@ -22,7 +22,7 @@ export const useDuplicateWorkflow = () => {
       };
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/workflow/duplicate/${workflow.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/workspace/duplicate/${workflow.id}`,
         { name: workflowName ? workflowName : workflow.name + " (Copy)" },
         { headers }
       );
@@ -35,7 +35,7 @@ export const useDuplicateWorkflow = () => {
       setIsOpen(false);
       setWorkflowName("");
 
-      toast.success("Workflow duplicated successfully");
+      toast.success("Workspace duplicated successfully");
       return response.data;
     } catch (error) {
       console.log(error);

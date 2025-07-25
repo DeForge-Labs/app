@@ -6,8 +6,12 @@ import {
 } from "@/lib/node-registry";
 
 const initialState = {
+  workspace: null,
+  form: null,
   workflow: null,
   isWorkflowInitializing: true,
+  isWorkspaceInitializing: true,
+  isFormInitializing: true,
   nodes: [],
   connections: [],
   logs: [],
@@ -93,6 +97,22 @@ const workflowSlice = createSlice({
     // New actions for the node editor
     setSelectedNode: (state, action) => {
       state.selectedNode = action.payload;
+    },
+
+    setIsWorkspaceInitializing: (state, action) => {
+      state.isWorkspaceInitializing = action.payload;
+    },
+
+    setIsFormInitializing: (state, action) => {
+      state.isFormInitializing = action.payload;
+    },
+
+    setWorkspace: (state, action) => {
+      state.workspace = action.payload;
+    },
+
+    setForm: (state, action) => {
+      state.form = action.payload;
     },
 
     onNodesChange: (state, action) => {
@@ -506,7 +526,10 @@ export const {
   deleteEdge,
   duplicateNode,
   setPanel,
-
+  setIsWorkspaceInitializing,
+  setIsFormInitializing,
+  setWorkspace,
+  setForm,
   setPaneLeft,
   setPaneRight,
   setWorkflowEnv,

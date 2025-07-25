@@ -37,28 +37,28 @@ export default function DeleteButton({ workflowId }) {
       >
         <ModalContent>
           <ModalHeader>
-            <h3 className="text-xl font-medium dark:text-background">
-              Delete Workflow
+            <h3 className="text-lg font-medium dark:text-background">
+              Delete Workspace
             </h3>
           </ModalHeader>
           <ModalBody className="-mt-3 dark:text-background">
             <p>
-              Are you sure you want to delete this workflow? All Nodes,
-              Connections and Logs related to this workflow will also be
+              Are you sure you want to delete this workspace? All Nodes,
+              Connections and Logs related to this workspace will also be
               deleted.
             </p>
           </ModalBody>
-          <ModalFooter className="-mt-2 flex w-full gap-2">
+          <ModalFooter className="-mt-1 flex w-full gap-2">
             <Button
               variant="outline"
-              className="w-full rounded-full border border-black/80 p-7 dark:border-background dark:text-background"
+              className="w-fit rounded-lg border border-black/80 p-4 dark:border-background dark:text-background"
               onPress={() => setIsOpen(false)}
               isDisabled={isDeletingWorkflow}
             >
               Cancel
             </Button>
             <Button
-              className="w-full rounded-full p-7 bg-black/80 text-background dark:bg-background dark:text-black"
+              className="w-fit rounded-lg p-4 bg-black/80 text-background dark:bg-background dark:text-black"
               onPress={() => handleDeleteWorkflow(workflowId)}
               isDisabled={isDeletingWorkflow}
             >

@@ -9,9 +9,10 @@ import { useParams } from "next/navigation";
 export default function WorkflowProvider({ children }) {
   const user = useSelector((state) => state.user.user);
   const nodeRegistry = useSelector((state) => state.library.nodeRegistry);
-  const { loadWorkflowById, loadLogs } = useInitialize();
+  const { loadWorkspaceById, loadLogs } = useInitialize();
   const { loadNodeRegistry } = useLibrary();
   const workflow = useSelector((state) => state.workflow.workflow);
+  const workspace = useSelector((state) => state.workflow.workspace);
   const {
     initializeWebSocket,
     subscribeToWorkflow,
@@ -34,14 +35,19 @@ export default function WorkflowProvider({ children }) {
         const id = params.id;
         if (!id) return;
 
-        loadWorkflowById(id);
-        loadLogs(id);
+        loadWorkspaceById(id);
         initializeWebSocket();
       } catch (error) {
         console.error("Error parsing params value:", error);
       }
     }
   }, [user, params?.id, nodeRegistry]);
+
+  useEffect(() => {
+    if (workflow?.id) {
+      loadLogs(workflow.id);
+    }
+  }, [workflow?.id]);
 
   // Handle workflow subscription with proper cleanup
   useEffect(() => {

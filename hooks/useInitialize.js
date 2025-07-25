@@ -18,6 +18,10 @@ import {
   setIsLogInitializing,
   setLogs,
   setSelectedNode,
+  setIsWorkspaceInitializing,
+  setWorkspace as setEditorWorkspace,
+  setIsFormInitializing,
+  setForm,
 } from "@/redux/slice/WorkflowSlice";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -257,8 +261,6 @@ export default function useInitialize() {
         await getEnv(workflowId);
 
         await getSocial(workflowId);
-
-        dispatch(setTeamWorkflow(response.data.workflow.team));
       } else {
         toast.error(response.data.message);
         if (response.data.status === 404 || response.data.status === 401) {
@@ -351,6 +353,53 @@ export default function useInitialize() {
     }
   };
 
+  const loadWorkspaceById = async (workspaceId) => {
+    try {
+      dispatch(setIsWorkspaceInitializing(true));
+      dispatch(setWorkflowInitializing(true));
+      dispatch(setIsFormInitializing(true));
+      dispatch(setSelectedNode(null));
+      const headers = {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      };
+
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/workspace/get/${workspaceId}`,
+        { headers }
+      );
+
+      if (response.data.success) {
+        dispatch(setEditorWorkspace(response.data.workspace));
+        dispatch(
+          setWorkflow({
+            workflow: response.data.workspace.workflow,
+            nodes: response.data.workspace.workflow.nodes,
+            connections: response.data.workspace.workflow.edges,
+          })
+        );
+        dispatch(setForm(response.data.workspace.form));
+
+        await getEnv(response.data.workspace.workflow.id);
+
+        await getSocial(response.data.workspace.workflow.id);
+
+        dispatch(setTeamWorkflow(response.data.workspace.team));
+      } else {
+        toast.error(response.data.message);
+        if (response.data.status === 404 || response.data.status === 401) {
+          router.push("/");
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to load workspace");
+    } finally {
+      dispatch(setIsWorkspaceInitializing(false));
+      dispatch(setWorkflowInitializing(false));
+      dispatch(setIsFormInitializing(false));
+    }
+  };
+
   return {
     loadUser,
     loadTeam,
@@ -358,6 +407,7 @@ export default function useInitialize() {
     loadWorkflowById,
     loadLogs,
     loadMembers,
+    loadWorkspaceById,
     loadUserAndTeams,
     loadTemplate,
     loadTemplates,

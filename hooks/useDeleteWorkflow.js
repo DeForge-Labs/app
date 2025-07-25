@@ -21,7 +21,7 @@ export default function useDeleteWorkflow() {
       };
 
       const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_URL}/workflow/delete/${workflowId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/workspace/delete/${workflowId}`,
         { headers }
       );
 
