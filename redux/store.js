@@ -8,6 +8,7 @@ import workflowSlice from "./slice/WorkflowSlice.js";
 import librarySlice from "./slice/librarySlice.js";
 import runSlice from "./slice/runSlice.js";
 import templateSlice from "./slice/templateSlice.js";
+import formSlice from "./slice/formSlice.js";
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     library: librarySlice,
     run: runSlice,
     template: templateSlice,
+    form: formSlice,
   },
 
   middleware: (getDefaultMiddleware) =>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Type, Heading1, Heading2, Heading3, Minus, Link } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 
 const componentTypes = [
   {
@@ -57,6 +57,7 @@ export default function FormMenu() {
         type: componentType.type,
         content: componentType.defaultContent,
         url: componentType.url || undefined,
+        component: "form",
       })
     );
   };

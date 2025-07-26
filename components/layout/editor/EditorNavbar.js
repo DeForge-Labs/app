@@ -7,6 +7,7 @@ import {
 } from "@/redux/slice/WorkflowSlice";
 import { Button, Tooltip } from "@heroui/react";
 import {
+  AlertCircleIcon,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -27,16 +28,25 @@ export default function EditorNavbar() {
   const isWorkspaceInitializing = useSelector(
     (state) => state.workflow.isWorkspaceInitializing
   );
+  const isFormInitializing = useSelector(
+    (state) => state.workflow.isFormInitializing
+  );
   const workspace = useSelector((state) => state.workflow.workspace);
   const paneLeft = useSelector((state) => state.workflow.paneLeft);
   const paneRight = useSelector((state) => state.workflow.paneRight);
   const router = useRouter();
-  const { loadWorkspaceById } = useInitialize();
+  const { loadWorkflowById, loadFormById } = useInitialize();
   const [isUndoing, setIsUndoing] = useState(false);
   const mode = useSelector((state) => state.workflow.mode);
+  const workflow = useSelector((state) => state.workflow.workflow);
+  const form = useSelector((state) => state.workflow.form);
 
   const hasUnsavedChanges = useSelector(
     (state) => state.workflow.hasUnsavedChanges
+  );
+
+  const hasUnsavedChangesForm = useSelector(
+    (state) => state.form.hasUnsavedChanges
   );
 
   const dispatch = useDispatch();
@@ -52,7 +62,11 @@ export default function EditorNavbar() {
   const handleUndoClick = async () => {
     try {
       setIsUndoing(true);
-      await loadWorkspaceById(workspace?.id);
+      if (mode === "workflow") {
+        await loadWorkflowById(workflow?.id);
+      } else {
+        await loadFormById(form?.id);
+      }
     } catch (error) {
       console.error("Error loading workspace:", error);
       toast.error("Failed to load workspace");
@@ -95,13 +109,31 @@ export default function EditorNavbar() {
             )}
           </span>
 
+          {(hasUnsavedChanges || hasUnsavedChangesForm) &&
+            !isWorkspaceInitializing &&
+            workspace?.workflow?.status !== "LIVE" && (
+              <div className="flex items-center gap-1 mt-1 text-xs border border-black/80 rounded-md px-2 py-1 dark:border-background dark:text-background ">
+                <div className="h-2 w-2 bg-yellow-400/80 rounded-full"></div>
+
+                <span>Unsaved</span>
+              </div>
+            )}
+
           {hasUnsavedChanges &&
             !isWorkspaceInitializing &&
             workspace?.workflow?.status !== "LIVE" && (
-              <div className="flex items-center gap-2 mt-1 text-xs border border-black/80 rounded-md px-2 py-1 dark:border-background dark:text-background ">
-                <div className="h-2 w-2 bg-yellow-400/80 rounded-full"></div>
+              <div className="flex items-center gap-1 mt-1 text-xs border border-black/80 rounded-md px-2 py-1 dark:border-background dark:text-background ">
+                <AlertCircleIcon className="h-4 w-4" />
+                <span>Workflow</span>
+              </div>
+            )}
 
-                <span>Unsaved Changes</span>
+          {hasUnsavedChangesForm &&
+            !isWorkspaceInitializing &&
+            workspace?.workflow?.status !== "LIVE" && (
+              <div className="flex items-center gap-1 mt-1 text-xs border border-black/80 rounded-md px-2 py-1 dark:border-background dark:text-background ">
+                <AlertCircleIcon className="h-4 w-4" />
+                <span>Form</span>
               </div>
             )}
         </div>
@@ -122,9 +154,13 @@ export default function EditorNavbar() {
               className="px-2 min-h-9 border border-black/80 rounded-md dark:border-background dark:text-background"
               onPress={handleUndoClick}
               isDisabled={
-                !hasUnsavedChanges ||
+                !(
+                  (hasUnsavedChanges && mode === "workflow") ||
+                  (hasUnsavedChangesForm && mode === "form")
+                ) ||
                 isUndoing ||
                 isWorkspaceInitializing ||
+                isFormInitializing ||
                 workspace?.workflow?.status === "LIVE"
               }
             >
@@ -175,7 +211,7 @@ export default function EditorNavbar() {
             <Button
               variant="outline"
               size="icon"
-              className="px-4 min-h-9 bg-black/80 text-background text-sm rounded-md rounded-r-none"
+              className="px-4 min-h-9 bg-black/80 dark:bg-background text-background text-sm rounded-md rounded-r-none dark:text-dark"
               onPress={() => {
                 if (mode === "workflow") {
                   dispatch(setMode("form"));
@@ -189,7 +225,7 @@ export default function EditorNavbar() {
             <Button
               variant="outline"
               size="icon"
-              className="min-h-9 bg-black/80 text-background text-sm rounded-md rounded-l-none px-1"
+              className="min-h-9 bg-black/80 dark:bg-background text-background text-sm rounded-md rounded-l-none px-1 dark:text-dark"
             >
               <ChevronDown className="h-3 w-3" />
             </Button>

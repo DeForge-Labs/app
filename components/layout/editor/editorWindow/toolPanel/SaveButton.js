@@ -17,6 +17,9 @@ export default function SaveButton() {
   const hasUnsavedChanges = useSelector(
     (state) => state.workflow.hasUnsavedChanges
   );
+  const hasUnsavedChangesForm = useSelector(
+    (state) => state.form.hasUnsavedChanges
+  );
   const { isOpen, setIsOpen, isSavingWorkflow, handleSaveWorkflow } =
     useSaveWorkflow();
 
@@ -41,7 +44,7 @@ export default function SaveButton() {
           size="icon"
           className="w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4 "
           isDisabled={
-            !hasUnsavedChanges ||
+            !(hasUnsavedChanges || hasUnsavedChangesForm) ||
             isWorkflowInitializing ||
             workflow?.status === "LIVE"
           }
@@ -64,12 +67,12 @@ export default function SaveButton() {
       >
         <ModalContent>
           <ModalHeader>
-            <h3 className="text-lg font-medium">Save Workflow</h3>
+            <h3 className="text-lg font-medium">Save Workspace</h3>
           </ModalHeader>
           <ModalBody className="-mt-3">
             <p>
-              Are you sure you want to save this workflow? All Nodes and
-              Connections will be saved.
+              Are you sure you want to save this workspace? All Nodes,
+              Connections and Form will be saved.
             </p>
           </ModalBody>
           <ModalFooter className="-mt-1 flex w-full gap-2">

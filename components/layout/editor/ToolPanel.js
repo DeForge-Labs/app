@@ -48,6 +48,9 @@ export default function ToolPanel({ className, onChange }) {
   const hasUnsavedChanges = useSelector(
     (state) => state.workflow.hasUnsavedChanges
   );
+  const hasUnsavedChangesForm = useSelector(
+    (state) => state.form.hasUnsavedChanges
+  );
   const workflow = useSelector((state) => state.workflow.workflow);
 
   const handleSelect = (index) => {
@@ -69,11 +72,13 @@ export default function ToolPanel({ className, onChange }) {
       >
         <RunButton />
 
-        {workflow?.status !== "LIVE" && hasUnsavedChanges && <SaveButton />}
+        {workflow?.status !== "LIVE" &&
+          (hasUnsavedChanges || hasUnsavedChangesForm) && <SaveButton />}
 
-        {workflow?.status !== "LIVE" && !hasUnsavedChanges && (
-          <DeployButton className="w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4" />
-        )}
+        {workflow?.status !== "LIVE" &&
+          !(hasUnsavedChanges || hasUnsavedChangesForm) && (
+            <DeployButton className="w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4" />
+          )}
         {workflow?.status === "LIVE" && (
           <FallbackButton className="w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4" />
         )}

@@ -38,6 +38,7 @@ import {
 } from "@/redux/slice/templateSlice";
 import useSocial from "./useSocial";
 import useTeams from "./useTeams";
+import { loadComponents } from "@/redux/slice/formSlice";
 
 export default function useInitialize() {
   const dispatch = useDispatch();
@@ -275,6 +276,37 @@ export default function useInitialize() {
     }
   };
 
+  const loadFormById = async (formId) => {
+    try {
+      dispatch(setIsFormInitializing(true));
+      const headers = {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      };
+
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/form/get/${formId}`,
+        { headers }
+      );
+
+      if (response.data.success) {
+        dispatch(setForm(response.data.form));
+        dispatch(
+          loadComponents(response.data.form.formLayout?.components || [])
+        );
+      } else {
+        toast.error(response.data.message);
+        if (response.data.status === 404 || response.data.status === 401) {
+          router.push("/");
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to load form");
+    } finally {
+      dispatch(setIsFormInitializing(false));
+    }
+  };
+
   const loadLogs = async (workflowId) => {
     try {
       dispatch(setIsLogInitializing(true));
@@ -379,6 +411,12 @@ export default function useInitialize() {
         );
         dispatch(setForm(response.data.workspace.form));
 
+        dispatch(
+          loadComponents(
+            response.data.workspace.form.formLayout?.components || []
+          )
+        );
+
         await getEnv(response.data.workspace.workflow.id);
 
         await getSocial(response.data.workspace.workflow.id);
@@ -412,5 +450,6 @@ export default function useInitialize() {
     loadTemplate,
     loadTemplates,
     loadDefaultTemplates,
+    loadFormById,
   };
 }

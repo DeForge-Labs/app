@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import ToolPanel from "./ToolPanel";
 import DeploymentTab from "./editorWindow/DeploymentTab";
 import FormMenu from "./formWindow/FormMenu";
+import Canvas from "./formWindow/Canvas";
 
 export default function EditorWindow() {
   const paneLeft = useSelector((state) => state.workflow.paneLeft);
@@ -25,6 +26,7 @@ export default function EditorWindow() {
 
       <div className="flex-1 relative flex flex-col">
         {panel === 1 && mode === "workflow" && <NodeEditor />}
+        {panel === 1 && mode === "form" && <Canvas />}
         {panel === 2 && <DeploymentTab />}
 
         <ToolPanel />
