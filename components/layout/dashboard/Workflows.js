@@ -15,7 +15,7 @@ import { useTheme } from "next-themes";
 
 export default function Workflows() {
   const defaultView = localStorage.getItem("defaultView") || "grid";
-  const defaultTab = localStorage.getItem("defaultTab") || "all";
+  const defaultTab = localStorage.getItem("defaultTab") || "workspaces";
   const [view, setView] = useState(defaultView);
   const [tab, setTab] = useState(defaultTab);
   const workspace = useSelector((state) => state.team.workspace);
