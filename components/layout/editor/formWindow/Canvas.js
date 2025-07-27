@@ -6,6 +6,7 @@ import {
   selectComponent,
   reorderComponents,
   setIsPreview,
+  setIsSelector,
 } from "@/redux/slice/formSlice";
 import ComponentRenderer from "./ComponentRenderer";
 import PreviewRenderer from "./PreviewRenderer";
@@ -15,8 +16,10 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import LogoAnimation from "@/components/ui/LogoAnimation";
+import { Button } from "@heroui/react";
 
 const tabs = [
+  { type: "separator" },
   { title: "Edit", icon: Edit, isPreview: false },
   { title: "Preview", icon: Eye, isPreview: true },
 ];
@@ -49,7 +52,9 @@ export default function Canvas() {
     (state) => state.form.selectedComponentId
   );
   const isPreviewMode = useSelector((state) => state.form.isPreview);
-  const [panel, setPanel] = useState(0);
+  const [panel, setPanel] = useState(1);
+
+  const isSelector = useSelector((state) => state.form.isSelector);
 
   const [draggedIndex, setDraggedIndex] = useState(null);
 
@@ -60,6 +65,10 @@ export default function Canvas() {
   if (isFormInitializing) {
     return <LogoAnimation opacity={0.5} />;
   }
+
+  const Separator = () => (
+    <div className="mx-1 h-[24px] w-[1.2px] bg-black/50" aria-hidden="true" />
+  );
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -90,8 +99,26 @@ export default function Canvas() {
   };
 
   const renderPanelSwitcher = () => (
-    <div className="flex items-center justify-center gap-2 absolute left-1/2 -translate-x-1/2 rounded-b-lg border bg-white p-2 px-3 border-black/50 border-t-0 shadow-sm z-10">
+    <div className="flex items-center fixed justify-center gap-2 left-1/2 -translate-x-1/2 rounded-b-lg border bg-white p-2 px-3 border-black/50 border-t-0 shadow-sm z-10">
+      <Button
+        onPress={() => {
+          dispatch(setIsSelector(true));
+        }}
+        variant="icon"
+        className={cn(
+          "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4"
+        )}
+        size="icon"
+      >
+        Select Node
+      </Button>
       {tabs.map((tab, index) => {
+        if (tab.type === "separator") {
+          return (
+            <Separator key={`separator-${index}`} className="border-black/50" />
+          );
+        }
+
         const Icon = tab.icon;
         return (
           <motion.button
@@ -192,59 +219,61 @@ export default function Canvas() {
   }
 
   return (
-    <div className="flex-1 bg-background dark:bg-dark relative">
-      {renderPanelSwitcher()}
-      <div
-        className="min-h-full p-8 pt-20 w-full"
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onClick={handleCanvasClick}
-      >
-        {components.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-96 border-2 border-black/50 dark:border-white/50 border-dashed rounded-lg">
-            <Plus className="w-12 h-12 dark:text-background mb-4" />
-            <h3 className="text-lg font-medium dark:text-background mb-2">
-              Start building your form
-            </h3>
-            <p className="text-gray-500 dark:text-background text-center max-w-sm">
-              Drag components from the sidebar to this area to start building
-              your form.
-            </p>
-          </div>
-        ) : (
-          <div className="max-w-full">
-            {/* Drop zone before first component */}
-            <DropZone
-              index={0}
-              isDragging={draggedIndex !== null}
-              onDrop={(fromIndex, newComponent) =>
-                handleDropZoneReorder(0, fromIndex, newComponent)
-              }
-            />
+    <div className="h-full absolute bg-background dark:bg-dark w-full overflow-y-auto hide-scroll">
+      <div className="h-full relative">
+        {renderPanelSwitcher()}
+        <div
+          className="p-8 pt-20 pb-20 w-full"
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onClick={handleCanvasClick}
+        >
+          {components.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-96 border-2 border-black/50 dark:border-white/50 border-dashed rounded-lg">
+              <Plus className="w-12 h-12 dark:text-background mb-4" />
+              <h3 className="text-lg font-medium dark:text-background mb-2">
+                Start building your form
+              </h3>
+              <p className="text-gray-500 dark:text-background text-center max-w-sm">
+                Drag components from the sidebar to this area to start building
+                your form.
+              </p>
+            </div>
+          ) : (
+            <div className="max-w-full">
+              {/* Drop zone before first component */}
+              <DropZone
+                index={0}
+                isDragging={draggedIndex !== null}
+                onDrop={(fromIndex, newComponent) =>
+                  handleDropZoneReorder(0, fromIndex, newComponent)
+                }
+              />
 
-            {sortedComponents.map((component, index) => (
-              <div key={component.id}>
-                <ComponentRenderer
-                  component={component}
-                  index={index}
-                  isSelected={selectedComponentId === component.id}
-                  onReorder={handleReorder}
-                  draggedIndex={draggedIndex}
-                  setDraggedIndex={setDraggedIndex}
-                />
+              {sortedComponents.map((component, index) => (
+                <div key={component.id}>
+                  <ComponentRenderer
+                    component={component}
+                    index={index}
+                    isSelected={selectedComponentId === component.id}
+                    onReorder={handleReorder}
+                    draggedIndex={draggedIndex}
+                    setDraggedIndex={setDraggedIndex}
+                  />
 
-                {/* Drop zone after each component */}
-                <DropZone
-                  index={index + 1}
-                  isDragging={draggedIndex !== null}
-                  onDrop={(fromIndex, newComponent) =>
-                    handleDropZoneReorder(index + 1, fromIndex, newComponent)
-                  }
-                />
-              </div>
-            ))}
-          </div>
-        )}
+                  {/* Drop zone after each component */}
+                  <DropZone
+                    index={index + 1}
+                    isDragging={draggedIndex !== null}
+                    onDrop={(fromIndex, newComponent) =>
+                      handleDropZoneReorder(index + 1, fromIndex, newComponent)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

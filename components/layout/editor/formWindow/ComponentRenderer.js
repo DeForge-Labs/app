@@ -1,14 +1,24 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   updateComponent,
   deleteComponent,
   selectComponent,
 } from "@/redux/slice/formSlice";
 import { Button, Input } from "@heroui/react";
-import { Trash2, Edit3, GripVertical, Save } from "lucide-react";
+import { Trash2, Edit3, GripVertical, Save, AlertCircle } from "lucide-react";
+import { getNodeTypeByType } from "@/lib/node-registry";
+import TextField from "./componentRenderer/TextField";
+import { updateNodeData } from "@/redux/slice/WorkflowSlice";
+import NumberField from "./componentRenderer/NumberField";
+import TextAreaField from "./componentRenderer/TextAreaField";
+import SelectField from "./componentRenderer/SelectField";
+import MapField from "./componentRenderer/MapFields";
+import CheckBoxField from "./componentRenderer/CheckBoxField";
+import DateTimeField from "./componentRenderer/DateTimeField";
+import SliderField from "./componentRenderer/SliderField";
 
 export default function ComponentRenderer({
   component,
@@ -40,7 +50,7 @@ export default function ComponentRenderer({
 
   const handleDoubleClick = (e) => {
     e.stopPropagation();
-    if (component.type !== "divider") {
+    if (component.type !== "divider" && component.component !== "component") {
       setIsEditing(true);
     }
   };
@@ -258,6 +268,195 @@ export default function ComponentRenderer({
     }
   };
 
+  const renderNodeComponent = () => {
+    const nodes = useSelector((state) => state.workflow.nodes);
+    const edges = useSelector((state) => state.workflow.connections || []);
+    const nodeRegistry = useSelector(
+      (state) => state.library?.nodeRegistry || []
+    );
+    const node =
+      nodes && nodes.find((node) => node.id === component?.id?.split("|")[0]);
+    const nodeTypes = node && getNodeTypeByType(node?.type, nodeRegistry);
+    const selectedField =
+      nodeTypes &&
+      nodeTypes?.fields.find((field) => field.name === component.name);
+
+    const matchingInput =
+      nodeTypes &&
+      nodeTypes?.inputs.find((input) => input.name === selectedField?.name);
+
+    const isInput = !!matchingInput;
+
+    const [connectedInputs, setConnectedInputs] = useState(new Map());
+    const workflow = useSelector((state) => state.workflow?.workflow);
+    const dispatch = useDispatch();
+
+    if (!node) {
+      return (
+        <div className="pr-7">
+          <div
+            className={`h-full flex gap-2 text-xs items-center justify-center border w-fit border-red-500 rounded-lg p-2 ${
+              isSelected ? "-mt-2" : ""
+            }`}
+          >
+            <AlertCircle className="w-4 h-4 text-red-500" />
+            <div className="text-red-500">
+              Node is either deleted or not found, Please remove the Component
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const handleChange = (key, value) => {
+      if (workflow?.status === "LIVE") {
+        return;
+      }
+      dispatch(
+        updateNodeData({
+          nodeId: node.id,
+          newData: { ...node.data, [key]: value },
+        })
+      );
+    };
+
+    useEffect(() => {
+      if (!node) return;
+
+      const connected = new Map();
+      edges.forEach((edge) => {
+        if (edge.target === node.id) {
+          // Extract the input name from the handle ID
+          const inputName = edge.targetHandle?.split("-")[1];
+
+          if (inputName) {
+            connected.set(inputName, edge.id);
+          }
+        }
+      });
+      setConnectedInputs(connected);
+    }, [edges, node]);
+
+    const isConnected = connectedInputs.has(selectedField?.name);
+
+    if (isConnected) {
+      return (
+        <div className="pr-7">
+          <div
+            className={`h-full flex gap-2 text-xs items-center justify-center border w-fit border-red-500 rounded-lg p-2 ${
+              isSelected ? "-mt-2" : ""
+            }`}
+          >
+            <AlertCircle className="w-4 h-4 text-red-500" />
+            <div className="text-red-500">
+              Field is already connected, disconnect or remove the connection
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    switch (selectedField?.type) {
+      case "Text":
+      case "text":
+        return (
+          <TextField
+            key={index}
+            field={selectedField}
+            isInput={isInput}
+            isConnected={isConnected}
+            selectedNode={node}
+            handleChange={handleChange}
+          />
+        );
+      case "Number":
+      case "number":
+        return (
+          <NumberField
+            key={index}
+            field={selectedField}
+            isInput={isInput}
+            isConnected={isConnected}
+            selectedNode={node}
+            handleChange={handleChange}
+          />
+        );
+      case "TextArea":
+      case "textarea":
+        return (
+          <TextAreaField
+            key={index}
+            field={selectedField}
+            isInput={isInput}
+            isConnected={isConnected}
+            selectedNode={node}
+            handleChange={handleChange}
+          />
+        );
+      case "select":
+        return (
+          <SelectField
+            key={index}
+            field={selectedField}
+            isInput={isInput}
+            isConnected={isConnected}
+            selectedNode={node}
+            handleChange={handleChange}
+          />
+        );
+      case "Map":
+      case "map":
+        return (
+          <MapField
+            field={selectedField}
+            key={index}
+            isInput={isInput}
+            isConnected={isConnected}
+            selectedNode={node}
+            handleChange={handleChange}
+          />
+        );
+      case "CheckBox":
+      case "checkbox":
+        return (
+          <CheckBoxField
+            field={selectedField}
+            key={index}
+            isInput={isInput}
+            isConnected={isConnected}
+            selectedNode={node}
+            handleChange={handleChange}
+          />
+        );
+      case "Date":
+      case "date":
+        return (
+          <DateTimeField
+            field={selectedField}
+            key={index}
+            isInput={isInput}
+            isConnected={isConnected}
+            selectedNode={node}
+            handleChange={handleChange}
+          />
+        );
+      case "Slider":
+      case "slider":
+        return (
+          <SliderField
+            field={selectedField}
+            key={index}
+            isInput={isInput}
+            isConnected={isConnected}
+            selectedNode={node}
+            handleChange={handleChange}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   const isDragging = draggedIndex === index;
   const isDropTarget =
     dragOverIndex === index && draggedIndex !== null && draggedIndex !== index;
@@ -266,7 +465,7 @@ export default function ComponentRenderer({
     <div
       className={`relative group rounded-lg transition-all duration-200 ${
         isSelected
-          ? "ring-1 ring-black/50 dark:ring-white bg-black/5 dark:bg-white/5"
+          ? "ring-1 ring-black/50 dark:ring-white bg-black/5 dark:bg-white/5 min-h-12"
           : "hover:bg-black/5 dark:hover:bg-white/5"
       } ${isDragging ? "opacity-50 scale-95 shadow-lg" : ""} ${
         isDropTarget
@@ -292,25 +491,34 @@ export default function ComponentRenderer({
           </div>
         )}
 
-        <div className={isSelected ? "ml-8 mb-[10px]" : ""}>
-          {renderComponent()}
-        </div>
+        {component.component !== "component" && (
+          <div className={isSelected ? "ml-8 mb-[10px]" : ""}>
+            {renderComponent()}
+          </div>
+        )}
+
+        {component.component === "component" && (
+          <div className={isSelected ? "ml-8 mt-2" : ""}>
+            {renderNodeComponent()}
+          </div>
+        )}
 
         {/* Action buttons */}
         {isSelected && !isEditing && (
           <div className="absolute top-2 right-2 flex gap-1 opacity-100 transition-opacity">
-            {component.type !== "divider" && (
-              <Button
-                variant="outline"
-                size="icon"
-                className="border-black/80 border p-2 rounded-lg dark:border-background dark:text-background"
-                onPress={(e) => {
-                  setIsEditing(true);
-                }}
-              >
-                <Edit3 className="w-3 h-3" />
-              </Button>
-            )}
+            {component.type !== "divider" &&
+              component.component !== "component" && (
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="border-black/80 border p-2 rounded-lg dark:border-background dark:text-background"
+                  onPress={(e) => {
+                    setIsEditing(true);
+                  }}
+                >
+                  <Edit3 className="w-3 h-3" />
+                </Button>
+              )}
             <Button
               variant="outline"
               size="icon"
@@ -323,27 +531,34 @@ export default function ComponentRenderer({
         )}
 
         {/* Edit hint */}
-        {isSelected && !isEditing && component.type !== "divider" && (
-          <div className="absolute bottom-2 left-12 text-xs text-black/50 dark:text-white/50 opacity-100 transition-opacity">
-            Double-click to edit
-          </div>
-        )}
+        {isSelected &&
+          !isEditing &&
+          component.type !== "divider" &&
+          component.component !== "component" && (
+            <div className="absolute bottom-2 left-12 text-xs text-black/50 dark:text-white/50 opacity-100 transition-opacity">
+              Double-click to edit
+            </div>
+          )}
 
         {isSelected &&
           isEditing &&
           component.type !== "divider" &&
           component.type !== "link" &&
-          component.type !== "paragraph" && (
+          component.type !== "paragraph" &&
+          component.component !== "component" && (
             <div className="absolute bottom-2 left-12 text-xs text-black/50 dark:text-white/50 opacity-100 transition-opacity">
               Click Enter to save
             </div>
           )}
 
-        {isSelected && isEditing && component.type === "paragraph" && (
-          <div className="absolute bottom-2 left-12 text-xs text-black/50 dark:text-white/50 opacity-100 transition-opacity">
-            Click Outside to save
-          </div>
-        )}
+        {isSelected &&
+          isEditing &&
+          component.type === "paragraph" &&
+          component.component !== "component" && (
+            <div className="absolute bottom-2 left-12 text-xs text-black/50 dark:text-white/50 opacity-100 transition-opacity">
+              Click Outside to save
+            </div>
+          )}
       </div>
     </div>
   );

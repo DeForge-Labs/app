@@ -9,18 +9,28 @@ const formSlice = createSlice({
     hasUnsavedChanges: false,
     lastSavedState: [],
     isPreview: false,
+    isSelector: false,
   },
 
   reducers: {
     addComponent: (state, action) => {
-      const newComponent = {
-        ...action.payload,
-        id: `component-${Date.now()}-${Math.random()
-          .toString(36)
-          .substr(2, 9)}`,
-        order: state.components.length,
-      };
-      state.components.push(newComponent);
+      if (action.payload.component === "component") {
+        const newComponent = {
+          ...action.payload,
+          order: state.components.length,
+        };
+        state.components.push(newComponent);
+      } else {
+        const newComponent = {
+          ...action.payload,
+          id: `component-${Date.now()}-${Math.random()
+            .toString(36)
+            .substr(2, 9)}`,
+          order: state.components.length,
+        };
+        state.components.push(newComponent);
+      }
+
       const isSame = deepCompareComponents(
         state.components,
         state.lastSavedState
@@ -99,6 +109,9 @@ const formSlice = createSlice({
     setIsPreview: (state, action) => {
       state.isPreview = action.payload;
     },
+    setIsSelector: (state, action) => {
+      state.isSelector = action.payload;
+    },
   },
 });
 
@@ -160,6 +173,7 @@ export const {
   loadComponents,
   clearForm,
   setIsPreview,
+  setIsSelector,
 } = formSlice.actions;
 
 export default formSlice.reducer;
