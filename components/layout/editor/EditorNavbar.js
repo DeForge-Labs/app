@@ -23,6 +23,7 @@ import useInitialize from "@/hooks/useInitialize";
 import { useState } from "react";
 import { toast } from "sonner";
 import ThemeChanger from "../dashboard/ThemeChanger";
+import { cn } from "@/lib/utils";
 
 export default function EditorNavbar() {
   const isWorkspaceInitializing = useSelector(
@@ -101,41 +102,41 @@ export default function EditorNavbar() {
             Deforge
           </span>
           <ChevronRight size={16} className="mt-1 dark:text-background" />
-          <span className="inline-block text-sm mt-0.5 dark:text-background">
+          <div className="inline-block text-sm mt-0.5 dark:text-background">
             {isWorkspaceInitializing ? (
               <Loader2 className="animate-spin w-4 h-4" />
             ) : (
-              workspace?.name
-            )}
-          </span>
+              <div className="flex flex-col gap-1 text-[13px]">
+                {workspace?.name}
+                <div className="flex items-center gap-1">
+                  <div
+                    className={`flex items-center gap-1 border border-black/80 text-[10px] w-fit px-2 rounded-md ${cn(
+                      workflow?.status === "LIVE"
+                        ? "bg-green-500/10 border-green-500 text-green-500"
+                        : "bg-red-500/10 border-red-500 text-red-500"
+                    )}`}
+                  >
+                    {workflow?.status === "LIVE" ? (
+                      <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                    ) : (
+                      <div className="h-2 w-2 bg-red-500 rounded-full"></div>
+                    )}
+                    {workflow?.status === "LIVE" ? "Production" : "Testing"}
+                  </div>
 
-          {(hasUnsavedChanges || hasUnsavedChangesForm) &&
-            !isWorkspaceInitializing &&
-            workspace?.workflow?.status !== "LIVE" && (
-              <div className="flex items-center gap-1 mt-1 text-xs border border-black/80 rounded-md px-2 py-1 dark:border-background dark:text-background ">
-                <div className="h-2 w-2 bg-yellow-400/80 rounded-full"></div>
+                  {(hasUnsavedChanges || hasUnsavedChangesForm) &&
+                    !isWorkspaceInitializing &&
+                    workspace?.workflow?.status !== "LIVE" && (
+                      <div className="flex items-center gap-1 text-[10px] border border-yellow-400 bg-yellow-400/10 text-yellow-700 dark:text-yellow-400 rounded-md px-2">
+                        <div className="h-2 w-2 bg-yellow-400 rounded-full"></div>
 
-                <span>Unsaved</span>
+                        <span>Unsaved</span>
+                      </div>
+                    )}
+                </div>
               </div>
             )}
-
-          {hasUnsavedChanges &&
-            !isWorkspaceInitializing &&
-            workspace?.workflow?.status !== "LIVE" && (
-              <div className="flex items-center gap-1 mt-1 text-xs border border-black/80 rounded-md px-2 py-1 dark:border-background dark:text-background ">
-                <AlertCircleIcon className="h-4 w-4" />
-                <span>Workflow</span>
-              </div>
-            )}
-
-          {hasUnsavedChangesForm &&
-            !isWorkspaceInitializing &&
-            workspace?.workflow?.status !== "LIVE" && (
-              <div className="flex items-center gap-1 mt-1 text-xs border border-black/80 rounded-md px-2 py-1 dark:border-background dark:text-background ">
-                <AlertCircleIcon className="h-4 w-4" />
-                <span>Form</span>
-              </div>
-            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -193,40 +194,36 @@ export default function EditorNavbar() {
           <Button
             variant="outline"
             size="icon"
-            className="px-4 min-h-9 border border-black/80 gap-2 text-sm rounded-md dark:border-background dark:text-background"
+            className="px-4 min-h-9 bg-black/80 dark:bg-background text-background text-sm rounded-md dark:text-dark"
+            onPress={() => {
+              if (mode === "workflow") {
+                dispatch(setMode("form"));
+              } else {
+                dispatch(setMode("workflow"));
+              }
+            }}
           >
-            <div
-              className="h-4 w-4 rounded-full opacity-70"
-              style={{
-                backgroundColor:
-                  workspace?.workflow?.status === "LIVE"
-                    ? "#00FF00"
-                    : "#FF0000",
-              }}
-            ></div>
-            {workspace?.workflow?.status === "LIVE" ? "Production" : "Testing"}
+            <div className="flex items-center gap-2">
+              {mode === "form" && hasUnsavedChanges && (
+                <div className="h-2 w-2 bg-yellow-400 dark:bg-yellow-500 rounded-full"></div>
+              )}
+              {mode === "workflow" && hasUnsavedChangesForm && (
+                <div className="h-2 w-2 bg-yellow-400 dark:bg-yellow-500 rounded-full"></div>
+              )}
+              <span>
+                {mode === "workflow" ? "Form Editor" : "Workflow Builder"}
+              </span>
+            </div>
           </Button>
 
           <div className="flex items-center gap-0.5">
             <Button
               variant="outline"
               size="icon"
-              className="px-4 min-h-9 bg-black/80 dark:bg-background text-background text-sm rounded-md rounded-r-none dark:text-dark"
-              onPress={() => {
-                if (mode === "workflow") {
-                  dispatch(setMode("form"));
-                } else {
-                  dispatch(setMode("workflow"));
-                }
-              }}
+              className="px-4 min-h-9 bg-black/80 dark:bg-background gap-1 text-background text-sm rounded-md dark:text-dark"
+              onPress={() => {}}
             >
-              {mode === "workflow" ? "Form Editor" : "Workflow Builder"}
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="min-h-9 bg-black/80 dark:bg-background text-background text-sm rounded-md rounded-l-none px-1 dark:text-dark"
-            >
+              Publish
               <ChevronDown className="h-3 w-3" />
             </Button>
           </div>

@@ -8,14 +8,11 @@ import {
   ModalBody,
   ModalFooter,
 } from "@heroui/react";
-import { Link2, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useSelector } from "react-redux";
 import useConnectSocial from "@/hooks/useConnectSocial";
-import { useDispatch } from "react-redux";
-import { setIsPreview, setIsSelector } from "@/redux/slice/formSlice";
 
-export default function SocialField({ field, nodeId }) {
-  const dispatch = useDispatch();
+export default function SocialField({ field }) {
   const {
     handleConnectSocial,
     isOpen,
@@ -26,42 +23,10 @@ export default function SocialField({ field, nodeId }) {
   const workflowSocial = useSelector((state) => state.workflow.workflowSocial);
   const workflow = useSelector((state) => state.workflow.workflow);
 
-  const components = useSelector((state) => state.form.components);
-
-  const handleDragStart = (e) => {
-    dispatch(setIsSelector(false));
-    dispatch(setIsPreview(false));
-
-    const isComponentPresent =
-      components &&
-      components.find(
-        (component) => component.id === `${nodeId}|${field.name}`
-      );
-    if (isComponentPresent) {
-      toast("Field is already present, can't add again");
-      return;
-    }
-
-    e.dataTransfer.setData(
-      "application/json",
-      JSON.stringify({
-        type: field.type,
-        id: `${nodeId}|${field.name}`,
-        name: field.name,
-        component: "component",
-      })
-    );
-  };
-
   return (
     <>
-      <div
-        key={field.name}
-        onDragStart={(e) => handleDragStart(e)}
-        draggable
-        className="space-y-2 p-3 rounded-lg border border-black/50 dark:border-background dark:text-background bg-background dark:bg-zinc-900"
-      >
-        <div className="text-sm font-medium flex items-center gap-2">
+      <div key={field.name} className="space-y-2">
+        <div className="text-sm font-medium flex items-center gap-2 dark:text-background">
           {field.name}
 
           <div className="text-[10px] text-blue-500 flex items-center gap-1 rounded-lg">

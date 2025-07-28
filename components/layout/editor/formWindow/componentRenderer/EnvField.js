@@ -26,10 +26,17 @@ export default function EnvField({ field }) {
       setDefaultValue(workflowEnv[field.name] ? workflowEnv[field.name] : "");
     }
   }, [workflowEnv]);
+
   return (
     <>
       <div key={field.name} className="space-y-2">
-        <div className="text-sm font-medium">{field.name}</div>
+        <div className="text-sm font-medium flex items-center gap-2 dark:text-background">
+          {field.name}
+          <div className="text-[10px] text-red-500 flex items-center gap-1 rounded-lg">
+            <div className="h-2 w-2 bg-red-500 rounded-full"> </div>
+            Env
+          </div>
+        </div>
         <div className="flex gap-2 items-center">
           <Input
             id={field.name}
@@ -58,7 +65,7 @@ export default function EnvField({ field }) {
 
       <Modal
         isOpen={isOpen}
-        className="border border-black bg-background p-1 rounded-lg dark:border-background dark:text-background dark:bg-dark"
+        className="border border-black bg-background p-1 rounded-lg dark:border-background dark:bg-dark dark:text-background"
         onClose={() => setIsOpen(false)}
         closeButton={<div></div>}
         isDismissable={!isSavingEnv}

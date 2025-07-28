@@ -207,7 +207,7 @@ export default function Canvas() {
               </p>
             </div>
           ) : (
-            <div className="space-y-6 max-w-full mx-auto">
+            <div className="space-y-6 mx-auto min-h-full max-w-5xl p-12 w-full py-16 border border-black/50 dark:border-background rounded-lg">
               {sortedComponents.map((component) => (
                 <PreviewRenderer key={component.id} component={component} />
               ))}
@@ -220,16 +220,16 @@ export default function Canvas() {
 
   return (
     <div className="h-full absolute bg-background dark:bg-dark w-full overflow-y-auto hide-scroll">
-      <div className="h-full relative">
+      <div className="h-full relative w-full">
         {renderPanelSwitcher()}
         <div
-          className="p-8 pt-20 pb-20 w-full"
+          className="p-8 pt-20 pb-20 min-h-full flex flex-col items-center"
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onClick={handleCanvasClick}
         >
           {components.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-96 border-2 border-black/50 dark:border-white/50 border-dashed rounded-lg">
+            <div className="flex flex-col items-center justify-center h-96 w-full border-2 border-black/50 dark:border-white/50 border-dashed rounded-lg">
               <Plus className="w-12 h-12 dark:text-background mb-4" />
               <h3 className="text-lg font-medium dark:text-background mb-2">
                 Start building your form
@@ -240,37 +240,43 @@ export default function Canvas() {
               </p>
             </div>
           ) : (
-            <div className="max-w-full">
-              {/* Drop zone before first component */}
-              <DropZone
-                index={0}
-                isDragging={draggedIndex !== null}
-                onDrop={(fromIndex, newComponent) =>
-                  handleDropZoneReorder(0, fromIndex, newComponent)
-                }
-              />
+            <div className="border border-black/50 dark:border-white/50 rounded-lg p-8 w-full max-w-5xl py-12">
+              <div className="max-w-full">
+                {/* Drop zone before first component */}
+                <DropZone
+                  index={0}
+                  isDragging={draggedIndex !== null}
+                  onDrop={(fromIndex, newComponent) =>
+                    handleDropZoneReorder(0, fromIndex, newComponent)
+                  }
+                />
 
-              {sortedComponents.map((component, index) => (
-                <div key={component.id}>
-                  <ComponentRenderer
-                    component={component}
-                    index={index}
-                    isSelected={selectedComponentId === component.id}
-                    onReorder={handleReorder}
-                    draggedIndex={draggedIndex}
-                    setDraggedIndex={setDraggedIndex}
-                  />
+                {sortedComponents.map((component, index) => (
+                  <div key={component.id}>
+                    <ComponentRenderer
+                      component={component}
+                      index={index}
+                      isSelected={selectedComponentId === component.id}
+                      onReorder={handleReorder}
+                      draggedIndex={draggedIndex}
+                      setDraggedIndex={setDraggedIndex}
+                    />
 
-                  {/* Drop zone after each component */}
-                  <DropZone
-                    index={index + 1}
-                    isDragging={draggedIndex !== null}
-                    onDrop={(fromIndex, newComponent) =>
-                      handleDropZoneReorder(index + 1, fromIndex, newComponent)
-                    }
-                  />
-                </div>
-              ))}
+                    {/* Drop zone after each component */}
+                    <DropZone
+                      index={index + 1}
+                      isDragging={draggedIndex !== null}
+                      onDrop={(fromIndex, newComponent) =>
+                        handleDropZoneReorder(
+                          index + 1,
+                          fromIndex,
+                          newComponent
+                        )
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

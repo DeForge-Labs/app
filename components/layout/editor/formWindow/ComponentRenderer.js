@@ -19,6 +19,8 @@ import MapField from "./componentRenderer/MapFields";
 import CheckBoxField from "./componentRenderer/CheckBoxField";
 import DateTimeField from "./componentRenderer/DateTimeField";
 import SliderField from "./componentRenderer/SliderField";
+import SocialField from "./componentRenderer/SocialField";
+import EnvField from "./componentRenderer/EnvField";
 
 export default function ComponentRenderer({
   component,
@@ -452,6 +454,10 @@ export default function ComponentRenderer({
             handleChange={handleChange}
           />
         );
+      case "social":
+        return <SocialField field={selectedField} key={index} />;
+      case "env":
+        return <EnvField field={selectedField} key={index} />;
       default:
         return null;
     }

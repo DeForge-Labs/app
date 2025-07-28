@@ -377,7 +377,8 @@ export function MiniNode({ id, type, data }) {
       className={`w-64 border-black/50 bg-background relative dark:border-background dark:text-background rounded-md dark:bg-zinc-900 ${cn(
         workflow?.status === "LIVE" && "border-red-500 dark:border-red-500"
       )} ${cn(
-        selectedNode?.id === id && "border-green-600 dark:border-green-500"
+        selectedNode?.id === id &&
+          "border-green-600 dark:border-green-500 bg-green-50"
       )}`}
     >
       {workflow?.status === "LIVE" && (

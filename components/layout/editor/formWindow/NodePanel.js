@@ -152,7 +152,7 @@ export default function NodePanel() {
           Node Components
         </div>
       </div>
-      <Card className="p-0 border-0">
+      <Card className="p-0 border-0 shadow-none">
         <CardHeader className="p-0">
           <CardTitle className="flex flex-col gap-1 text-lg border border-dashed border-black/50 dark:border-background dark:text-background p-3 pb-4 rounded-lg mb-5">
             {nodeType.title}
