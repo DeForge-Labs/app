@@ -17,8 +17,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeNewLog } from "@/redux/slice/WorkflowSlice";
 import JsonViewer from "./JSONViewer";
 import LogViewer from "./LogViewer";
+import { cn } from "@/lib/utils";
 
-export default function ExecutionLogsPanel() {
+export default function ExecutionLogsPanel({ isForm = false }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedExecution, setSelectedExecution] = useState(null);
   const logs = useSelector((state) => state.workflow.logs);
@@ -40,13 +41,17 @@ export default function ExecutionLogsPanel() {
 
   return (
     <div
-      className={` bg-background border-t transition-all duration-300 z-10 dark:bg-dark dark:border-background dark:text-background ${
+      className={cn(
+        ` bg-background transition-all duration-300 z-10 dark:bg-dark dark:border-background dark:text-background`,
         isExpanded ? "h-80" : "h-12"
-      }`}
+      )}
     >
       {/* Header bar */}
       <div
-        className="flex items-center justify-between bg-black/5 border-black/50 border-t px-4 h-12 border-b  cursor-pointer dark:bg-dark dark:border-background dark:text-background"
+        className={cn(
+          "flex items-center justify-between bg-black/5 border-black/50 border-t px-4 h-12 border-b  cursor-pointer dark:bg-dark dark:border-background dark:text-background",
+          isForm ? "rounded-t-lg border-x" : ""
+        )}
         onClick={() => {
           if (!isLogInitializing) {
             setIsExpanded(!isExpanded);
@@ -92,7 +97,12 @@ export default function ExecutionLogsPanel() {
 
       {/* Expanded content */}
       {isExpanded && (
-        <div className="flex h-[calc(100%-3rem)] overflow-hidden">
+        <div
+          className={cn(
+            "flex h-[calc(100%-3rem)] overflow-hidden",
+            isForm ? "border-x border-black/50 dark:border-background" : ""
+          )}
+        >
           {/* Executions list */}
           <div className="w-64 border-r border-black/20 overflow-y-auto py-2 dark:border-background">
             <h3 className="text-sm font-medium pb-2 pl-2 border-b border-black/20 dark:border-background">

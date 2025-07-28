@@ -10,11 +10,17 @@ import { DynamicIcon } from "lucide-react/dynamic";
 export default function GridCard({ flow, type = "workspace" }) {
   const timeAgo = formatDistanceToNow(flow.createdAt, { addSuffix: true });
   const router = useRouter();
+
   return (
     <Card className="overflow-hidden text-black/80 transition-all hover:shadow-md bg-transparent shadow-none border border-black/80 dark:border-background dark:text-background">
       <CardHeader className="p-4 pb-2 flex flex-col items-start">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between w-full">
           <span className="truncate font-bold">{flow.name}</span>
+          {type === "workspace" && flow?.type !== "WORKFLOW" && (
+            <div className="flex p-1 px-2 rounded-md text-xs text-background bg-black dark:bg-background dark:text-dark">
+              Published
+            </div>
+          )}
         </div>
         {flow?.description && (
           <p className="text-xs text-muted-foreground mt-1 mb-1">
@@ -38,7 +44,13 @@ export default function GridCard({ flow, type = "workspace" }) {
           variant="outline"
           size="sm"
           className="border-black/80 border dark:border-background dark:text-background"
-          onPress={() => router.push(`/editor/${flow.id}`)}
+          onPress={() => {
+            if (flow?.type === "WORKFLOW") {
+              router.push(`/editor/${flow.id}`);
+            } else {
+              router.push(`/form/${flow.id}`);
+            }
+          }}
         >
           {type === "workspace" ? (
             <>

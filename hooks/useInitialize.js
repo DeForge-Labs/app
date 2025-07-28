@@ -401,6 +401,20 @@ export default function useInitialize() {
       );
 
       if (response.data.success) {
+        const type = response.data.workspace.type;
+
+        if (type === "FORM") {
+          if (window.location.pathname !== `/form/${workspaceId}`) {
+            router.push(`/form/${workspaceId}`);
+            return;
+          }
+        } else {
+          if (window.location.pathname !== `/editor/${workspaceId}`) {
+            router.push(`/editor/${workspaceId}`);
+            return;
+          }
+        }
+
         dispatch(setEditorWorkspace(response.data.workspace));
         dispatch(
           setWorkflow({

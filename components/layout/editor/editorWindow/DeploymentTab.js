@@ -6,8 +6,9 @@ import ApiDeployments from "./deployments/ApiDeployments";
 import ChatBotDeployment from "./deployments/ChatBotdeployment";
 import TelegramDeployment from "./deployments/TelegramDeployments";
 import WidgetDeployment from "./deployments/WidgetDeployments";
+import { cn } from "@/lib/utils";
 
-export default function DeploymentTab() {
+export default function DeploymentTab({ padding = true }) {
   const isWorkflowInitializing = useSelector(
     (state) => state.workflow.isWorkflowInitializing
   );
@@ -33,7 +34,12 @@ export default function DeploymentTab() {
 
   return (
     <div className="overflow-y-auto hide-scroll flex-1 relative dark:text-background">
-      <div className="flex-1 flex flex-col p-4 absolute w-full pb-16">
+      <div
+        className={cn(
+          "flex-1 flex flex-col p-4 absolute w-full pb-16",
+          padding ? "" : "px-0"
+        )}
+      >
         <h1 className="font-semibold text-xl">Deployments</h1>
 
         {isApi && <ApiDeployments />}

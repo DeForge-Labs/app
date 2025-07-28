@@ -24,6 +24,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import ThemeChanger from "../dashboard/ThemeChanger";
 import { cn } from "@/lib/utils";
+import PublishButton from "./editorWindow/PublishButton";
 
 export default function EditorNavbar() {
   const isWorkspaceInitializing = useSelector(
@@ -85,7 +86,7 @@ export default function EditorNavbar() {
             size="icon"
             className="p-1 mr-2 border border-black/80 rounded-md dark:border-background dark:text-background"
             onPress={() => {
-              router.back();
+              router.push(`/dashboard/${workspace?.teamId}`);
             }}
           >
             <ChevronLeft className="h-4 w-4" />
@@ -217,15 +218,7 @@ export default function EditorNavbar() {
           </Button>
 
           <div className="flex items-center gap-0.5">
-            <Button
-              variant="outline"
-              size="icon"
-              className="px-4 min-h-9 bg-black/80 dark:bg-background gap-1 text-background text-sm rounded-md dark:text-dark"
-              onPress={() => {}}
-            >
-              Publish
-              <ChevronDown className="h-3 w-3" />
-            </Button>
+            <PublishButton />
           </div>
         </div>
       </div>

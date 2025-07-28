@@ -4,13 +4,15 @@ import { useState } from "react";
 import useInitialize from "./useInitialize";
 import { toast } from "sonner";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setPanel } from "@/redux/slice/WorkflowSlice";
 
 export default function useDeployWorkflow() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDeploying, setIsDeploying] = useState(false);
   const { loadWorkflowById } = useInitialize();
   const workflow = useSelector((state) => state.workflow.workflow);
+  const dispatch = useDispatch();
 
   const handleDeployWorkflow = async () => {
     try {
@@ -32,6 +34,7 @@ export default function useDeployWorkflow() {
 
       loadWorkflowById(workflow?.id);
       setIsOpen(false);
+      dispatch(setPanel(2));
 
       toast.success("Workflow deployed successfully");
       return response.data;
