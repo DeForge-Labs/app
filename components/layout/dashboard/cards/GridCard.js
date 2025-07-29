@@ -6,6 +6,8 @@ import DeleteButton from "./DeleteButton";
 import { useRouter } from "next/navigation";
 import DuplicateButton from "./DuplicateButton";
 import { DynamicIcon } from "lucide-react/dynamic";
+import MiniShareButton from "./MiniShareButton";
+import RevertButton from "./RevertButton";
 
 export default function GridCard({ flow, type = "workspace" }) {
   const timeAgo = formatDistanceToNow(flow.createdAt, { addSuffix: true });
@@ -46,7 +48,7 @@ export default function GridCard({ flow, type = "workspace" }) {
           className="border-black/80 border dark:border-background dark:text-background"
           onPress={() => {
             if (type === "template") {
-              router.push(`/template/${flow.id}`);
+              window.open(`/template/${flow.id}`, "_blank");
               return;
             }
             if (flow?.type === "WORKFLOW") {
@@ -71,18 +73,15 @@ export default function GridCard({ flow, type = "workspace" }) {
         </Button>
         <div className="flex space-x-2">
           {type === "template" ? (
-            <Button
-              variant="outline"
-              size="icon"
-              className="border-black/80 border p-2 rounded-lg dark:bg-dark dark:border-background"
-              onPress={() => {}}
-            >
-              <Share className="h-3 w-3" />
-            </Button>
+            <MiniShareButton template={flow} />
           ) : (
             <DuplicateButton workflow={flow} />
           )}
-          <DeleteButton workflowId={flow.id} />
+          {type === "template" ? (
+            <RevertButton templateId={flow.id} />
+          ) : (
+            <DeleteButton workflowId={flow.id} />
+          )}
         </div>
       </CardFooter>
     </Card>

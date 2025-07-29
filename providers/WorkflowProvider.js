@@ -47,6 +47,12 @@ export default function WorkflowProvider({ children }) {
   }, [user, params?.id, nodeRegistry]);
 
   useEffect(() => {
+    if (!params?.id) return;
+
+    if (params?.id !== workspace?.id) {
+      return;
+    }
+
     if (workspace?.workflowId) {
       loadLogs(workspace?.workflowId);
     }
@@ -54,7 +60,7 @@ export default function WorkflowProvider({ children }) {
     return () => {
       dispatch(setLogs([]));
     };
-  }, [workspace?.workflowId]);
+  }, [workspace?.workflowId, params?.id]);
 
   // Handle workflow subscription with proper cleanup
   useEffect(() => {
