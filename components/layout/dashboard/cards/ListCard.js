@@ -42,7 +42,17 @@ export default function ListCard({ flow, type = "workspace" }) {
           variant="outline"
           size="sm"
           className="border-black/80 border dark:border-background dark:text-background"
-          onPress={() => router.push(`/editor/${flow.id}`)}
+          onPress={() => {
+            if (type === "template") {
+              router.push(`/template/${flow.id}`);
+              return;
+            }
+            if (flow?.type === "WORKFLOW") {
+              router.push(`/editor/${flow.id}`);
+            } else {
+              router.push(`/form/${flow.id}`);
+            }
+          }}
         >
           {type === "workspace" ? (
             <Edit className="h-3 w-3" />

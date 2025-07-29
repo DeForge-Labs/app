@@ -11,8 +11,8 @@ export default function TemplateNavbar() {
   const router = useRouter();
   const user = useSelector((state) => state.user.user);
   return (
-    <header className="sticky top-0 z-10 border-b border-black/50 bg-background dark:bg-dark dark:border-background">
-      <div className="container flex h-16 items-center justify-between py-4">
+    <header className="sticky top-0 z-10">
+      <div className="max-w-5xl px-8 mx-auto flex h-16 items-center justify-between py-4 border border-t-0 rounded-xl rounded-t-none border-black/50 bg-background dark:bg-dark dark:border-background">
         <div className="flex items-center gap-2">
           <Image
             src="/logo/logo-black.svg"

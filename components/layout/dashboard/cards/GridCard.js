@@ -23,7 +23,7 @@ export default function GridCard({ flow, type = "workspace" }) {
           )}
         </div>
         {flow?.description && (
-          <p className="text-xs text-muted-foreground mt-1 mb-1">
+          <p className="text-xs text-muted-foreground mt-1 mb-1 line-clamp-2">
             {flow.description}
           </p>
         )}
@@ -45,6 +45,10 @@ export default function GridCard({ flow, type = "workspace" }) {
           size="sm"
           className="border-black/80 border dark:border-background dark:text-background"
           onPress={() => {
+            if (type === "template") {
+              router.push(`/template/${flow.id}`);
+              return;
+            }
             if (flow?.type === "WORKFLOW") {
               router.push(`/editor/${flow.id}`);
             } else {

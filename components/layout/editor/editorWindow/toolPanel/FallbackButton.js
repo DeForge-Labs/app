@@ -66,12 +66,12 @@ export default function FallbackButton({ className, showTooltip = true }) {
       >
         <ModalContent>
           <ModalHeader>
-            <h3 className="text-lg font-medium">Rollback Workflow</h3>
+            <h3 className="text-lg font-medium">Rollback Workspace</h3>
           </ModalHeader>
           <ModalBody className="-mt-3">
             <p>
-              Are you sure you want to rollback this workflow? Nodes and
-              connections can be updated and run from the Deployments tab.
+              Are you sure you want to rollback this workspace? This will revert
+              the workspace to testing environment.
             </p>
           </ModalBody>
           <ModalFooter className="-mt-1 flex w-full gap-2">

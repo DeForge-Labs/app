@@ -22,6 +22,9 @@ import {
   setWorkspace as setEditorWorkspace,
   setIsFormInitializing,
   setForm,
+  setNodes,
+  setConnections,
+  setWorkflowForce,
 } from "@/redux/slice/WorkflowSlice";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -136,7 +139,18 @@ export default function useInitialize() {
       );
 
       if (response.data.success) {
-        dispatch(setTemplate(response.data.template));
+        dispatch(setTemplate(response.data?.template || null));
+        dispatch(setWorkflowForce(response.data?.template?.workflow || null));
+        dispatch(setForm(response.data?.template?.form || null));
+        dispatch(setNodes(response.data?.template?.workflow?.nodes || []));
+        dispatch(
+          setConnections(response.data?.template?.workflow?.edges || [])
+        );
+        dispatch(
+          loadComponents(
+            response.data?.template?.form?.formLayout?.components || []
+          )
+        );
       } else {
         console.log(response.data);
       }

@@ -85,7 +85,16 @@ export default function CreateWorkflowButton() {
           };
         }),
       ];
-      setCategories(allCategories);
+
+      const uniqueCategories = [...new Set(allCategories.map((c) => c.name))];
+
+      setCategories(
+        uniqueCategories.map((c) => {
+          return {
+            name: c,
+          };
+        })
+      );
     }
   }, [defaultTemplates]);
 
@@ -137,9 +146,9 @@ export default function CreateWorkflowButton() {
                 <Card className="flex-1 h-full rounded-none bg-background dark:bg-dark shadow-none">
                   <CardBody className="p-4 hide-scroll">
                     <div className="space-y-6">
-                      {categories.map((category) => (
+                      {categories.map((category, index) => (
                         <div
-                          key={category.name}
+                          key={index}
                           className="gap-2 text-black dark:text-background"
                         >
                           <h3 className="text-sm font-medium mb-2 flex items-center gap-2">

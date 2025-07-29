@@ -35,7 +35,10 @@ const workflowSlice = createSlice({
   name: "workflow",
   initialState,
   reducers: {
-    // Original actions
+    setWorkflowForce: (state, action) => {
+      state.workflow = action.payload;
+    },
+
     setWorkflow: (state, action) => {
       state.workflow = action.payload.workflow;
       state.nodes = action.payload.nodes;
@@ -506,6 +509,7 @@ function isObject(obj) {
 
 export const {
   // Original actions
+  setWorkflowForce,
   setWorkflow,
   setIsWorkflowInitializing,
   setNodes,

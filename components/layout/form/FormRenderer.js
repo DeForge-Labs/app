@@ -33,7 +33,7 @@ export default function FormRenderer() {
             </p>
           </div>
         ) : (
-          <div className="space-y-6 mx-auto min-h-full max-w-5xl p-12 w-full py-16 border border-black/50 dark:border-background rounded-lg">
+          <div className="space-y-6 mx-auto min-h-full max-w-5xl p-12 w-full py-16 border border-black/50 dark:border-background bg-black/5 dark:bg-white/5 rounded-lg">
             {sortedComponents.map((component) => (
               <PreviewRenderer key={component.id} component={component} />
             ))}

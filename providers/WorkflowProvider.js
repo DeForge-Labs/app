@@ -5,6 +5,8 @@ import useInitialize from "@/hooks/useInitialize";
 import useLibrary from "@/hooks/useLibrary";
 import useSocket from "@/hooks/useSocket";
 import { useParams } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { setLogs } from "@/redux/slice/WorkflowSlice";
 
 export default function WorkflowProvider({ children }) {
   const user = useSelector((state) => state.user.user);
@@ -20,6 +22,7 @@ export default function WorkflowProvider({ children }) {
     socket,
   } = useSocket();
   const params = useParams();
+  const dispatch = useDispatch();
 
   // Load node registry once on component mount
   useEffect(() => {
@@ -44,10 +47,14 @@ export default function WorkflowProvider({ children }) {
   }, [user, params?.id, nodeRegistry]);
 
   useEffect(() => {
-    if (workflow?.id) {
-      loadLogs(workflow.id);
+    if (workspace?.workflowId) {
+      loadLogs(workspace?.workflowId);
     }
-  }, [workflow?.id]);
+
+    return () => {
+      dispatch(setLogs([]));
+    };
+  }, [workspace?.workflowId]);
 
   // Handle workflow subscription with proper cleanup
   useEffect(() => {

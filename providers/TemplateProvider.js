@@ -3,28 +3,29 @@
 import useInitialize from "@/hooks/useInitialize";
 import { useEffect } from "react";
 import useLibrary from "@/hooks/useLibrary";
+import { useParams } from "next/navigation";
 
-export default function TemplateProvider({ children, params }) {
+export default function TemplateProvider({ children }) {
   const { loadTemplate } = useInitialize();
   const { loadNodeRegistry } = useLibrary();
+  const params = useParams();
 
   useEffect(() => {
     loadNodeRegistry();
   }, []);
 
   useEffect(() => {
-    if (!params?.value) return;
+    if (!params?.id) return;
 
     try {
-      const parsedValue = JSON.parse(params.value);
-      const id = parsedValue.id;
+      const id = params.id;
       if (!id) return;
 
       loadTemplate(id);
     } catch (error) {
       console.error("Error parsing params value:", error);
     }
-  }, [params]);
+  }, [params?.id]);
 
   return <div>{children}</div>;
 }

@@ -146,13 +146,13 @@ export default function Workflows() {
 
       {isWorkflowInitializing && <WorkflowLoading />}
 
-      {workspace?.length === 0 && !isWorkflowInitializing && (
-        <WorkflowEmptyState type="workspace" />
-      )}
+      {tab === "workspaces" &&
+        workspace?.length === 0 &&
+        !isWorkflowInitializing && <WorkflowEmptyState type="workspace" />}
 
-      {templates?.length === 0 && !isWorkflowInitializing && (
-        <WorkflowEmptyState type="template" />
-      )}
+      {tab === "templates" &&
+        templates?.length === 0 &&
+        !isWorkflowInitializing && <WorkflowEmptyState type="template" />}
 
       {workspace &&
         tab === "workspaces" &&

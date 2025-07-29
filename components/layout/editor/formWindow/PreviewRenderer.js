@@ -17,7 +17,7 @@ import SliderField from "./componentRenderer/SliderField";
 import SocialField from "./componentRenderer/SocialField";
 import EnvField from "./componentRenderer/EnvField";
 
-export default function PreviewRenderer({ component }) {
+export default function PreviewRenderer({ component, isTemplate = false }) {
   const renderNodeComponent = () => {
     const nodes = useSelector((state) => state.workflow.nodes);
     const edges = useSelector((state) => state.workflow.connections || []);
@@ -45,9 +45,7 @@ export default function PreviewRenderer({ component }) {
       return (
         <div className="pr-7">
           <div
-            className={`h-full flex gap-2 text-xs items-center justify-center border w-fit border-red-500 rounded-lg p-2 ${
-              isSelected ? "-mt-2" : ""
-            }`}
+            className={`h-full flex gap-2 text-xs items-center justify-center border w-fit border-red-500 rounded-lg p-2`}
           >
             <AlertCircle className="w-4 h-4 text-red-500" />
             <div className="text-red-500">
@@ -93,9 +91,7 @@ export default function PreviewRenderer({ component }) {
       return (
         <div className="pr-7">
           <div
-            className={`h-full flex gap-2 text-xs items-center justify-center border w-fit border-red-500 rounded-lg p-2 ${
-              isSelected ? "-mt-2" : ""
-            }`}
+            className={`h-full flex gap-2 text-xs items-center justify-center border w-fit border-red-500 rounded-lg p-2`}
           >
             <AlertCircle className="w-4 h-4 text-red-500" />
             <div className="text-red-500">
@@ -203,9 +199,21 @@ export default function PreviewRenderer({ component }) {
           />
         );
       case "social":
-        return <SocialField field={selectedField} key={component.id} />;
+        return (
+          <SocialField
+            field={selectedField}
+            key={component.id}
+            isTemplate={isTemplate}
+          />
+        );
       case "env":
-        return <EnvField field={selectedField} key={component.id} />;
+        return (
+          <EnvField
+            field={selectedField}
+            key={component.id}
+            isTemplate={isTemplate}
+          />
+        );
       default:
         return null;
     }

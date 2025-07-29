@@ -10,14 +10,10 @@ export default function UserTeamsProvider({ children }) {
   const isTeamsInitializing = useSelector(
     (state) => state.template.isTeamsInitializing
   );
-  const { loadUserAndTeams, loadTemplates } = useInitialize();
+  const { loadUserAndTeams } = useInitialize();
 
   useEffect(() => {
     loadUserAndTeams();
-  }, []);
-
-  useEffect(() => {
-    loadTemplates();
   }, []);
 
   if (isTeamsInitializing) {
@@ -28,7 +24,5 @@ export default function UserTeamsProvider({ children }) {
     );
   }
 
-  return (
-    <div className="flex flex-col min-h-screen dark:bg-dark">{children}</div>
-  );
+  return <div>{children}</div>;
 }

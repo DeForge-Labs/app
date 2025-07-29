@@ -14,7 +14,7 @@ import { Save, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-export default function EnvField({ field }) {
+export default function EnvField({ field, isTemplate = false }) {
   const { handleSaveEnv, isOpen, setIsOpen, isSavingEnv } = useSaveEnv();
   const [value, setValue] = useState(field.value);
   const workflowEnv = useSelector((state) => state.workflow.workflowEnv);
@@ -51,6 +51,9 @@ export default function EnvField({ field }) {
             variant="icon"
             className="p-3 rounded-md text-xs bg-black/80 text-background h-full dark:bg-background dark:text-black"
             onPress={() => {
+              if (isTemplate) {
+                return;
+              }
               setIsOpen(true);
             }}
             isDisabled={!value || workflow?.status === "LIVE"}

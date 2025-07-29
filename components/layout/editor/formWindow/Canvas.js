@@ -55,6 +55,7 @@ export default function Canvas() {
   const [panel, setPanel] = useState(1);
 
   const isSelector = useSelector((state) => state.form.isSelector);
+  const workflow = useSelector((state) => state.workflow.workflow);
 
   const [draggedIndex, setDraggedIndex] = useState(null);
 
@@ -72,6 +73,10 @@ export default function Canvas() {
 
   const handleDrop = (e) => {
     e.preventDefault();
+
+    if (workflow.status === "LIVE") {
+      return;
+    }
 
     // Check if this is a component from sidebar (JSON data)
     const jsonData = e.dataTransfer.getData("application/json");
@@ -193,26 +198,28 @@ export default function Canvas() {
 
   if (isPreviewMode) {
     return (
-      <div className="flex-1 bg-background dark:bg-dark">
-        {renderPanelSwitcher()}
-        <div className="min-h-full p-8 pt-20">
-          {components.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-96 border-2 border-dashed border-gray-300 rounded-lg">
-              <Plus className="w-12 h-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2 dark:text-background">
-                No components to preview
-              </h3>
-              <p className="text-gray-500 text-center max-w-sm">
-                Switch to edit mode and add some components first.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-6 mx-auto min-h-full max-w-5xl p-12 w-full py-16 border border-black/50 dark:border-background rounded-lg">
-              {sortedComponents.map((component) => (
-                <PreviewRenderer key={component.id} component={component} />
-              ))}
-            </div>
-          )}
+      <div className="h-full absolute bg-background dark:bg-dark w-full overflow-y-auto hide-scroll">
+        <div className="h-full relative w-full">
+          {renderPanelSwitcher()}
+          <div className="min-h-full p-8 pt-20 pb-20">
+            {components.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-96 border-2 border-dashed border-gray-300 rounded-lg">
+                <Plus className="w-12 h-12 text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2 dark:text-background">
+                  No components to preview
+                </h3>
+                <p className="text-gray-500 text-center max-w-sm">
+                  Switch to edit mode and add some components first.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-6 mx-auto min-h-full max-w-5xl p-12 w-full py-16 border border-black/50 dark:border-background rounded-lg">
+                {sortedComponents.map((component) => (
+                  <PreviewRenderer key={component.id} component={component} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );

@@ -12,7 +12,7 @@ import { Loader2 } from "lucide-react";
 import { useSelector } from "react-redux";
 import useConnectSocial from "@/hooks/useConnectSocial";
 
-export default function SocialField({ field }) {
+export default function SocialField({ field, isTemplate = false }) {
   const {
     handleConnectSocial,
     isOpen,
@@ -35,12 +35,16 @@ export default function SocialField({ field }) {
           </div>
         </div>
         <div className="flex gap-2 items-center">
-          {workflowSocial && !workflowSocial[field.name.toLowerCase()] ? (
+          {isTemplate ||
+          (workflowSocial && !workflowSocial[field.name.toLowerCase()]) ? (
             <Button
               variant="outline"
               size="md"
               className="px-2 text-xs bg-black/80 text-background w-full dark:bg-background dark:text-black"
               onPress={() => {
+                if (isTemplate) {
+                  return;
+                }
                 setIsOpen(true);
               }}
               isDisabled={workflow?.status === "LIVE"}
@@ -53,6 +57,9 @@ export default function SocialField({ field }) {
               size="md"
               className="px-2 text-xs bg-black/80 text-background w-full dark:bg-background dark:text-black"
               onPress={() => {
+                if (isTemplate) {
+                  return;
+                }
                 setIsOpen(true);
               }}
               isDisabled={workflow?.status === "LIVE"}
