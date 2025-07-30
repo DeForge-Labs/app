@@ -18,7 +18,8 @@ export default function usePublishTemplate() {
     selectedIcon,
     visibility,
     author,
-    workspaceId
+    workspaceId,
+    teamId
   ) => {
     try {
       setIsPublishingTemplate(true);
@@ -41,7 +42,10 @@ export default function usePublishTemplate() {
 
       toast.success("Template published successfully");
 
-      router.push(`/template/${response.data.template.id}`);
+      router.push(`/dashboard/${teamId}`);
+
+      window.open(`/template/${response.data.template.id}`, "_blank");
+
       return response.data;
     } catch (error) {
       console.log(error);

@@ -21,7 +21,7 @@ export default function FormRenderer() {
 
   return (
     <div className="overflow-y-auto hide-scroll flex-1 relative dark:text-background">
-      <div className="flex-1 flex flex-col absolute w-full p-8 pt-10 pb-16">
+      <div className="flex-1 flex flex-col absolute w-full p-8 pt-4 pb-16">
         {components.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-96 border-2 border-dashed border-gray-300 rounded-lg">
             <Plus className="w-12 h-12 text-gray-400 mb-4" />

@@ -5,7 +5,10 @@ import { Button, Input, InputOtp } from "@heroui/react";
 import { Loader2, Mail, User } from "lucide-react";
 import useOnboard from "@/hooks/useOnboard";
 
-export default function LoginForm() {
+export default function LoginForm({
+  onLoadingChange = () => {},
+  embedded = false,
+}) {
   const [isOTPWindow, setIsOTPWindow] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
@@ -19,6 +22,14 @@ export default function LoginForm() {
   const { requestLogin, verifyLogin, verifySignUp, resend } = useOnboard();
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
+
+  // Notify parent component of loading state changes
+  useEffect(() => {
+    const isLoading = isRequestingLogin || isVerifying || isResending;
+    if (onLoadingChange) {
+      onLoadingChange(isLoading);
+    }
+  }, [isRequestingLogin, isVerifying, isResending, onLoadingChange]);
 
   useEffect(() => {
     if (timeout > 0) {
@@ -36,9 +47,9 @@ export default function LoginForm() {
         onSubmit={(e) => {
           e.preventDefault();
           if (isSignUp) {
-            verifySignUp(email, otp, username, setIsVerifying);
+            verifySignUp(email, otp, username, setIsVerifying, embedded);
           } else {
-            verifyLogin(email, otp, setIsVerifying);
+            verifyLogin(email, otp, setIsVerifying, embedded);
           }
         }}
       >

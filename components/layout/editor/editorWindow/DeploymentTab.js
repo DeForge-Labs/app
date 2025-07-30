@@ -36,8 +36,8 @@ export default function DeploymentTab({ padding = true }) {
     <div className="overflow-y-auto hide-scroll flex-1 relative dark:text-background">
       <div
         className={cn(
-          "flex-1 flex flex-col p-4 absolute w-full pb-16",
-          padding ? "" : "px-0"
+          "flex-1 flex flex-col p-4 absolute w-full pb-16 left-1/2 -translate-x-1/2",
+          padding ? "" : "px-0 max-w-5xl mx-auto"
         )}
       >
         <h1 className="font-semibold text-xl">Deployments</h1>

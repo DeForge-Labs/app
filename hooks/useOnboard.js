@@ -8,7 +8,7 @@ import useInitialize from "./useInitialize";
 export default function useOnboard() {
   const { getTeams } = useTeams();
   const router = useRouter();
-  const { loadUser } = useInitialize();
+  const { loadUser, loadUserAndTeams } = useInitialize();
   const { createTeam } = useTeams();
 
   const requestLogin = async (
@@ -48,7 +48,7 @@ export default function useOnboard() {
     }
   };
 
-  const verifyLogin = async (email, otp, setIsVerifying) => {
+  const verifyLogin = async (email, otp, setIsVerifying, embedded) => {
     try {
       setIsVerifying(true);
 
@@ -70,22 +70,26 @@ export default function useOnboard() {
         const user = await loadUser(false, response.data.token);
 
         try {
-          const teams = await getTeams();
+          const teams = await getTeams(response.data.token);
 
           if (teams.length === 0) {
             router.push("/team/create");
           } else {
-            const lastTeamId = localStorage.getItem(`team_${user.id}`);
+            if (embedded) {
+              await loadUserAndTeams(response.data.token);
+            } else {
+              const lastTeamId = localStorage.getItem(`team_${user.id}`);
 
-            if (lastTeamId) {
-              if (lastTeamId in teams) {
-                router.push(`/dashboard/${lastTeamId}`);
+              if (lastTeamId) {
+                if (lastTeamId in teams) {
+                  router.push(`/dashboard/${lastTeamId}`);
+                } else {
+                  router.push(`/dashboard/${teams[0].teamId}`);
+                  localStorage.setItem(`team_${user.id}`, teams[0].teamId);
+                }
               } else {
                 router.push(`/dashboard/${teams[0].teamId}`);
-                localStorage.setItem(`team_${user.id}`, teams[0].teamId);
               }
-            } else {
-              router.push(`/dashboard/${teams[0].teamId}`);
             }
           }
         } catch (error) {
@@ -103,7 +107,13 @@ export default function useOnboard() {
     }
   };
 
-  const verifySignUp = async (email, otp, username, setIsVerifying) => {
+  const verifySignUp = async (
+    email,
+    otp,
+    username,
+    setIsVerifying,
+    embedded
+  ) => {
     try {
       setIsVerifying(true);
 
@@ -136,7 +146,11 @@ export default function useOnboard() {
         const teamResponse = await createTeam("My Team", response.data.token);
 
         if (teamResponse.success) {
-          router.push(`/dashboard/${teamResponse.team.id}`);
+          if (embedded) {
+            await loadUserAndTeams(response.data.token);
+          } else {
+            router.push(`/dashboard/${teamResponse.team.id}`);
+          }
         } else {
           toast.error(teamResponse.message);
           router.push("/team/create");

@@ -49,13 +49,13 @@ export default function LogoutButton() {
           <ModalFooter className="-mt-2 flex w-full gap-2">
             <Button
               variant="outline"
-              className="w-full rounded-full border border-black/80 p-7 dark:border-background dark:text-background"
+              className="w-fit rounded-lg border border-black/80 p-4 dark:border-background dark:text-background"
               onPress={() => setIsOpen(false)}
             >
               Cancel
             </Button>
             <Button
-              className="w-full rounded-full p-7 bg-black/80 text-background dark:bg-background dark:text-black"
+              className="w-fit rounded-lg p-4 bg-black/80 text-background dark:bg-background dark:text-black"
               onPress={handleLogout}
             >
               Logout

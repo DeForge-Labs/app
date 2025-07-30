@@ -405,7 +405,8 @@ export default function PublishButton() {
                       selectedIcon,
                       visibility,
                       author,
-                      workspace?.id
+                      workspace?.id,
+                      workspace?.teamId
                     );
                   }}
                   isDisabled={

@@ -16,7 +16,7 @@ export default function Navbar() {
   );
   const team = useSelector((state) => state.team.team);
   return (
-    <header className="sticky top-0 z-10 border-b border-black/50 bg-background dark:bg-dark dark:border-background">
+    <header className="sticky top-0 z-50 border-b border-black/50 bg-background dark:bg-dark dark:border-background">
       <div className="container flex h-16 items-center justify-between py-4">
         <div className="flex items-center gap-2">
           <Image

@@ -85,7 +85,7 @@ body {
 
 @keyframes ping-sm {
   75%, 100% {
-    transform: scale(1.04);
+    transform: scale(1.1);
     opacity: 0;
   }
 }

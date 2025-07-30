@@ -38,8 +38,8 @@ export default function FormNavbar() {
   );
 
   return (
-    <header className="sticky top-0 z-10 border-b border-black/50 bg-background dark:bg-dark dark:border-background">
-      <div className="container flex h-16 items-center justify-between py-4">
+    <header className="sticky top-0 z-10">
+      <div className="max-w-5xl px-8 mx-auto flex h-16 items-center justify-between py-10 border border-t-0 rounded-xl rounded-t-none border-black/50 bg-background dark:bg-dark dark:border-background">
         <div className="flex items-center gap-2">
           <Button
             variant="outline"

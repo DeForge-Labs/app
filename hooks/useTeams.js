@@ -1,9 +1,9 @@
 import axios from "axios";
 
 export default function useTeams() {
-  const getTeams = async () => {
+  const getTeams = async (token = null) => {
     const headers = {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      Authorization: `Bearer ${token || localStorage.getItem("token")}`,
     };
 
     const response = await axios.post(

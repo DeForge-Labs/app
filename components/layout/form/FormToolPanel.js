@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Link2, StickyNote } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPanel } from "@/redux/slice/WorkflowSlice";
+import RunButton from "../editor/editorWindow/toolPanel/RunButton";
 
 const tabs = [
   { type: "separator" },
@@ -58,6 +59,7 @@ export default function FormToolPanel({ className, onChange }) {
           className
         )}
       >
+        <RunButton />
         {tabs.map((tab, index) => {
           if (tab.type === "separator") {
             return null;

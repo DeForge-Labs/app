@@ -50,7 +50,7 @@ export default function ExecutionLogsPanel({ isForm = false }) {
       <div
         className={cn(
           "flex items-center justify-between bg-black/5 border-black/50 border-t px-4 h-12 border-b  cursor-pointer dark:bg-dark dark:border-background dark:text-background",
-          isForm ? "rounded-t-lg border-x" : ""
+          isForm ? "rounded-t-lg border-x max-w-5xl mx-auto" : ""
         )}
         onClick={() => {
           if (!isLogInitializing) {
@@ -100,7 +100,9 @@ export default function ExecutionLogsPanel({ isForm = false }) {
         <div
           className={cn(
             "flex h-[calc(100%-3rem)] overflow-hidden",
-            isForm ? "border-x border-black/50 dark:border-background" : ""
+            isForm
+              ? "border-x border-black/50 dark:border-background max-w-5xl mx-auto"
+              : ""
           )}
         >
           {/* Executions list */}

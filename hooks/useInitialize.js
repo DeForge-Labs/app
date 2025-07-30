@@ -103,14 +103,14 @@ export default function useInitialize() {
     }
   };
 
-  const loadUserAndTeams = async () => {
+  const loadUserAndTeams = async (token = null) => {
     try {
       dispatch(setIsTeamsInitializing(true));
       const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token || localStorage.getItem("token")}`,
       };
 
-      await loadUser(false);
+      await loadUser(false, token);
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/teams/list`,
