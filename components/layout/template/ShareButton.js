@@ -51,7 +51,7 @@ export default function ShareButton() {
               startContent={
                 <GitBranch className="text-black/40 dark:text-background" />
               }
-              value={`https://d4ge.xyz/${template.shortId}`}
+              value={`https://d4g.app/${template.shortId}`}
               onChange={(e) => {}}
             />
           </ModalBody>
@@ -67,7 +67,7 @@ export default function ShareButton() {
               className="w-fit rounded-lg p-4 bg-black/80 text-background dark:bg-background dark:text-black"
               onPress={() => {
                 navigator.clipboard.writeText(
-                  `https://d4ge.xyz/${template.shortId}`
+                  `https://d4g.app/${template.shortId}`
                 );
                 toast("Link copied to clipboard");
               }}
