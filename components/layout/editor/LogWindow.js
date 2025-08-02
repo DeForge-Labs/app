@@ -212,7 +212,7 @@ export default function ExecutionLogsPanel({ isForm = false }) {
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-3">
-                  <LogViewer logs={execution.logs} />
+                  <LogViewer logs={execution.logs} totalCredits={execution.totalCredits} />
 
                   <JsonViewer data={execution.result} />
                 </div>

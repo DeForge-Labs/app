@@ -8,11 +8,12 @@ import {
   CheckCircle,
   AlertCircle,
   Info,
+  CircleDollarSign,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@heroui/react";
 
-const LogViewer = ({ logs, title = "Execution Logs" }) => {
+const LogViewer = ({ logs, totalCredits = 0, title = "Execution Logs" }) => {
   const [copied, setCopied] = useState(false);
 
   const getLogIcon = (level) => {
@@ -133,6 +134,11 @@ const LogViewer = ({ logs, title = "Execution Logs" }) => {
                 <span>Completed in {executionTime}ms</span>
               </div>
             )}
+            <div className="flex items-center gap-1">
+              <CircleDollarSign className="h-3 w-3" />
+              <span>{totalCredits} credits used</span>
+            </div>
+            
           </div>
         </div>
         <Button
