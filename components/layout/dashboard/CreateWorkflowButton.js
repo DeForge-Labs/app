@@ -103,7 +103,7 @@ export default function CreateWorkflowButton() {
       <Button
         variant="outline"
         size="md"
-        className="bg-black/80 rounded-lg text-background text-xs dark:bg-background dark:text-black"
+        className="bg-black/80 rounded-lg text-background text-xs h-9 dark:bg-background dark:text-black"
         onPress={() => {
           setIsOpen(true);
         }}

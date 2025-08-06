@@ -14,6 +14,7 @@ const teamSlice = createSlice({
     templates: null,
     defaultTemplate: null,
     isDefaultTemplatesInitializing: true,
+    tab: "dashboard",
   },
 
   reducers: {
@@ -47,6 +48,9 @@ const teamSlice = createSlice({
     setIsDefaultTemplatesInitializing: (state, action) => {
       state.isDefaultTemplatesInitializing = action.payload;
     },
+    setTab: (state, action) => {
+      state.tab = action.payload;
+    },
   },
 });
 
@@ -61,6 +65,7 @@ export const {
   setTemplates,
   setDefaultTemplate,
   setIsDefaultTemplatesInitializing,
+  setTab,
 } = teamSlice.actions;
 
 export default teamSlice.reducer;

@@ -20,7 +20,7 @@ export default function GridCard({ flow, type = "workspace" }) {
           <span className="truncate font-bold">{flow.name}</span>
           {type === "workspace" && flow?.type !== "WORKFLOW" && (
             <div className="flex p-1 px-2 rounded-md text-xs text-background bg-black dark:bg-background dark:text-dark">
-              Published
+              FORM
             </div>
           )}
         </div>

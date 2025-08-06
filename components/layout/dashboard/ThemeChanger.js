@@ -11,7 +11,7 @@ export default function ThemeChanger() {
     <Button
       variant="outline"
       size="icon"
-      className="border border-black/50 px-4 h-9 rounded-lg text-black/80 text-xs dark:text-background dark:border-background"
+      className="border border-black/50 px-2 h-8 rounded-lg text-black/80 text-xs dark:text-background dark:border-background"
       onPress={() => {
         setTheme(resolvedTheme === "dark" ? "light" : "dark");
       }}
