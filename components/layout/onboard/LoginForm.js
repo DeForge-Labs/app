@@ -195,6 +195,25 @@ export default function LoginForm({
             )}
           </Button>
         </div>
+        <p className="mt-5 text-sm dark:text-background">
+          By pressing "Continue", you agree to our{" "}
+          <a 
+            href="/ToS" 
+            target="_blank" 
+            className="text-blue-600 hover:underline dark:text-blue-400"
+          >
+            Terms of Service
+          </a>{" "}
+          and{" "}
+          <a 
+            href="/privacy" 
+            target="_blank" 
+            className="text-blue-600 hover:underline dark:text-blue-400"
+          >
+            Privacy Policy
+          </a>
+          .
+        </p>
       </form>
     );
   }
