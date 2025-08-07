@@ -90,7 +90,7 @@ export default function Dashboard() {
             <p className="text-sm dark:text-background">Your credit balance</p>
             <p className="text-3xl font-bold dark:text-background mt-3">1000</p>
 
-            <Coins className="absolute -bottom-5 -right-5 h-24 w-24 opacity-10" />
+            <Coins className="absolute -bottom-5 -right-5 h-24 w-24 opacity-10 dark:text-background" />
           </div>
           <div className="bg-black/5 border border-black/50 dark:border-white/50 dark:bg-white/5 rounded-lg p-4  relative overflow-hidden">
             <h1 className="text-lg font-bold dark:text-background">
@@ -101,14 +101,14 @@ export default function Dashboard() {
               {workspace ? workspace?.length : 0}
             </p>
 
-            <LayoutTemplate className="absolute -bottom-5 -right-5 h-24 w-24 opacity-10" />
+            <LayoutTemplate className="absolute -bottom-5 -right-5 h-24 w-24 opacity-10 dark:text-background" />
           </div>
           <div className="bg-black/5 border border-black/50 dark:border-white/50 dark:bg-white/5 rounded-lg p-4 relative overflow-hidden">
             <h1 className="text-lg font-bold dark:text-background">Plan</h1>
             <p className="text-sm dark:text-background">Your Current plan</p>
             <p className="text-3xl font-bold dark:text-background mt-3">Free</p>
 
-            <Waypoints className="absolute -bottom-5 -right-5 h-24 w-24 opacity-10" />
+            <Waypoints className="absolute -bottom-5 -right-5 h-24 w-24 opacity-10 dark:text-background" />
           </div>
         </div>
 
