@@ -16,7 +16,7 @@ export default function Navbar() {
   const team = useSelector((state) => state.team.team);
   return (
     <header className="sticky top-0 z-50 border-b border-black/50 dark:border-background bg-black/5 dark:bg-white/5">
-      <div className="container flex items-center justify-between h-14 px-6">
+      <div className="flex items-center justify-between h-14 px-6">
         <div className="flex items-center gap-2">
           <span className="text-md font-semibold mt-0.5 flex items-center gap-1 dark:text-background">
             {isTeamInitializing ? (

@@ -5,6 +5,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import useInitialize from "./useInitialize";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function useWorkflow() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,8 +13,9 @@ export default function useWorkflow() {
   const [workflowName, setWorkflowName] = useState("");
   const team = useSelector((state) => state.team.team);
   const { loadWorkflow } = useInitialize();
+  const router = useRouter();
 
-  const handleCreateWorkflow = async (templateId) => {
+  const handleCreateWorkflow = async (templateId, type = "editor") => {
     try {
       setIsCreatingWorkflow(true);
 
@@ -32,6 +34,7 @@ export default function useWorkflow() {
       }
 
       loadWorkflow(team?.id);
+      router.push(`/${type}/${response.data.workspace.id}`);
       setIsOpen(false);
       setWorkflowName("");
 

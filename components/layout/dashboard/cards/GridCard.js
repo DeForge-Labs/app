@@ -34,7 +34,7 @@ export default function GridCard({ flow, type = "workspace" }) {
           <span>Created {timeAgo}</span>
         </div>
       </CardHeader>
-      <CardBody className="p-4 pt-2">
+      <CardBody className="p-4 pt-2 justify-end">
         <div className="h-32 bg-black/5 dark:bg-white/5 rounded-md flex items-center justify-center">
           <div className="flex flex-col items-center text-muted-foreground">
             <DynamicIcon name={flow.iconId} className="h-12 w-12" />

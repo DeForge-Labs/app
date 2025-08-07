@@ -1,8 +1,8 @@
 import { Card, CardBody, CardHeader, CardFooter } from "@heroui/react";
-import { ArrowUpRight, CalendarRange, Plus, User } from "lucide-react";
-import { Button } from "@heroui/react";
+import { CalendarRange, User } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { DynamicIcon } from "lucide-react/dynamic";
+import UseTemplateButton from "./UseTemplateButton";
 
 export default function TemplateGridCard({ flow }) {
   const timeAgo = formatDistanceToNow(flow.createdAt, { addSuffix: true });
@@ -23,7 +23,7 @@ export default function TemplateGridCard({ flow }) {
           <span>Created {timeAgo}</span>
         </div>
       </CardHeader>
-      <CardBody className="p-4 pt-2">
+      <CardBody className="p-4 pt-2 justify-end">
         <div className="h-32 bg-black/5 dark:bg-white/5 rounded-md flex items-center justify-center">
           <div className="flex flex-col items-center text-muted-foreground">
             <DynamicIcon name={flow.iconId} className="h-12 w-12" />
@@ -31,15 +31,7 @@ export default function TemplateGridCard({ flow }) {
         </div>
       </CardBody>
       <CardFooter className="p-4 pt-0 flex justify-between">
-        <Button
-          variant="outline"
-          size="sm"
-          className="bg-black/80 rounded-lg text-background text-xs dark:bg-background dark:text-black"
-          onPress={() => {}}
-        >
-          <Plus size={16} />
-          Use Template
-        </Button>
+        <UseTemplateButton template={flow} />
         <div className="flex space-x-2 items-center rounded-lg bg-black/5 dark:bg-white/5 p-2">
           <User
             name="user"

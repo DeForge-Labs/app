@@ -197,7 +197,10 @@ export default function CreateWorkflowButton() {
                 if (step === 1) {
                   setStep(2);
                 } else {
-                  handleCreateWorkflow(selectedWorkspace.id);
+                  handleCreateWorkflow(
+                    selectedWorkspace.id,
+                    selectedWorkspace.id === "blank" ? "editor" : "form"
+                  );
                 }
               }}
               isDisabled={

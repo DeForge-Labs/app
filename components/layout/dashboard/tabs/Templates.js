@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { Terminal } from "lucide-react";
 import TemplateGridCard from "./TemplateGridCard";
+import LogoAnimation from "@/components/ui/LogoAnimation";
 
 export default function Templates() {
   const defaultTemplates = useSelector((state) => state.team.defaultTemplate);
@@ -34,6 +35,8 @@ export default function Templates() {
       );
     }
   }, [defaultTemplates]);
+
+  if (isDefaultTemplatesInitializing) return <LogoAnimation />;
 
   return (
     <div className="absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll p-6">

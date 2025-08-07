@@ -26,7 +26,7 @@ export default function TeamProvider({ children }) {
       dispatch(setTeam(null));
       dispatch(setWorkflows(null));
     };
-  }, [user, params]);
+  }, [user, params?.id]);
 
   useEffect(() => {
     if (team?.id) {
