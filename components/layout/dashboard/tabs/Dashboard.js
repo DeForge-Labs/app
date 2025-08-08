@@ -3,11 +3,12 @@
 import { useSelector } from "react-redux";
 import TemplateGridCard from "./TemplateGridCard";
 import { useState, useEffect } from "react";
-import { Card, CardBody, CardHeader } from "@heroui/react";
-import { Coins, FileQuestion, LayoutTemplate, Waypoints } from "lucide-react";
+import { Card, CardBody, CardHeader, Button } from "@heroui/react";
+import { Coins, FileQuestion, LayoutTemplate, Waypoints, RefreshCcw } from "lucide-react";
 import GridCard from "../cards/GridCard";
 import CreateWorkflowButton from "../CreateWorkflowButton";
 import LogoAnimation from "@/components/ui/LogoAnimation";
+import useTeamCredits from "@/hooks/useTeamCredits";
 
 export default function Dashboard() {
   const user = useSelector((state) => state.user.user);
@@ -17,12 +18,27 @@ export default function Dashboard() {
     (state) => state.team.isDefaultTemplatesInitializing
   );
   const templates = useSelector((state) => state.team.templates);
+  const team = useSelector((state) => state.team.team);
   const [top3Templates, setTop3Templates] = useState([]);
   const [recentWorkflows, setRecentWorkflows] = useState([]);
   const [recentTemplates, setRecentTemplates] = useState([]);
   const isWorkflowInitializing = useSelector(
     (state) => state.team.isWorkflowInitializing
   );
+  const { credits, isLoading, fetchTeamCredits, refreshCredits } = useTeamCredits();
+
+  // Fetch credits when team is available
+  useEffect(() => {
+    if (team?.id) {
+      fetchTeamCredits(team.id);
+    }
+  }, [team?.id, fetchTeamCredits]);
+
+  const handleRefreshCredits = async () => {
+    if (team?.id) {
+      await refreshCredits(team.id);
+    }
+  };
 
   useEffect(() => {
     if (defaultTemplates) {
@@ -88,7 +104,24 @@ export default function Dashboard() {
           <div className="bg-black/5 border border-black/50 dark:border-white/50 dark:bg-white/5 rounded-lg p-4 relative overflow-hidden">
             <h1 className="text-lg font-bold dark:text-background">Credits</h1>
             <p className="text-sm dark:text-background">Your credit balance</p>
-            <p className="text-3xl font-bold dark:text-background mt-3">1000</p>
+            <div className="flex flex-row gap-4 mb-2">
+              <div>
+                <p className="text-3xl font-bold dark:text-background mt-3">
+                  {isLoading ? "..." : (credits !== null ? credits : "N/A")}
+                </p>
+              </div>
+              <Button
+                isIconOnly
+                variant="ghost"
+                size="sm"
+                onPress={handleRefreshCredits}
+                isLoading={isLoading}
+                isDisabled={!team?.id}
+                className="mt-3.5"
+              >
+                <RefreshCcw className="h-4 w-4" />
+              </Button>
+            </div>
 
             <Coins className="absolute -bottom-5 -right-5 h-24 w-24 opacity-10 dark:text-background" />
           </div>

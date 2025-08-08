@@ -2,9 +2,10 @@
 
 import LogoAnimation from "@/components/ui/LogoAnimation";
 import { Button } from "@heroui/react";
-import { Check } from "lucide-react";
-import { useState } from "react";
+import { Check, RefreshCcw } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import useTeamCredits from "@/hooks/useTeamCredits";
 
 const plans = [
   {
@@ -56,6 +57,21 @@ export default function Usage() {
   const isWorkflowInitializing = useSelector(
     (state) => state.team.isWorkflowInitializing
   );
+  const team = useSelector((state) => state.team.team);
+  const { credits, isLoading, fetchTeamCredits, refreshCredits } = useTeamCredits();
+
+  // Fetch credits when team is available
+  useEffect(() => {
+    if (team?.id) {
+      fetchTeamCredits(team.id);
+    }
+  }, [team?.id, fetchTeamCredits]);
+
+  const handleRefreshCredits = async () => {
+    if (team?.id) {
+      await refreshCredits(team.id);
+    }
+  };
 
   if (isWorkflowInitializing) return <LogoAnimation />;
 
@@ -76,7 +92,7 @@ export default function Usage() {
             <div className="flex flex-col gap-2">
               <h3 className="text-xs">Credits</h3>
               <p className="text-2xl font-bold text-dark dark:text-background">
-                1000
+                500
               </p>
             </div>
 
@@ -116,16 +132,21 @@ export default function Usage() {
           <div className="flex items-start gap-6 mt-4 dark:text-background">
             <div className="flex flex-col gap-2">
               <h3 className="text-xs">Credits</h3>
-              <p className="text-2xl font-bold text-dark dark:text-background">
-                1000
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <h3 className="text-xs">Additional Credits</h3>
-              <p className="text-2xl font-bold text-dark dark:text-background">
-                0
-              </p>
+              <div className="flex flex-row gap-4">
+                <p className="text-2xl font-bold text-dark dark:text-background">
+                  {isLoading ? "..." : (credits !== null ? credits : "N/A")}
+                </p>
+                <Button
+                  isIconOnly
+                  variant="ghost"
+                  size="sm"
+                  onPress={handleRefreshCredits}
+                  isLoading={isLoading}
+                  isDisabled={!team?.id}
+                >
+                  <RefreshCcw className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
 
