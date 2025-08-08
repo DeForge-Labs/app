@@ -29,6 +29,9 @@ const initialState = {
   workflowSocial: null,
   panel: 1,
   mode: "workflow",
+  credits: 0,
+  plan: "free",
+  isStatsInitializing: true,
 };
 
 const workflowSlice = createSlice({
@@ -121,6 +124,18 @@ const workflowSlice = createSlice({
 
     setMode: (state, action) => {
       state.mode = action.payload;
+    },
+
+    setIsStatsInitializing: (state, action) => {
+      state.isStatsInitializing = action.payload;
+    },
+
+    setCredits: (state, action) => {
+      state.credits = action.payload;
+    },
+
+    setPlan: (state, action) => {
+      state.plan = action.payload;
     },
 
     onNodesChange: (state, action) => {
@@ -521,6 +536,9 @@ export const {
   addNewLog,
   removeNewLog,
   setWorkflowSocial,
+  setIsStatsInitializing,
+  setCredits,
+  setPlan,
 
   // New actions
   setSelectedNode,

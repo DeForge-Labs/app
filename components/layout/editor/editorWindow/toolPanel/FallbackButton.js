@@ -51,7 +51,7 @@ export default function FallbackButton({ className, showTooltip = true }) {
           size="icon"
         >
           <FlaskConical size={16} />
-          Rollback
+          Revert to Testing
         </Button>
       )}
 

@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  setMode,
-  setPaneLeft,
-  setPaneRight,
-} from "@/redux/slice/WorkflowSlice";
+import { setPanel } from "@/redux/slice/WorkflowSlice";
 import { Button, Tooltip } from "@heroui/react";
 import {
   AlertCircleIcon,
@@ -21,7 +17,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import ThemeChanger from "../dashboard/ThemeChanger";
 import { cn } from "@/lib/utils";
-import FormDeployButton from "./FormDeployButton";
 import FormRollbackButton from "./FormRollbackButton";
 import FormSaveButton from "./FormSaveButton";
 import RevertDropdown from "./RevertDropdown";
@@ -36,6 +31,8 @@ export default function FormNavbar() {
   const hasUnsavedChanges = useSelector(
     (state) => state.workflow.hasUnsavedChanges
   );
+  const dispatch = useDispatch();
+  const panel = useSelector((state) => state.workflow.panel);
 
   return (
     <header className="sticky top-0 z-10">
@@ -94,12 +91,23 @@ export default function FormNavbar() {
 
         <div className="flex items-center gap-2">
           <ThemeChanger />
-          {workflow?.status !== "LIVE" && !hasUnsavedChanges && (
-            <FormDeployButton
-              className={
-                "px-4 min-h-9 bg-black/80 dark:bg-background text-background text-sm rounded-md dark:text-dark rounded-r-none"
-              }
-            />
+
+          {workflow?.status !== "LIVE" && !hasUnsavedChanges && panel !== 2 && (
+            <Button
+              className="px-4 min-h-9 h-9 bg-black/80 dark:bg-background text-background text-sm rounded-md dark:text-dark rounded-r-none"
+              onPress={() => dispatch(setPanel(2))}
+            >
+              Deploy
+            </Button>
+          )}
+
+          {workflow?.status !== "LIVE" && !hasUnsavedChanges && panel !== 1 && (
+            <Button
+              className="px-4 min-h-9 h-9 bg-black/80 dark:bg-background text-background text-sm rounded-md dark:text-dark rounded-r-none"
+              onPress={() => dispatch(setPanel(1))}
+            >
+              Form
+            </Button>
           )}
           {workflow?.status === "LIVE" && !hasUnsavedChanges && (
             <FormRollbackButton

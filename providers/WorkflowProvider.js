@@ -6,12 +6,12 @@ import useLibrary from "@/hooks/useLibrary";
 import useSocket from "@/hooks/useSocket";
 import { useParams } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { setLogs } from "@/redux/slice/WorkflowSlice";
+import { setCredits, setLogs, setPlan } from "@/redux/slice/WorkflowSlice";
 
 export default function WorkflowProvider({ children }) {
   const user = useSelector((state) => state.user.user);
   const nodeRegistry = useSelector((state) => state.library.nodeRegistry);
-  const { loadWorkspaceById, loadLogs } = useInitialize();
+  const { loadWorkspaceById, loadLogs, loadStats } = useInitialize();
   const { loadNodeRegistry } = useLibrary();
   const workflow = useSelector((state) => state.workflow.workflow);
   const workspace = useSelector((state) => state.workflow.workspace);
@@ -57,10 +57,16 @@ export default function WorkflowProvider({ children }) {
       loadLogs(workspace?.workflowId);
     }
 
+    if (workspace?.teamId) {
+      loadStats(workspace?.teamId);
+    }
+
     return () => {
       dispatch(setLogs([]));
+      dispatch(setCredits(null));
+      dispatch(setPlan(null));
     };
-  }, [workspace?.workflowId, params?.id]);
+  }, [workspace?.workflowId, params?.id, workspace?.teamId]);
 
   // Handle workflow subscription with proper cleanup
   useEffect(() => {

@@ -64,7 +64,7 @@ export default function DeployButton({ className, showTooltip = true }) {
           size="icon"
         >
           <Rocket size={16} />
-          Deploy
+          Switch to Production
         </Button>
       )}
 

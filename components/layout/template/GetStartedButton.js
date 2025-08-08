@@ -12,7 +12,7 @@ import {
 import LoginForm from "../onboard/LoginForm";
 import Image from "next/image";
 
-export default function GetStartedButton() {
+export default function GetStartedButton({ isNavbar = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,15 +25,27 @@ export default function GetStartedButton() {
 
   return (
     <>
-      <Button
-        variant="outline"
-        size="md"
-        className="bg-black/80 h-9 rounded-lg text-background text-xs dark:bg-background dark:text-black"
-        onPress={() => setIsOpen(true)}
-      >
-        Get Started
-      </Button>
+      {!isNavbar && (
+        <Button
+          variant="outline"
+          size="md"
+          className="bg-black/80 h-9 rounded-lg text-background text-xs dark:bg-background dark:text-black"
+          onPress={() => setIsOpen(true)}
+        >
+          Get Started
+        </Button>
+      )}
 
+      {isNavbar && (
+        <Button
+          className="bg-black/80 h-12 rounded-full text-xs text-background dark:bg-background dark:text-black p-5 px-10 w-36 z-10"
+          onPress={() => {
+            setIsOpen(true);
+          }}
+        >
+          Sign In
+        </Button>
+      )}
       <Modal
         isOpen={isOpen}
         className="border border-black bg-background p-5 pb-8 rounded-3xl max-w-md dark:bg-dark dark:border-background"

@@ -3,8 +3,9 @@
 import LogoAnimation from "@/components/ui/LogoAnimation";
 import PreviewRenderer from "../editor/formWindow/PreviewRenderer";
 import { useSelector } from "react-redux";
-import { Plus } from "lucide-react";
+import { EyeOff, Plus } from "lucide-react";
 import TemplateDetails from "./TemplateDetails";
+import { cn } from "@/lib/utils";
 
 export default function TemplateRenderer() {
   const components = useSelector((state) => state.form.components);
@@ -12,6 +13,7 @@ export default function TemplateRenderer() {
   const isTemplateInitializing = useSelector(
     (state) => state.template.isTemplateInitializing
   );
+  const user = useSelector((state) => state.user.user);
 
   if (isTemplateInitializing) {
     return <LogoAnimation opacity={0.5} />;
@@ -33,7 +35,13 @@ export default function TemplateRenderer() {
         ) : (
           <>
             <TemplateDetails />
-            <div className="space-y-6 mx-auto min-h-full max-w-5xl p-12 w-full py-16 border border-black/50 rounded-t-none dark:border-background bg-black/5 dark:bg-white/5 rounded-xl">
+            <div className="space-y-6 mx-auto min-h-full max-w-5xl p-12 w-full py-16 border border-black/50 rounded-t-none dark:border-background bg-black/5 dark:bg-white/5 rounded-xl relative">
+              {user ? null : (
+                <div className="h-full w-full rounded-b-xl bg-black/5 dark:bg-white/5 backdrop-blur-md absolute top-0 left-0 z-10 text-center flex flex-col items-center justify-center px-5">
+                  <EyeOff className="w-12 h-12 text-gray-900 dark:text-white/70 mb-4" />
+                  Sign in to view the template and deploy this AI Agent
+                </div>
+              )}
               {sortedComponents.map((component) => (
                 <PreviewRenderer
                   key={component.id}

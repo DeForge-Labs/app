@@ -7,6 +7,7 @@ import ChatBotDeployment from "./deployments/ChatBotdeployment";
 import TelegramDeployment from "./deployments/TelegramDeployments";
 import WidgetDeployment from "./deployments/WidgetDeployments";
 import { cn } from "@/lib/utils";
+import Stats from "./Stats";
 
 export default function DeploymentTab({ padding = true }) {
   const isWorkflowInitializing = useSelector(
@@ -41,6 +42,8 @@ export default function DeploymentTab({ padding = true }) {
         )}
       >
         <h1 className="font-semibold text-xl">Deployments</h1>
+
+        <Stats />
 
         {isApi && <ApiDeployments />}
         {isChatBot && <ChatBotDeployment />}

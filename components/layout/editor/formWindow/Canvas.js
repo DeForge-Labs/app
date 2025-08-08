@@ -13,7 +13,6 @@ import PreviewRenderer from "./PreviewRenderer";
 import DropZone from "./DropZone";
 import { Edit, Eye, Plus } from "lucide-react";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import LogoAnimation from "@/components/ui/LogoAnimation";
 import { Button } from "@heroui/react";
@@ -126,40 +125,23 @@ export default function Canvas() {
 
         const Icon = tab.icon;
         return (
-          <motion.button
+          <button
             key={tab.title}
-            variants={buttonVariants}
-            initial={false}
-            animate="animate"
-            custom={panel === index}
             onClick={() => {
               setPanel(index);
               dispatch(setIsPreview(tab.isPreview));
             }}
-            transition={transition}
             className={cn(
-              "relative flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-300 ",
+              "relative flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-300 gap-2",
               panel === index
                 ? "bg-black/10 text-black"
                 : "hover:bg-black/10 hover:text-black "
             )}
           >
             <Icon size={16} />
-            <AnimatePresence initial={false}>
-              {panel === index && (
-                <motion.span
-                  variants={spanVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={transition}
-                  className="overflow-hidden text-xs"
-                >
-                  {tab.title}
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.button>
+
+            <span className="overflow-hidden text-xs">{tab.title}</span>
+          </button>
         );
       })}
     </div>

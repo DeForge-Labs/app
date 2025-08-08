@@ -4,7 +4,13 @@ import { useSelector } from "react-redux";
 import TemplateGridCard from "./TemplateGridCard";
 import { useState, useEffect } from "react";
 import { Card, CardBody, CardHeader, Button } from "@heroui/react";
-import { Coins, FileQuestion, LayoutTemplate, Waypoints, RefreshCcw } from "lucide-react";
+import {
+  Coins,
+  FileQuestion,
+  LayoutTemplate,
+  Waypoints,
+  RefreshCcw,
+} from "lucide-react";
 import GridCard from "../cards/GridCard";
 import CreateWorkflowButton from "../CreateWorkflowButton";
 import LogoAnimation from "@/components/ui/LogoAnimation";
@@ -26,8 +32,13 @@ export default function Dashboard() {
   const isWorkflowInitializing = useSelector(
     (state) => state.team.isWorkflowInitializing
   );
-  const { credits, isLoading, fetchTeamCredits, refreshCredits } = useTeamCredits();
-  const { fetchTeamPlan, getPlanName, isLoading: isPlanLoading } = useTeamPlan();
+  const { credits, isLoading, fetchTeamCredits, refreshCredits } =
+    useTeamCredits();
+  const {
+    fetchTeamPlan,
+    getPlanName,
+    isLoading: isPlanLoading,
+  } = useTeamPlan();
 
   // Fetch credits and plan when team is available
   useEffect(() => {
@@ -59,8 +70,13 @@ export default function Dashboard() {
   useEffect(() => {
     if (workspace) {
       const recent = [...workspace]
-        .sort((a, b) => b.updatedAt - a.updatedAt)
+        .sort(
+          (a, b) =>
+            new Date(b?.workflow?.updatedAt).getTime() -
+            new Date(a?.workflow?.updatedAt).getTime()
+        )
         .slice(0, 3);
+
       setRecentWorkflows(recent);
     }
 
@@ -110,7 +126,7 @@ export default function Dashboard() {
             <div className="flex flex-row gap-4 mb-2">
               <div>
                 <p className="text-3xl font-bold dark:text-background mt-3">
-                  {isLoading ? "..." : (credits !== null ? credits : "N/A")}
+                  {isLoading ? "..." : credits !== null ? credits : "N/A"}
                 </p>
               </div>
               <Button
@@ -120,7 +136,7 @@ export default function Dashboard() {
                 onPress={handleRefreshCredits}
                 isLoading={isLoading}
                 isDisabled={!team?.id}
-                className="mt-3.5"
+                className="mt-3.5 border border-black/50 dark:border-white/50"
               >
                 <RefreshCcw className="h-4 w-4" />
               </Button>

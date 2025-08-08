@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Link2, StickyNote } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,19 +20,11 @@ const buttonVariants = {
     paddingRight: ".5rem",
   },
   animate: (isSelected) => ({
-    gap: isSelected ? ".5rem" : 0,
+    gap: isSelected ? ".5rem" : ".5rem",
     paddingLeft: isSelected ? "1rem" : ".5rem",
     paddingRight: isSelected ? "1rem" : ".5rem",
   }),
 };
-
-const spanVariants = {
-  initial: { width: 0, opacity: 0 },
-  animate: { width: "auto", opacity: 1 },
-  exit: { width: 0, opacity: 0 },
-};
-
-const transition = { delay: 0.1, type: "spring", bounce: 0, duration: 0.6 };
 
 export default function FormToolPanel({ className, onChange }) {
   const dispatch = useDispatch();
@@ -67,37 +58,20 @@ export default function FormToolPanel({ className, onChange }) {
 
           const Icon = tab.icon;
           return (
-            <motion.button
+            <button
               key={tab.title}
-              variants={buttonVariants}
-              initial={false}
-              animate="animate"
-              custom={panel === index}
               onClick={() => handleSelect(index)}
-              transition={transition}
               className={cn(
-                "relative flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-300 ",
+                "relative flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-300 gap-1",
                 panel === index
                   ? "bg-black/10 text-black"
                   : "hover:bg-black/10 hover:text-black "
               )}
             >
               <Icon size={16} />
-              <AnimatePresence initial={false}>
-                {panel === index && (
-                  <motion.span
-                    variants={spanVariants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    transition={transition}
-                    className="overflow-hidden text-xs"
-                  >
-                    {tab.title}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </motion.button>
+
+              <span className="overflow-hidden text-xs">{tab.title}</span>
+            </button>
           );
         })}
       </div>

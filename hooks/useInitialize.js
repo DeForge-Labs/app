@@ -25,6 +25,9 @@ import {
   setNodes,
   setConnections,
   setWorkflowForce,
+  setIsStatsInitializing,
+  setCredits,
+  setPlan,
 } from "@/redux/slice/WorkflowSlice";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -466,6 +469,42 @@ export default function useInitialize() {
     }
   };
 
+  const loadStats = async (teamId) => {
+    try {
+      dispatch(setIsStatsInitializing(true));
+      const headers = {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      };
+
+      const creditsResponse = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/team/credits/${teamId}`,
+        { headers }
+      );
+
+      if (creditsResponse.data.success) {
+        dispatch(setCredits(creditsResponse.data.credits));
+
+        const planResponse = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/team/plan/${teamId}`,
+          { headers }
+        );
+
+        if (planResponse.data.success) {
+          dispatch(setPlan(planResponse.data));
+        } else {
+          toast.error(planResponse.data.message);
+        }
+      } else {
+        toast.error(creditsResponse.data.message);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to load stats");
+    } finally {
+      dispatch(setIsStatsInitializing(false));
+    }
+  };
+
   return {
     loadUser,
     loadTeam,
@@ -479,5 +518,6 @@ export default function useInitialize() {
     loadTemplates,
     loadDefaultTemplates,
     loadFormById,
+    loadStats,
   };
 }

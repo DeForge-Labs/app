@@ -59,15 +59,16 @@ export default function Usage() {
     (state) => state.team.isWorkflowInitializing
   );
   const team = useSelector((state) => state.team.team);
-  const { credits, isLoading, fetchTeamCredits, refreshCredits } = useTeamCredits();
-  const { 
-    fetchTeamPlan, 
-    getPlanCredits, 
-    getPlanPrice, 
-    getPlanName, 
+  const { credits, isLoading, fetchTeamCredits, refreshCredits } =
+    useTeamCredits();
+  const {
+    fetchTeamPlan,
+    getPlanCredits,
+    getPlanPrice,
+    getPlanName,
     getRenewalDate,
     isLoading: isPlanLoading,
-    planData
+    planData,
   } = useTeamPlan();
 
   // Fetch credits and plan when team is available
@@ -152,7 +153,7 @@ export default function Usage() {
               <h3 className="text-xs">Credits</h3>
               <div className="flex flex-row gap-4">
                 <p className="text-2xl font-bold text-dark dark:text-background">
-                  {isLoading ? "..." : (credits !== null ? credits : "N/A")}
+                  {isLoading ? "..." : credits !== null ? credits : "N/A"}
                 </p>
                 <Button
                   isIconOnly
@@ -161,6 +162,7 @@ export default function Usage() {
                   onPress={handleRefreshCredits}
                   isLoading={isLoading}
                   isDisabled={!team?.id}
+                  className="border border-black/50 dark:border-white/50"
                 >
                   <RefreshCcw className="h-4 w-4" />
                 </Button>

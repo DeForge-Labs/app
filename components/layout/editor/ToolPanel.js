@@ -3,7 +3,7 @@
 import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { Code, Link2, Play } from "lucide-react";
+import { Blocks, Code, Link2, Play, Rocket, StickyNote } from "lucide-react";
 import { Button, Tooltip } from "@heroui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPanel } from "@/redux/slice/WorkflowSlice";
@@ -18,33 +18,14 @@ const tabs = [
   { title: "Deployments", icon: Link2 },
 ];
 
-const buttonVariants = {
-  initial: {
-    gap: 0,
-    paddingLeft: ".5rem",
-    paddingRight: ".5rem",
-  },
-  animate: (isSelected) => ({
-    gap: isSelected ? ".5rem" : 0,
-    paddingLeft: isSelected ? "1rem" : ".5rem",
-    paddingRight: isSelected ? "1rem" : ".5rem",
-  }),
-};
-
-const spanVariants = {
-  initial: { width: 0, opacity: 0 },
-  animate: { width: "auto", opacity: 1 },
-  exit: { width: 0, opacity: 0 },
-};
-
-const transition = { delay: 0.1, type: "spring", bounce: 0, duration: 0.6 };
-
 export default function ToolPanel({ className, onChange }) {
   const dispatch = useDispatch();
   const panel = useSelector((state) => state.workflow.panel);
+
   const isWorkflowInitializing = useSelector(
     (state) => state.workflow.isWorkflowInitializing
   );
+  const mode = useSelector((state) => state.workflow.mode);
   const hasUnsavedChanges = useSelector(
     (state) => state.workflow.hasUnsavedChanges
   );
@@ -76,9 +57,32 @@ export default function ToolPanel({ className, onChange }) {
           (hasUnsavedChanges || hasUnsavedChangesForm) && <SaveButton />}
 
         {workflow?.status !== "LIVE" &&
-          !(hasUnsavedChanges || hasUnsavedChangesForm) && (
-            <DeployButton className="w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4" />
-          )}
+          !(hasUnsavedChanges || hasUnsavedChangesForm) &&
+          (panel === 1 ? (
+            <Button
+              variant="icon"
+              size="icon"
+              onPress={() => handleSelect(2)}
+              className="w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4"
+            >
+              <Rocket size={16} />
+              Deploy
+            </Button>
+          ) : (
+            <Button
+              variant="icon"
+              size="icon"
+              onPress={() => handleSelect(1)}
+              className="w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4"
+            >
+              {mode === "workflow" ? (
+                <Blocks size={16} />
+              ) : (
+                <StickyNote size={16} />
+              )}
+              {mode === "workflow" ? "Workflow" : "Form"}
+            </Button>
+          ))}
         {workflow?.status === "LIVE" && (
           <FallbackButton className="w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-4" />
         )}
@@ -95,37 +99,20 @@ export default function ToolPanel({ className, onChange }) {
 
           const Icon = tab.icon;
           return (
-            <motion.button
+            <button
               key={tab.title}
-              variants={buttonVariants}
-              initial={false}
-              animate="animate"
-              custom={panel === index}
               onClick={() => handleSelect(index)}
-              transition={transition}
               className={cn(
-                "relative flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-300 ",
+                "relative flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-300 gap-2",
                 panel === index
                   ? "bg-black/10 text-black"
                   : "hover:bg-black/10 hover:text-black "
               )}
             >
               <Icon size={16} />
-              <AnimatePresence initial={false}>
-                {panel === index && (
-                  <motion.span
-                    variants={spanVariants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    transition={transition}
-                    className="overflow-hidden text-xs"
-                  >
-                    {tab.title}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </motion.button>
+
+              <span className="overflow-hidden text-xs">{tab.title}</span>
+            </button>
           );
         })}
       </div>
