@@ -6,6 +6,7 @@ import { Check, RefreshCcw } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import useTeamCredits from "@/hooks/useTeamCredits";
+import useTeamPlan from "@/hooks/useTeamPlan";
 
 const plans = [
   {
@@ -59,13 +60,22 @@ export default function Usage() {
   );
   const team = useSelector((state) => state.team.team);
   const { credits, isLoading, fetchTeamCredits, refreshCredits } = useTeamCredits();
+  const { 
+    fetchTeamPlan, 
+    getPlanCredits, 
+    getPlanPrice, 
+    getPlanName, 
+    getRenewalDate,
+    isLoading: isPlanLoading 
+  } = useTeamPlan();
 
-  // Fetch credits when team is available
+  // Fetch credits and plan when team is available
   useEffect(() => {
     if (team?.id) {
       fetchTeamCredits(team.id);
+      fetchTeamPlan(team.id);
     }
-  }, [team?.id, fetchTeamCredits]);
+  }, [team?.id, fetchTeamCredits, fetchTeamPlan]);
 
   const handleRefreshCredits = async () => {
     if (team?.id) {
@@ -84,7 +94,7 @@ export default function Usage() {
               Plan Summary
             </h3>
             <div className="bg-primary text-white px-2 py-1 rounded-lg text-xs">
-              Free Plan
+              {isPlanLoading ? "Loading..." : `${getPlanName()} Plan`}
             </div>
           </div>
 
@@ -92,21 +102,21 @@ export default function Usage() {
             <div className="flex flex-col gap-2">
               <h3 className="text-xs">Credits</h3>
               <p className="text-2xl font-bold text-dark dark:text-background">
-                500
+                {isPlanLoading ? "..." : getPlanCredits()}
               </p>
             </div>
 
             <div className="flex flex-col gap-2">
               <h3 className="text-xs">Price / Month</h3>
               <p className="text-2xl font-bold text-dark dark:text-background">
-                $0
+                {isPlanLoading ? "..." : getPlanPrice()}
               </p>
             </div>
 
             <div className="flex flex-col gap-2">
-              <h3 className="text-xs">Recurring</h3>
+              <h3 className="text-xs">Renewal</h3>
               <p className="text-2xl font-bold text-dark dark:text-background">
-                -
+                {isPlanLoading ? "..." : getRenewalDate()}
               </p>
             </div>
           </div>

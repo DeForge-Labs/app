@@ -9,6 +9,7 @@ import GridCard from "../cards/GridCard";
 import CreateWorkflowButton from "../CreateWorkflowButton";
 import LogoAnimation from "@/components/ui/LogoAnimation";
 import useTeamCredits from "@/hooks/useTeamCredits";
+import useTeamPlan from "@/hooks/useTeamPlan";
 
 export default function Dashboard() {
   const user = useSelector((state) => state.user.user);
@@ -26,13 +27,15 @@ export default function Dashboard() {
     (state) => state.team.isWorkflowInitializing
   );
   const { credits, isLoading, fetchTeamCredits, refreshCredits } = useTeamCredits();
+  const { fetchTeamPlan, getPlanName, isLoading: isPlanLoading } = useTeamPlan();
 
-  // Fetch credits when team is available
+  // Fetch credits and plan when team is available
   useEffect(() => {
     if (team?.id) {
       fetchTeamCredits(team.id);
+      fetchTeamPlan(team.id);
     }
-  }, [team?.id, fetchTeamCredits]);
+  }, [team?.id, fetchTeamCredits, fetchTeamPlan]);
 
   const handleRefreshCredits = async () => {
     if (team?.id) {
@@ -139,7 +142,9 @@ export default function Dashboard() {
           <div className="bg-black/5 border border-black/50 dark:border-white/50 dark:bg-white/5 rounded-lg p-4 relative overflow-hidden">
             <h1 className="text-lg font-bold dark:text-background">Plan</h1>
             <p className="text-sm dark:text-background">Your Current plan</p>
-            <p className="text-3xl font-bold dark:text-background mt-3">Free</p>
+            <p className="text-3xl font-bold dark:text-background mt-3">
+              {isPlanLoading ? "..." : getPlanName()}
+            </p>
 
             <Waypoints className="absolute -bottom-5 -right-5 h-24 w-24 opacity-10 dark:text-background" />
           </div>
