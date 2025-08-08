@@ -66,7 +66,8 @@ export default function Usage() {
     getPlanPrice, 
     getPlanName, 
     getRenewalDate,
-    isLoading: isPlanLoading 
+    isLoading: isPlanLoading,
+    planData
   } = useTeamPlan();
 
   // Fetch credits and plan when team is available
@@ -76,6 +77,13 @@ export default function Usage() {
       fetchTeamPlan(team.id);
     }
   }, [team?.id, fetchTeamCredits, fetchTeamPlan]);
+
+  // Update currentPlan state when planData changes
+  useEffect(() => {
+    if (planData?.plan) {
+      setCurrentPlan(planData.plan.toLowerCase());
+    }
+  }, [planData]);
 
   const handleRefreshCredits = async () => {
     if (team?.id) {
@@ -127,7 +135,7 @@ export default function Usage() {
               size="md"
               className="bg-black/80 rounded-lg text-background text-xs h-9 dark:bg-background dark:text-black"
             >
-              Upgrade Plan
+              Change Plan
             </Button>
           </div>
         </div>
