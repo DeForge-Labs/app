@@ -7,7 +7,7 @@ import { Button } from "@heroui/react";
 import { Loader2, Play } from "lucide-react";
 import { useSelector } from "react-redux";
 
-export default function RunButton() {
+export default function RunButton({ className }) {
   const isRunning = useSelector((state) => state.run.isRunning);
   const type = useSelector((state) => state.run.type);
   const workflow = useSelector((state) => state.workflow.workflow);
@@ -48,7 +48,8 @@ export default function RunButton() {
             }}
             variant="icon"
             className={cn(
-              "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-2 "
+              "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-2 " +
+                className
             )}
             size="icon"
             isDisabled={isRunning}
@@ -73,7 +74,8 @@ export default function RunButton() {
             }}
             variant="icon"
             className={cn(
-              "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-2 "
+              "w-fit text-xs p-1 gap-2 bg-black/80 text-background py-2 rounded-lg px-2 " +
+                className
             )}
             size="icon"
             isDisabled={isRunning || isTelegramTriggerPresent}

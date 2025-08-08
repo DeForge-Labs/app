@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import FormRollbackButton from "./FormRollbackButton";
 import FormSaveButton from "./FormSaveButton";
 import RevertDropdown from "./RevertDropdown";
+import RunButton from "../editor/editorWindow/toolPanel/RunButton";
 
 export default function FormNavbar() {
   const isWorkspaceInitializing = useSelector(
@@ -90,7 +91,9 @@ export default function FormNavbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          <ThemeChanger />
+          <ThemeChanger className="h-9" />
+
+          <RunButton className="h-9 w-9 dark:bg-background dark:text-black" />
 
           {workflow?.status !== "LIVE" && !hasUnsavedChanges && panel !== 2 && (
             <Button
