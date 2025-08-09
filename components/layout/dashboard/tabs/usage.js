@@ -3,7 +3,7 @@
 import LogoAnimation from "@/components/ui/LogoAnimation";
 import { Button } from "@heroui/react";
 import { Check, RefreshCcw } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import useTeamCredits from "@/hooks/useTeamCredits";
 import useTeamPlan from "@/hooks/useTeamPlan";
@@ -54,6 +54,7 @@ const plans = [
 ];
 
 export default function Usage() {
+  const scrollContainerRef = useRef(null);
   const [currentPlan, setCurrentPlan] = useState("free");
   const isWorkflowInitializing = useSelector(
     (state) => state.team.isWorkflowInitializing
@@ -92,10 +93,20 @@ export default function Usage() {
     }
   };
 
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section && scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        top: section.offsetTop,
+        behavior: "smooth"
+      });
+    }
+  }
+
   if (isWorkflowInitializing) return <LogoAnimation />;
 
   return (
-    <div className="absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll p-6">
+    <div ref={scrollContainerRef} className="absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll p-6">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col bg-black/5 border border-black/50 dark:border-white/50 dark:bg-white/5 rounded-lg p-4">
           <div className="flex items-center gap-2">
@@ -135,6 +146,9 @@ export default function Usage() {
               variant="outline"
               size="md"
               className="bg-black/80 rounded-lg text-background text-xs h-9 dark:bg-background dark:text-black"
+              onPress={() => {
+                scrollToSection("plans");
+              }}
             >
               Change Plan
             </Button>
@@ -182,7 +196,7 @@ export default function Usage() {
         </div>
 
         <div className="flex flex-col bg-black/5 border border-black/50 dark:border-white/50 dark:bg-white/5 rounded-lg p-4">
-          <p className="text-sm font-bold dark:text-background">Plans</p>
+          <p id="plans" className="text-sm font-bold dark:text-background">Plans</p>
           <p className="text-xs opacity-70 font-normal text-black dark:text-background">
             Compare plans to find the right one for you
           </p>
