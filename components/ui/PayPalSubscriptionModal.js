@@ -10,11 +10,22 @@ import { X } from "lucide-react";
 export default function PayPalSubscriptionModal({ isOpen, onClose, onSuccess, planId = "pro" }) {
   const [isLoading, setIsLoading] = useState(false);
   const user = useSelector((state) => state.user.user);
+  const team = useSelector((state) => state.team.team);
 
-  const createSubscription = async () => {
+  const createSubscription = async (data, actions) => {
     try {
-      setIsLoading(true);
       
+      if (!team?.id) {
+        throw new Error("Team information not available");
+      }
+
+      return actions.subscription.create({
+        plan_id: "P-75T68067YY768144BNCLVWFA",
+      })
+      .then((orderId) => {
+        return orderId;
+      });
+
       // Call your backend API to create PayPal subscription
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/billing/create-subscription`, {
         method: "POST",
@@ -24,8 +35,8 @@ export default function PayPalSubscriptionModal({ isOpen, onClose, onSuccess, pl
         },
         body: JSON.stringify({
           planId: "P-2KG18973UC126193UNCJ3V3A", // Your provided subscription plan ID
-          userEmail: user?.email,
-          type: "subscription"
+          type: "subscription",
+          teamId: team.id
         }),
       });
 
@@ -40,8 +51,6 @@ export default function PayPalSubscriptionModal({ isOpen, onClose, onSuccess, pl
       console.error("Error creating subscription:", error);
       toast.error("Failed to create subscription");
       throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -58,8 +67,8 @@ export default function PayPalSubscriptionModal({ isOpen, onClose, onSuccess, pl
         },
         body: JSON.stringify({
           subscriptionID: data.subscriptionID,
-          userEmail: user?.email,
-          planId: planId
+          planId: planId,
+          teamId: team?.id
         }),
       });
 

@@ -120,8 +120,8 @@ export default function Usage() {
           "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
-          userEmail: user?.email,
-          currentPlan: currentPlan
+          currentPlan: currentPlan,
+          teamId: team?.id
         }),
       });
 
