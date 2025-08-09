@@ -1,9 +1,11 @@
 "use client";
 
 import LogoAnimation from "@/components/ui/LogoAnimation";
+import PayPalCreditModal from "@/components/ui/PayPalCreditModal";
+import PayPalSubscriptionModal from "@/components/ui/PayPalSubscriptionModal";
 import { Button } from "@heroui/react";
 import { Check, RefreshCcw } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import useTeamCredits from "@/hooks/useTeamCredits";
 import useTeamPlan from "@/hooks/useTeamPlan";
@@ -54,11 +56,15 @@ const plans = [
 ];
 
 export default function Usage() {
+  const scrollContainerRef = useRef(null);
   const [currentPlan, setCurrentPlan] = useState("free");
+  const [isCreditModalOpen, setIsCreditModalOpen] = useState(false);
+  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const isWorkflowInitializing = useSelector(
     (state) => state.team.isWorkflowInitializing
   );
   const team = useSelector((state) => state.team.team);
+  const user = useSelector((state) => state.user.user);
   const { credits, isLoading, fetchTeamCredits, refreshCredits } =
     useTeamCredits();
   const {
@@ -92,10 +98,64 @@ export default function Usage() {
     }
   };
 
+  const handleCreditPurchaseSuccess = () => {
+    // Refresh credits after successful purchase
+    handleRefreshCredits();
+  };
+
+  const handleSubscriptionSuccess = () => {
+    // Refresh plan data after successful subscription
+    if (team?.id) {
+      fetchTeamPlan(team.id);
+    }
+  };
+
+  const handleDowngrade = async () => {
+    try {
+      // Call your backend API for downgrade
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/billing/downgrade`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          userEmail: user?.email,
+          currentPlan: currentPlan
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        toast.success("Downgrade request submitted successfully!");
+        // Refresh plan data
+        if (team?.id) {
+          fetchTeamPlan(team.id);
+        }
+      } else {
+        throw new Error(result.message || "Downgrade request failed");
+      }
+    } catch (error) {
+      console.error("Downgrade error:", error);
+      toast.error("Downgrade request failed. Please contact support.");
+    }
+  };
+
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section && scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        top: section.offsetTop,
+        behavior: "smooth"
+      });
+    }
+  }
+
   if (isWorkflowInitializing) return <LogoAnimation />;
 
   return (
-    <div className="absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll p-6">
+    <div ref={scrollContainerRef} className="absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll p-6">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col bg-black/5 border border-black/50 dark:border-white/50 dark:bg-white/5 rounded-lg p-4">
           <div className="flex items-center gap-2">
@@ -135,6 +195,9 @@ export default function Usage() {
               variant="outline"
               size="md"
               className="bg-black/80 rounded-lg text-background text-xs h-9 dark:bg-background dark:text-black"
+              onPress={() => {
+                scrollToSection("plans");
+              }}
             >
               Change Plan
             </Button>
@@ -175,6 +238,7 @@ export default function Usage() {
               variant="outline"
               size="md"
               className="bg-black/80 rounded-lg text-background text-xs h-9 dark:bg-background dark:text-black"
+              onPress={() => setIsCreditModalOpen(true)}
             >
               Buy more credits
             </Button>
@@ -182,7 +246,7 @@ export default function Usage() {
         </div>
 
         <div className="flex flex-col bg-black/5 border border-black/50 dark:border-white/50 dark:bg-white/5 rounded-lg p-4">
-          <p className="text-sm font-bold dark:text-background">Plans</p>
+          <p id="plans" className="text-sm font-bold dark:text-background">Plans</p>
           <p className="text-xs opacity-70 font-normal text-black dark:text-background">
             Compare plans to find the right one for you
           </p>
@@ -236,6 +300,19 @@ export default function Usage() {
                     size="md"
                     className="bg-black/80 rounded-lg text-background text-xs h-12 dark:bg-background dark:text-black mt-6"
                     isDisabled={currentPlan === plan.id}
+                    onPress={() => {
+                      if (currentPlan === plan.id) return;
+                      
+                      // Handle upgrade to pro
+                      if (currentPlan === "free" && plan.id === "pro") {
+                        setIsSubscriptionModalOpen(true);
+                      }
+                      // Handle downgrade
+                      else if ((currentPlan === "pro" && plan.id === "free") || 
+                               (currentPlan === "enterprise" && plan.id === "pro")) {
+                        handleDowngrade();
+                      }
+                    }}
                   >
                     {currentPlan !== "free" &&
                       plan.id === "free" &&
@@ -264,6 +341,20 @@ export default function Usage() {
           </div>
         </div>
       </div>
+
+      {/* PayPal Modals */}
+      <PayPalCreditModal
+        isOpen={isCreditModalOpen}
+        onClose={() => setIsCreditModalOpen(false)}
+        onSuccess={handleCreditPurchaseSuccess}
+      />
+
+      <PayPalSubscriptionModal
+        isOpen={isSubscriptionModalOpen}
+        onClose={() => setIsSubscriptionModalOpen(false)}
+        onSuccess={handleSubscriptionSuccess}
+        planId="pro"
+      />
     </div>
   );
 }

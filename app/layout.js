@@ -7,6 +7,7 @@ import UiProvider from "@/providers/UiProvider";
 import ReduxProvider from "@/providers/ReduxProvider";
 import { ThemeProvider } from "next-themes";
 import ToasterProvider from "@/providers/ToasterProvider";
+import PayPalProvider from "@/providers/PayPalProvider";
 
 const lexendDeca = Lexend_Deca({
   subsets: ["latin"],
@@ -27,10 +28,12 @@ export default function RootLayout({ children }) {
       >
         <ReduxProvider>
           <ThemeProvider attribute="class">
-            <UiProvider>
-              <ToasterProvider />
-              {children}
-            </UiProvider>
+            <PayPalProvider>
+              <UiProvider>
+                <ToasterProvider />
+                {children}
+              </UiProvider>
+            </PayPalProvider>
           </ThemeProvider>
         </ReduxProvider>
       </body>
