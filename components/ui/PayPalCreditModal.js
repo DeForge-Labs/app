@@ -103,7 +103,7 @@ export default function PayPalCreditModal({ isOpen, onClose, onSuccess }) {
             variant="ghost"
             size="sm"
             onPress={onClose}
-            className="text-black/60 hover:text-black dark:text-background/60 dark:hover:text-background"
+            className="hover:text-black dark:text-background/60 dark:hover:text-background"
           >
             <X className="h-4 w-4" />
           </Button>
@@ -116,15 +116,16 @@ export default function PayPalCreditModal({ isOpen, onClose, onSuccess }) {
                 You'll be redirected to PayPal to complete your payment securely.
               </p>
             </div>
-            
-            <div className="pt-2">
+
+            <div className="pt-4 pr-4 pl-4 pb-2 bg-gray-50 rounded-md">
               {!isLoading ? (
                 <PayPalButtons
                   style={{
                     layout: "vertical",
-                    color: "blue",
-                    shape: "rect",
-                    label: "pay"
+                    color: "black",
+                    shape: "pill",
+                    label: "pay",
+                    disableMaxWidth: true,
                   }}
                   createOrder={createOrder}
                   onApprove={onApprove}

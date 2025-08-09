@@ -102,7 +102,7 @@ export default function PayPalSubscriptionModal({ isOpen, onClose, onSuccess, pl
             variant="ghost"
             size="sm"
             onPress={onClose}
-            className="text-black/60 hover:text-black dark:text-background/60 dark:hover:text-background"
+            className="hover:text-black dark:text-background/60 dark:hover:text-background"
           >
             <X className="h-4 w-4" />
           </Button>
@@ -116,14 +116,15 @@ export default function PayPalSubscriptionModal({ isOpen, onClose, onSuccess, pl
               </p>
             </div>
             
-            <div className="pt-2">
+            <div className="pt-4 pr-4 pl-4 pb-2 bg-gray-50 rounded-md">
               {!isLoading ? (
                 <PayPalButtons
                   style={{
                     layout: "vertical",
-                    color: "blue",
-                    shape: "rect",
-                    label: "subscribe"
+                    color: "black",
+                    shape: "pill",
+                    label: "subscribe",
+                    disableMaxWidth: true,
                   }}
                   createSubscription={createSubscription}
                   onApprove={onApprove}
