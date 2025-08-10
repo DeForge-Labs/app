@@ -1,7 +1,12 @@
 "use client";
 
 import LogoAnimation from "@/components/ui/LogoAnimation";
-import { Button } from "@heroui/react";
+import CreditPurchaseModal from "@/components/ui/CreditPurchaseModal";
+import PlanUpgradeModal from "@/components/ui/PlanUpgradeModal";
+import PlanDowngradeModal from "@/components/ui/PlanDowngradeModal";
+import { 
+  Button
+} from "@heroui/react";
 import { Check, RefreshCcw } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
@@ -56,10 +61,21 @@ const plans = [
 export default function Usage() {
   const scrollContainerRef = useRef(null);
   const [currentPlan, setCurrentPlan] = useState("free");
+  
+  // Modal states
+  const [isCreditModalOpen, setIsCreditModalOpen] = useState(false);
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
+  const [isDowngradeModalOpen, setIsDowngradeModalOpen] = useState(false);
+  
+  // Countdown states
+  const [creditCountdown, setCreditCountdown] = useState(5);
+  const [upgradeCountdown, setUpgradeCountdown] = useState(5);
+  
   const isWorkflowInitializing = useSelector(
     (state) => state.team.isWorkflowInitializing
   );
   const team = useSelector((state) => state.team.team);
+  const user = useSelector((state) => state.user.user);
   const { credits, isLoading, fetchTeamCredits, refreshCredits } =
     useTeamCredits();
   const {
@@ -91,6 +107,51 @@ export default function Usage() {
     if (team?.id) {
       await refreshCredits(team.id);
     }
+  };
+
+  // Credit purchase modal handler
+  const handleBuyCredits = () => {
+    setIsCreditModalOpen(true);
+    setCreditCountdown(5);
+    
+    const interval = setInterval(() => {
+      setCreditCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setIsCreditModalOpen(false);
+          if (user?.id && team?.id) {
+            window.open(`https://credits.deforge.io/?deforge_id=${user.id}&team_id=${team.id}`, '_blank');
+          }
+          return 5;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  // Plan upgrade modal handler
+  const handleUpgradePlan = () => {
+    setIsUpgradeModalOpen(true);
+    setUpgradeCountdown(5);
+    
+    const interval = setInterval(() => {
+      setUpgradeCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setIsUpgradeModalOpen(false);
+          if (user?.id && team?.id) {
+            window.open(`https://pro.deforge.io/?deforge_id=${user.id}&team_id=${team.id}`, '_blank');
+          }
+          return 5;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  // Plan downgrade handler
+  const handleDowngradePlan = () => {
+    setIsDowngradeModalOpen(true);
   };
 
   const scrollToSection = (sectionId) => {
@@ -189,6 +250,7 @@ export default function Usage() {
               variant="outline"
               size="md"
               className="bg-black/80 rounded-lg text-background text-xs h-9 dark:bg-background dark:text-black"
+              onPress={handleBuyCredits}
             >
               Buy more credits
             </Button>
@@ -250,6 +312,13 @@ export default function Usage() {
                     size="md"
                     className="bg-black/80 rounded-lg text-background text-xs h-12 dark:bg-background dark:text-black mt-6"
                     isDisabled={currentPlan === plan.id}
+                    onPress={() => {
+                      if (currentPlan !== "free" && plan.id === "free") {
+                        handleDowngradePlan();
+                      } else if (currentPlan === "free" && plan.id === "pro") {
+                        handleUpgradePlan();
+                      }
+                    }}
                   >
                     {currentPlan !== "free" &&
                       plan.id === "free" &&
@@ -278,6 +347,24 @@ export default function Usage() {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <CreditPurchaseModal
+        isOpen={isCreditModalOpen}
+        onClose={() => setIsCreditModalOpen(false)}
+        countdown={creditCountdown}
+      />
+
+      <PlanUpgradeModal
+        isOpen={isUpgradeModalOpen}
+        onClose={() => setIsUpgradeModalOpen(false)}
+        countdown={upgradeCountdown}
+      />
+
+      <PlanDowngradeModal
+        isOpen={isDowngradeModalOpen}
+        onClose={() => setIsDowngradeModalOpen(false)}
+      />
     </div>
   );
 }
