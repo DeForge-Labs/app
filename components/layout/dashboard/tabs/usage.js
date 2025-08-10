@@ -67,10 +67,6 @@ export default function Usage() {
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [isDowngradeModalOpen, setIsDowngradeModalOpen] = useState(false);
   
-  // Countdown states
-  const [creditCountdown, setCreditCountdown] = useState(5);
-  const [upgradeCountdown, setUpgradeCountdown] = useState(5);
-  
   const isWorkflowInitializing = useSelector(
     (state) => state.team.isWorkflowInitializing
   );
@@ -112,41 +108,11 @@ export default function Usage() {
   // Credit purchase modal handler
   const handleBuyCredits = () => {
     setIsCreditModalOpen(true);
-    setCreditCountdown(5);
-    
-    const interval = setInterval(() => {
-      setCreditCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setIsCreditModalOpen(false);
-          if (user?.id && team?.id) {
-            window.open(`https://credits.deforge.io/?deforge_id=${user.id}&team_id=${team.id}`, '_blank');
-          }
-          return 5;
-        }
-        return prev - 1;
-      });
-    }, 1000);
   };
 
   // Plan upgrade modal handler
   const handleUpgradePlan = () => {
     setIsUpgradeModalOpen(true);
-    setUpgradeCountdown(5);
-    
-    const interval = setInterval(() => {
-      setUpgradeCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setIsUpgradeModalOpen(false);
-          if (user?.id && team?.id) {
-            window.open(`https://pro.deforge.io/?deforge_id=${user.id}&team_id=${team.id}`, '_blank');
-          }
-          return 5;
-        }
-        return prev - 1;
-      });
-    }, 1000);
   };
 
   // Plan downgrade handler
@@ -352,13 +318,13 @@ export default function Usage() {
       <CreditPurchaseModal
         isOpen={isCreditModalOpen}
         onClose={() => setIsCreditModalOpen(false)}
-        countdown={creditCountdown}
+        gumroadUrl={user?.id && team?.id ? `https://credits.deforge.io/?deforge_id=${user.id}&team_id=${team.id}` : null}
       />
 
       <PlanUpgradeModal
         isOpen={isUpgradeModalOpen}
         onClose={() => setIsUpgradeModalOpen(false)}
-        countdown={upgradeCountdown}
+        gumroadUrl={user?.id && team?.id ? `https://pro.deforge.io/?deforge_id=${user.id}&team_id=${team.id}` : null}
       />
 
       <PlanDowngradeModal
