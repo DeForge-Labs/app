@@ -13,7 +13,7 @@ import { X } from "lucide-react";
 export default function PlanUpgradeModal({ isOpen, onClose, gumroadUrl }) {
   const handleSubscribeOnGumroad = () => {
     if (gumroadUrl) {
-      window.open(gumroadUrl, '_blank');
+      window.open(gumroadUrl, "_blank");
     }
     onClose();
   };
@@ -33,34 +33,27 @@ export default function PlanUpgradeModal({ isOpen, onClose, gumroadUrl }) {
           <h3 className="text-lg font-medium dark:text-background">
             Upgrade to Pro Plan
           </h3>
-          <Button
-            isIconOnly
-            variant="ghost"
-            size="sm"
-            onPress={onClose}
-            className="border border-black/50 dark:border-white/50"
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </ModalHeader>
         <ModalBody className="-mt-3 dark:text-background">
           <p className="mb-2">
             Click the button below to subscribe to the Pro plan on Gumroad.
           </p>
           <p className="text-sm opacity-70">
-            Please confirm and finish the payment in the link opened via this button only, do not open gumroad separately, come back to this page and use the button again in case you have to close the new tab.
+            Please confirm and finish the payment in the link opened via this
+            button only, do not open gumroad separately, come back to this page
+            and use the button again in case you have to close the new tab.
           </p>
         </ModalBody>
         <ModalFooter>
           <Button
             variant="ghost"
             onPress={onClose}
-            className="border border-black/50 dark:border-white/50 dark:text-gray-50"
+            className="w-fit rounded-lg border border-black/80 p-4 dark:border-background dark:text-background"
           >
             Cancel
           </Button>
           <Button
-            className="bg-primary text-white"
+            className="w-fit rounded-lg p-4 bg-black/80 text-background dark:bg-background dark:text-black"
             onPress={handleSubscribeOnGumroad}
           >
             Subscribe on Gumroad
