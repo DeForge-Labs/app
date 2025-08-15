@@ -2,11 +2,11 @@ import { useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 
-export default function useTeamCredits() {
+export default function useUserCredits() {
   const [credits, setCredits] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchTeamCredits = useCallback(async (teamId) => {
+  const fetchUserCredits = useCallback(async (teamId) => {
     if (!teamId) {
       console.warn("Team ID is required to fetch credits");
       return;
@@ -19,7 +19,7 @@ export default function useTeamCredits() {
       };
 
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/team/credits/${teamId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/user/credits`,
         { headers }
       );
 
@@ -39,17 +39,17 @@ export default function useTeamCredits() {
   }, []);
 
   const refreshCredits = useCallback(async (teamId) => {
-    const updatedCredits = await fetchTeamCredits(teamId);
+    const updatedCredits = await fetchUserCredits(teamId);
     if (updatedCredits !== null) {
       toast.success("Credits refreshed successfully");
     }
     return updatedCredits;
-  }, [fetchTeamCredits]);
+  }, [fetchUserCredits]);
 
   return {
     credits,
     isLoading,
-    fetchTeamCredits,
+    fetchUserCredits,
     refreshCredits,
   };
 }

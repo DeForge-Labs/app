@@ -10,8 +10,8 @@ import {
 import { Check, RefreshCcw } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import useTeamCredits from "@/hooks/useTeamCredits";
-import useTeamPlan from "@/hooks/useTeamPlan";
+import useUserCredits from "@/hooks/useUserCredits";
+import useUserPlan from "@/hooks/useUserPlan";
 
 const plans = [
   {
@@ -72,25 +72,25 @@ export default function Usage() {
   );
   const team = useSelector((state) => state.team.team);
   const user = useSelector((state) => state.user.user);
-  const { credits, isLoading, fetchTeamCredits, refreshCredits } =
-    useTeamCredits();
+  const { credits, isLoading, fetchUserCredits, refreshCredits } =
+    useUserCredits();
   const {
-    fetchTeamPlan,
+    fetchUserPlan,
     getPlanCredits,
     getPlanPrice,
     getPlanName,
     getRenewalDate,
     isLoading: isPlanLoading,
     planData,
-  } = useTeamPlan();
+  } = useUserPlan();
 
   // Fetch credits and plan when team is available
   useEffect(() => {
     if (team?.id) {
-      fetchTeamCredits(team.id);
-      fetchTeamPlan(team.id);
+      fetchUserCredits(team.id);
+      fetchUserPlan(team.id);
     }
-  }, [team?.id, fetchTeamCredits, fetchTeamPlan]);
+  }, [team?.id, fetchUserCredits, fetchUserPlan]);
 
   // Update currentPlan state when planData changes
   useEffect(() => {
@@ -318,13 +318,13 @@ export default function Usage() {
       <CreditPurchaseModal
         isOpen={isCreditModalOpen}
         onClose={() => setIsCreditModalOpen(false)}
-        gumroadUrl={user?.id && team?.id ? `https://credits.deforge.io/?deforge_id=${user.id}&team_id=${team.id}` : null}
+        gumroadUrl={user?.id && team?.id ? `https://credits.deforge.io/?deforge_id=${user.id}` : null}
       />
 
       <PlanUpgradeModal
         isOpen={isUpgradeModalOpen}
         onClose={() => setIsUpgradeModalOpen(false)}
-        gumroadUrl={user?.id && team?.id ? `https://pro.deforge.io/?deforge_id=${user.id}&team_id=${team.id}` : null}
+        gumroadUrl={user?.id && team?.id ? `https://pro.deforge.io/?deforge_id=${user.id}` : null}
       />
 
       <PlanDowngradeModal

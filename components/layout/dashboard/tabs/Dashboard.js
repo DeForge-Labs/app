@@ -14,8 +14,8 @@ import {
 import GridCard from "../cards/GridCard";
 import CreateWorkflowButton from "../CreateWorkflowButton";
 import LogoAnimation from "@/components/ui/LogoAnimation";
-import useTeamCredits from "@/hooks/useTeamCredits";
-import useTeamPlan from "@/hooks/useTeamPlan";
+import useUserCredits from "@/hooks/useUserCredits";
+import useUserPlan from "@/hooks/useUserPlan";
 
 export default function Dashboard() {
   const user = useSelector((state) => state.user.user);
@@ -32,21 +32,21 @@ export default function Dashboard() {
   const isWorkflowInitializing = useSelector(
     (state) => state.team.isWorkflowInitializing
   );
-  const { credits, isLoading, fetchTeamCredits, refreshCredits } =
-    useTeamCredits();
+  const { credits, isLoading, fetchUserCredits, refreshCredits } =
+    useUserCredits();
   const {
-    fetchTeamPlan,
+    fetchUserPlan,
     getPlanName,
     isLoading: isPlanLoading,
-  } = useTeamPlan();
+  } = useUserPlan();
 
   // Fetch credits and plan when team is available
   useEffect(() => {
     if (team?.id) {
-      fetchTeamCredits(team.id);
-      fetchTeamPlan(team.id);
+      fetchUserCredits(team.id);
+      fetchUserPlan(team.id);
     }
-  }, [team?.id, fetchTeamCredits, fetchTeamPlan]);
+  }, [team?.id, fetchUserCredits, fetchUserPlan]);
 
   const handleRefreshCredits = async () => {
     if (team?.id) {

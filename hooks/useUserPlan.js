@@ -2,15 +2,11 @@ import { useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 
-export default function useTeamPlan() {
+export default function useUserPlan() {
   const [planData, setPlanData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchTeamPlan = useCallback(async (teamId) => {
-    if (!teamId) {
-      console.warn("Team ID is required to fetch plan");
-      return;
-    }
+  const fetchUserPlan = useCallback(async () => {
 
     try {
       setIsLoading(true);
@@ -19,7 +15,7 @@ export default function useTeamPlan() {
       };
 
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/team/plan/${teamId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/user/plan`,
         { headers }
       );
 
@@ -97,7 +93,7 @@ export default function useTeamPlan() {
   return {
     planData,
     isLoading,
-    fetchTeamPlan,
+    fetchUserPlan,
     getPlanCredits,
     getPlanPrice,
     getPlanName,
