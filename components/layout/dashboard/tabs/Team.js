@@ -12,6 +12,7 @@ import InviteMembersButton from "../../manage/InviteMembersButton";
 export default function Team() {
   const [search, setSearch] = useState("");
   const members = useSelector((state) => state.team.members);
+  const team = useSelector((state) => state.team.team);
   const isMemberInitializing = useSelector(
     (state) => state.team.isMembersInitializing
   );
@@ -42,7 +43,7 @@ export default function Team() {
       {members && members.length > 0 && !isMemberInitializing && (
         <div className="flex flex-col gap-4 mt-4">
           {filteredMembers.map((member, index) => (
-            <MemberCard key={index} member={member} />
+            <MemberCard key={index} member={member} team={team} />
           ))}
         </div>
       )}

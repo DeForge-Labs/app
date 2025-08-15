@@ -1,10 +1,11 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import { CalendarRange, User } from "lucide-react";
+import { CalendarRange, User, Crown } from "lucide-react";
 
-export default function MemberCard({ member }) {
+export default function MemberCard({ member, team }) {
   const timeAgo = formatDistanceToNow(member.joinedAt, { addSuffix: true });
+  const isOwner = team?.ownerId === member?.user?.id;
 
   return (
     <div className="flex items-center justify-between p-3 border border-black/80 rounded-lg hover:shadow-md transition-colors dark:border-background dark:text-background">
@@ -13,7 +14,12 @@ export default function MemberCard({ member }) {
           <User className="h-5 w-5" />
         </div>
         <div>
-          <h3 className="font-bold text-sm">{member?.user?.name}</h3>
+          <div className="flex items-center gap-1">
+            <h3 className="font-bold text-sm">{member?.user?.name}</h3>
+            {isOwner && (
+              <Crown className="h-4 w-4 text-yellow-500 dark:text-yellow-400" />
+            )}
+          </div>
           <div className="flex items-center text-xs text-black/80 mt-1 dark:text-background">
             <CalendarRange className="mr-1 h-3 w-3" />
             <span>Joined {timeAgo}</span>

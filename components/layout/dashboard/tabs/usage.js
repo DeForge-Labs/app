@@ -7,7 +7,7 @@ import PlanDowngradeModal from "@/components/ui/PlanDowngradeModal";
 import { 
   Button
 } from "@heroui/react";
-import { Check, RefreshCcw } from "lucide-react";
+import { Check, RefreshCcw, AlertTriangle } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import useUserCredits from "@/hooks/useUserCredits";
@@ -135,6 +135,19 @@ export default function Usage() {
   return (
     <div ref={scrollContainerRef} className="absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll p-6">
       <div className="flex flex-col gap-6">
+        <div className="flex flex-col bg-amber-50 border border-amber-200 dark:border-amber-800 dark:bg-amber-950/20 rounded-lg p-4">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+            <h3 className="text-sm font-bold text-amber-800 dark:text-amber-200">
+              Credit Usage Notice
+            </h3>
+          </div>
+          <p className="text-sm text-amber-700 dark:text-amber-300 mt-2">
+            When AI agents are executed within this team, credits will be deducted from the team owner's account. 
+            Please ensure the team owner has sufficient credits before running workflows.
+          </p>
+        </div>
+
         <div className="flex flex-col bg-black/5 border border-black/50 dark:border-white/50 dark:bg-white/5 rounded-lg p-4">
           <div className="flex items-center gap-2">
             <h3 className="text-sm font-bold dark:text-background">
