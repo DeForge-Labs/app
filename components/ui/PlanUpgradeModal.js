@@ -54,6 +54,7 @@ export default function PlanUpgradeModal({ isOpen, onClose, gumroadUrl }) {
           </Button>
           <Button
             className="w-fit rounded-lg p-4 bg-black/80 text-background dark:bg-background dark:text-black"
+            isDisabled={true}
             onPress={handleSubscribeOnGumroad}
           >
             Subscribe on Gumroad

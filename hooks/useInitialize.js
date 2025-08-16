@@ -477,7 +477,7 @@ export default function useInitialize() {
       };
 
       const creditsResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/team/credits/${teamId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/user/credits`,
         { headers }
       );
 
@@ -485,7 +485,7 @@ export default function useInitialize() {
         dispatch(setCredits(creditsResponse.data.credits));
 
         const planResponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/team/plan/${teamId}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/user/plan`,
           { headers }
         );
 
