@@ -17,7 +17,7 @@ export default function MemberCard({ member, team }) {
           <div className="flex items-center gap-1">
             <h3 className="font-bold text-sm">{member?.user?.name}</h3>
             {isOwner && (
-              <Crown className="h-4 w-4 text-yellow-500 dark:text-yellow-400" />
+              <Crown className="h-4 w-4 text-dark dark:text-background" />
             )}
           </div>
           <div className="flex items-center text-xs text-black/80 mt-1 dark:text-background">

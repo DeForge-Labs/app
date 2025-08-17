@@ -196,10 +196,19 @@ const workflowSlice = createSlice({
         });
       }
 
-      // Merge provided data with default data
-      const mergedData = data
-        ? { ...defaultData, ...data, category: nodeType.category }
-        : defaultData;
+      let mergedData = {};
+
+      for (const key in defaultData) {
+        if (
+          data[key] !== undefined &&
+          fieldType !== "CheckBox" &&
+          fieldType !== "Slider"
+        ) {
+          mergedData[key] = data[key];
+        } else {
+          mergedData[key] = defaultData[key];
+        }
+      }
 
       const newNode = {
         id: `${type}-${Date.now()}`,

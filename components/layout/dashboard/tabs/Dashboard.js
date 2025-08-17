@@ -207,10 +207,10 @@ export default function Dashboard() {
         <div className="flex items-center gap-2">
           <div className="flex flex-col gap-0">
             <p className="text-lg font-bold dark:text-background">
-              Recent Workflows
+              Recent Workspaces
             </p>
             <p className="text-sm dark:text-background">
-              Your recent modified workflows
+              Your recent modified workspaces
             </p>
           </div>
         </div>

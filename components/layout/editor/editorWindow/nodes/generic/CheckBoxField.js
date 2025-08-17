@@ -76,7 +76,7 @@ export default function CheckBoxField({
         )}
         <Checkbox
           isDisabled={isDisabled}
-          isSelected={currentValue || false}
+          isSelected={currentValue}
           onValueChange={(value) => handleChange(field.name, value)}
           className=""
           classNames={{

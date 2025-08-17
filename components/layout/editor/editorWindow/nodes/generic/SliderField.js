@@ -82,7 +82,7 @@ export default function SliderField({
           </div>
         )}
         <Slider
-          value={currentValue || 0}
+          value={currentValue || field.value}
           onChange={(value) => {
             setValue(value);
             handleChange(field.name, value);
@@ -98,7 +98,7 @@ export default function SliderField({
                 aria-label="Temperature value"
                 className="px-1 py-0.5 w-10 text-right text-xs bg-black/5 outline-none transition-colors rounded-md border border-transparent hover:border-black focus:border-black dark:bg-white/5 dark:hover:border-background dark:focus:border-background dark:text-background dark:bg-dark"
                 type="text"
-                value={value || 0}
+                value={value || field.value}
                 onChange={(e) => {
                   const v = e.target.value;
                   setValue(v);

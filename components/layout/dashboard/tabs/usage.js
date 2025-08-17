@@ -4,9 +4,7 @@ import LogoAnimation from "@/components/ui/LogoAnimation";
 import CreditPurchaseModal from "@/components/ui/CreditPurchaseModal";
 import PlanUpgradeModal from "@/components/ui/PlanUpgradeModal";
 import PlanDowngradeModal from "@/components/ui/PlanDowngradeModal";
-import { 
-  Button
-} from "@heroui/react";
+import { Button } from "@heroui/react";
 import { Check, RefreshCcw, AlertTriangle } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
@@ -61,12 +59,12 @@ const plans = [
 export default function Usage() {
   const scrollContainerRef = useRef(null);
   const [currentPlan, setCurrentPlan] = useState("free");
-  
+
   // Modal states
   const [isCreditModalOpen, setIsCreditModalOpen] = useState(false);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [isDowngradeModalOpen, setIsDowngradeModalOpen] = useState(false);
-  
+
   const isWorkflowInitializing = useSelector(
     (state) => state.team.isWorkflowInitializing
   );
@@ -125,17 +123,20 @@ export default function Usage() {
     if (section && scrollContainerRef.current) {
       scrollContainerRef.current.scrollTo({
         top: section.offsetTop,
-        behavior: "smooth"
+        behavior: "smooth",
       });
     }
-  }
+  };
 
   if (isWorkflowInitializing) return <LogoAnimation />;
 
   return (
-    <div ref={scrollContainerRef} className="absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll p-6">
+    <div
+      ref={scrollContainerRef}
+      className="absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll p-6"
+    >
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col bg-amber-50 border border-amber-200 dark:border-amber-800 dark:bg-amber-950/20 rounded-lg p-4">
+        <div className="flex flex-col bg-amber-50 border border-amber-800 dark:border-amber-800 dark:bg-amber-950/20 rounded-lg p-4">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             <h3 className="text-sm font-bold text-amber-800 dark:text-amber-200">
@@ -143,8 +144,9 @@ export default function Usage() {
             </h3>
           </div>
           <p className="text-sm text-amber-700 dark:text-amber-300 mt-2">
-            When AI agents are executed within this team, credits will be deducted from the team owner's account. 
-            Please ensure the team owner has sufficient credits before running workflows.
+            When AI agents are executed within this team, credits will be
+            deducted from the team owner's account. Please ensure the team owner
+            has sufficient credits before running agents.
           </p>
         </div>
 
@@ -237,7 +239,9 @@ export default function Usage() {
         </div>
 
         <div className="flex flex-col bg-black/5 border border-black/50 dark:border-white/50 dark:bg-white/5 rounded-lg p-4">
-          <p id="plans" className="text-sm font-bold dark:text-background">Plans</p>
+          <p id="plans" className="text-sm font-bold dark:text-background">
+            Plans
+          </p>
           <p className="text-xs opacity-70 font-normal text-black dark:text-background">
             Compare plans to find the right one for you
           </p>
@@ -331,13 +335,21 @@ export default function Usage() {
       <CreditPurchaseModal
         isOpen={isCreditModalOpen}
         onClose={() => setIsCreditModalOpen(false)}
-        gumroadUrl={user?.id && team?.id ? `https://credits.deforge.io/?deforge_id=${user.id}` : null}
+        gumroadUrl={
+          user?.id && team?.id
+            ? `https://credits.deforge.io/?deforge_id=${user.id}`
+            : null
+        }
       />
 
       <PlanUpgradeModal
         isOpen={isUpgradeModalOpen}
         onClose={() => setIsUpgradeModalOpen(false)}
-        gumroadUrl={user?.id && team?.id ? `https://pro.deforge.io/?deforge_id=${user.id}` : null}
+        gumroadUrl={
+          user?.id && team?.id
+            ? `https://pro.deforge.io/?deforge_id=${user.id}`
+            : null
+        }
       />
 
       <PlanDowngradeModal
