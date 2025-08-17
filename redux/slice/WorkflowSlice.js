@@ -199,6 +199,10 @@ const workflowSlice = createSlice({
       let mergedData = {};
 
       for (const key in defaultData) {
+        const fieldType = nodeType.fields.find(
+          (field) => field.name === key
+        )?.type;
+
         if (
           data[key] !== undefined &&
           fieldType !== "CheckBox" &&
