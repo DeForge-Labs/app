@@ -13,7 +13,12 @@ export default function ConnectionMain() {
   const key = searchParams.get("key");
   const user = useSelector((state) => state.user.user);
   const isInitializing = useSelector((state) => state.user.isInitializing);
-  const { handleYouTube, handleTwitter, handleLinkedIn, } = useSocial();
+  const { 
+    handleYouTube,
+    handleTwitter,
+    handleLinkedIn,
+    handleGmailTrigger,
+  } = useSocial();
 
   const connectionTypes = [
     {
@@ -29,6 +34,11 @@ export default function ConnectionMain() {
     {
       name: "LinkedIn",
       key: "linkedin",
+      type: "redirect",
+    },
+    {
+      name: "Gmail",
+      key: "gmail_trigger",
       type: "redirect",
     }
   ];
@@ -111,6 +121,25 @@ export default function ConnectionMain() {
     } else if (connectionType.key === "linkedin") {
       try {
         const response = await handleLinkedIn(workflowId);
+
+        if (!response.data.success) {
+          throw new Error(response.data.message);
+        }
+
+        window.location.href = response.data.authURL;
+      } catch (error) {
+        console.log(error);
+        window.opener.postMessage(
+          {
+            type: "SOCIAL_AUTH_ERROR",
+            message: error.message,
+          },
+          window.location.origin
+        );
+      }
+    } else if (connectionType.key === "gmail_trigger") {
+      try {
+        const response = await handleGmailTrigger(workflowId);
 
         if (!response.data.success) {
           throw new Error(response.data.message);
