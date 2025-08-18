@@ -212,6 +212,8 @@ const workflowSlice = createSlice({
         } else {
           mergedData[key] = defaultData[key];
         }
+
+        mergedData.category = nodeType.category;
       }
 
       const newNode = {
