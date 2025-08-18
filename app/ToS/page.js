@@ -9,17 +9,16 @@ export default function TermsOfService() {
     <div className="min-h-screen bg-background dark:bg-dark">
       {/* Header */}
       <header className="sticky top-0 z-10 border-b border-black/50 bg-background dark:bg-dark dark:border-background">
-        <div className="max-w-4xl mx-auto flex h-16 items-center justify-between px-6">
+        <div className="relative max-w-4xl mx-auto flex h-16 items-center justify-between px-6">
           <div className="flex items-center gap-4">
             <Link 
               href="/"
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
               <ChevronLeft className="h-4 w-4 dark:text-background" />
-              <span className="text-sm dark:text-background">Back</span>
             </Link>
             
-            <div className="flex items-center gap-2">
+            <div className="absolute left-1/2 -translate-x-1/2 top-4 flex items-center gap-2">
               <Image
                 src="/logo/logo-black.svg"
                 alt="Logo"

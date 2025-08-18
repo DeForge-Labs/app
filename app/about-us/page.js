@@ -7,29 +7,29 @@ import { ChevronLeft, ExternalLink, Users, TrendingUp, Target, DollarSign, Play 
 export default function AboutUsPage() {
   return (
     <div className="min-h-screen bg-background">
-        <header className="sticky top-0 border-b border-black/50 bg-black/5 backdrop-blur-sm">
-            <div className="max-w-6xl mx-auto flex h-16 items-center justify-between px-6">
-            <div className="flex items-center gap-4">
-                <Link 
-                href="https://deforge.io"
-                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-                >
-                <ChevronLeft className="h-4 w-4 text-black/80" />
-                <span className="text-sm text-black/80">Back</span>
-                </Link>
-                
-                <div className="flex items-center gap-2">
-                <Image
-                    src="/logo/logo-black.svg"
-                    alt="Logo"
-                    width={22}
-                    height={22}
-                />
-                <span className="font-bold text-2xl text-black">
-                    Deforge
-                </span>
-                </div>
-            </div>
+        <header className="sticky top-0 border-b border-black/50 bg-black/5 backdrop-blur-lg">
+            <div className="relative max-w-6xl mx-auto flex h-16 items-center justify-between px-6">
+              <div className="flex gap-4">
+                  <Link 
+                  href="https://deforge.io"
+                  className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                  >
+                  <ChevronLeft className="h-4 w-4 text-black/80" />
+                  </Link>
+                  
+                  <div className="absolute left-1/2 -translate-x-1/2 top-4 flex items-center gap-2">
+                    <Image
+                        src="/logo/logo-black.svg"
+                        alt="Logo"
+                        width={22}
+                        height={22}
+                        className="-ml-4"
+                    />
+                    <span className="font-bold text-2xl text-black">
+                        Deforge
+                    </span>
+                  </div>
+              </div>
             </div>
         </header>
 
@@ -52,13 +52,13 @@ export default function AboutUsPage() {
           </h2>
           <div className="bg-transparent border border-black/80 rounded-2xl p-8 shadow-none">
             <p className="text-lg text-black/80 leading-relaxed mb-6">
-              We are building Deforge, a no-code node-based visual AI Agent Builder. Imagine n8n or langflow, but 10 times more user-friendly. Most users don't want to integrate complex databases and hunt for API keys just to create a Knowledge Base. Our product does that with just one node.
+              We believe current workflow builders are broken, even though they provide granular nodes to control the minute details efficiently. However, normal users don’t need those. Imagine watching a one-hour-long video just to copy a workflow and then spending another hour finding where to place the API key.
             </p>
             <p className="text-lg text-black/80 leading-relaxed mb-6">
-              We believe current workflow builders are broken, even though they provide granular nodes to control the minute details efficiently. However, normal users don't need those. Imagine watching a one-hour-long video just to copy a workflow and then spending another hour finding where to place the API key.
+              So, here’s where Deforge comes in, a no-code node-based visual AI Agent Builder. Imagine n8n or langflow, but 10 times more user-friendly. Most users don’t want to integrate complex databases and hunt for API keys just to create a Knowledge Base. Our product does that with just one node.
             </p>
             <p className="text-lg text-black/80 leading-relaxed">
-              So, here's where Deforge comes in. We've also built an intuitive form builder that can be wrapped over your workflow, making it as easy as filling out a form to deploy AI Agents.
+              We’ve also built an intuitive form builder that can be wrapped over your workflow, making it as easy as filling out a form to deploy AI Agents.
             </p>
           </div>
         </section>
@@ -78,7 +78,7 @@ export default function AboutUsPage() {
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://www.youtube.com/embed/sY0tg8BwTFQ"
+                  src="https://www.youtube.com/embed/8NQVkZJtLxk"
                   title="Deforge Founders Video"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -91,14 +91,14 @@ export default function AboutUsPage() {
             <div className="bg-transparent border border-black/80 rounded-2xl p-6 shadow-none">
               <div className="flex items-center gap-2 mb-4">
                 <Play className="h-5 w-5 text-red-600" />
-                <h3 className="text-xl font-semibold text-black">YC Demo</h3>
+                <h3 className="text-xl font-semibold text-black">Demo</h3>
               </div>
               <div className="aspect-video rounded-lg overflow-hidden">
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://www.youtube.com/embed/9lHxi9nXXn8"
-                  title="Deforge YC Demo Video"
+                  src="https://www.youtube.com/embed/VnQLhlbCj-g"
+                  title="Deforge Demo Video"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
