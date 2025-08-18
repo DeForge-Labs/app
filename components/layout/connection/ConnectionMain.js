@@ -18,6 +18,7 @@ export default function ConnectionMain() {
     handleTwitter,
     handleLinkedIn,
     handleGmailTrigger,
+    handleGmailRead,
   } = useSocial();
 
   const connectionTypes = [
@@ -40,7 +41,12 @@ export default function ConnectionMain() {
       name: "Gmail",
       key: "gmail_trigger",
       type: "redirect",
-    }
+    },
+    {
+      name: "Gmail",
+      key: "gmail_read",
+      type: "redirect",
+    },
   ];
 
   const connectionType = key
@@ -140,6 +146,25 @@ export default function ConnectionMain() {
     } else if (connectionType.key === "gmail_trigger") {
       try {
         const response = await handleGmailTrigger(workflowId);
+
+        if (!response.data.success) {
+          throw new Error(response.data.message);
+        }
+
+        window.location.href = response.data.authURL;
+      } catch (error) {
+        console.log(error);
+        window.opener.postMessage(
+          {
+            type: "SOCIAL_AUTH_ERROR",
+            message: error.message,
+          },
+          window.location.origin
+        );
+      }
+    } else if (connectionType.key === "gmail_read") {
+      try {
+        const response = await handleGmailRead(workflowId);
 
         if (!response.data.success) {
           throw new Error(response.data.message);
