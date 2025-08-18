@@ -322,7 +322,7 @@ export default function AboutUsPage() {
               Ready to Build Your AI Agent?
             </h2>
             <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
-              Join thousands of creators who are building powerful AI agents without writing a single line of code.
+              Join us to build powerful AI agents without writing a single line of code.
             </p>
             <Link 
               href="https://deforge.io"
