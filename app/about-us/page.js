@@ -135,8 +135,14 @@ export default function AboutUsPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-transparent border border-black/80 rounded-2xl p-6 shadow-none text-center">
-              <div className="w-20 h-20 bg-black/5 rounded-full mx-auto mb-4 flex items-center justify-center">
-                <Users className="h-10 w-10 text-black/60" />
+              <div className="w-20 h-20 mx-auto mb-4 overflow-hidden rounded-full">
+                <Image
+                  src="/pfp/anoy.jpeg"
+                  alt="Anoy Roy Chowdhury"
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <h3 className="text-xl font-semibold text-black mb-2">Anoy Roy Chowdhury</h3>
               <p className="text-black/60 mb-4">CEO</p>
@@ -151,8 +157,14 @@ export default function AboutUsPage() {
             </div>
 
             <div className="bg-transparent border border-black/80 rounded-2xl p-6 shadow-none text-center">
-              <div className="w-20 h-20 bg-black/5 rounded-full mx-auto mb-4 flex items-center justify-center">
-                <Users className="h-10 w-10 text-black/60" />
+              <div className="w-20 h-20 mx-auto mb-4 overflow-hidden rounded-full">
+                <Image
+                  src="/pfp/shamba.jpeg"
+                  alt="Shamba Chowdhury"
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <h3 className="text-xl font-semibold text-black mb-2">Shamba Chowdhury</h3>
               <p className="text-black/60 mb-4">CTO</p>
@@ -167,8 +179,14 @@ export default function AboutUsPage() {
             </div>
 
             <div className="bg-transparent border border-black/80 rounded-2xl p-6 shadow-none text-center">
-              <div className="w-20 h-20 bg-black/5 rounded-full mx-auto mb-4 flex items-center justify-center">
-                <Users className="h-10 w-10 text-black/60" />
+              <div className="w-20 h-20 mx-auto mb-4 overflow-hidden rounded-full">
+                <Image
+                  src="/pfp/gautam.jpeg"
+                  alt="Gautam Raj"
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <h3 className="text-xl font-semibold text-black mb-2">Gautam Raj</h3>
               <p className="text-black/60 mb-4">CMO</p>
