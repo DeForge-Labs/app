@@ -10,6 +10,7 @@ import {
   StickyNote,
   Users,
   Zap,
+  Bug
 } from "lucide-react";
 import Image from "next/image";
 import LogoutButton from "./LogoutButton";
@@ -151,13 +152,20 @@ export default function Sidebar() {
             <p className="text-sm">Docs</p>
           </div>
           <div
-            className="flex gap-1 items-center hover:cursor-pointer hover:text-black/80 dark:hover:text-background dark:text-background pb-2"
+            className="flex gap-1 items-center hover:cursor-pointer hover:text-black/80 dark:hover:text-background dark:text-background"
             onClick={() =>
               window.open("https://cal.com/anoy-deforge/30min", "_blank")
             }
           >
             <Headset className="w-4 h-4" />
             <p className="text-sm">Contact Us</p>
+          </div>
+          <div
+            className="flex gap-1 items-center hover:cursor-pointer hover:text-black/80 dark:hover:text-background pb-2"
+            onClick={() => window.open("https://app.youform.com/forms/1xejylht", "_blank")}
+          >
+            <Bug className="w-4 h-4" />
+            <p className="text-sm">Report Bug</p>
           </div>
 
           <LogoutButton />

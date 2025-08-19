@@ -42,7 +42,7 @@ export default function PrivacyPolicy() {
               Privacy Policy
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Last updated: August 06, 2025
+              Last updated: August 20, 2025
             </p>
           </div>
 
@@ -152,6 +152,9 @@ export default function PrivacyPolicy() {
               <h3 className="text-xl font-semibold text-black dark:text-background mb-3">Google API</h3>
               <p className="mb-4">
                 Our use of information received from Google APIs will adhere to <a href="https://developers.google.com/terms/api-services-user-data-policy" rel="noopener noreferrer" target="_blank" className="text-blue-600 hover:underline dark:text-blue-400">Google API Services User Data Policy</a>, including the <a href="https://developers.google.com/terms/api-services-user-data-policy#limited-use" rel="noopener noreferrer" target="_blank" className="text-blue-600 hover:underline dark:text-blue-400">Limited Use requirements</a>.
+              </p>
+              <p className="mb-4">
+                When you grant us access to your Google account for specific functionalities, we securely store the access tokens for the scopes you have authorized. These tokens are exclusively used to operate the Deforge workflows or AI agents that you create and configure. The tokens are bound to these specific agents/workflows and are only utilized during their execution. We do not use these access tokens for any purpose outside of the designated workflows/agents you have built.
               </p>
             </section>
 
