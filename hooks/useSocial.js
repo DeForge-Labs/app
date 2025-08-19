@@ -138,6 +138,24 @@ export default function useSocial() {
     return response;
   };
 
+  const handleGoogleSheets = async (workflowId) => {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    };
+
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/workflow/connectSocial/${workflowId}?social=google_sheets`,
+      {},
+      { headers }
+    );
+
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+
+    return response;
+  };
+
   return {
     handleYouTube,
     handleTwitter,
@@ -145,6 +163,7 @@ export default function useSocial() {
     handleGmailTrigger,
     handleGmailRead,
     handleSlack,
+    handleGoogleSheets,
     getSocial,
   };
 }
