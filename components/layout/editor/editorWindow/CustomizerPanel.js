@@ -5,7 +5,7 @@ import { updateNodeData, deleteEdge } from "@/redux/slice/WorkflowSlice";
 import { Button } from "@heroui/react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lock, StickyNote } from "lucide-react";
+import { Coins, Lock, StickyNote } from "lucide-react";
 import { getNodeTypeByType, isArrayType } from "@/lib/node-registry";
 import { useEffect, useState } from "react";
 import EnvField from "./nodes/customizer/EnvField";
@@ -410,6 +410,22 @@ export default function CustomizerPanel() {
           </CardContent>
         </Card>
       )}
+
+      {/* Render minimum credit requirement */}
+      <Card className="border border-black/50 shadow-none dark:bg-zinc-900 dark:border-background dark:text-background">
+        <CardContent className="p-4 pt-0 ">
+          <div className="mt-4">
+            <h3 className="text-sm font-semibold mb-3">Required Balance</h3>
+            <p className="text-xs text-black/60 dark:text-background -mt-2">
+              Minimum balance required to run this node
+            </p>
+            <div className="flex items-center gap-2 font-bold text-2xl mt-3">
+              <Coins className="h-6 w-6" />
+              <span>{nodeType?.credit ? nodeType.credit : "0"}</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

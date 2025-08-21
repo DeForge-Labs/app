@@ -10,7 +10,7 @@ import {
   getCategoryColor,
   isArrayType,
 } from "@/lib/node-registry";
-import { FileWarning, Link2 } from "lucide-react";
+import { Coins, FileWarning, Link2 } from "lucide-react";
 import getColorByType from "@/lib/color-profile";
 import { useSelector } from "react-redux";
 import { Lock } from "lucide-react";
@@ -404,6 +404,17 @@ export function GenericNode({ id, type, data }) {
             {data.label || nodeType.title}
           </div>
         </CardTitle>
+
+        {/* Render minimum credit requirement */}
+
+        <div className="flex items-center justify-end">
+          <div className="p-1 py-0.5 border-black/50 rounded-md border dark:border-background dark:text-background">
+            <div className="flex items-center gap-1 text-xs">
+              <Coins className="h-4 w-4" />
+              <span>{nodeType?.credit ? nodeType.credit : "0"}</span>
+            </div>
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="p-3 pt-0 space-y-4">
         <div className="space-y-2">

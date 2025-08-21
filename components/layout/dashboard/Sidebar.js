@@ -10,13 +10,14 @@ import {
   StickyNote,
   Users,
   Zap,
-  Bug
+  Bug,
 } from "lucide-react";
 import Image from "next/image";
 import LogoutButton from "./LogoutButton";
 import { setTab } from "@/redux/slice/TeamSlice";
 import { cn } from "@/lib/utils";
 import { useParams, usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Sidebar() {
   const router = useRouter();
@@ -151,18 +152,18 @@ export default function Sidebar() {
             <StickyNote className="w-4 h-4" />
             <p className="text-sm">Docs</p>
           </div>
-          <div
+          <Link
+            href="mailto:contact@deforge.io"
             className="flex gap-1 items-center hover:cursor-pointer hover:text-black/80 dark:hover:text-background dark:text-background"
-            onClick={() =>
-              window.open("https://cal.com/anoy-deforge/30min", "_blank")
-            }
           >
             <Headset className="w-4 h-4" />
             <p className="text-sm">Contact Us</p>
-          </div>
+          </Link>
           <div
             className="flex gap-1 items-center hover:cursor-pointer hover:text-black/80 dark:hover:text-background pb-2"
-            onClick={() => window.open("https://app.youform.com/forms/1xejylht", "_blank")}
+            onClick={() =>
+              window.open("https://app.youform.com/forms/1xejylht", "_blank")
+            }
           >
             <Bug className="w-4 h-4" />
             <p className="text-sm">Report Bug</p>
