@@ -118,7 +118,12 @@ export default function TeamForm() {
             isClearable
             onClear={() => setName("")}
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              if (e.target.value.length > 20) {
+                return;
+              }
+              setName(e.target.value);
+            }}
           />
 
           <div className="mt-3 rounded-2xl p-4 border border-black/40 dark:border-background">

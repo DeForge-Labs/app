@@ -63,7 +63,9 @@ export default function TeamList() {
                 >
                   <div className="flex flex-col items-start">
                     <p className="font-semibold text-black/80 text-lg dark:text-background">
-                      {team.team.name}
+                      {team.team.name.length > 15
+                        ? team.team.name.slice(0, 15) + "..."
+                        : team.team.name}
                     </p>
                     <p className="text-black/60 text-xs dark:text-background">
                       Joined at {new Date(team.joinedAt).toLocaleDateString()}

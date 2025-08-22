@@ -17,6 +17,8 @@ export default function TemplateNavbar() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    if (!teams || teams?.length === 0) return;
+
     if (teams.length > 0) {
       const teamId = localStorage.getItem(`team_${user.id}`);
       if (teamId && teams.find((team) => team.team.id === teamId)) {

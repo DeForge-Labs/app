@@ -70,7 +70,12 @@ export default function LoginForm({
               }
               isClearable
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length > 20) {
+                  return;
+                }
+                setUsername(e.target.value);
+              }}
               onClear={() => setUsername("")}
             />
           </>
@@ -197,17 +202,17 @@ export default function LoginForm({
         </div>
         <p className="mt-5 text-sm dark:text-background">
           By pressing "Continue", you agree to our{" "}
-          <a 
-            href="/ToS" 
-            target="_blank" 
+          <a
+            href="/ToS"
+            target="_blank"
             className="text-blue-600 hover:underline dark:text-blue-400"
           >
             Terms of Service
           </a>{" "}
           and{" "}
-          <a 
-            href="/privacy" 
-            target="_blank" 
+          <a
+            href="/privacy"
+            target="_blank"
             className="text-blue-600 hover:underline dark:text-blue-400"
           >
             Privacy Policy

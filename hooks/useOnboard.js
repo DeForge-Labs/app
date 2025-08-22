@@ -67,6 +67,11 @@ export default function useOnboard() {
 
         localStorage.setItem("token", response.data.token);
 
+        if (embedded) {
+          await loadUserAndTeams(response.data.token);
+          return;
+        }
+
         const user = await loadUser(false, response.data.token);
 
         try {
@@ -75,21 +80,17 @@ export default function useOnboard() {
           if (teams.length === 0) {
             router.push("/team/create");
           } else {
-            if (embedded) {
-              await loadUserAndTeams(response.data.token);
-            } else {
-              const lastTeamId = localStorage.getItem(`team_${user.id}`);
+            const lastTeamId = localStorage.getItem(`team_${user.id}`);
 
-              if (lastTeamId) {
-                if (lastTeamId in teams) {
-                  router.push(`/dashboard/${lastTeamId}`);
-                } else {
-                  router.push(`/dashboard/${teams[0].teamId}`);
-                  localStorage.setItem(`team_${user.id}`, teams[0].teamId);
-                }
+            if (lastTeamId) {
+              if (lastTeamId in teams) {
+                router.push(`/dashboard/${lastTeamId}`);
               } else {
                 router.push(`/dashboard/${teams[0].teamId}`);
+                localStorage.setItem(`team_${user.id}`, teams[0].teamId);
               }
+            } else {
+              router.push(`/dashboard/${teams[0].teamId}`);
             }
           }
         } catch (error) {
@@ -141,16 +142,17 @@ export default function useOnboard() {
 
         localStorage.setItem("token", response.data.token);
 
+        if (embedded) {
+          await loadUserAndTeams(response.data.token);
+          return;
+        }
+
         await loadUser(false, response.data.token);
 
         const teamResponse = await createTeam("My Team", response.data.token);
 
         if (teamResponse.success) {
-          if (embedded) {
-            await loadUserAndTeams(response.data.token);
-          } else {
-            router.push(`/dashboard/${teamResponse.team.id}`);
-          }
+          router.push(`/dashboard/${teamResponse.team.id}`);
         } else {
           toast.error(teamResponse.message);
           router.push("/team/create");

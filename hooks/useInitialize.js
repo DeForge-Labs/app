@@ -51,9 +51,10 @@ export default function useInitialize() {
   const router = useRouter();
   const { getEnv } = useEnv();
   const { getSocial } = useSocial();
-  const { getTeams } = useTeams();
+  const { getTeams, createTeam } = useTeams();
 
   const loadUser = async (force = true, token = null) => {
+    dispatch(setIsInitializing(true));
     try {
       const headers = {
         Authorization: `Bearer ${token || localStorage.getItem("token")}`,
@@ -122,6 +123,14 @@ export default function useInitialize() {
       );
 
       if (response.data.success) {
+        if (response.data.teams.length === 0) {
+          const team = await createTeam("My Team", token);
+
+          dispatch(setTeams([team]));
+
+          return;
+        }
+
         dispatch(setTeams(response.data.teams));
       } else {
         console.log(response.data);
