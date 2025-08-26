@@ -37,6 +37,17 @@ export default function AboutUsPage() {
       <main className="max-w-6xl mx-auto px-6 py-12">
         {/* Hero Section */}
         <div className="text-center mb-16">
+          <a
+            href="https://www.producthunt.com/products/deforge-open-beta?embed=true&utm_source=badge-top-post-badge&utm_medium=badge&utm_source=badge-deforge"
+            target="_blank"
+            className="inline-block mb-2"
+          >
+            <img
+              src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=1007944&theme=dark&period=daily&t=1756041023938"
+              alt="Deforge - Canva&#0032;for&#0032;AI&#0032;Agents | Product Hunt"
+              style={{ width: "250px", height: "54px" }}
+            />
+          </a>
           <h1 className="text-5xl font-bold text-black mb-6">
             About Deforge
           </h1>
@@ -210,14 +221,14 @@ export default function AboutUsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-transparent border border-black/80 rounded-2xl p-8 shadow-none text-center">
               <TrendingUp className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="text-3xl font-bold text-black mb-2">50,000+</h3>
-              <p className="text-black/60">Impressions across social media platforms</p>
+              <h3 className="text-3xl font-bold text-black mb-2">2400+</h3>
+              <p className="text-black/60">Unique visitors on launch day</p>
             </div>
 
             <div className="bg-transparent border border-black/80 rounded-2xl p-8 shadow-none text-center">
               <Users className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-              <h3 className="text-3xl font-bold text-black mb-2">170+</h3>
-              <p className="text-black/60">Waitlist enrollments</p>
+              <h3 className="text-3xl font-bold text-black mb-2">240+</h3>
+              <p className="text-black/60">Sign ups on launch</p>
             </div>
           </div>
         </section>

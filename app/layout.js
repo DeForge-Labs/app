@@ -8,6 +8,8 @@ import ReduxProvider from "@/providers/ReduxProvider";
 import { ThemeProvider } from "next-themes";
 import ToasterProvider from "@/providers/ToasterProvider";
 
+import Script from "next/script";
+
 const lexendDeca = Lexend_Deca({
   subsets: ["latin"],
   weight: ["variable"],
@@ -21,6 +23,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <script
+        async
+        src="https://scripts.simpleanalyticscdn.com/latest.js"
+      ></script>
       <body
         className={`${lexendDeca.className} antialiased`}
         suppressHydrationWarning
@@ -34,6 +40,7 @@ export default function RootLayout({ children }) {
           </ThemeProvider>
         </ReduxProvider>
       </body>
+      <Script src="https://scripts.simpleanalyticscdn.com/latest.js" />
     </html>
   );
 }
