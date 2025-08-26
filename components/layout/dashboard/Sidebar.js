@@ -123,7 +123,7 @@ export default function Sidebar() {
             }}
           >
             <Activity size={20} />
-            Usage
+            Billing
           </Button>
 
           <Button

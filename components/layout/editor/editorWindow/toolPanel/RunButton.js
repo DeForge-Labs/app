@@ -23,9 +23,13 @@ export default function RunButton({ className }) {
   const isWidgetTriggerPresent =
     nodes.filter((node) => node.type === "widget_trigger").length > 0;
 
+  const isGmailTriggerPresent =
+    nodes.filter((node) => node.type === "gmail_trigger").length > 0;
+
   return (
     !isTelegramTriggerPresent &&
-    !isWidgetTriggerPresent && (
+    !isWidgetTriggerPresent &&
+    !isGmailTriggerPresent && (
       <Tooltip
         className="bg-white border-black/50 border mb-3 rounded-lg shadow-none"
         content={
