@@ -320,6 +320,14 @@ export default function Usage() {
                     size="md"
                     className="bg-black/80 rounded-lg text-background text-xs h-12 dark:bg-background dark:text-black mt-6"
                     isDisabled={currentPlan === plan.id}
+                    onPress={() => {
+                      if (
+                        currentPlan !== "enterprise" &&
+                        plan.id === "enterprise"
+                      ) {
+                        window.open("mailto:contact@deforge.io");
+                      }
+                    }}
                   >
                     {(currentPlan !== "enterprise" && "Contact Us") ||
                       "Current"}

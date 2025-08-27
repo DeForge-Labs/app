@@ -236,6 +236,23 @@ export function GenericNode({ id, type, data }) {
           />
         );
 
+      case "Tool[]":
+      case "tool[]":
+        return (
+          <ArrayField
+            key={index}
+            field={field}
+            nodeType={nodeType}
+            isDisabled={isDisabled}
+            currentValue={currentValue}
+            handleChange={handleChange}
+            matchingInput={matchingInput}
+            totalValidConnections={totalValidConnections}
+            isArrayInput={isArrayInput}
+            isSameNode={selectedNodeId === id}
+          />
+        );
+
       case "Map":
       case "map":
         return (
@@ -390,11 +407,11 @@ export function GenericNode({ id, type, data }) {
   return (
     <Card
       className={`w-64 border-black/50 bg-background relative dark:border-background dark:text-background rounded-md dark:bg-zinc-900 ${cn(
-        workflow?.status === "LIVE" && "border-red-500"
+        workflow?.status === "LIVE" && "border-red-500 dark:border-red-500"
       )} `}
     >
       {workflow?.status === "LIVE" && (
-        <div className="absolute -top-2 -right-3 bg-black h-6 w-6 rounded-full flex items-center justify-center text-background">
+        <div className="absolute -top-2 -right-3 bg-dark dark:bg-white h-6 w-6 rounded-full flex items-center justify-center text-background dark:text-dark">
           <Lock className="h-3 w-3" />
         </div>
       )}

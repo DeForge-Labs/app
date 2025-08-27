@@ -275,6 +275,19 @@ export default function CustomizerPanel() {
                     />
                   );
 
+                case "Tool[]":
+                case "tool[]":
+                  return (
+                    <ArrayField
+                      field={field}
+                      key={index}
+                      totalValidConnections={totalValidConnections}
+                      totalConnectedInputs={totalConnectedInputs}
+                      handleDisconnectAll={handleDisconnectAll}
+                      handleDisconnectExact={handleDisconnectExact}
+                    />
+                  );
+
                 case "Map":
                 case "map":
                   return (

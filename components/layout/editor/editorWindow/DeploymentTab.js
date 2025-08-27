@@ -6,6 +6,7 @@ import ApiDeployments from "./deployments/ApiDeployments";
 import ChatBotDeployment from "./deployments/ChatBotdeployment";
 import TelegramDeployment from "./deployments/TelegramDeployments";
 import WidgetDeployment from "./deployments/WidgetDeployments";
+import GmailDeployment from "./deployments/GmailDeployments";
 import { cn } from "@/lib/utils";
 import Stats from "./Stats";
 
@@ -29,6 +30,9 @@ export default function DeploymentTab({ padding = true }) {
   const isWidgetTriggerPresent =
     nodes.filter((node) => node?.type === "widget_trigger").length > 0;
 
+  const isGmailTriggerPresent =
+    nodes.filter((node) => node?.type === "gmail_trigger").length > 0;
+
   if (isWorkflowInitializing) {
     return <LogoAnimation opacity={0.5} />;
   }
@@ -49,6 +53,7 @@ export default function DeploymentTab({ padding = true }) {
         {isChatBot && <ChatBotDeployment />}
         {isTelegramTriggerPresent && <TelegramDeployment />}
         {isWidgetTriggerPresent && <WidgetDeployment />}
+        {isGmailTriggerPresent && <GmailDeployment />}
       </div>
     </div>
   );

@@ -221,6 +221,23 @@ export function MiniNode({ id, type, data }) {
           />
         );
 
+      case "Tool[]":
+      case "tool[]":
+        return (
+          <ArrayField
+            key={index}
+            field={field}
+            nodeType={nodeType}
+            isDisabled={isDisabled}
+            currentValue={currentValue}
+            handleChange={() => {}}
+            matchingInput={matchingInput}
+            totalValidConnections={totalValidConnections}
+            isArrayInput={isArrayInput}
+            isSameNode={selectedNodeId === id}
+          />
+        );
+
       case "Map":
       case "map":
         return (
