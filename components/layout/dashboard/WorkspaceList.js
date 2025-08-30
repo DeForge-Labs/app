@@ -18,7 +18,7 @@ export const WorkspaceList = ({
           isHoverable
           variant="flat"
           className={`w-[calc(50%-0.5rem)] shadow-none rounded-lg border-black/80 dark:border-white/80 border relative bg-black/5 ${
-            workspace.id === selectedWorkspace.id
+            workspace.id === selectedWorkspace?.id
               ? "border-primary dark:border-primary"
               : ""
           }`}
@@ -36,7 +36,7 @@ export const WorkspaceList = ({
             </div>
           )}
           <CardBody className="p-3">
-            <div className="flex items-center gap-2">
+            <div className="flex gap-2">
               <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-black/5 dark:bg-white/5">
                 <DynamicIcon
                   name={workspace.iconId}
@@ -44,7 +44,7 @@ export const WorkspaceList = ({
                 />
               </div>
               <div className="flex-1 flex flex-col gap-1">
-                <h3 className="font-medium text-sm text-black dark:text-background">
+                <h3 className="font-medium text-sm text-black dark:text-background w-[90%]">
                   {workspace.name}
                 </h3>
                 <p className="text-tiny text-default-500 dark:text-background line-clamp-2">

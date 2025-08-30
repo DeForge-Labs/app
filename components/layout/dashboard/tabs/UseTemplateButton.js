@@ -33,7 +33,7 @@ export default function UseTemplateButton({ template }) {
         }}
       >
         <Plus size={16} />
-        Use Template
+        Use Form
       </Button>
 
       <Modal
@@ -62,6 +62,7 @@ export default function UseTemplateButton({ template }) {
               workspace={template}
               workspaceName={workflowName}
               setWorkspaceName={setWorkflowName}
+              isCreatingWorkflow={isCreatingWorkflow}
             />
           </ModalBody>
           <ModalFooter className=" flex w-full gap-2 px-4">

@@ -51,10 +51,10 @@ export default function TemplateNavbar() {
           {user && (
             <Select
               classNames={{
-                mainWrapper: "h-8",
+                mainWrapper: "h-9",
                 base: "",
                 trigger:
-                  "min-h-6 h-9 rounded-lg bg-dark dark:bg-background hover:text-black/80 group-data-[focus=true]:bg-black/80 text-black/80 border border-black/50 data-[hover=true]:bg-dark dark:border-background dark:text-black",
+                  "min-h-9 h-9 rounded-lg bg-dark dark:bg-background hover:text-black/80 group-data-[focus=true]:bg-black/80 text-black/80 border border-black/50 data-[hover=true]:bg-dark dark:border-background dark:text-black",
                 label:
                   "group-data-[filled=true]:text-black/80 dark:group-data-[filled=true]:text-background -mt-3 ",
                 selectorIcon:

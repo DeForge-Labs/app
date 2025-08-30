@@ -5,7 +5,7 @@ import CreditPurchaseModal from "@/components/ui/CreditPurchaseModal";
 import PlanUpgradeModal from "@/components/ui/PlanUpgradeModal";
 import PlanDowngradeModal from "@/components/ui/PlanDowngradeModal";
 import { Button } from "@heroui/react";
-import { Check, RefreshCcw, AlertTriangle } from "lucide-react";
+import { Check, RefreshCcw, AlertTriangle, Plus } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import useUserCredits from "@/hooks/useUserCredits";
@@ -233,7 +233,7 @@ export default function Usage() {
               className="bg-black/80 rounded-lg text-background text-xs h-9 dark:bg-background dark:text-black"
               onPress={handleBuyCredits}
             >
-              Buy more credits
+              <Plus className="h-4 w-4" /> Buy more credits
             </Button>
           </div>
         </div>

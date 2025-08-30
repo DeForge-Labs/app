@@ -104,16 +104,14 @@ export default function Workspace() {
       {isWorkflowInitializing && <WorkflowLoading />}
 
       {workspace?.length === 0 && !isWorkflowInitializing && (
-        <WorkflowEmptyState type="workspace" />
+        <WorkflowEmptyState type="workflow" />
       )}
 
       {workspace &&
         workspace?.length > 0 &&
         !isWorkflowInitializing &&
         filteredWorkspaces?.length === 0 &&
-        search && (
-          <WorkflowEmptySearch setSearch={setSearch} type="workspace" />
-        )}
+        search && <WorkflowEmptySearch setSearch={setSearch} type="workflow" />}
 
       {view === "grid" && workspace?.length > 0 && !isWorkflowInitializing && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">

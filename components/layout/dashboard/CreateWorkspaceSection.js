@@ -10,6 +10,7 @@ export default function CreateWorkspaceSection({
   workspace,
   workspaceName,
   setWorkspaceName,
+  isCreatingWorkflow,
 }) {
   return (
     <div>
@@ -54,6 +55,7 @@ export default function CreateWorkspaceSection({
             value={workspaceName}
             onChange={(e) => setWorkspaceName(e.target.value)}
             onClear={() => setWorkspaceName("")}
+            isDisabled={isCreatingWorkflow}
           />
         </CardBody>
       </Card>

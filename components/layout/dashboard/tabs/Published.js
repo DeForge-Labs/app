@@ -39,7 +39,7 @@ export default function Published() {
       <div className="flex w-full justify-between items-center">
         <Input
           variant="outline"
-          placeholder="Search Templates"
+          placeholder="Search Published Forms"
           className="w-[350px] shadow-none border-black/50 dark:border-background border rounded-lg dark:text-background"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -104,14 +104,14 @@ export default function Published() {
       {isWorkflowInitializing && <WorkflowLoading />}
 
       {templates?.length === 0 && !isWorkflowInitializing && (
-        <WorkflowEmptyState type="template" />
+        <WorkflowEmptyState type="form" />
       )}
 
       {templates &&
         templates?.length > 0 &&
         !isWorkflowInitializing &&
         filteredTemplates?.length === 0 &&
-        search && <WorkflowEmptySearch setSearch={setSearch} type="template" />}
+        search && <WorkflowEmptySearch setSearch={setSearch} type="form" />}
 
       {view === "grid" && templates?.length > 0 && !isWorkflowInitializing && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">

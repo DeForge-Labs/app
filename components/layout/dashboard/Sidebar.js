@@ -11,6 +11,7 @@ import {
   Users,
   Zap,
   Bug,
+  FileCode2,
 } from "lucide-react";
 import Image from "next/image";
 import LogoutButton from "./LogoutButton";
@@ -79,23 +80,6 @@ export default function Sidebar() {
             size="md"
             className={cn(
               "text-md transition-colors bg-transparent text-black dark:text-background justify-start",
-              pathname === `/templates/${params.id}`
-                ? "bg-black/80 text-background dark:bg-background dark:text-black"
-                : "hover:bg-black/5 hover:dark:bg-white/5"
-            )}
-            onPress={() => {
-              if (pathname === `/templates/${params.id}`) return;
-              router.push(`/templates/${params.id}`);
-            }}
-          >
-            <Layers size={20} />
-            Templates
-          </Button>
-
-          <Button
-            size="md"
-            className={cn(
-              "text-md transition-colors bg-transparent text-black dark:text-background justify-start",
               pathname === `/published/${params.id}`
                 ? "bg-black/80 text-background dark:bg-background dark:text-black"
                 : "hover:bg-black/5 hover:dark:bg-white/5"
@@ -107,6 +91,23 @@ export default function Sidebar() {
           >
             <LayoutTemplate size={20} />
             Published
+          </Button>
+
+          <Button
+            size="md"
+            className={cn(
+              "text-md transition-colors bg-transparent text-black dark:text-background justify-start",
+              pathname === `/forms/${params.id}`
+                ? "bg-black/80 text-background dark:bg-background dark:text-black"
+                : "hover:bg-black/5 hover:dark:bg-white/5"
+            )}
+            onPress={() => {
+              if (pathname === `/forms/${params.id}`) return;
+              router.push(`/forms/${params.id}`);
+            }}
+          >
+            <FileCode2 size={20} />
+            Forms
           </Button>
 
           <Button

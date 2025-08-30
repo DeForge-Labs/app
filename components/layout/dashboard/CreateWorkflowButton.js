@@ -13,13 +13,20 @@ import {
   CardBody,
   Input,
 } from "@heroui/react";
-import { GitBranch, Loader2, Plus, Terminal } from "lucide-react";
+import {
+  Check,
+  FileBox,
+  FileCode2,
+  Loader2,
+  Plus,
+  Terminal,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { WorkspaceDetails } from "./WorkspaceDetails";
 import { WorkspaceList } from "./WorkspaceList";
 import { useSelector } from "react-redux";
-import { DynamicIcon } from "lucide-react/dynamic";
 import CreateWorkspaceSection from "./CreateWorkspaceSection";
+import { cn } from "@/lib/utils";
 
 export default function CreateWorkflowButton() {
   const {
@@ -37,48 +44,25 @@ export default function CreateWorkflowButton() {
   );
 
   const [allWorkspace, setAllWorkspace] = useState([]);
-  const [categories, setCategories] = useState([
-    {
-      name: "New Workspace",
-    },
-  ]);
+  const [categories, setCategories] = useState([]);
 
   const [step, setStep] = useState(1);
 
-  const [selectedWorkspace, setSelectedWorkspace] = useState({
-    id: "blank",
-    name: "Blank Workspace",
-    category: "New Workspace",
-    tags: ["Workspace", "Blank"],
-    iconId: "layout-template",
-    description: "Start with a clean slate, no pre-built templates.",
-    author: "Team Deforge",
-  });
+  const [selectedWorkspace, setSelectedWorkspace] = useState();
+  const [selectedType, setSelectedType] = useState("");
 
   const onClose = () => {
     setIsOpen(false);
     setStep(1);
+    setSelectedWorkspace(null);
+    setWorkflowName("");
   };
 
   useEffect(() => {
     if (defaultTemplates) {
-      setAllWorkspace([
-        {
-          id: "blank",
-          name: "Blank Workspace",
-          category: "New Workspace",
-          tags: ["Workspace", "Blank"],
-          iconId: "layout-template",
-          description: "Start with a clean slate, no pre-built templates.",
-          author: "Team Deforge",
-        },
-        ...defaultTemplates,
-      ]);
+      setAllWorkspace([...defaultTemplates]);
 
       const allCategories = [
-        {
-          name: "New Workspace",
-        },
         ...defaultTemplates.map((t) => {
           return {
             name: t.category,
@@ -117,7 +101,7 @@ export default function CreateWorkflowButton() {
         isOpen={isOpen}
         className="border border-black bg-background dark:bg-dark dark:border-background p-1 rounded-lg"
         onClose={onClose}
-        size={step === 1 ? "5xl" : "md"}
+        size={step === 1 ? "2xl" : step === 2 ? "5xl" : "md"}
         closeButton={<div></div>}
         isDismissable={!isCreatingWorkflow}
         isKeyboardDismissDisabled={isCreatingWorkflow}
@@ -126,16 +110,89 @@ export default function CreateWorkflowButton() {
         <ModalContent className="p-0">
           <ModalHeader className="p-4 flex-col">
             <h3 className="text-lg font-bold dark:text-background">
-              {step === 1 ? "Choose a Template" : "Create Workspace"}
+              {step === 1
+                ? "Select a type"
+                : step === 2
+                ? "Choose a form"
+                : "Create Workspace"}
             </h3>
             <p className="text-xs opacity-70 font-normal text-black dark:text-background">
               {step === 1
-                ? "Select a template to get started"
+                ? "Select a type of agent to get started"
+                : step === 2
+                ? "Select a form to get started"
                 : "Enter a name for your workspace"}
             </p>
           </ModalHeader>
           <ModalBody className="p-0 bg-background dark:bg-dark border-y dark:border-background border-black">
             {step === 1 ? (
+              <>
+                <div className="flex h-[300px] rounded-none overflow-hidden p-4 gap-4">
+                  <Card
+                    className={cn(
+                      "w-[calc(50%-0.5rem)] shadow-none rounded-lg border-black/80 dark:border-white/80 border hover:cursor-pointer bg-black/5 relative",
+                      selectedType === "forms" &&
+                        "border-primary dark:border-primary"
+                    )}
+                    isPressable
+                    isHoverable
+                    onPress={() => {
+                      setSelectedType("forms");
+                    }}
+                  >
+                    {selectedType === "forms" && (
+                      <div className="p-2 rounded-full absolute top-2 right-2 bg-black/5 dark:bg-white/5">
+                        <Check className="w-4 h-4 text-black dark:text-background" />
+                      </div>
+                    )}
+
+                    <CardBody className="p-4">
+                      <h2 className="text-4xl font-semibold text-black dark:text-background mt-2">
+                        Forms
+                      </h2>
+                      <p className="text-sm opacity-70 text-black dark:text-background">
+                        Forms are pre-built AI agents that are ready to be
+                        deployed by you. Fill in the form and get started.
+                      </p>
+                    </CardBody>
+
+                    <FileCode2 className="absolute -bottom-5 -right-0 w-36 h-36 text-black dark:text-background opacity-15" />
+                  </Card>
+
+                  <Card
+                    className={cn(
+                      "w-[calc(50%-0.5rem)] shadow-none rounded-lg border-black/80 dark:border-white/80 hover:cursor-pointer border relative bg-black/5",
+                      selectedType === "blank" &&
+                        "border-primary dark:border-primary"
+                    )}
+                    isPressable
+                    isHoverable
+                    onPress={() => {
+                      setSelectedType("blank");
+                    }}
+                  >
+                    {selectedType === "blank" && (
+                      <div className="p-2 rounded-full absolute top-2 right-2 bg-black/5 dark:bg-white/5">
+                        <Check className="w-4 h-4 text-black dark:text-background" />
+                      </div>
+                    )}
+
+                    <CardBody className="p-4">
+                      <h2 className="text-4xl font-semibold text-black dark:text-background mt-2">
+                        Blank
+                      </h2>
+                      <p className="text-sm opacity-70 text-black dark:text-background">
+                        Start with a blank workspace. Create, connect, and
+                        deploy powerful AI agents with our intuitive node-based
+                        interface.
+                      </p>
+                    </CardBody>
+
+                    <FileBox className="absolute -bottom-5 -right-0 w-36 h-36 text-black dark:text-background opacity-15" />
+                  </Card>
+                </div>
+              </>
+            ) : step === 2 ? (
               <div className="flex h-[600px] rounded-none overflow-hidden">
                 <div className="w-1/3 border-r border-black dark:border-background ">
                   <WorkspaceDetails
@@ -173,6 +230,7 @@ export default function CreateWorkflowButton() {
                 workspace={selectedWorkspace}
                 workspaceName={workflowName}
                 setWorkspaceName={setWorkflowName}
+                isCreatingWorkflow={isCreatingWorkflow}
               />
             )}
           </ModalBody>
@@ -195,7 +253,24 @@ export default function CreateWorkflowButton() {
               className="w-fit rounded-lg p-4 bg-black/80 text-background dark:bg-background dark:text-black"
               onPress={() => {
                 if (step === 1) {
-                  setStep(2);
+                  if (selectedType === "forms") {
+                    setSelectedWorkspace(null);
+                    setStep(2);
+                  } else {
+                    setSelectedWorkspace({
+                      id: "blank",
+                      name: "Blank Workspace",
+                      category: "New Workspace",
+                      tags: ["Workspace", "Blank"],
+                      iconId: "layout-template",
+                      description:
+                        "Start with a clean slate, no pre-built templates.",
+                      author: "Team Deforge",
+                    });
+                    setStep(3);
+                  }
+                } else if (step === 2) {
+                  setStep(3);
                 } else {
                   handleCreateWorkflow(
                     selectedWorkspace.id,
@@ -205,13 +280,19 @@ export default function CreateWorkflowButton() {
               }}
               isDisabled={
                 isCreatingWorkflow ||
-                (step === 1 ? !selectedWorkspace : !workflowName)
+                (step === 1
+                  ? !selectedType
+                  : step === 2
+                  ? !selectedWorkspace
+                  : !workflowName)
               }
             >
               {isCreatingWorkflow ? (
                 <Loader2 className="animate-spin text-background dark:text-black" />
               ) : step === 1 ? (
-                "Use This Template"
+                "Select"
+              ) : step === 2 ? (
+                "Use this form"
               ) : (
                 "Create"
               )}

@@ -10,12 +10,14 @@ import {
   LayoutTemplate,
   Waypoints,
   RefreshCcw,
+  Plus,
 } from "lucide-react";
 import GridCard from "../cards/GridCard";
 import CreateWorkflowButton from "../CreateWorkflowButton";
 import LogoAnimation from "@/components/ui/LogoAnimation";
 import useUserCredits from "@/hooks/useUserCredits";
 import useUserPlan from "@/hooks/useUserPlan";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const user = useSelector((state) => state.user.user);
@@ -24,6 +26,7 @@ export default function Dashboard() {
   const isDefaultTemplatesInitializing = useSelector(
     (state) => state.team.isDefaultTemplatesInitializing
   );
+  const router = useRouter();
   const templates = useSelector((state) => state.team.templates);
   const team = useSelector((state) => state.team.team);
   const [top3Templates, setTop3Templates] = useState([]);
@@ -121,7 +124,22 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
           <div className="bg-black/5 border border-black/50 dark:border-white/50 dark:bg-white/5 rounded-lg p-4 relative overflow-hidden">
-            <h1 className="text-lg font-bold dark:text-background">Credits</h1>
+            <div className="flex items-center justify-between">
+              <h1 className="text-lg font-bold dark:text-background">
+                Credits
+              </h1>
+
+              <Button
+                variant="outline"
+                size="md"
+                className="bg-black/80 rounded-lg text-background text-xs px-3 h-8 min-w-16 dark:bg-background dark:text-black"
+                onPress={() => {
+                  router.push(`/usage/${team?.id}`);
+                }}
+              >
+                <Plus className="h-4 w-4" /> Add Credits
+              </Button>
+            </div>
             <p className="text-sm dark:text-background">Your credit balance</p>
             <div className="flex flex-row gap-4 mb-2">
               <div>
@@ -169,10 +187,10 @@ export default function Dashboard() {
         <div className="flex items-center gap-2">
           <div className="flex flex-col gap-0">
             <p className="text-lg font-bold dark:text-background">
-              Popular Templates
+              Popular Forms
             </p>
             <p className="text-sm dark:text-background">
-              Discover templates that are popular with our community
+              Discover forms that are popular with our community
             </p>
           </div>
         </div>
@@ -188,9 +206,7 @@ export default function Dashboard() {
             <Card className="overflow-hidden h-[310px] text-black/80 justify-between transition-all hover:shadow-md bg-transparent shadow-none border border-black/80 dark:border-background rounded-lg dark:text-background border-dashed">
               <CardHeader className="p-4 pb-2 flex flex-col items-start">
                 <div className="flex items-center justify-between w-full">
-                  <span className="truncate font-semibold">
-                    No templates found
-                  </span>
+                  <span className="truncate font-semibold">No forms found</span>
                 </div>
               </CardHeader>
               <CardBody className="p-4 pt-2 justify-end">
@@ -249,10 +265,10 @@ export default function Dashboard() {
         <div className="flex items-center gap-2">
           <div className="flex flex-col gap-0">
             <p className="text-lg font-bold dark:text-background">
-              Published Templates
+              Published Forms
             </p>
             <p className="text-sm dark:text-background">
-              Your recent published templates
+              Your recent published forms
             </p>
           </div>
         </div>

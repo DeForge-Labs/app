@@ -3,15 +3,34 @@
 import React from "react";
 import { Card, CardBody, CardHeader, Chip } from "@heroui/react";
 import { DynamicIcon } from "lucide-react/dynamic";
+import { FileCode2 } from "lucide-react";
 
 export const WorkspaceDetails = ({ workspace }) => {
+  if (!workspace) {
+    return (
+      <Card className="h-full rounded-none border-none bg-background dark:bg-dark justify-center shadow-none">
+        <CardHeader className="flex-col p-4">
+          <div className="flex items-center bg-black/5 opacity-60 border-dashed dark:bg-white/5 text-black dark:text-background border-black/50 dark:border-background border justify-center rounded-lg w-[60%] aspect-square">
+            <FileCode2 className="w-[60%] h-[60%]" />
+          </div>
+          <h2 className="text-lg font-medium ml-2 text-black dark:text-background mt-2">
+            Select a Form
+          </h2>
+          <p className="text-xs opacity-70 text-black dark:text-background">
+            Select a form to get started
+          </p>
+        </CardHeader>
+      </Card>
+    );
+  }
+
   return (
     <Card className="h-full rounded-none border-none bg-background dark:bg-dark shadow-none">
       <CardHeader className="flex-col border-b border-black/50 dark:border-background p-4">
         <div className="flex items-center bg-black/5 dark:bg-white/5 text-black dark:text-background border-black/50 dark:border-background border justify-center rounded-lg w-[60%] aspect-square">
           <DynamicIcon name={workspace.iconId} className="w-[60%] h-[60%]" />
         </div>
-        <h2 className="text-lg font-medium ml-2 text-black dark:text-background mt-2">
+        <h2 className="text-lg font-medium ml-2 text-black dark:text-background mt-2 text-center">
           {workspace.name}
         </h2>
         <Chip color="primary" variant="flat" size="sm" className="mt-1">

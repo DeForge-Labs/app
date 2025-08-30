@@ -8,6 +8,7 @@ import DuplicateButton from "./DuplicateButton";
 import { DynamicIcon } from "lucide-react/dynamic";
 import MiniShareButton from "./MiniShareButton";
 import RevertButton from "./RevertButton";
+import UseTemplateButton from "../tabs/UseTemplateButton";
 
 export default function GridCard({ flow, type = "workspace" }) {
   const timeAgo = formatDistanceToNow(flow.createdAt, { addSuffix: true });
@@ -42,35 +43,38 @@ export default function GridCard({ flow, type = "workspace" }) {
         </div>
       </CardBody>
       <CardFooter className="p-4 pt-0 flex justify-between">
-        <Button
-          variant="outline"
-          size="sm"
-          className="border-black/80 border dark:border-background dark:text-background"
-          onPress={() => {
-            if (type === "template") {
-              window.open(`/template/${flow.id}`, "_blank");
-              return;
-            }
-            if (flow?.type === "WORKFLOW") {
-              router.push(`/editor/${flow.id}`);
-            } else {
-              router.push(`/form/${flow.id}`);
-            }
-          }}
-        >
-          {type === "workspace" ? (
-            <>
-              {" "}
-              <Edit className="h-3 w-3" />
-              Edit
-            </>
-          ) : (
-            <>
-              <ArrowUpRight className="h-3 w-3" />
-              Open
-            </>
-          )}
-        </Button>
+        <div className="flex space-x-2 items-center">
+          {type !== "workspace" && <UseTemplateButton template={flow} />}
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-black/80 border dark:border-background dark:text-background"
+            onPress={() => {
+              if (type === "template") {
+                window.open(`/template/${flow.id}`, "_blank");
+                return;
+              }
+              if (flow?.type === "WORKFLOW") {
+                router.push(`/editor/${flow.id}`);
+              } else {
+                router.push(`/form/${flow.id}`);
+              }
+            }}
+          >
+            {type === "workspace" ? (
+              <>
+                {" "}
+                <Edit className="h-3 w-3" />
+                Edit
+              </>
+            ) : (
+              <>
+                <ArrowUpRight className="h-3 w-3" />
+                Open
+              </>
+            )}
+          </Button>
+        </div>
         <div className="flex space-x-2">
           {type === "template" ? (
             <MiniShareButton template={flow} />

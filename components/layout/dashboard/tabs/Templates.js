@@ -40,6 +40,12 @@ export default function Templates() {
 
   return (
     <div className="absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll p-6">
+      <div className="flex flex-col mb-5">
+        <p className="text-xl font-bold dark:text-background">Forms</p>
+        <p className="text-md dark:text-background">
+          Discover forms and deploy them to your workspace
+        </p>
+      </div>
       <div className="flex flex-col gap-6">
         {defaultTemplates?.length > 0 &&
           !isDefaultTemplatesInitializing &&
