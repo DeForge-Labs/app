@@ -215,6 +215,7 @@ export default function ExecutionLogsPanel({ isForm = false }) {
                   <LogViewer logs={execution.logs} totalCredits={execution.totalCredits} />
 
                   <JsonViewer data={execution.result} />
+                  <JsonViewer data={execution.stats} title="Node Stats" />
                 </div>
               </>
             ) : (
