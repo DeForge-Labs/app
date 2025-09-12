@@ -18,6 +18,7 @@ import { removeNewLog } from "@/redux/slice/WorkflowSlice";
 import JsonViewer from "./JSONViewer";
 import LogViewer from "./LogViewer";
 import { cn } from "@/lib/utils";
+import StatsWindow from "./StatsWindow";
 
 export default function ExecutionLogsPanel({ isForm = false }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -212,10 +213,13 @@ export default function ExecutionLogsPanel({ isForm = false }) {
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-3">
-                  <LogViewer logs={execution.logs} totalCredits={execution.totalCredits} />
+                  <LogViewer
+                    logs={execution.logs}
+                    totalCredits={execution.totalCredits}
+                  />
 
                   <JsonViewer data={execution.result} />
-                  <JsonViewer data={execution.stats} title="Node Stats" />
+                  <StatsWindow stats={execution.stats} />
                 </div>
               </>
             ) : (

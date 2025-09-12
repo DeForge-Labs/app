@@ -4,7 +4,7 @@ import LogWindow from "@/components/layout/editor/LogWindow";
 
 export default function FormPage() {
   return (
-    <div className="flex flex-col h-screen dark:bg-dark mx-4">
+    <div className="flex flex-col h-screen dark:bg-dark">
       <FormNavbar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <FormWindow />
