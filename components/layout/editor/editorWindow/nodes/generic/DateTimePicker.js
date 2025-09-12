@@ -1,8 +1,20 @@
 "use client";
-
 import { DatePicker } from "@heroui/react";
+import { CalendarDateTime } from "@internationalized/date";
 
 export default function DateTimePicker({ value, onChange, isDisabled }) {
+  const calendarDateTime = value
+    ? new CalendarDateTime(
+        value.year,
+        value.month,
+        value.day,
+        value.hour,
+        value.minute,
+        value.second,
+        value.millisecond
+      )
+    : null;
+
   return (
     <DatePicker
       granularity="minute"
@@ -40,7 +52,7 @@ export default function DateTimePicker({ value, onChange, isDisabled }) {
         },
       }}
       isDisabled={isDisabled}
-      value={value}
+      value={calendarDateTime}
       onChange={onChange}
     />
   );
