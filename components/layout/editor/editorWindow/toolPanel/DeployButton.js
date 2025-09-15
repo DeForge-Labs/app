@@ -14,6 +14,7 @@ import { Loader2, Rocket } from "lucide-react";
 import useDeployWorkflow from "@/hooks/useDeployWorkflow";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 export default function DeployButton({ className, showTooltip = true }) {
   const { isOpen, setIsOpen, isDeploying, handleDeployWorkflow } =
@@ -21,6 +22,29 @@ export default function DeployButton({ className, showTooltip = true }) {
   const hasUnsavedChanges = useSelector(
     (state) => state.workflow.hasUnsavedChanges
   );
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (isDeploying) return;
+
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+
+      if (e.key === "Enter") {
+        handleDeployWorkflow();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, [isOpen, isDeploying, handleDeployWorkflow]);
+
   return (
     <>
       {showTooltip && (

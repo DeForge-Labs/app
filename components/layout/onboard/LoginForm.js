@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button, Input, InputOtp } from "@heroui/react";
-import { Loader2, Mail, User } from "lucide-react";
+import { Code, Loader2, Mail, User } from "lucide-react";
 import useOnboard from "@/hooks/useOnboard";
 
 export default function LoginForm({
@@ -13,6 +13,7 @@ export default function LoginForm({
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
+  const [referralCode, setReferralCode] = useState("");
   const [otp, setOtp] = useState("");
 
   const [isRequestingLogin, setIsRequestingLogin] = useState(false);
@@ -47,7 +48,14 @@ export default function LoginForm({
         onSubmit={(e) => {
           e.preventDefault();
           if (isSignUp) {
-            verifySignUp(email, otp, username, setIsVerifying, embedded);
+            verifySignUp(
+              email,
+              otp,
+              username,
+              setIsVerifying,
+              referralCode,
+              embedded
+            );
           } else {
             verifyLogin(email, otp, setIsVerifying, embedded);
           }
@@ -118,14 +126,35 @@ export default function LoginForm({
           onChange={(e) => setOtp(e.target.value)}
         />
 
+        {isSignUp && (
+          <>
+            <p className="mt-3 text-sm dark:text-background">
+              Have a referral code?
+            </p>
+
+            <Input
+              type="text"
+              placeholder="Referral Code (Optional)"
+              className="border border-black/40 mb-5 rounded-xl mt-3 shadow-none dark:border-background dark:text-background"
+              size="lg"
+              variant="outline"
+              startContent={
+                <Code className="text-black/40 dark:text-background" />
+              }
+              isClearable
+              value={referralCode}
+              onChange={(e) => {
+                if (e.target.value.length > 20) {
+                  return;
+                }
+                setReferralCode(e.target.value);
+              }}
+              onClear={() => setReferralCode("")}
+            />
+          </>
+        )}
+
         <div className="mt-1 flex w-full gap-2">
-          <Button
-            className="w-full rounded-full p-7 dark:bg-background dark:text-black bg-black/80 text-background"
-            type="submit"
-            isDisabled={isVerifying || isResending}
-          >
-            {isVerifying ? <Loader2 className="animate-spin" /> : "Verify"}
-          </Button>
           <Button
             className="w-full rounded-full p-7 border border-black/40 dark:border-background dark:text-background"
             variant="outline"
@@ -142,6 +171,13 @@ export default function LoginForm({
             ) : (
               "Resend"
             )}
+          </Button>
+          <Button
+            className="w-full rounded-full p-7 dark:bg-background dark:text-black bg-black/80 text-background"
+            type="submit"
+            isDisabled={isVerifying || isResending}
+          >
+            {isVerifying ? <Loader2 className="animate-spin" /> : "Verify"}
           </Button>
         </div>
 

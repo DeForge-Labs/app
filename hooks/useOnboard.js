@@ -113,6 +113,7 @@ export default function useOnboard() {
     otp,
     username,
     setIsVerifying,
+    referralCode,
     embedded
   ) => {
     try {
@@ -135,7 +136,7 @@ export default function useOnboard() {
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/verify/signup`,
-        { email, code: otp, username }
+        { email, code: otp, username, referralCode }
       );
       if (response.data.success) {
         toast.success("Sign up successful");

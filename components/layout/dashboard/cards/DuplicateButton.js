@@ -12,6 +12,7 @@ import {
 } from "@heroui/react";
 import { GitBranch, Loader2 } from "lucide-react";
 import { Copy } from "lucide-react";
+import { useEffect } from "react";
 
 export default function DuplicateButton({ workflow }) {
   const {
@@ -22,6 +23,29 @@ export default function DuplicateButton({ workflow }) {
     isDuplicatingWorkflow,
     handleDuplicateWorkflow,
   } = useDuplicateWorkflow();
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (isDuplicatingWorkflow) return;
+
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+
+      if (e.key === "Enter") {
+        handleDuplicateWorkflow(workflow);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, [isOpen, isDuplicatingWorkflow, handleDuplicateWorkflow, workflow]);
+
   return (
     <>
       <Button

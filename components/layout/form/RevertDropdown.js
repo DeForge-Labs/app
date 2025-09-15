@@ -15,11 +15,34 @@ import {
 } from "@heroui/react";
 import { ChevronDown, Loader2 } from "lucide-react";
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 export default function RevertDropdown() {
   const { isOpen, setIsOpen, handlePublishForm, isPublishingForm } =
     usePublishForm();
   const workspace = useSelector((state) => state.workflow.workspace);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (isPublishingForm) return;
+
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+
+      if (e.key === "Enter") {
+        handlePublishForm(workspace?.id, "WORKFLOW");
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, [isOpen, isPublishingForm, handlePublishForm, workspace?.id]);
 
   return (
     <>

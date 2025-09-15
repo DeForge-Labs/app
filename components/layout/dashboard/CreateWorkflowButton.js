@@ -51,6 +51,60 @@ export default function CreateWorkflowButton() {
   const [selectedWorkspace, setSelectedWorkspace] = useState();
   const [selectedType, setSelectedType] = useState("");
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (
+      isCreatingWorkflow ||
+      (step === 1
+        ? !selectedType
+        : step === 2
+        ? !selectedWorkspace
+        : !workflowName)
+    ) {
+      return;
+    }
+
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+
+      if (e.key === "Enter") {
+        if (step === 1) {
+          if (selectedType === "forms") {
+            setSelectedWorkspace(null);
+            setStep(2);
+          } else {
+            setSelectedWorkspace({
+              id: "blank",
+              name: "Blank Workspace",
+              category: "New Workspace",
+              tags: ["Workspace", "Blank"],
+              iconId: "layout-template",
+              description: "Start with a clean slate, no pre-built templates.",
+              author: "Team Deforge",
+            });
+            setStep(3);
+          }
+        } else if (step === 2) {
+          setStep(3);
+        } else {
+          handleCreateWorkflow(
+            selectedWorkspace.id,
+            selectedWorkspace.id === "blank" ? "editor" : "form"
+          );
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, [isOpen, step, selectedType, selectedWorkspace, workflowName]);
+
   const onClose = () => {
     setIsOpen(false);
     setStep(1);
@@ -106,6 +160,33 @@ export default function CreateWorkflowButton() {
         isDismissable={!isCreatingWorkflow}
         isKeyboardDismissDisabled={isCreatingWorkflow}
         hideCloseButton={isCreatingWorkflow}
+        onSubmit={() => {
+          if (step === 1) {
+            if (selectedType === "forms") {
+              setSelectedWorkspace(null);
+              setStep(2);
+            } else {
+              setSelectedWorkspace({
+                id: "blank",
+                name: "Blank Workspace",
+                category: "New Workspace",
+                tags: ["Workspace", "Blank"],
+                iconId: "layout-template",
+                description:
+                  "Start with a clean slate, no pre-built templates.",
+                author: "Team Deforge",
+              });
+              setStep(3);
+            }
+          } else if (step === 2) {
+            setStep(3);
+          } else {
+            handleCreateWorkflow(
+              selectedWorkspace.id,
+              selectedWorkspace.id === "blank" ? "editor" : "form"
+            );
+          }
+        }}
       >
         <ModalContent className="p-0">
           <ModalHeader className="p-4 flex-col">

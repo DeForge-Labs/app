@@ -10,10 +10,33 @@ import {
 } from "@heroui/react";
 import { Undo2, Loader2 } from "lucide-react";
 import useRevertTemplate from "@/hooks/useRevertTemplate";
+import { useEffect } from "react";
 
 export default function RevertButton({ templateId }) {
   const { isOpen, setIsOpen, isRevertingTemplate, handleRevertTemplate } =
     useRevertTemplate();
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (isRevertingTemplate) return;
+
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+
+      if (e.key === "Enter") {
+        handleRevertTemplate(templateId);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, [isOpen, isRevertingTemplate, handleRevertTemplate, templateId]);
 
   return (
     <>

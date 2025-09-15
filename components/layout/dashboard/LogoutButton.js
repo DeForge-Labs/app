@@ -11,6 +11,7 @@ import {
   ModalBody,
   ModalFooter,
 } from "@heroui/react";
+import { useEffect } from "react";
 
 export default function LogoutButton() {
   const router = useRouter();
@@ -20,6 +21,26 @@ export default function LogoutButton() {
     localStorage.removeItem("token");
     router.push("/");
   };
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+
+      if (e.key === "Enter") {
+        handleLogout();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, [isOpen, handleLogout]);
 
   return (
     <>

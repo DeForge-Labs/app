@@ -12,10 +12,34 @@ import {
 import { cn } from "@/lib/utils";
 import { FlaskConical, Loader2 } from "lucide-react";
 import useFallbackWorkflow from "@/hooks/useFallbackWorkflow";
+import { useEffect } from "react";
 
 export default function FallbackButton({ className, showTooltip = true }) {
   const { isOpen, setIsOpen, isFallbacking, handleFallbackWorkflow } =
     useFallbackWorkflow();
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (isFallbacking) return;
+
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+
+      if (e.key === "Enter") {
+        handleFallbackWorkflow();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, [isOpen, isFallbacking, handleFallbackWorkflow]);
+
   return (
     <>
       {showTooltip && (

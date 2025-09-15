@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 const icons = [
   "layout-template",
@@ -61,6 +62,83 @@ export default function PublishButton() {
   const [author, setAuthor] = useState("");
 
   const isFormEmpty = components?.length === 0;
+
+  useEffect(() => {
+    if (!isTemplateOpen) return;
+
+    if (
+      isPublishingTemplate ||
+      !name ||
+      !description ||
+      !category ||
+      !author ||
+      tags.length === 0 ||
+      !selectedIcon
+    )
+      return;
+
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") {
+        setIsTemplateOpen(false);
+      }
+
+      if (e.key === "Enter") {
+        if (step === 1) {
+          return;
+        }
+        handlePublishTemplate(
+          name,
+          description,
+          category,
+          tags,
+          selectedIcon,
+          visibility,
+          author,
+          workspace?.id,
+          workspace?.teamId
+        );
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, [
+    isOpen,
+    isPublishingTemplate,
+    handlePublishTemplate,
+    workspace?.id,
+    name,
+    description,
+    category,
+    author,
+    tags,
+    selectedIcon,
+  ]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (isPublishingForm) return;
+
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+
+      if (e.key === "Enter") {
+        handlePublishForm(workspace?.id, "FORM");
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, [isOpen, isPublishingForm, handlePublishForm, workspace?.id]);
 
   return (
     <>

@@ -15,6 +15,7 @@ import { Loader2 } from "lucide-react";
 import LoginForm from "../onboard/LoginForm";
 import Image from "next/image";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 export default function UseButton() {
   const { isOpen, setIsOpen, handleCloneTemplate, isCloningTemplate } =
@@ -23,6 +24,28 @@ export default function UseButton() {
   const user = useSelector((state) => state.user.user);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const selectedTeam = useSelector((state) => state.template.selectedTeam);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (isCloningTemplate) return;
+
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+
+      if (e.key === "Enter") {
+        handleCloneTemplate(selectedTeam);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, [isOpen, handleCloneTemplate, selectedTeam, isCloningTemplate]);
 
   return (
     <>

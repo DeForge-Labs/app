@@ -10,10 +10,33 @@ import {
 } from "@heroui/react";
 import { Loader2, Trash2 } from "lucide-react";
 import useDeleteWorkflow from "@/hooks/useDeleteWorkflow";
+import { useEffect } from "react";
 
 export default function DeleteButton({ workflowId }) {
   const { isOpen, setIsOpen, handleDeleteWorkflow, isDeletingWorkflow } =
     useDeleteWorkflow();
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (isDeletingWorkflow) return;
+
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+
+      if (e.key === "Enter") {
+        handleDeleteWorkflow(workflowId);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, [isOpen, isDeletingWorkflow, handleDeleteWorkflow, workflowId]);
 
   return (
     <>

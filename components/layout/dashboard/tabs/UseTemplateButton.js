@@ -11,6 +11,7 @@ import {
 } from "@heroui/react";
 import { Loader2, Plus } from "lucide-react";
 import CreateWorkspaceSection from "../CreateWorkspaceSection";
+import { useEffect } from "react";
 
 export default function UseTemplateButton({ template }) {
   const {
@@ -21,6 +22,35 @@ export default function UseTemplateButton({ template }) {
     setWorkflowName,
     handleCreateWorkflow,
   } = useWorkflow();
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (isCreatingWorkflow) return;
+
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+
+      if (e.key === "Enter") {
+        if (!workflowName) return;
+        handleCreateWorkflow(template.id, "form");
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, [
+    isOpen,
+    isCreatingWorkflow,
+    handleCreateWorkflow,
+    template,
+    workflowName,
+  ]);
 
   return (
     <>

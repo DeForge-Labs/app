@@ -12,6 +12,7 @@ import {
 } from "@heroui/react";
 import { Loader2 } from "lucide-react";
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 export default function FormSaveButton() {
   const hasUnsavedChanges = useSelector(
@@ -28,6 +29,28 @@ export default function FormSaveButton() {
   );
 
   const workflow = useSelector((state) => state.workflow.workflow);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (isSavingWorkflow) return;
+
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+
+      if (e.key === "Enter") {
+        handleSaveWorkflow();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, [isOpen, isSavingWorkflow, handleSaveWorkflow]);
 
   return (
     <>
