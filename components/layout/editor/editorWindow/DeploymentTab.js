@@ -9,6 +9,7 @@ import WidgetDeployment from "./deployments/WidgetDeployments";
 import GmailDeployment from "./deployments/GmailDeployments";
 import { cn } from "@/lib/utils";
 import Stats from "./Stats";
+import ApiTriggerDeployment from "./deployments/ApiTriggerDeployment";
 
 export default function DeploymentTab({ padding = true }) {
   const isWorkflowInitializing = useSelector(
@@ -33,6 +34,9 @@ export default function DeploymentTab({ padding = true }) {
   const isGmailTriggerPresent =
     nodes.filter((node) => node?.type === "gmail_trigger").length > 0;
 
+  const isApiTriggerPresent =
+    nodes.filter((node) => node?.type === "api_trigger").length > 0;
+
   if (isWorkflowInitializing) {
     return <LogoAnimation opacity={0.5} />;
   }
@@ -54,6 +58,7 @@ export default function DeploymentTab({ padding = true }) {
         {isTelegramTriggerPresent && <TelegramDeployment />}
         {isWidgetTriggerPresent && <WidgetDeployment />}
         {isGmailTriggerPresent && <GmailDeployment />}
+        {isApiTriggerPresent && <ApiTriggerDeployment />}
       </div>
     </div>
   );

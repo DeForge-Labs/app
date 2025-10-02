@@ -5,7 +5,8 @@ import { cn } from "@/lib/utils";
 import { Tooltip } from "@heroui/react";
 import { Button } from "@heroui/react";
 import { Loader2, Play } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setPanel } from "@/redux/slice/WorkflowSlice";
 
 export default function RunButton({ className }) {
   const isRunning = useSelector((state) => state.run.isRunning);
@@ -13,6 +14,7 @@ export default function RunButton({ className }) {
   const workflow = useSelector((state) => state.workflow.workflow);
   const nodes = useSelector((state) => state.workflow.nodes || []);
   const { handleRun, handleRunLive } = useExecution();
+  const dispatch = useDispatch();
 
   const isTelegramTriggerPresent =
     nodes.filter((node) => node.type === "tg_trigger").length > 0;
@@ -25,6 +27,9 @@ export default function RunButton({ className }) {
 
   const isGmailTriggerPresent =
     nodes.filter((node) => node.type === "gmail_trigger").length > 0;
+
+  const isApiTriggerPresent =
+    nodes.filter((node) => node.type === "api_trigger").length > 0;
 
   return (
     !isTelegramTriggerPresent &&
@@ -41,6 +46,11 @@ export default function RunButton({ className }) {
         {workflow?.status !== "LIVE" ? (
           <Button
             onPress={() => {
+              if (isApiTriggerPresent) {
+                dispatch(setPanel(2));
+                return;
+              }
+
               if (isChatBotTriggerPresent) {
                 window.open(
                   `https://chat.deforge.io/?workflowId=${workflow?.id}&status=test`,
@@ -67,6 +77,11 @@ export default function RunButton({ className }) {
         ) : (
           <Button
             onPress={() => {
+              if (isApiTriggerPresent) {
+                dispatch(setPanel(2));
+                return;
+              }
+
               if (isChatBotTriggerPresent) {
                 window.open(
                   `https://chat.deforge.io/?workflowId=${workflow?.id}`,
