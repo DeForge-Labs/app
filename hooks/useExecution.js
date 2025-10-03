@@ -66,7 +66,7 @@ export default function useExecution() {
       dispatch(setIsRunning(true));
       dispatch(setType("live"));
 
-      const url = process.env.NEXT_PUBLIC_API_URL.split("/api")[0];
+      const url = process.env.NEXT_PUBLIC_API_URL.slice(0, -4);
 
       const response = await axios.get(`${url}/live/${workflow?.id}`);
 
