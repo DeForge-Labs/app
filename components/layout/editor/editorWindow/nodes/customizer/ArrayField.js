@@ -6,7 +6,6 @@ import { Link2Off } from "lucide-react";
 export default function ArrayField({
   field,
   totalValidConnections,
-  totalConnectedInputs,
   handleDisconnectAll,
   handleDisconnectExact,
 }) {
@@ -43,18 +42,21 @@ export default function ArrayField({
         </p>
         {totalValidConnections.length > 0 ? (
           <div className="mt-2 space-y-1">
-            {totalConnectedInputs.map((edgeId, index) => {
+            {/* --- THIS IS THE CORRECTED LINE --- */}
+            {/* We now map over the correctly filtered `totalValidConnections` array */}
+            {totalValidConnections.map((connection, index) => {
               return (
                 <div
                   key={index}
                   className="flex justify-between items-center text-xs"
                 >
-                  <span>Connection {index + 1}</span>
+                  {/* You can display more info here if you want, e.g., connection.source */}
+                  <span>Connection from: {connection.source}</span>
                   <Button
                     variant="icon"
                     size="icon"
                     className="h-5 w-5 p-0 bg-black/80 text-background rounded-md dark:bg-background dark:text-black"
-                    onPress={() => handleDisconnectExact(edgeId.edgeId)}
+                    onPress={() => handleDisconnectExact(connection.id)}
                   >
                     <Link2Off className="h-3 w-3" />
                   </Button>

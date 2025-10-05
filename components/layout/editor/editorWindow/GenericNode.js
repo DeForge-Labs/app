@@ -118,7 +118,13 @@ export function GenericNode({ id, type, data }) {
   // Render field based on its type
   const renderField = (field, index) => {
     // Check if this field corresponds to an input that's connected
-    const isConnected = connectedInputs.has(field.name);
+    const handleId = `input-${field.name}-${field.type}`;
+    const totalValidConnections = edges.filter(
+      (edge) => edge.target === id && edge.targetHandle === handleId
+    ).length;
+
+    const isConnected = totalValidConnections > 0;
+
     const isDisabled =
       isConnected && nodeType.inputs.some((input) => input.name === field.name);
 
@@ -131,14 +137,6 @@ export function GenericNode({ id, type, data }) {
 
     // Get current value or use default from field definition
     const currentValue = data[field.name] !== undefined ? data[field.name] : "";
-
-    const totalValidConnections = isArrayInput
-      ? totalConnectedInputs.filter(
-          (input) =>
-            input.toLowerCase() ===
-            matchingInput?.type.split("[]")[0].toLowerCase()
-        ).length
-      : totalConnectedInputs.length;
 
     switch (field.type) {
       case "Text":

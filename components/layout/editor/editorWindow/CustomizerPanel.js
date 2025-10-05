@@ -169,24 +169,26 @@ export default function CustomizerPanel() {
 
             {/* Show all fields based on node type */}
             {nodeType.fields.map((field, index) => {
-              // Check if this field corresponds to an input
+              const handleId = `input-${field.name}-${field.type}`;
+
+              // 1. Get the actual connection objects for this specific field
+              const connectionsForThisField = edges.filter(
+                (edge) =>
+                  edge.target === selectedNode.id &&
+                  edge.targetHandle === handleId
+              );
+
+              // 2. The connection count is just the length of that array
+              const totalValidConnections = connectionsForThisField.length;
+
+              // 3. The connection status is based on the count
+              const isConnected = totalValidConnections > 0;
+
+              // Your existing logic for these is fine
               const matchingInput = nodeType.inputs.find(
                 (input) => input.name === field.name
               );
               const isInput = !!matchingInput;
-
-              const isConnected = connectedInputs.has(field.name);
-
-              const isArrayInput =
-                matchingInput && isArrayType(matchingInput.type);
-
-              const totalValidConnections = isArrayInput
-                ? totalConnectedInputs.filter(
-                    (input) =>
-                      input.sourceName.toLowerCase() ===
-                      matchingInput?.type.split("[]")[0].toLowerCase()
-                  )
-                : totalConnectedInputs;
 
               // Render the field based on its type
               switch (field.type) {
@@ -255,8 +257,7 @@ export default function CustomizerPanel() {
                     <ArrayField
                       field={field}
                       key={index}
-                      totalValidConnections={totalValidConnections}
-                      totalConnectedInputs={totalConnectedInputs}
+                      totalValidConnections={connectionsForThisField}
                       handleDisconnectAll={handleDisconnectAll}
                       handleDisconnectExact={handleDisconnectExact}
                     />
@@ -268,8 +269,7 @@ export default function CustomizerPanel() {
                     <ArrayField
                       field={field}
                       key={index}
-                      totalValidConnections={totalValidConnections}
-                      totalConnectedInputs={totalConnectedInputs}
+                      totalValidConnections={connectionsForThisField}
                       handleDisconnectAll={handleDisconnectAll}
                       handleDisconnectExact={handleDisconnectExact}
                     />
@@ -281,8 +281,7 @@ export default function CustomizerPanel() {
                     <ArrayField
                       field={field}
                       key={index}
-                      totalValidConnections={totalValidConnections}
-                      totalConnectedInputs={totalConnectedInputs}
+                      totalValidConnections={connectionsForThisField}
                       handleDisconnectAll={handleDisconnectAll}
                       handleDisconnectExact={handleDisconnectExact}
                     />
