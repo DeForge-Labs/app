@@ -381,7 +381,7 @@ export default function CustomizerPanel() {
               Environment Variables
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4">
+          <CardContent className="p-4 flex flex-col gap-4">
             {nodeType.fields.map((field, index) => {
               return (
                 field.type === "env" && <EnvField key={index} field={field} />
