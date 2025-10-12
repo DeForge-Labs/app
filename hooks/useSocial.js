@@ -156,6 +156,24 @@ export default function useSocial() {
     return response;
   };
 
+  const handleHubSpot = async (workflowId) => {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    };
+
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/workflow/connectSocial/${workflowId}?social=hubspot`,
+      {},
+      { headers }
+    );
+
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+
+    return response;
+  };
+
   return {
     handleYouTube,
     handleTwitter,
@@ -164,6 +182,7 @@ export default function useSocial() {
     handleGmailRead,
     handleSlack,
     handleGoogleSheets,
+    handleHubSpot,
     getSocial,
   };
 }

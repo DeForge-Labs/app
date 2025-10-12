@@ -43,6 +43,8 @@ export default function useConnectSocial() {
         console.log("Received broadcast message:", event.data);
         messageReceived = true;
 
+        console.log("event.data.type", event.data.type);
+
         if (event.data.type === "SOCIAL_AUTH_SUCCESS") {
           if (!isResolved) {
             isResolved = true;

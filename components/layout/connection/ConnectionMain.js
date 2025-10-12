@@ -13,7 +13,7 @@ export default function ConnectionMain() {
   const key = searchParams.get("key");
   const user = useSelector((state) => state.user.user);
   const isInitializing = useSelector((state) => state.user.isInitializing);
-  const { 
+  const {
     handleYouTube,
     handleTwitter,
     handleLinkedIn,
@@ -21,6 +21,7 @@ export default function ConnectionMain() {
     handleGmailRead,
     handleSlack,
     handleGoogleSheets,
+    handleHubSpot,
   } = useSocial();
 
   const connectionTypes = [
@@ -58,7 +59,12 @@ export default function ConnectionMain() {
       name: "Google Sheets",
       key: "google_sheets",
       type: "redirect",
-    }
+    },
+    {
+      name: "HubSpot",
+      key: "hubspot",
+      type: "redirect",
+    },
   ];
 
   const connectionType = key
@@ -215,6 +221,25 @@ export default function ConnectionMain() {
     } else if (connectionType.key === "google_sheets") {
       try {
         const response = await handleGoogleSheets(workflowId);
+
+        if (!response.data.success) {
+          throw new Error(response.data.message);
+        }
+
+        window.location.href = response.data.authURL;
+      } catch (error) {
+        console.log(error);
+        window.opener.postMessage(
+          {
+            type: "SOCIAL_AUTH_ERROR",
+            message: error.message,
+          },
+          window.location.origin
+        );
+      }
+    } else if (connectionType.key === "hubspot") {
+      try {
+        const response = await handleHubSpot(workflowId);
 
         if (!response.data.success) {
           throw new Error(response.data.message);
