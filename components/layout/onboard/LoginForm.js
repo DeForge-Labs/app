@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button, Input, InputOtp } from "@heroui/react";
+import { InputOtp } from "@heroui/react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Code, Loader2, Mail, User } from "lucide-react";
 import useOnboard from "@/hooks/useOnboard";
 
@@ -206,28 +208,25 @@ export default function LoginForm({
           );
         }}
       >
-        <p className="mt-5 text-sm dark:text-background">
+        <p className="mt-5 text-xs dark:text-foreground">
           Enter your email to access your account
         </p>
 
         <Input
           type="text"
           placeholder="Enter your email"
-          className="border border-black/40 rounded-xl mt-3 shadow-none dark:border-background dark:text-background"
+          className="border border-black/40 py-1 rounded-sm mt-3 shadow-none dark:border-foreground dark:text-foreground"
           size="lg"
           variant="outline"
-          startContent={<Mail className="text-black/40 dark:text-background" />}
-          isClearable
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          onClear={() => setEmail("")}
         />
 
         <div className="mt-3 flex w-full gap-2">
           <Button
-            className="w-full rounded-full p-7 dark:bg-background dark:text-black bg-black/80 text-background"
+            className="w-full py-3 dark:bg-foreground dark:text-black text-background bg-black/80"
             type="submit"
-            isDisabled={isRequestingLogin}
+            disabled={isRequestingLogin}
           >
             {isRequestingLogin ? (
               <Loader2 className="animate-spin" />
@@ -236,7 +235,7 @@ export default function LoginForm({
             )}
           </Button>
         </div>
-        <p className="mt-5 text-sm dark:text-background">
+        <p className="mt-3 text-xs dark:text-foreground">
           By pressing "Continue", you agree to our{" "}
           <a
             href="/ToS"

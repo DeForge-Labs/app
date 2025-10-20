@@ -2,8 +2,6 @@ import { Lexend_Deca } from "next/font/google";
 
 import "./globals.css";
 
-import UiProvider from "@/providers/UiProvider";
-
 import ReduxProvider from "@/providers/ReduxProvider";
 import { ThemeProvider } from "next-themes";
 import ToasterProvider from "@/providers/ToasterProvider";
@@ -33,10 +31,8 @@ export default function RootLayout({ children }) {
       >
         <ReduxProvider>
           <ThemeProvider attribute="class">
-            <UiProvider>
-              <ToasterProvider />
-              {children}
-            </UiProvider>
+            <ToasterProvider />
+            {children}
           </ThemeProvider>
         </ReduxProvider>
       </body>
