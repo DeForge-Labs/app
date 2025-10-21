@@ -1,11 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { InputOtp } from "@heroui/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Code, Loader2, Mail, User } from "lucide-react";
+import { Code, Loader2, User } from "lucide-react";
 import useOnboard from "@/hooks/useOnboard";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/InputOTP";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
 
 export default function LoginForm({
   onLoadingChange = () => {},
@@ -65,20 +71,15 @@ export default function LoginForm({
       >
         {isSignUp && (
           <>
-            <p className="mt-5 text-sm dark:text-background">
+            <p className="mt-5 text-xs dark:text-foreground">
               What should we call you?
             </p>
 
             <Input
               type="text"
               placeholder="Enter your username"
-              className="border border-black/40 rounded-xl mt-3 shadow-none dark:border-background dark:text-background"
-              size="lg"
+              className="border border-black/40 py-1 rounded-sm mt-2 shadow-none dark:border-foreground dark:text-foreground"
               variant="outline"
-              startContent={
-                <User className="text-black/40 dark:text-background" />
-              }
-              isClearable
               value={username}
               onChange={(e) => {
                 if (e.target.value.length > 20) {
@@ -86,64 +87,63 @@ export default function LoginForm({
                 }
                 setUsername(e.target.value);
               }}
-              onClear={() => setUsername("")}
             />
           </>
         )}
 
-        <p className="mt-5 text-sm dark:text-background">
-          We sent a code to {email}
+        <p className="mt-5 text-xs dark:text-foreground">
+          We sent a code to{" "}
+          {email.length < 30 ? email : email.slice(0, 27) + "..."}
         </p>
 
-        <InputOtp
-          className="rounded-xl mt-1 shadow-none text-black items-center dark:text-background"
-          size="lg"
-          variant="bordered"
-          length={"6"}
-          color="black"
-          errorMessage="Enter a valid code"
-          fullWidth
-          classNames={{
-            segmentWrapper: "gap-x-3",
-            segment: [
-              "relative",
-              "h-10",
-              "w-10",
-              "border-y",
-              "border-l",
-              "border-r",
-              "border-default-200",
-              "data-[active=true]:border",
-              "data-[active=true]:border-black",
-              "data-[active=true]:z-20",
-              "data-[active=true]:ring-2",
-              "data-[active=true]:ring-offset-2",
-              "data-[active=true]:ring-offset-background",
-              "data-[active=true]:ring-foreground",
-              "data-[active=true]:ring-black/40",
-            ],
-          }}
-          radius="lg"
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-        />
+        <div className="mt-2 mb-4">
+          <InputOTP
+            maxLength={6}
+            pattern={REGEXP_ONLY_DIGITS}
+            value={otp}
+            onChange={(e) => setOtp(e)}
+          >
+            <InputOTPGroup className="w-full">
+              <InputOTPSlot
+                index={0}
+                className="h-14 border-black/40 bg-background rounded-l-sm dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1"
+              />
+              <InputOTPSlot
+                index={1}
+                className="h-14 border-black/40 bg-background dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1"
+              />
+              <InputOTPSlot
+                index={2}
+                className="h-14 border-black/40 bg-background dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1"
+              />
+
+              <InputOTPSlot
+                index={3}
+                className="h-14 border-black/40 bg-background dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1"
+              />
+              <InputOTPSlot
+                index={4}
+                className="h-14 border-black/40 bg-background dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1"
+              />
+              <InputOTPSlot
+                index={5}
+                className="h-14 border-black/40 bg-background dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1 rounded-r-sm"
+              />
+            </InputOTPGroup>
+          </InputOTP>
+        </div>
 
         {isSignUp && (
           <>
-            <p className="mt-3 text-sm dark:text-background">
+            <p className="text-xs dark:text-foreground">
               Have a referral code?
             </p>
 
             <Input
               type="text"
               placeholder="Referral Code (Optional)"
-              className="border border-black/40 mb-5 rounded-xl mt-3 shadow-none dark:border-background dark:text-background"
-              size="lg"
+              className="border border-black/40 py-1 mb-4 rounded-sm mt-2 shadow-none dark:border-foreground dark:text-foreground"
               variant="outline"
-              startContent={
-                <Code className="text-black/40 dark:text-background" />
-              }
-              isClearable
               value={referralCode}
               onChange={(e) => {
                 if (e.target.value.length > 20) {
@@ -151,20 +151,19 @@ export default function LoginForm({
                 }
                 setReferralCode(e.target.value);
               }}
-              onClear={() => setReferralCode("")}
             />
           </>
         )}
 
         <div className="mt-1 flex w-full gap-2">
           <Button
-            className="w-full rounded-full p-7 border border-black/40 dark:border-background dark:text-background"
+            className="h-11 flex-1 dark:bg-background dark:text-foreground border border-black/40 dark:border-foreground text-black rounded-sm text-xs"
             variant="outline"
             type="button"
-            onPress={() => {
+            onClick={() => {
               resend(email, setIsResending, setTimeout);
             }}
-            isDisabled={isResending || isVerifying || timeout > 0}
+            disabled={isResending || isVerifying || timeout > 0}
           >
             {timeout > 0 ? (
               `Resend in ${timeout}`
@@ -175,16 +174,16 @@ export default function LoginForm({
             )}
           </Button>
           <Button
-            className="w-full rounded-full p-7 dark:bg-background dark:text-black bg-black/80 text-background"
+            className="h-11 flex-1 dark:bg-foreground dark:text-black bg-black/80 text-white rounded-sm text-xs"
             type="submit"
-            isDisabled={isVerifying || isResending}
+            disabled={isVerifying || isResending}
           >
             {isVerifying ? <Loader2 className="animate-spin" /> : "Verify"}
           </Button>
         </div>
 
         <div
-          className="mt-3 ml-1 flex w-full text-black/60 hover:text-black/80 hover:underline cursor-pointer text-xs dark:text-background"
+          className="mt-2 ml-1 flex w-full text-black/60 hover:text-black/80 hover:underline cursor-pointer text-xs dark:text-foreground"
           onClick={() => {
             if (isVerifying || isResending) return;
 
@@ -224,7 +223,7 @@ export default function LoginForm({
 
         <div className="mt-3 flex w-full gap-2">
           <Button
-            className="w-full py-3 dark:bg-foreground dark:text-black text-background bg-black/80"
+            className="w-full h-11 dark:bg-foreground dark:text-black text-background bg-black/80"
             type="submit"
             disabled={isRequestingLogin}
           >

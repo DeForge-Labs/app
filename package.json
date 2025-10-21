@@ -19,6 +19,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.6.3",
+    "input-otp": "^1.4.2",
     "lucide-react": "^0.487.0",
     "motion": "^12.6.3",
     "next": "15.1.0",

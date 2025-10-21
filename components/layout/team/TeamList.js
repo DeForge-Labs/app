@@ -5,9 +5,9 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@heroui/react";
-import { Loader2, Plus } from "lucide-react";
+import { ChevronRight, Loader2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export default function TeamList() {
   const { getTeams } = useTeams();
@@ -35,9 +35,11 @@ export default function TeamList() {
   }, [user]);
 
   return (
-    <>
-      <p className="mt-5 text-sm dark:text-background">Your Teams</p>
-      <div className="h-[350px] relative w-full mt-3 overflow-hidden dark:text-background">
+    <div className="flex flex-col rounded-lg mt-4 border border-black/10 shadow-md bg-background">
+      <div className="px-4 border-b border-black/10 py-4">
+        <p className="text-xs dark:text-background">Your Teams</p>
+      </div>
+      <div className="h-[350px] relative w-full overflow-hidden dark:text-background">
         {isFetching ? (
           <div className="flex items-center justify-center h-full">
             <Loader2 className="animate-spin" />
@@ -54,26 +56,24 @@ export default function TeamList() {
               teams.map((team) => (
                 <Button
                   key={team.teamId}
-                  className="w-full mb-2 rounded-xl py-9 px-4 border border-black/40 justify-between dark:border-background dark:text-background"
+                  className="w-full mb-2 rounded-none py-4 shadow-none px-4 border-b border-x-0 border-t-0 border-black/10 justify-between dark:border-background dark:text-background text-xs"
                   variant="outline"
-                  onPress={() => {
+                  onClick={() => {
                     router.push(`/dashboard/${team.teamId}`);
                     localStorage.setItem(`team_${user.id}`, team.teamId);
                   }}
                 >
                   <div className="flex flex-col items-start">
-                    <p className="font-semibold text-black/80 text-lg dark:text-background">
+                    <p className="font-semibold text-black/80 text-sm dark:text-background">
                       {team.team.name.length > 15
                         ? team.team.name.slice(0, 15) + "..."
                         : team.team.name}
                     </p>
-                    <p className="text-black/60 text-xs dark:text-background">
+                    <p className="text-black/60 text-[10px] dark:text-background">
                       Joined at {new Date(team.joinedAt).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="flex items-center capitalize bg-black/70 p-2 py-1 rounded-md text-xs text-[var(--primary)] dark:bg-background dark:text-black">
-                    {team.role.toLowerCase()}
-                  </div>
+                  <ChevronRight className="h-3 w-3" />
                 </Button>
               ))}
           </div>
@@ -81,14 +81,14 @@ export default function TeamList() {
       </div>
 
       <Button
-        className="w-full mt-3 rounded-full p-7 border border-black/40 dark:border-background dark:text-background"
+        className="h-11 flex-1 dark:bg-background dark:text-foreground border-t py-3 border-x-0 border-b-0 border-black/10 dark:border-foreground text-info items-start justify-start px-4 rounded-lg rounded-t-none text-xs"
         variant="outline"
-        onPress={() => {
+        onClick={() => {
           router.push("/team/create");
         }}
       >
-        <Plus className="mr-2" /> Create or Join Team
+        <Plus className="h-3 w-3" /> Create or Join Team
       </Button>
-    </>
+    </div>
   );
 }
