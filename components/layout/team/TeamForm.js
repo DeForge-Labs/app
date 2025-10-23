@@ -1,11 +1,14 @@
 "use client";
 
 import useTeams from "@/hooks/useTeams";
-import { Tab, Tabs, Input, Button } from "@heroui/react";
+import { Tab, Tabs } from "@heroui/react";
+import { Button } from "@/components/ui/button";
 import { Asterisk, Loader2, UsersRound } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 export default function TeamForm() {
   const [tab, setTab] = useState("create");
@@ -43,25 +46,6 @@ export default function TeamForm() {
     }
   };
 
-  const handleSkipTeam = async () => {
-    try {
-      setIsSkipping(true);
-
-      const response = await skipTeam();
-
-      if (response) {
-        router.push("/team");
-      } else {
-        toast.error("Something went wrong");
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to skip team");
-    } finally {
-      setIsSkipping(false);
-    }
-  };
-
   const handleJoinTeam = async (invitationCode) => {
     try {
       setIsJoining(true);
@@ -82,41 +66,46 @@ export default function TeamForm() {
   };
 
   return (
-    <>
-      <Tabs
-        aria-label="Tabs radius"
-        radius={"lg"}
-        className="mt-5"
-        variant="bordered"
-        fullWidth
-        classNames={{
-          tabList: "relative border-1 border-black/50 dark:border-background",
-          tabContent:
-            "text-black/80 cursor-pointer dark:text-background dark:border-background dark:group-data-[selected=true]:text-black/80 group-data-[selected=true]:text-background",
-          cursor: "dark:bg-background bg-black/80",
-        }}
-        selectedKey={tab}
-        onSelectionChange={setTab}
-      >
-        <Tab key="create" title="Create a Team" className="py-6" />
-        <Tab key="join" title="Join a Team" className="py-6" />
-      </Tabs>
+    <div className="flex flex-col rounded-lg mt-5 border border-black/10 shadow-md bg-background dark:bg-foreground/5 dark:border-white/10">
+      <div className="flex w-full">
+        <Button
+          className={cn(
+            "flex-1 h-11 text-xs border-black/10 before:rounded-b-none dark:before:rounded-tl-lg border-t-0 before:rounded-t-none dark:border-white/10 border-l-0 rounded-tr-none rounded-b-none dark:bg-transparent text-foreground/60 shadow-none",
+            tab === "create" && "border-b-0 border-r-0"
+          )}
+          variant="outline"
+          onClick={() => {
+            setTab("create");
+          }}
+          disabled={tab === "create"}
+        >
+          Create
+        </Button>
+
+        <Button
+          className={cn(
+            "flex-1 h-11 text-xs border-black/10 before:rounded-b-none dark:before:rounded-tr-lg before:rounded-t-none dark:border-white/10 border-r-0 rounded-tl-none rounded-b-none dark:bg-transparent dark:border-t-0 text-foreground/60 shadow-none",
+            tab === "join" && "border-b-0 border-l-0"
+          )}
+          variant="outline"
+          onClick={() => {
+            setTab("join");
+          }}
+          disabled={tab === "join"}
+        >
+          Join
+        </Button>
+      </div>
 
       {tab === "create" && (
         <>
-          <p className="mt-5 text-sm dark:text-background">Team Name</p>
+          <p className="mt-3 text-xs dark:text-foreground px-4 ">Team Name</p>
 
           <Input
             type="text"
             placeholder="Enter your team name"
-            className="border border-black/40 rounded-xl mt-3 shadow-none dark:border-background dark:text-background"
-            size="lg"
+            className="border border-black/10 py-1 before:rounded-sm mt-3 shadow-none dark:border-foreground dark:text-foreground px-1 w-[91%]  mx-auto rounded-sm "
             variant="outline"
-            startContent={
-              <UsersRound className="text-black/40 dark:text-background" />
-            }
-            isClearable
-            onClear={() => setName("")}
             value={name}
             onChange={(e) => {
               if (e.target.value.length > 20) {
@@ -126,33 +115,33 @@ export default function TeamForm() {
             }}
           />
 
-          <div className="mt-3 rounded-2xl p-4 border border-black/40 dark:border-background">
-            <h4 className="font-medium text-black/80 flex items-center dark:text-background">
+          <div className="mt-2 rounded-2xl px-4">
+            <h4 className="text-sm text-black/80 flex items-center dark:text-foreground">
               Benefits of creating a team
             </h4>
-            <ul className="mt-2 text-xs text-black/60 space-y-1 dark:text-background">
+            <ul className="mt-2 text-xs text-black/60 space-y-1 dark:text-foreground">
               <li>• Collaborate with team members on AI agents</li>
               <li>• Share resources and templates</li>
               <li>• Manage permissions and access controls</li>
-              <li>• Track team activity and progress</li>
             </ul>
           </div>
 
-          <div className="mt-3 flex w-full gap-2">
+          <div className="mt-3 flex w-full">
             <Button
-              className="w-full rounded-full p-7 bg-black/80 dark:bg-background dark:text-black text-background"
-              onPress={() => handleCreateTeam(name)}
-              isDisabled={isCreating || isSkipping || !name}
-            >
-              {isCreating ? <Loader2 className="animate-spin" /> : "Create"}
-            </Button>
-            <Button
-              className="w-full rounded-full p-7 border border-black/40 dark:border-background dark:text-background"
+              className="flex-1 h-11 text-xs border-black/10 before:rounded-t-none dark:bg-transparent dark:border-white/10 border-l-0 border-b-0 rounded-br-none rounded-t-none text-destructive"
               variant="outline"
-              isDisabled={isCreating || isSkipping}
-              onPress={() => router.push("/team")}
+              disabled={isCreating || isSkipping}
+              onClick={() => router.push("/team")}
             >
               {isSkipping ? <Loader2 className="animate-spin" /> : "Back"}
+            </Button>
+            <Button
+              className="flex-1 h-11 text-xs border-black/10 before:rounded-t-none dark:bg-transparent dark:border-white/10 border-x-0 border-b-0 rounded-bl-none rounded-t-none text-info"
+              variant="outline"
+              onClick={() => handleCreateTeam(name)}
+              disabled={isCreating || isSkipping || !name}
+            >
+              {isCreating ? <Loader2 className="animate-spin" /> : "Create"}
             </Button>
           </div>
         </>
@@ -160,50 +149,48 @@ export default function TeamForm() {
 
       {tab === "join" && (
         <>
-          <p className="mt-5 text-sm dark:text-background">Invitation Code</p>
+          <p className="mt-3 text-xs dark:text-foreground px-4">
+            Invitation Code
+          </p>
 
           <Input
             type="text"
             placeholder="Enter your invitation code"
-            className="border border-black/40 rounded-xl mt-3 shadow-none dark:border-background dark:text-background"
+            className="border border-black/10 py-1 before:rounded-sm mt-3 shadow-none dark:border-foreground dark:text-foreground px-1 w-[91%]  mx-auto rounded-sm"
             size="lg"
             variant="outline"
-            startContent={
-              <Asterisk className="text-black/40 dark:text-background" />
-            }
-            isClearable
-            onClear={() => setInvitationCode("")}
             value={invitationCode}
             onChange={(e) => setInvitationCode(e.target.value)}
           />
 
-          <div className="mt-3 rounded-2xl p-4 border border-black/40 dark:border-background">
-            <p className="text-xs text-black/60 dark:text-background">
+          <div className="mt-2 rounded-2xl px-4">
+            <p className="text-xs text-black/60 dark:text-foreground">
               Ask your team admin for an invitation code to join their team.
             </p>
           </div>
 
-          <div className="mt-3 flex w-full gap-2">
+          <div className="mt-3 flex w-full">
             <Button
-              className="w-full rounded-full p-7 bg-black/80 dark:bg-background dark:text-black text-background"
-              onPress={() => handleJoinTeam(invitationCode)}
-              isDisabled={isJoining || isSkipping || !invitationCode}
-            >
-              {isJoining ? <Loader2 className="animate-spin" /> : "Join"}
-            </Button>
-            <Button
-              className="w-full rounded-full p-7 border border-black/40 dark:border-background dark:text-background"
+              className="flex-1 h-11 text-xs border-black/10 before:rounded-t-none dark:bg-transparent dark:border-white/10 border-l-0 border-b-0 rounded-br-none rounded-t-none text-destructive"
               variant="outline"
-              onPress={() => {
+              onClick={() => {
                 router.push("/team");
               }}
-              isDisabled={isJoining || isSkipping}
+              disabled={isJoining || isSkipping}
             >
               {isSkipping ? <Loader2 className="animate-spin" /> : "Back"}
+            </Button>
+            <Button
+              className="flex-1 h-11 text-xs border-black/10 before:rounded-t-none dark:bg-transparent dark:border-white/10 border-x-0 border-b-0 rounded-bl-none rounded-t-none text-info"
+              onClick={() => handleJoinTeam(invitationCode)}
+              variant={"outline"}
+              disabled={isJoining || isSkipping || !invitationCode}
+            >
+              {isJoining ? <Loader2 className="animate-spin" /> : "Join"}
             </Button>
           </div>
         </>
       )}
-    </>
+    </div>
   );
 }

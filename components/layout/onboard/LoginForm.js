@@ -68,17 +68,18 @@ export default function LoginForm({
             verifyLogin(email, otp, setIsVerifying, embedded);
           }
         }}
+        className="flex flex-col rounded-lg border mt-6 border-black/10 shadow-md bg-background dark:bg-foreground/5 dark:border-white/10"
       >
         {isSignUp && (
           <>
-            <p className="mt-5 text-xs dark:text-foreground">
+            <p className="mt-5 text-xs dark:text-foreground px-4">
               What should we call you?
             </p>
 
             <Input
               type="text"
               placeholder="Enter your username"
-              className="border border-black/40 py-1 rounded-sm mt-2 shadow-none dark:border-foreground dark:text-foreground"
+              className="border border-black/10 py-1 before:rounded-sm mt-2 shadow-none dark:border-foreground dark:text-foreground px-1 w-[91%]  mx-auto rounded-sm "
               variant="outline"
               value={username}
               onChange={(e) => {
@@ -91,12 +92,12 @@ export default function LoginForm({
           </>
         )}
 
-        <p className="mt-5 text-xs dark:text-foreground">
+        <p className="mt-5 text-xs dark:text-foreground px-4">
           We sent a code to{" "}
           {email.length < 30 ? email : email.slice(0, 27) + "..."}
         </p>
 
-        <div className="mt-2 mb-4">
+        <div className="mt-2 px-4">
           <InputOTP
             maxLength={6}
             pattern={REGEXP_ONLY_DIGITS}
@@ -106,43 +107,58 @@ export default function LoginForm({
             <InputOTPGroup className="w-full">
               <InputOTPSlot
                 index={0}
-                className="h-14 border-black/40 bg-background rounded-l-sm dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1"
+                className="h-11 border-black/10 bg-background rounded-l-sm dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1"
               />
               <InputOTPSlot
                 index={1}
-                className="h-14 border-black/40 bg-background dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1"
+                className="h-11 border-black/10 bg-background dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1"
               />
               <InputOTPSlot
                 index={2}
-                className="h-14 border-black/40 bg-background dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1"
+                className="h-11 border-black/10 bg-background dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1"
               />
 
               <InputOTPSlot
                 index={3}
-                className="h-14 border-black/40 bg-background dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1"
+                className="h-11 border-black/10 bg-background dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1"
               />
               <InputOTPSlot
                 index={4}
-                className="h-14 border-black/40 bg-background dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1"
+                className="h-11 border-black/10 bg-background dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1"
               />
               <InputOTPSlot
                 index={5}
-                className="h-14 border-black/40 bg-background dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1 rounded-r-sm"
+                className="h-11 border-black/10 bg-background dark:border-foreground dark:data-[active=true]:ring-foreground/40 flex-1 rounded-r-sm"
               />
             </InputOTPGroup>
           </InputOTP>
         </div>
 
+        <div className="mt-2 w-full px-4 text-black/60 cursor-pointer text-xs dark:text-foreground">
+          Check spam folder if you don't receive the code.
+          <br />
+          <span
+            className="hover:underline cursor-pointer text-info"
+            onClick={() => {
+              if (isVerifying || isResending) return;
+
+              setIsOTPWindow(false);
+            }}
+          >
+            Not you?
+          </span>
+        </div>
+
         {isSignUp && (
           <>
-            <p className="text-xs dark:text-foreground">
+            <p className="text-xs dark:text-foreground px-4 mt-2">
               Have a referral code?
             </p>
 
             <Input
               type="text"
               placeholder="Referral Code (Optional)"
-              className="border border-black/40 py-1 mb-4 rounded-sm mt-2 shadow-none dark:border-foreground dark:text-foreground"
+              className="border border-black/10 py-1 before:rounded-sm mt-2 shadow-none dark:border-foreground dark:text-foreground px-1 w-[91%]  mx-auto rounded-sm "
               variant="outline"
               value={referralCode}
               onChange={(e) => {
@@ -155,9 +171,9 @@ export default function LoginForm({
           </>
         )}
 
-        <div className="mt-1 flex w-full gap-2">
+        <div className="mt-4 flex w-full">
           <Button
-            className="h-11 flex-1 dark:bg-background dark:text-foreground border border-black/40 dark:border-foreground text-black rounded-sm text-xs"
+            className="flex-1 h-11 text-xs border-black/10 before:rounded-t-none dark:border-white/10 border-l-0 border-b-0 rounded-br-none rounded-t-none text-destructive"
             variant="outline"
             type="button"
             onClick={() => {
@@ -174,86 +190,81 @@ export default function LoginForm({
             )}
           </Button>
           <Button
-            className="h-11 flex-1 dark:bg-foreground dark:text-black bg-black/80 text-white rounded-sm text-xs"
+            className="flex-1 h-11 text-xs border-black/10 before:rounded-t-none dark:border-white/10 border-x-0 border-b-0 rounded-bl-none rounded-t-none text-info"
+            variant="outline"
             type="submit"
             disabled={isVerifying || isResending}
           >
             {isVerifying ? <Loader2 className="animate-spin" /> : "Verify"}
           </Button>
         </div>
-
-        <div
-          className="mt-2 ml-1 flex w-full text-black/60 hover:text-black/80 hover:underline cursor-pointer text-xs dark:text-foreground"
-          onClick={() => {
-            if (isVerifying || isResending) return;
-
-            setIsOTPWindow(false);
-          }}
-        >
-          Not you?
-        </div>
       </form>
     );
   } else {
     return (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          requestLogin(
-            email,
-            setIsOTPWindow,
-            setIsRequestingLogin,
-            setIsSignUp
-          );
-        }}
-      >
-        <p className="mt-5 text-xs dark:text-foreground">
-          Enter your email to access your account
-        </p>
+      <>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            requestLogin(
+              email,
+              setIsOTPWindow,
+              setIsRequestingLogin,
+              setIsSignUp
+            );
+          }}
+          className="flex flex-col rounded-lg border mt-6 border-black/10 shadow-md bg-background dark:bg-foreground/5 dark:border-white/10"
+        >
+          <p className="mt-5 text-xs dark:text-foreground px-4">
+            Enter your email to access your account
+          </p>
 
-        <Input
-          type="text"
-          placeholder="Enter your email"
-          className="border border-black/40 py-1 rounded-sm mt-3 shadow-none dark:border-foreground dark:text-foreground"
-          size="lg"
-          variant="outline"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+          <Input
+            type="text"
+            placeholder="Enter your email"
+            className="border border-black/10 py-1 before:rounded-sm mt-3 shadow-none dark:border-foreground dark:text-foreground px-1 w-[91%]  mx-auto rounded-sm "
+            size="lg"
+            variant="outline"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-        <div className="mt-3 flex w-full gap-2">
-          <Button
-            className="w-full h-11 dark:bg-foreground dark:text-black text-background bg-black/80"
-            type="submit"
-            disabled={isRequestingLogin}
-          >
-            {isRequestingLogin ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              "Continue"
-            )}
-          </Button>
-        </div>
-        <p className="mt-3 text-xs dark:text-foreground">
-          By pressing "Continue", you agree to our{" "}
-          <a
-            href="/ToS"
-            target="_blank"
-            className="text-blue-600 hover:underline dark:text-blue-400"
-          >
-            Terms of Service
-          </a>{" "}
-          and{" "}
-          <a
-            href="/privacy"
-            target="_blank"
-            className="text-blue-600 hover:underline dark:text-blue-400"
-          >
-            Privacy Policy
-          </a>
-          .
-        </p>
-      </form>
+          <p className="mt-3 text-xs dark:text-foreground px-4">
+            By pressing "Continue", you agree to our{" "}
+            <a
+              href="/ToS"
+              target="_blank"
+              className="text-blue-600 hover:underline dark:text-blue-400"
+            >
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a
+              href="/privacy"
+              target="_blank"
+              className="text-blue-600 hover:underline dark:text-blue-400"
+            >
+              Privacy Policy
+            </a>
+            .
+          </p>
+
+          <div className="mt-3 flex w-full gap-2">
+            <Button
+              className="w-full h-11 before:rounded-t-none dark:bg-transparent text-xs border-black/10 dark:disabled:border-white/10 border-x-0 border-b-0 rounded-t-none text-info"
+              variant="outline"
+              type="submit"
+              disabled={isRequestingLogin}
+            >
+              {isRequestingLogin ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Continue"
+              )}
+            </Button>
+          </div>
+        </form>
+      </>
     );
   }
 }

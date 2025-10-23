@@ -35,11 +35,11 @@ export default function TeamList() {
   }, [user]);
 
   return (
-    <div className="flex flex-col rounded-lg mt-4 border border-black/10 shadow-md bg-background">
-      <div className="px-4 border-b border-black/10 py-4">
-        <p className="text-xs dark:text-background">Your Teams</p>
+    <div className="flex flex-col rounded-lg mt-4 border border-black/10 shadow-md bg-background dark:bg-foreground/5 dark:border-white/10">
+      <div className="px-4 border-b border-black/10 dark:border-white/10 py-4">
+        <p className="text-xs dark:text-foreground">Your Teams</p>
       </div>
-      <div className="h-[350px] relative w-full overflow-hidden dark:text-background">
+      <div className="h-[350px] relative w-full overflow-hidden dark:text-foreground">
         {isFetching ? (
           <div className="flex items-center justify-center h-full">
             <Loader2 className="animate-spin" />
@@ -48,7 +48,7 @@ export default function TeamList() {
           <div className="flex flex-col gap-2 overflow-y-auto h-full hide-scroll">
             {!teams ||
               (teams?.length === 0 && (
-                <p className="flex items-center justify-center h-full text-center text-black/60 dark:text-background">
+                <p className="flex items-center justify-center h-full text-center text-black/60 dark:text-foreground">
                   No teams found
                 </p>
               ))}
@@ -56,7 +56,7 @@ export default function TeamList() {
               teams.map((team) => (
                 <Button
                   key={team.teamId}
-                  className="w-full mb-2 rounded-none py-4 shadow-none px-4 border-b border-x-0 border-t-0 border-black/10 justify-between dark:border-background dark:text-background text-xs"
+                  className="w-full mb-2 before:rounded-none rounded-none py-4 shadow-none px-4 border-b border-x-0 border-t-0 border-black/10 justify-between dark:border-white/10 dark:bg-transparent dark:text-foreground text-xs"
                   variant="outline"
                   onClick={() => {
                     router.push(`/dashboard/${team.teamId}`);
@@ -64,16 +64,16 @@ export default function TeamList() {
                   }}
                 >
                   <div className="flex flex-col items-start">
-                    <p className="font-semibold text-black/80 text-sm dark:text-background">
+                    <p className="font-semibold text-black/80 text-sm dark:text-foreground">
                       {team.team.name.length > 15
                         ? team.team.name.slice(0, 15) + "..."
                         : team.team.name}
                     </p>
-                    <p className="text-black/60 text-[10px] dark:text-background">
+                    <p className="text-black/60 text-[10px] dark:text-foreground">
                       Joined at {new Date(team.joinedAt).toLocaleDateString()}
                     </p>
                   </div>
-                  <ChevronRight className="h-3 w-3" />
+                  <ChevronRight className="h-3 w-3 dark:text-foreground" />
                 </Button>
               ))}
           </div>
@@ -81,7 +81,7 @@ export default function TeamList() {
       </div>
 
       <Button
-        className="h-11 flex-1 dark:bg-background dark:text-foreground border-t py-3 border-x-0 border-b-0 border-black/10 dark:border-foreground text-info items-start justify-start px-4 rounded-lg rounded-t-none text-xs"
+        className="h-11 flex-1 dark:bg-transparent before:rounded-t-none dark:border-white/10 border-t py-3 border-x-0 border-b-0 border-black/10 text-info items-start justify-start px-4 rounded-b-lg rounded-t-none text-xs"
         variant="outline"
         onClick={() => {
           router.push("/team/create");
