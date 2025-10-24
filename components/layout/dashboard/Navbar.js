@@ -42,9 +42,12 @@ export default function Navbar() {
   const team = useSelector((state) => state.team.team);
   return (
     <header className="sticky top-0 z-50 bg-foreground/5">
-      <div className="flex items-center justify-between px-4 h-[50px]">
+      <div className="flex items-center justify-between px-2 h-[50px]">
         <div className="flex items-center gap-4 h-full">
-          <Link href="/" className="flex items-center justify-center space-x-2">
+          <Link
+            href="/"
+            className="flex items-center ml-1 justify-center space-x-2"
+          >
             <div className="p-1.5 bg-black/80 w-fit rounded-sm shadow-md shadow-[#8754ff]">
               <Image
                 src="/logo/logo-white.svg"
@@ -143,7 +146,7 @@ export default function Navbar() {
               render={
                 <Button
                   variant="outline"
-                  className="text-xs bg-background border border-foreground/20 rounded-sm [&_svg:not([class*='size-'])]:size-3"
+                  className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm [&_svg:not([class*='size-'])]:size-3"
                   onClick={() => {}}
                 >
                   <CircleDot />
@@ -185,7 +188,7 @@ export default function Navbar() {
               render={
                 <Button
                   variant="outline"
-                  className="text-xs bg-background border border-foreground/20 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
+                  className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
                   onClick={() => {}}
                 >
                   <Settings />

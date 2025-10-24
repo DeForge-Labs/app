@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@heroui/react";
 import {
   Activity,
   Grid2X2,
@@ -12,6 +11,10 @@ import {
   Zap,
   Bug,
   FileCode2,
+  Search,
+  LayoutGrid,
+  Globe,
+  Plus,
 } from "lucide-react";
 import Image from "next/image";
 import LogoutButton from "./LogoutButton";
@@ -19,6 +22,15 @@ import { setTab } from "@/redux/slice/TeamSlice";
 import { cn } from "@/lib/utils";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionPanel,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import SearchDialog from "./sidebar/SearchDialog";
 
 export default function Sidebar() {
   const router = useRouter();
@@ -26,151 +38,109 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="lg:w-80 w-64 border-r bg-black/5 dark:bg-white/5 border-black/50 relative overflow-y-auto hide-scroll dark:border-background dark:text-background p-3 px-0 flex flex-col">
-      <div className="flex items-center gap-2 p-4 pt-2 px-6 pb-0">
-        <Image
-          src="/logo/logo-black.svg"
-          alt="Logo"
-          width={24}
-          height={24}
-          className="dark:invert"
-        />
-        <span className="font-bold inline-block text-3xl dark:text-background">
-          Deforge
-        </span>
-      </div>
-
-      <div className="flex flex-col flex-1 justify-between px-4 pt-2">
-        <div className="flex flex-col mt-3">
+    <div className="w-[240px] bg-foreground/5 relative overflow-y-auto hide-scroll p-2 px-0 flex flex-col">
+      <div className="flex flex-col flex-1 justify-between p-2 py-0">
+        <div className="flex flex-col gap-[2px]">
           <Button
-            size="md"
-            className={cn(
-              "text-md transition-colors bg-transparent text-black dark:text-background justify-start",
-              pathname === `/dashboard/${params.id}`
-                ? "bg-black/80 text-background dark:bg-background dark:text-black"
-                : "hover:bg-black/5 hover:dark:bg-white/5"
-            )}
-            onPress={() => {
-              if (pathname === `/dashboard/${params.id}`) return;
-              router.push(`/dashboard/${params.id}`);
-            }}
+            className="flex gap-2 font-normal text-xs border border-foreground/20 rounded-sm"
+            variant="outline"
           >
-            <Grid2X2 size={20} />
-            Dashboard
+            <Plus />
+            New App
+          </Button>
+
+          <SearchDialog />
+
+          <Button
+            className="flex gap-2 bg-transparent font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
+            variant="outline"
+          >
+            <LayoutGrid />
+            Apps
           </Button>
 
           <Button
-            size="md"
-            className={cn(
-              "text-md transition-colors bg-transparent text-black dark:text-background justify-start",
-              pathname === `/workspaces/${params.id}`
-                ? "bg-black/80 text-background dark:bg-background dark:text-black"
-                : "hover:bg-black/5 hover:dark:bg-white/5"
-            )}
-            onPress={() => {
-              if (pathname === `/workspaces/${params.id}`) return;
-              router.push(`/workspaces/${params.id}`);
-            }}
+            className="flex gap-2 bg-transparent font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
+            variant="outline"
           >
-            <Zap size={20} />
-            Workspaces
+            <Globe />
+            Templates
           </Button>
 
           <Button
-            size="md"
-            className={cn(
-              "text-md transition-colors bg-transparent text-black dark:text-background justify-start",
-              pathname === `/published/${params.id}`
-                ? "bg-black/80 text-background dark:bg-background dark:text-black"
-                : "hover:bg-black/5 hover:dark:bg-white/5"
-            )}
-            onPress={() => {
-              if (pathname === `/published/${params.id}`) return;
-              router.push(`/published/${params.id}`);
-            }}
+            className="flex gap-2 bg-transparent font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
+            variant="outline"
           >
-            <LayoutTemplate size={20} />
-            Published
-          </Button>
-
-          <Button
-            size="md"
-            className={cn(
-              "text-md transition-colors bg-transparent text-black dark:text-background justify-start",
-              pathname === `/forms/${params.id}`
-                ? "bg-black/80 text-background dark:bg-background dark:text-black"
-                : "hover:bg-black/5 hover:dark:bg-white/5"
-            )}
-            onPress={() => {
-              if (pathname === `/forms/${params.id}`) return;
-              router.push(`/forms/${params.id}`);
-            }}
-          >
-            <FileCode2 size={20} />
-            Forms
-          </Button>
-
-          <Button
-            size="md"
-            className={cn(
-              "text-md transition-colors bg-transparent text-black dark:text-background justify-start",
-              pathname === `/usage/${params.id}`
-                ? "bg-black/80 text-background dark:bg-background dark:text-black"
-                : "hover:bg-black/5 hover:dark:bg-white/5"
-            )}
-            onPress={() => {
-              if (pathname === `/usage/${params.id}`) return;
-              router.push(`/usage/${params.id}`);
-            }}
-          >
-            <Activity size={20} />
-            Billing
-          </Button>
-
-          <Button
-            size="md"
-            className={cn(
-              "text-md transition-colors bg-transparent text-black dark:text-background justify-start",
-              pathname === `/manage/${params.id}`
-                ? "bg-black/80 text-background dark:bg-background dark:text-black"
-                : "hover:bg-black/5 hover:dark:bg-white/5"
-            )}
-            onPress={() => {
-              if (pathname === `/manage/${params.id}`) return;
-              router.push(`/manage/${params.id}`);
-            }}
-          >
-            <Users size={20} />
+            <Users />
             Team
           </Button>
+
+          <div className="px-2 my-2">
+            <Separator
+              className="bg-foreground/10 w-[80%]"
+              orientation="horizontal"
+            />
+          </div>
+
+          <div className="px-2 flex flex-col gap-2">
+            <Accordion className="w-full">
+              <AccordionItem>
+                <AccordionTrigger
+                  className="font-normal text-foreground/60 text-xs py-0"
+                  size="xs"
+                >
+                  Favourites
+                </AccordionTrigger>
+                <AccordionPanel className="mt-2">
+                  <div className="bg-foreground/5 p-2 border border-foreground/20 rounded-sm text-xs border-dashed text-center">
+                    Your Favourite apps that you have saved
+                  </div>
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
+
+            <Accordion>
+              <AccordionItem>
+                <AccordionTrigger
+                  className="font-normal text-foreground/60 text-xs py-0"
+                  size="xs"
+                >
+                  Recent Apps
+                </AccordionTrigger>
+                <AccordionPanel className="mt-2">
+                  <Button
+                    className="flex gap-2 bg-transparent w-full font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
+                    variant="outline"
+                  >
+                    Workflow 1
+                  </Button>
+                  <Button
+                    className="flex gap-2 bg-transparent w-full font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
+                    variant="outline"
+                  >
+                    Workflow 2
+                  </Button>
+                  <Button
+                    className="flex gap-2 bg-transparent w-full font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
+                    variant="outline"
+                  >
+                    Workflow 3
+                  </Button>
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
+          </div>
         </div>
+      </div>
 
-        <div className="flex flex-col gap-3 px-4 pb-4">
-          <div
-            className="flex gap-1 items-center hover:cursor-pointer hover:text-black/80 dark:hover:text-background"
-            onClick={() => window.open("https://docs.deforge.io", "_blank")}
-          >
-            <StickyNote className="w-4 h-4" />
-            <p className="text-sm">Docs</p>
+      <div className="flex flex-col px-2">
+        <div className="p-2 bg-foreground/5 rounded-sm border border-foreground/20 space-y-1">
+          <div className="font-semibold text-foreground/50 text-[10px]">
+            New Update
           </div>
-          <Link
-            href="mailto:contact@deforge.io"
-            className="flex gap-1 items-center hover:cursor-pointer hover:text-black/80 dark:hover:text-background dark:text-background"
-          >
-            <Headset className="w-4 h-4" />
-            <p className="text-sm">Contact Us</p>
-          </Link>
-          <div
-            className="flex gap-1 items-center hover:cursor-pointer hover:text-black/80 dark:hover:text-background pb-2"
-            onClick={() =>
-              window.open("https://app.youform.com/forms/1xejylht", "_blank")
-            }
-          >
-            <Bug className="w-4 h-4" />
-            <p className="text-sm">Report Bug</p>
+          <div className="text-xs text-foreground/70">
+            Full UI Overhaul and Chat to Create AI Agents
           </div>
-
-          <LogoutButton />
         </div>
       </div>
     </div>
