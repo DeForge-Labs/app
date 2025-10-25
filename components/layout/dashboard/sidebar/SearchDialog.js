@@ -5,15 +5,22 @@ import {
   Globe,
   LayoutGrid,
   MessageCircle,
+  Plus,
   Search,
   Users,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogPopup } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
 const DUMMY_RESULTS = [
+  {
+    id: "0",
+    title: "New App",
+    category: "Quick Actions",
+    icon: <Plus />,
+  },
   {
     id: "1",
     title: "Apps",
