@@ -3,12 +3,11 @@
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Code, Loader2, User } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import useOnboard from "@/hooks/useOnboard";
 import {
   InputOTP,
   InputOTPGroup,
-  InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/InputOTP";
 import { REGEXP_ONLY_DIGITS } from "input-otp";

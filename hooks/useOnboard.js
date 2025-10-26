@@ -1,15 +1,11 @@
-import axios from "axios";
+"use client";
+
 import { toast } from "sonner";
 import { z } from "zod";
-import useTeams from "./useTeams";
 import { useRouter } from "next/navigation";
-import useInitialize from "./useInitialize";
 
 export default function useOnboard() {
-  const { getTeams } = useTeams();
   const router = useRouter();
-  const { loadUser, loadUserAndTeams } = useInitialize();
-  const { createTeam } = useTeams();
 
   const requestLogin = async (
     email,
@@ -29,16 +25,27 @@ export default function useOnboard() {
         return;
       }
 
-      const response = await axios.post(
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/request/login`,
-        { email }
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+          }),
+        }
       );
-      if (response.data.success) {
+
+      const data = await response.json();
+
+      if (data.success) {
         setIsOTPWindow(true);
         setIsRequestingLogin(false);
-        setIsSignUp(response.data.isSignup);
+        setIsSignUp(data.isSignup);
       } else {
-        toast(response.data.message);
+        toast(data.message);
         setIsRequestingLogin(false);
       }
     } catch (error) {
@@ -58,47 +65,31 @@ export default function useOnboard() {
         return;
       }
 
-      const response = await axios.post(
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/verify/login`,
-        { email, code: otp }
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ email, code: otp }),
+        }
       );
-      if (response.data.success) {
+
+      const data = await response.json();
+
+      if (data.success) {
         toast.success("Login successful");
 
-        localStorage.setItem("token", response.data.token);
-
-        if (embedded) {
-          await loadUserAndTeams(response.data.token);
+        if (!data.lastTeamId) {
+          router.push("/team/create");
           return;
         }
 
-        const user = await loadUser(false, response.data.token);
-
-        try {
-          const teams = await getTeams(response.data.token);
-
-          if (teams.length === 0) {
-            router.push("/team/create");
-          } else {
-            const lastTeamId = localStorage.getItem(`team_${user.id}`);
-
-            if (lastTeamId) {
-              if (lastTeamId in teams) {
-                router.push(`/dashboard/${lastTeamId}`);
-              } else {
-                router.push(`/dashboard/${teams[0].teamId}`);
-                localStorage.setItem(`team_${user.id}`, teams[0].teamId);
-              }
-            } else {
-              router.push(`/dashboard/${teams[0].teamId}`);
-            }
-          }
-        } catch (error) {
-          toast.error("Failed to get teams");
-          router.push("/");
-        }
+        router.push(`/dashboard/${data.lastTeamId}`);
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (error) {
       console.log(error);
@@ -134,32 +125,30 @@ export default function useOnboard() {
         return;
       }
 
-      const response = await axios.post(
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/verify/signup`,
-        { email, code: otp, username, referralCode }
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, code: otp, username, referralCode }),
+        }
       );
-      if (response.data.success) {
+
+      const data = await response.json();
+
+      if (data.success) {
         toast.success("Sign up successful");
 
-        localStorage.setItem("token", response.data.token);
-
-        if (embedded) {
-          await loadUserAndTeams(response.data.token);
+        if (!data.lastTeamId) {
+          router.push("/team/create");
           return;
         }
 
-        await loadUser(false, response.data.token);
-
-        const teamResponse = await createTeam("My Team", response.data.token);
-
-        if (teamResponse.success) {
-          router.push(`/dashboard/${teamResponse.team.id}`);
-        } else {
-          toast.error(teamResponse.message);
-          router.push("/team/create");
-        }
+        router.push(`/dashboard/${data.lastTeamId}`);
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (error) {
       toast.error("Failed to verify OTP");
@@ -172,15 +161,24 @@ export default function useOnboard() {
     try {
       setIsResending(true);
 
-      const response = await axios.post(
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/request/login`,
-        { email }
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
       );
-      if (response.data.success) {
+
+      const data = await response.json();
+
+      if (data.success) {
         toast.success("OTP sent successfully");
         setTimeout(20);
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message);
       }
     } catch (error) {
       toast.error("Failed to send OTP");
@@ -191,7 +189,6 @@ export default function useOnboard() {
 
   return {
     requestLogin,
-
     verifyLogin,
     verifySignUp,
     resend,
