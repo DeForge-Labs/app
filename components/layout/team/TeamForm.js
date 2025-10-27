@@ -1,9 +1,8 @@
 "use client";
 
 import useTeams from "@/hooks/useTeams";
-import { Tab, Tabs } from "@heroui/react";
 import { Button } from "@/components/ui/button";
-import { Asterisk, Loader2, UsersRound } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -13,12 +12,11 @@ import { cn } from "@/lib/utils";
 export default function TeamForm() {
   const [tab, setTab] = useState("create");
   const router = useRouter();
-  const { createTeam, skipTeam, joinTeam } = useTeams();
+  const { createTeam, joinTeam } = useTeams();
   const [name, setName] = useState("");
   const [invitationCode, setInvitationCode] = useState("");
 
   const [isCreating, setIsCreating] = useState(false);
-  const [isSkipping, setIsSkipping] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
 
   const handleCreateTeam = async (name) => {
@@ -130,16 +128,16 @@ export default function TeamForm() {
             <Button
               className="flex-1 h-11 text-xs border-black/10 before:rounded-t-none dark:bg-transparent dark:border-white/10 border-l-0 border-b-0 rounded-br-none rounded-t-none text-destructive"
               variant="outline"
-              disabled={isCreating || isSkipping}
+              disabled={isCreating}
               onClick={() => router.push("/team")}
             >
-              {isSkipping ? <Loader2 className="animate-spin" /> : "Back"}
+              Back
             </Button>
             <Button
               className="flex-1 h-11 text-xs border-black/10 before:rounded-t-none dark:bg-transparent dark:border-white/10 border-x-0 border-b-0 rounded-bl-none rounded-t-none text-info"
               variant="outline"
               onClick={() => handleCreateTeam(name)}
-              disabled={isCreating || isSkipping || !name}
+              disabled={isCreating || !name}
             >
               {isCreating ? <Loader2 className="animate-spin" /> : "Create"}
             </Button>
@@ -176,15 +174,15 @@ export default function TeamForm() {
               onClick={() => {
                 router.push("/team");
               }}
-              disabled={isJoining || isSkipping}
+              disabled={isJoining}
             >
-              {isSkipping ? <Loader2 className="animate-spin" /> : "Back"}
+              Back
             </Button>
             <Button
               className="flex-1 h-11 text-xs border-black/10 before:rounded-t-none dark:bg-transparent dark:border-white/10 border-x-0 border-b-0 rounded-bl-none rounded-t-none text-info"
               onClick={() => handleJoinTeam(invitationCode)}
               variant={"outline"}
-              disabled={isJoining || isSkipping || !invitationCode}
+              disabled={isJoining || !invitationCode}
             >
               {isJoining ? <Loader2 className="animate-spin" /> : "Join"}
             </Button>

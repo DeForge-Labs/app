@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { verifyToken } from "./lib/verify-token";
 
 const unprotectedRoutes = ["/about-us", "/privacy", "/ToS"];
 
@@ -19,20 +20,9 @@ export async function middleware(req) {
   }
 
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/authenticate`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Cookie: `token=${token.value}`,
-        },
-      }
-    );
+    const { payload } = await verifyToken(`Bearer ${token.value}`);
 
-    const data = await response.json();
-
-    if (!data.success || !response.ok) {
+    if (!payload) {
       const redirectResponse = NextResponse.redirect(new URL("/", req.url));
       return redirectResponse;
     }
@@ -43,11 +33,14 @@ export async function middleware(req) {
       );
     }
 
+    if (pathname === "/" && !lastTeamId) {
+      return NextResponse.redirect(new URL(`/team`, req.url));
+    }
+
     return NextResponse.next();
   } catch (error) {
     console.error("Authentication error:", error);
     const redirectResponse = NextResponse.redirect(new URL("/", req.url));
-    redirectResponse.cookies.delete("token");
     return redirectResponse;
   }
 }

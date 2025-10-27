@@ -1,6 +1,5 @@
-"use client";
-
 import { Headset, StickyNote } from "lucide-react";
+import Link from "next/link";
 
 export default function StartContainer({ children }) {
   return (
@@ -28,22 +27,18 @@ export default function StartContainer({ children }) {
         </div>
       </div>
       <div className="flex items-center justify-center text-black/60 gap-3 py-8 px-4 dark:text-foreground">
-        <div
-          className="flex gap-1 items-center hover:cursor-pointer hover:text-black/80 dark:hover:text-foreground/80"
-          onClick={() => window.open("https://docs.deforge.io", "_blank")}
-        >
-          <StickyNote className="w-3 h-3" />
-          <p className="text-xs">Docs</p>
-        </div>
-        <div
-          className="flex gap-1 items-center hover:cursor-pointer hover:text-black/80 dark:hover:text-foreground/80 dark:text-foreground"
-          onClick={() =>
-            window.open("https://cal.com/anoy-deforge/30min", "_blank")
-          }
-        >
-          <Headset className="w-3 h-3" />
-          <p className="text-xs">Contact Us</p>
-        </div>
+        <Link href="https://docs.deforge.io" target="_blank">
+          <div className="flex gap-1 items-center hover:cursor-pointer hover:text-black/80 dark:hover:text-foreground/80">
+            <StickyNote className="w-3 h-3" />
+            <p className="text-xs">Docs</p>
+          </div>
+        </Link>
+        <Link href="https://cal.com/anoy-deforge/30min" target="_blank">
+          <div className="flex gap-1 items-center hover:cursor-pointer hover:text-black/80 dark:hover:text-foreground/80 dark:text-foreground">
+            <Headset className="w-3 h-3" />
+            <p className="text-xs">Contact Us</p>
+          </div>
+        </Link>
       </div>
     </div>
   );

@@ -1,43 +1,34 @@
 import axios from "axios";
 
 export default function useTeams() {
-  const getTeams = async (token = null) => {
-    const headers = {
-      Authorization: `Bearer ${token || localStorage.getItem("token")}`,
-    };
+  const getTeams = async () => {
+    axios.defaults.withCredentials = true;
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/teams/list`,
-      {},
-      { headers }
+      {}
     );
 
     return response.data.teams;
   };
 
-  const createTeam = async (name, token = null) => {
-    const headers = {
-      Authorization: `Bearer ${token || localStorage.getItem("token")}`,
-    };
+  const createTeam = async (name) => {
+    axios.defaults.withCredentials = true;
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/teams/create`,
-      { name },
-      { headers }
+      { name }
     );
 
     return response.data;
   };
 
   const skipTeam = async () => {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    };
+    axios.defaults.withCredentials = true;
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/teams/list`,
-      {},
-      { headers }
+      {}
     );
 
     if (!response.data.success) {
@@ -49,8 +40,7 @@ export default function useTeams() {
     if (teams.length === 0) {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/teams/create`,
-        { name: "My Team" },
-        { headers }
+        { name: "My Team" }
       );
 
       if (!response.data.success) {
@@ -64,14 +54,11 @@ export default function useTeams() {
   };
 
   const joinTeam = async (invitationCode) => {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    };
+    axios.defaults.withCredentials = true;
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/teams/join/${invitationCode}`,
-      {},
-      { headers }
+      {}
     );
 
     return response.data;
