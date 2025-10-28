@@ -1,29 +1,15 @@
-import {
-  CircleDot,
-  ExternalLink,
-  HandCoins,
-  LogOut,
-  Settings,
-} from "lucide-react";
-import ThemeChanger from "./ThemeChanger";
+import { CircleDot } from "lucide-react";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
-import {
-  Menu,
-  MenuGroup,
-  MenuGroupLabel,
-  MenuItem,
-  MenuPopup,
-  MenuRadioGroup,
-  MenuRadioItem,
-  MenuSeparator,
-  MenuTrigger,
-} from "@/components/ui/menu";
+
 import { Button } from "@/components/ui/button";
 import TeamMenu from "./navbar/TeamMenu";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import CreditMenu from "./navbar/CreditMenu";
+import SettingsMenu from "./navbar/SettingsMenu";
 
 export default function Navbar({ params }) {
   return (
@@ -57,7 +43,6 @@ export default function Navbar({ params }) {
         </div>
 
         <div className="flex items-center gap-2">
-          <ThemeChanger />
           <Button
             variant="outline"
             className="text-xs bg-background font-normal border border-foreground/20 rounded-sm"
@@ -65,92 +50,21 @@ export default function Navbar({ params }) {
             Feedback
           </Button>
 
-          <Menu>
-            <MenuTrigger
-              render={
-                <Button
-                  variant="outline"
-                  className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm [&_svg:not([class*='size-'])]:size-3"
-                >
-                  <CircleDot />
-                  42
-                </Button>
-              }
-            ></MenuTrigger>
-            <MenuPopup
-              className="w-[250px] border border-foreground/30 rounded-lg"
-              sideOffset={10}
-            >
-              <MenuGroup>
-                <MenuGroupLabel>Credit Balance</MenuGroupLabel>
-                <MenuItem disabled className="data-disabled:opacity-100">
-                  Total Credit
-                  <div className="ms-auto">42</div>
-                </MenuItem>
-                <MenuItem disabled className="data-disabled:opacity-100">
-                  Monthly Credit
-                  <div className="ms-auto">42</div>
-                </MenuItem>
-                <MenuItem disabled className="data-disabled:opacity-100">
-                  Purchase Credit
-                  <div className="ms-auto">42</div>
-                </MenuItem>
+          <Suspense
+            fallback={
+              <Button
+                variant="outline"
+                className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm [&_svg:not([class*='size-'])]:size-3"
+              >
+                <CircleDot />
+                <Skeleton className="w-[30px] h-[20px]" />
+              </Button>
+            }
+          >
+            <CreditMenu params={params} />
+          </Suspense>
 
-                <MenuSeparator className="bg-foreground/10" />
-
-                <MenuItem className="text-info data-highlighted:bg-foreground/5 data-highlighted:text-info cursor-pointer">
-                  <HandCoins />
-                  Buy Credit
-                </MenuItem>
-              </MenuGroup>
-            </MenuPopup>
-          </Menu>
-
-          <Menu>
-            <MenuTrigger
-              render={
-                <Button
-                  variant="outline"
-                  className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
-                >
-                  <Settings />
-                  Settings
-                </Button>
-              }
-            ></MenuTrigger>
-            <MenuPopup
-              className="w-[200px] border border-foreground/30 rounded-lg"
-              align="end"
-              sideOffset={10}
-            >
-              <MenuGroup>
-                <MenuGroupLabel>Quick Actions</MenuGroupLabel>
-                <MenuItem className="cursor-pointer">
-                  Billing <ExternalLink className="ms-auto" />
-                </MenuItem>
-                <MenuItem className="cursor-pointer">
-                  Documentation <ExternalLink className="ms-auto" />
-                </MenuItem>
-                <MenuItem className="cursor-pointer">
-                  Community Forum <ExternalLink className="ms-auto" />
-                </MenuItem>
-              </MenuGroup>
-              <MenuSeparator className="bg-foreground/10" />
-
-              <MenuGroup>
-                <MenuGroupLabel>Theme</MenuGroupLabel>
-                <MenuRadioGroup>
-                  <MenuRadioItem value="1">Dark</MenuRadioItem>
-                  <MenuRadioItem value="2">Light</MenuRadioItem>
-                </MenuRadioGroup>
-              </MenuGroup>
-              <MenuSeparator className="bg-foreground/10" />
-              <MenuItem className="text-destructive data-highlighted:bg-foreground/5 data-highlighted:text-destructive cursor-pointer">
-                <LogOut size={16} />
-                Logout
-              </MenuItem>
-            </MenuPopup>
-          </Menu>
+          <SettingsMenu params={params} />
         </div>
       </div>
     </header>
