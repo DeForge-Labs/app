@@ -1,27 +1,4 @@
-"use client";
-
-import {
-  Activity,
-  Grid2X2,
-  Headset,
-  Layers,
-  LayoutTemplate,
-  StickyNote,
-  Users,
-  Zap,
-  Bug,
-  FileCode2,
-  Search,
-  LayoutGrid,
-  Globe,
-  Plus,
-} from "lucide-react";
-import Image from "next/image";
-import LogoutButton from "./LogoutButton";
-import { setTab } from "@/redux/slice/TeamSlice";
-import { cn } from "@/lib/utils";
-import { useParams, usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
+import { Users, LayoutGrid, Globe, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -31,49 +8,58 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import SearchDialog from "./sidebar/SearchDialog";
+import RecentApps from "./sidebar/RecentApps";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
-export default function Sidebar() {
-  const router = useRouter();
-  const params = useParams();
-  const pathname = usePathname();
-
+export default async function Sidebar({ params }) {
+  const { id } = await params;
   return (
     <div className="w-[240px] bg-foreground/5 relative overflow-y-auto hide-scroll p-2 px-0 flex flex-col">
-      <div className="flex flex-col flex-1 justify-between p-2 py-0">
+      <div className="flex flex-col justify-between p-2 py-0 h-full">
         <div className="flex flex-col gap-[2px]">
-          <Button
-            className="flex gap-2 font-normal text-xs border border-foreground/20 rounded-sm"
-            variant="outline"
-          >
-            <Plus />
-            New App
-          </Button>
+          <Link href={`/dashboard/${id}`} className="w-full">
+            <Button
+              className="flex gap-2 font-normal text-xs border border-foreground/20 rounded-sm w-full"
+              variant="outline"
+            >
+              <Plus />
+              New App
+            </Button>
+          </Link>
 
           <SearchDialog />
 
-          <Button
-            className="flex gap-2 bg-transparent font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
-            variant="outline"
-          >
-            <LayoutGrid />
-            Apps
-          </Button>
+          <Link href={`/dashboard/${id}/apps`} className="w-full">
+            <Button
+              className="flex gap-2 bg-transparent font-normal w-full !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
+              variant="outline"
+            >
+              <LayoutGrid />
+              Apps
+            </Button>
+          </Link>
 
-          <Button
-            className="flex gap-2 bg-transparent font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
-            variant="outline"
-          >
-            <Globe />
-            Templates
-          </Button>
+          <Link href={`/dashboard/${id}/templates`} className="w-full">
+            <Button
+              className="flex gap-2 bg-transparent font-normal w-full !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
+              variant="outline"
+            >
+              <Globe />
+              Templates
+            </Button>
+          </Link>
 
-          <Button
-            className="flex gap-2 bg-transparent font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
-            variant="outline"
-          >
-            <Users />
-            Team
-          </Button>
+          <Link href={`/dashboard/${id}/team`} className="w-full">
+            <Button
+              className="flex gap-2 bg-transparent font-normal w-full !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
+              variant="outline"
+            >
+              <Users />
+              Team
+            </Button>
+          </Link>
 
           <div className="px-2 my-2">
             <Separator
@@ -82,7 +68,7 @@ export default function Sidebar() {
             />
           </div>
 
-          <div className="px-2 flex flex-col gap-2">
+          <div className="px-2 flex flex-col gap-2 flex-1">
             <Accordion className="w-full">
               <AccordionItem>
                 <AccordionTrigger
@@ -108,24 +94,17 @@ export default function Sidebar() {
                   Recent Apps
                 </AccordionTrigger>
                 <AccordionPanel className="mt-2">
-                  <Button
-                    className="flex gap-2 bg-transparent w-full font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
-                    variant="outline"
+                  <Suspense
+                    fallback={
+                      <div className="flex flex-col gap-2">
+                        <Skeleton className="w-full h-9" />
+                        <Skeleton className="w-full h-9" />
+                        <Skeleton className="w-full h-9" />
+                      </div>
+                    }
                   >
-                    Workflow 1
-                  </Button>
-                  <Button
-                    className="flex gap-2 bg-transparent w-full font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
-                    variant="outline"
-                  >
-                    Workflow 2
-                  </Button>
-                  <Button
-                    className="flex gap-2 bg-transparent w-full font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
-                    variant="outline"
-                  >
-                    Workflow 3
-                  </Button>
+                    <RecentApps params={params} />
+                  </Suspense>
                 </AccordionPanel>
               </AccordionItem>
             </Accordion>

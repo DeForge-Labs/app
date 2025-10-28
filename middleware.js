@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { verifyToken } from "./lib/verify-token";
 
-const unprotectedRoutes = ["/about-us", "/privacy", "/ToS"];
+const unprotectedRoutes = [
+  "/about-us",
+  "/privacy",
+  "/ToS",
+  "/server-not-found",
+];
 
 export async function middleware(req) {
   const { pathname } = req.nextUrl;

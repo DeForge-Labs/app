@@ -8,65 +8,86 @@ import {
   Plus,
   Search,
   Users,
-  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-
-const DUMMY_RESULTS = [
-  {
-    id: "0",
-    title: "New App",
-    category: "Quick Actions",
-    icon: <Plus />,
-  },
-  {
-    id: "1",
-    title: "Apps",
-    category: "Quick Actions",
-    icon: <LayoutGrid />,
-  },
-  {
-    id: "2",
-    title: "Workflow 1",
-    category: "Recent Apps",
-    icon: <MessageCircle />,
-  },
-  {
-    id: "3",
-    title: "Workflow 2",
-    category: "Recent Apps",
-    icon: <MessageCircle />,
-  },
-  {
-    id: "4",
-    title: "Templates",
-    category: "Quick Actions",
-    icon: <Globe />,
-  },
-  {
-    id: "5",
-    title: "Team",
-    category: "Quick Actions",
-    icon: <Users />,
-  },
-  {
-    id: "6",
-    title: "Workflow 3",
-    category: "Recent Apps",
-    icon: <MessageCircle />,
-  },
-];
+import { useParams, useRouter } from "next/navigation";
 
 export default function SearchDialog({
   placeholder = "Search...",
-  results = DUMMY_RESULTS,
   onSelect,
   buttonLabel = "Search",
 }) {
+  const params = useParams();
+  const router = useRouter();
+
+  const RESULTS = [
+    {
+      id: "0",
+      title: "New App",
+      category: "Quick Actions",
+      icon: <Plus />,
+      redirect: `/dashboard/${params?.id}`,
+    },
+    {
+      id: "1",
+      title: "Apps",
+      category: "Quick Actions",
+      icon: <LayoutGrid />,
+      redirect: `/dashboard/${params?.id}/apps`,
+    },
+    {
+      id: "2",
+      title: "Templates",
+      category: "Quick Actions",
+      icon: <Globe />,
+      redirect: `/dashboard/${params?.id}/templates`,
+    },
+    {
+      id: "3",
+      title: "Team",
+      category: "Quick Actions",
+      icon: <Users />,
+      redirect: `/dashboard/${params?.id}/team`,
+    },
+  ];
+
   const [open, setOpen] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState("");
+
+  const [results, setResults] = React.useState(RESULTS);
+
+  const getRecentApps = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/workspace/recent/${params?.id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+
+      const items = data?.workspaces?.map((workspace) => {
+        return {
+          id: workspace?.id,
+          title: workspace?.name,
+          category: "Recent Apps",
+          icon: <MessageCircle />,
+          redirect: `/editor/${workspace?.id}`,
+        };
+      });
+
+      setResults([...RESULTS, ...items]);
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
 
   const filteredResults = React.useMemo(() => {
     if (!searchValue.trim()) return results;
@@ -91,9 +112,20 @@ export default function SearchDialog({
 
   const handleSelect = (result) => {
     onSelect?.(result);
+    router.push(result.redirect);
     setOpen(false);
     setSearchValue("");
   };
+
+  React.useEffect(() => {
+    if (!params?.id) return;
+    getRecentApps();
+
+    return () => {
+      setSearchValue("");
+      setResults(RESULTS);
+    };
+  }, [params?.id]);
 
   return (
     <>

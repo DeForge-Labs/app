@@ -12,6 +12,7 @@ import { CircleDot, ExternalLink } from "lucide-react";
 import { HandCoins } from "lucide-react";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default async function CreditMenu({ params }) {
   const { id } = await params;
@@ -25,17 +26,14 @@ export default async function CreditMenu({ params }) {
         .map((cookie) => `${cookie.name}=${cookie.value}`)
         .join("; ");
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/user/credits`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            cookie: cookieHeader,
-          },
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${process.env.API_URL}/user/credits`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: cookieHeader,
+        },
+        credentials: "include",
+      });
       const data = await response.json();
 
       return data;
@@ -48,9 +46,7 @@ export default async function CreditMenu({ params }) {
   const credits = await getCredits();
 
   if (!credits) {
-    // TODO: Go To Server Not Found Route
-    console.log("Server Error");
-    return null;
+    redirect("/server-not-found");
   }
 
   if (!credits?.success) {

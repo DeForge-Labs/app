@@ -1,10 +1,43 @@
 import { ChevronRight, GitBranch } from "lucide-react";
-import { templates } from "@/lib/TemplateData";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { Badge } from "@/components/ui/badge";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 
-export default function DashboardTemplate() {
+export default async function DashboardTemplate() {
+  const getPopularTemplates = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.API_URL}/template/global?limit=9`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const popularTemplates = await getPopularTemplates();
+
+  if (!popularTemplates) {
+    redirect("/server-not-found");
+  }
+
+  if (!popularTemplates?.success) {
+    redirect("/");
+  }
+
+  const templates = popularTemplates?.templates;
+
   return (
     <div className="w-[90%] lg:w-[80%] flex flex-col gap-4 z-20 mt-20">
       <div className="flex w-full justify-between lg:items-center flex-col gap-2 lg:flex-row">
@@ -21,39 +54,38 @@ export default function DashboardTemplate() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {templates.map((template) => (
-          <Card
-            key={template.id}
-            className="hover:border hover:border-foreground/20 cursor-pointer"
-          >
-            <CardHeader>
-              <CardTitle className="text-sm font-semibold flex flex-col gap-3">
-                <div className="rounded-sm p-4 bg-foreground/10 w-fit">
-                  <DynamicIcon
-                    name={template.icon}
-                    className="size-4 opacity-80"
-                  />
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {templates.map((template, index) => (
+          <Link href={`/template/${template.id}`} key={index}>
+            <Card className="hover:border hover:border-foreground/20 cursor-pointer">
+              <CardHeader>
+                <CardTitle className="text-sm font-semibold flex flex-col gap-3">
+                  <div className="rounded-sm p-4 bg-foreground/10 w-fit">
+                    <DynamicIcon
+                      name={template.iconId}
+                      className="size-4 opacity-80"
+                    />
+                  </div>
+                  <p className="text-sm font-semibold"> {template?.name}</p>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="-mt-6 flex flex-col flex-1 justify-between">
+                <p className="text-xs text-foreground/60 line-clamp-4">
+                  {template?.description}
+                </p>
+
+                <div className="flex gap-2">
+                  <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 border bg-transparent text-foreground/60 border-foreground/60">
+                    {template?.category}
+                  </Badge>
+
+                  <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 border bg-transparent text-foreground/60 border-foreground/60">
+                    <GitBranch className="size-3" /> {template?.totalClones}
+                  </Badge>
                 </div>
-                <p className="text-sm font-semibold"> {template.name}</p>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="-mt-6 flex flex-col">
-              <p className="text-xs text-foreground/60 line-clamp-4">
-                {template.description}
-              </p>
-
-              <div className="flex gap-2">
-                <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 border bg-transparent text-foreground/60 border-foreground/60">
-                  {template.category}
-                </Badge>
-
-                <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 border bg-transparent text-foreground/60 border-foreground/60">
-                  <GitBranch className="size-3" /> 42
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>

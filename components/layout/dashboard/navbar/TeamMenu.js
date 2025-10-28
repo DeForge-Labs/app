@@ -3,7 +3,6 @@ import {
   Menu,
   MenuPopup,
   MenuRadioGroup,
-  MenuRadioItem,
   MenuSeparator,
   MenuTrigger,
   MenuItem,
@@ -28,17 +27,14 @@ export default async function TeamMenu({ params }) {
         .map((cookie) => `${cookie.name}=${cookie.value}`)
         .join("; ");
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/team/get/${id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            cookie: cookieHeader,
-          },
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${process.env.API_URL}/team/get/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: cookieHeader,
+        },
+        credentials: "include",
+      });
       const data = await response.json();
 
       return data;
@@ -82,9 +78,7 @@ export default async function TeamMenu({ params }) {
   const teamsData = await getAllTeams();
 
   if (!teamData || !teamsData) {
-    // TODO: Go To Server Not Found Route
-    console.log("Server Error");
-    return null;
+    redirect("/server-not-found");
   }
 
   if (!teamData?.success || !teamsData?.success) {

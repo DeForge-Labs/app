@@ -1,57 +1,12 @@
-"use client";
-
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import {
-  ArrowUp,
-  BriefcaseBusiness,
-  MessageCircle,
-  StickyNote,
-} from "lucide-react";
-import { useState, useEffect } from "react";
+import { BriefcaseBusiness, MessageCircle, StickyNote } from "lucide-react";
 import Image from "next/image";
 import DashboardTemplate from "./DashboardTemplate";
+import Chatbox from "./Chatbox";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function DashboardNew() {
-  const placeholders = [
-    "Create an AI Chatbot which teaches me to code",
-    "Build an agent that summarizes my emails daily",
-    "Make a bot that tracks competitor pricing",
-    "Create an assistant that schedules meetings",
-  ];
-
-  const [currentPlaceholder, setCurrentPlaceholder] = useState("");
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const [charIndex, setCharIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    const currentText = placeholders[placeholderIndex];
-
-    const timeout = setTimeout(
-      () => {
-        if (!isDeleting) {
-          if (charIndex < currentText.length) {
-            setCurrentPlaceholder(currentText.slice(0, charIndex + 1));
-            setCharIndex(charIndex + 1);
-          } else {
-            setTimeout(() => setIsDeleting(true), 2000);
-          }
-        } else {
-          if (charIndex > 0) {
-            setCurrentPlaceholder(currentText.slice(0, charIndex - 1));
-            setCharIndex(charIndex - 1);
-          } else {
-            setIsDeleting(false);
-            setPlaceholderIndex((placeholderIndex + 1) % placeholders.length);
-          }
-        }
-      },
-      isDeleting ? 30 : 50
-    );
-
-    return () => clearTimeout(timeout);
-  }, [charIndex, isDeleting, placeholderIndex, placeholders]);
+export default function DashboardNew({ params }) {
   return (
     <div className="absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll p-6">
       <div className="flex flex-col items-center justify-center gap-2 relative">
@@ -76,19 +31,7 @@ export default function DashboardNew() {
             No coding required.
           </p>
 
-          <div className="relative sm:w-[600px] min-w-[360px] mt-4">
-            <Textarea
-              placeholder={currentPlaceholder}
-              className="w-full border border-foreground/30 rounded-lg h-28 p-2 px-1"
-              style={{ resize: "none", fontSize: "16px" }}
-            />
-            <Button
-              className="absolute bottom-2 right-2 rounded-sm p-2 !shadow-none before:!shadow-none"
-              onClick={() => {}}
-            >
-              <ArrowUp />
-            </Button>
-          </div>
+          <Chatbox />
 
           <div className="flex gap-2 items-center justify-center mt-2">
             <Button
@@ -117,7 +60,31 @@ export default function DashboardNew() {
           </div>
         </div>
 
-        <DashboardTemplate />
+        <Suspense
+          fallback={
+            <div className="w-[90%] lg:w-[80%] flex flex-col gap-4 z-20 mt-20">
+              <div className="flex w-full justify-between lg:items-center flex-col gap-2 lg:flex-row">
+                <div className="flex flex-col gap-1">
+                  <p className="text-sm font-semibold">Popular Templates</p>
+                  <p className="text-xs text-foreground/60">
+                    Explore what others are automating using Deforge
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                <Skeleton className="w-full h-48" />
+                <Skeleton className="w-full h-48" />
+                <Skeleton className="w-full h-48" />
+                <Skeleton className="w-full h-48" />
+                <Skeleton className="w-full h-48" />
+                <Skeleton className="w-full h-48" />
+              </div>
+            </div>
+          }
+        >
+          <DashboardTemplate />
+        </Suspense>
       </div>
     </div>
   );
