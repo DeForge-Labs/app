@@ -48,7 +48,7 @@ export default function LogoutDialog() {
               Cancel
             </DialogClose>
             <Button
-              className="bg-destructive text-background rounded-sm border-none text-xs"
+              className="bg-destructive text-background rounded-md border-none text-xs"
               onClick={async () => {
                 await logout();
               }}

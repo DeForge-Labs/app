@@ -28,6 +28,9 @@ export async function middleware(req) {
     const { payload } = await verifyToken(`Bearer ${token.value}`);
 
     if (!payload) {
+      if (pathname === "/") {
+        return NextResponse.next();
+      }
       const redirectResponse = NextResponse.redirect(new URL("/", req.url));
       return redirectResponse;
     }
