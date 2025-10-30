@@ -30,8 +30,8 @@ export default async function TeamView({ params }) {
             <Suspense
               fallback={
                 <>
-                  <Skeleton className="h-[114px] w-full max-w-7xl" />
-                  <Skeleton className="h-[114px] w-full max-w-7xl" />
+                  <Skeleton className="h-[114px] w-full max-w-[1360px]" />
+                  <Skeleton className="h-[114px] w-full max-w-[1360px]" />
                 </>
               }
             >

@@ -64,7 +64,7 @@ export default async function TeamMembers({ id }) {
 
         return (
           <div
-            className="flex flex-col gap-2 border w-full border-foreground/15 rounded-sm p-4 bg-foreground/2 hover:shadow-sm transition-shadow shadow-foreground/10 max-w-7xl"
+            className="flex flex-col gap-2 border w-full border-foreground/15 rounded-sm p-4 bg-foreground/2 hover:shadow-sm transition-shadow shadow-foreground/10 max-w-[1360px]"
             key={index}
           >
             <div className="flex flex-col gap-0.5">
