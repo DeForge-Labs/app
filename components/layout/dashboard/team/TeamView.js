@@ -24,18 +24,20 @@ export default async function TeamView({ params }) {
         <AddMemberButton teamId={id} />
       </div>
 
-      <div className="flex flex-col flex-1">
-        <div className="absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll p-4 space-y-4">
-          <Suspense
-            fallback={
-              <>
-                <Skeleton className="h-[114px] w-full" />
-                <Skeleton className="h-[114px] w-full" />
-              </>
-            }
-          >
-            <TeamMembers id={id} />
-          </Suspense>
+      <div className="flex flex-col flex-1 relative">
+        <div className="absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll p-4">
+          <div className="flex flex-col space-y-4 items-center">
+            <Suspense
+              fallback={
+                <>
+                  <Skeleton className="h-[114px] w-full max-w-7xl" />
+                  <Skeleton className="h-[114px] w-full max-w-7xl" />
+                </>
+              }
+            >
+              <TeamMembers id={id} />
+            </Suspense>
+          </div>
         </div>
       </div>
     </div>

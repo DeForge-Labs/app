@@ -1,21 +1,13 @@
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeftRight, Ellipsis, Trash } from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
-import {
-  Menu,
-  MenuGroup,
-  MenuGroupLabel,
-  MenuItem,
-  MenuPopup,
-  MenuRadioGroup,
-  MenuRadioItem,
-  MenuSeparator,
-  MenuTrigger,
-} from "@/components/ui/menu";
+import { Menu, MenuPopup, MenuTrigger } from "@/components/ui/menu";
+import ChangeRoleButton from "./ChangeRoleButton";
+import RemoveMemberButton from "./RemoveMemberButton";
 
 export default async function TeamMembers({ id }) {
   const getTeamMembers = async () => {
@@ -69,9 +61,10 @@ export default async function TeamMembers({ id }) {
         const timeAgo = formatDistanceToNow(member.joinedAt, {
           addSuffix: true,
         });
+
         return (
           <div
-            className="flex flex-col gap-2 border border-foreground/15 rounded-sm p-4 bg-foreground/2"
+            className="flex flex-col gap-2 border w-full border-foreground/15 rounded-sm p-4 bg-foreground/2 hover:shadow-sm transition-shadow shadow-foreground/10 max-w-7xl"
             key={index}
           >
             <div className="flex flex-col gap-0.5">
@@ -112,14 +105,12 @@ export default async function TeamMembers({ id }) {
                       <MenuPopup
                         align="end"
                         sideOffset={5}
-                        className={" border border-foreground/30 rounded-lg"}
+                        className={
+                          " border border-foreground/30 rounded-lg w-[160px]"
+                        }
                       >
-                        <MenuItem className="cursor-pointer sm:text-xs [&_svg:not([class*='size-'])]:size-3">
-                          <ArrowLeftRight /> Change Role
-                        </MenuItem>
-                        <MenuItem className="cursor-pointer text-destructive sm:text-xs [&_svg:not([class*='size-'])]:size-3 data-highlighted:text-destructive">
-                          <Trash /> Remove Member
-                        </MenuItem>
+                        <ChangeRoleButton member={member} />
+                        <RemoveMemberButton member={member} />
                       </MenuPopup>
                     </Menu>
                   )}
