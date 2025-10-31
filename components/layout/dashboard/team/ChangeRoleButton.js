@@ -93,6 +93,7 @@ export default function ChangeRoleButton({ member }) {
             <Button
               className="text-background rounded-md border-none text-xs"
               disabled={isChanging || role === member?.role}
+              type="submit"
               onClick={() =>
                 handleChangeRole(member?.teamId, member?.userEmail)
               }

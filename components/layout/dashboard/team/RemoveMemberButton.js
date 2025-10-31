@@ -61,6 +61,7 @@ export default function RemoveMemberButton({ member }) {
               onClick={() =>
                 handleRemoveMember(member?.teamId, member?.userEmail)
               }
+              type="submit"
               disabled={isRemoving}
             >
               {isRemoving ? <Loader2 className="animate-spin" /> : "Remove"}

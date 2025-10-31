@@ -59,7 +59,9 @@ export default async function RecentApps({ params }) {
               className="flex gap-2 bg-transparent w-full font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
               variant="outline"
             >
-              {workspace?.name}
+              {workspace?.name?.length > 20
+                ? workspace?.name?.slice(0, 20) + "..."
+                : workspace?.name}
             </Button>
           </Link>
         );

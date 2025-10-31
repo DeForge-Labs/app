@@ -103,6 +103,7 @@ export default function AddMemberButton({ teamId }) {
               onClick={() => {
                 handleInviteMember(teamId);
               }}
+              type="submit"
               disabled={isInviting}
             >
               {isInviting ? <Loader2 className="animate-spin" /> : "Invite"}
@@ -137,6 +138,7 @@ export default function AddMemberButton({ teamId }) {
                       navigator.clipboard.writeText(invitation?.inviteCode);
                       toast.success("Copied to clipboard");
                     }}
+                    type="submit"
                     disabled={isInviting}
                   >
                     Copy

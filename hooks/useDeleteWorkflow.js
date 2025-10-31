@@ -1,35 +1,29 @@
 "use client";
 
 import { useState } from "react";
-import useInitialize from "./useInitialize";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export default function useDeleteWorkflow() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function useDeleteWorkflow(setIsOpen) {
   const [isDeletingWorkflow, setIsDeletingWorkflow] = useState(false);
-  const { loadWorkflow } = useInitialize();
-  const team = useSelector((state) => state.team.team);
+  const router = useRouter();
 
   const handleDeleteWorkflow = async (workflowId) => {
     try {
       setIsDeletingWorkflow(true);
 
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      };
+      axios.defaults.withCredentials = true;
 
       const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_URL}/workspace/delete/${workflowId}`,
-        { headers }
+        `${process.env.NEXT_PUBLIC_API_URL}/workspace/delete/${workflowId}`
       );
 
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
 
-      loadWorkflow(team?.id);
+      router.refresh();
       setIsOpen(false);
 
       toast.success("Workflow deleted successfully");
@@ -43,8 +37,6 @@ export default function useDeleteWorkflow() {
   };
 
   return {
-    isOpen,
-    setIsOpen,
     isDeletingWorkflow,
     setIsDeletingWorkflow,
     handleDeleteWorkflow,

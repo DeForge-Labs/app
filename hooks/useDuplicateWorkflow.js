@@ -1,41 +1,37 @@
 "use client";
 
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import useInitialize from "./useInitialize";
 import { toast } from "sonner";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
-export const useDuplicateWorkflow = () => {
-  const [isOpen, setIsOpen] = useState(false);
+export default function useDuplicateWorkflow(setIsOpen) {
   const [isDuplicatingWorkflow, setIsDuplicatingWorkflow] = useState(false);
   const [workflowName, setWorkflowName] = useState("");
-  const team = useSelector((state) => state.team.team);
-  const { loadWorkflow } = useInitialize();
+  const router = useRouter();
 
-  const handleDuplicateWorkflow = async (workflow) => {
+  const handleDuplicateWorkflow = async (appId, appName) => {
     try {
       setIsDuplicatingWorkflow(true);
 
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      };
+      axios.defaults.withCredentials = true;
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/workspace/duplicate/${workflow.id}`,
-        { name: workflowName ? workflowName : workflow.name + " (Copy)" },
-        { headers }
+        `${process.env.NEXT_PUBLIC_API_URL}/workspace/duplicate/${appId}`,
+        { name: workflowName ? workflowName : appName + " (Copy)" }
       );
 
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
 
-      loadWorkflow(team?.id);
       setIsOpen(false);
+
+      router.refresh();
+
       setWorkflowName("");
 
-      toast.success("Workspace duplicated successfully");
+      toast.success("App duplicated successfully");
       return response.data;
     } catch (error) {
       console.log(error);
@@ -46,12 +42,10 @@ export const useDuplicateWorkflow = () => {
   };
 
   return {
-    isOpen,
-    setIsOpen,
     isDuplicatingWorkflow,
     setIsDuplicatingWorkflow,
     workflowName,
     setWorkflowName,
     handleDuplicateWorkflow,
   };
-};
+}

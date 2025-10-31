@@ -5,8 +5,21 @@ import { Separator } from "@/components/ui/separator";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { Menu, MenuPopup, MenuTrigger } from "@/components/ui/menu";
 import { Button } from "@/components/ui/button";
-import { Copy, Ellipsis, Pen, Star, Trash } from "lucide-react";
+import {
+  Copy,
+  Ellipsis,
+  MessageCircleDashed,
+  Pen,
+  SearchX,
+  Star,
+  Trash,
+  X,
+} from "lucide-react";
 import Link from "next/link";
+import MenuBox from "./MenuBox";
+import IconDialog from "./IconDialog";
+import { Plus } from "lucide-react";
+import PageSection from "./PageSection";
 
 export default async function AppList({ teamId, page, query }) {
   const getApps = async () => {
@@ -52,8 +65,48 @@ export default async function AppList({ teamId, page, query }) {
 
   const workspaces = appsData.workspaces;
 
+  const totalPages = appsData.totalPages;
+
+  const totalWorkspaces = appsData.totalWorkspaces;
+
   return (
     <>
+      {workspaces.length === 0 && query && (
+        <div className="flex flex-col items-center justify-center h-full bg-foreground/2 w-full max-w-[1360px] border border-foreground/15 border-dashed rounded-sm p-4 gap-2">
+          <div className="p-4 bg-background rounded-sm border border-foreground/15">
+            <SearchX className="w-5 h-5 opacity-70" />
+          </div>
+          <p className="text-center text-foreground/70 text-sm mt-2">
+            No apps found based on your search.
+          </p>
+
+          <Link href={`/dashboard/${teamId}/apps`}>
+            <Button className="flex gap-2 font-normal text-xs bg-foreground/90 text-background rounded-sm w-fit">
+              <X />
+              Clear Search
+            </Button>
+          </Link>
+        </div>
+      )}
+
+      {workspaces.length === 0 && !query && (
+        <div className="flex flex-col items-center justify-center h-full bg-foreground/2 w-full max-w-[1360px] border border-foreground/15 border-dashed rounded-sm p-4 gap-2">
+          <div className="p-4 bg-background rounded-sm border border-foreground/15">
+            <MessageCircleDashed className="w-5 h-5 opacity-70" />
+          </div>
+          <p className="text-center text-foreground/70 text-sm mt-2">
+            You have not created any apps yet.
+          </p>
+
+          <Link href={`/dashboard/${teamId}`}>
+            <Button className="flex gap-2 font-normal text-xs bg-foreground/90 text-background rounded-sm w-fit">
+              <Plus />
+              New App
+            </Button>
+          </Link>
+        </div>
+      )}
+
       {workspaces.map((app, index) => {
         const timeAgo = formatDistanceToNow(app.workflow.updatedAt, {
           addSuffix: true,
@@ -73,12 +126,7 @@ export default async function AppList({ teamId, page, query }) {
                 <p className="text-xs text-foreground/70">Updated {timeAgo}</p>
               </div>
 
-              <div className="p-2 border border-foreground/15 bg-background rounded-sm hover:bg-foreground/5 cursor-pointer z-10">
-                <DynamicIcon
-                  name={app?.iconId}
-                  className="w-5 h-5 opacity-70"
-                />
-              </div>
+              <IconDialog appId={app.id} appIcon={app.iconId} />
             </div>
 
             <Separator className="my-2 bg-foreground/15" />
@@ -91,55 +139,23 @@ export default async function AppList({ teamId, page, query }) {
                 })}
               </p>
 
-              <Menu>
-                <MenuTrigger
-                  render={
-                    <Button
-                      className="flex gap-2 bg-transparent font-normal px-1 min-h-4 !pointer-coarse:after:min-h-4 h-5 w-fit z-10 !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60 border border-foreground/15"
-                      variant="outline"
-                    >
-                      <Ellipsis />
-                    </Button>
-                  }
-                ></MenuTrigger>
-
-                <MenuPopup
-                  align="end"
-                  sideOffset={5}
-                  className={
-                    " border border-foreground/30 rounded-lg w-[160px]"
-                  }
-                >
-                  <Button
-                    variant="outline"
-                    className="data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent !shadow-none bg-transparent hover:bg-transparent w-full justify-start border-none"
-                  >
-                    <Pen className="w-4 h-4" /> Rename
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent !shadow-none bg-transparent hover:bg-transparent w-full justify-start border-none"
-                  >
-                    <Copy className="w-4 h-4" /> Duplicate
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent !shadow-none bg-transparent hover:bg-transparent w-full justify-start border-none"
-                  >
-                    <Star className="w-4 h-4" /> Favourite
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="text-destructive data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent !shadow-none bg-transparent hover:bg-transparent w-full justify-start border-none"
-                  >
-                    <Trash className="w-4 h-4" /> Delete
-                  </Button>
-                </MenuPopup>
-              </Menu>
+              <MenuBox
+                appId={app.id}
+                appName={app.name}
+                isFavorite={app.isFavorite}
+              />
             </div>
           </div>
         );
       })}
+
+      <PageSection
+        totalPages={totalPages}
+        totalWorkspaces={totalWorkspaces}
+        page={page}
+        query={query}
+        teamId={teamId}
+      />
     </>
   );
 }
