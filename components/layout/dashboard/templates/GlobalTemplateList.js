@@ -9,6 +9,7 @@ import { User } from "lucide-react";
 import PageSection from "../apps/PageSection";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import ErrorDialog from "@/components/ui/ErrorDialog";
 
 export default async function GlobalTemplateList({ teamId, page, query }) {
   const getGlobalTemplates = async () => {
@@ -49,7 +50,7 @@ export default async function GlobalTemplateList({ teamId, page, query }) {
   }
 
   if (!globalTemplatesData?.success) {
-    redirect("/");
+    return <ErrorDialog error={globalTemplatesData?.message} />;
   }
 
   const templates = globalTemplatesData.templates;
@@ -70,7 +71,7 @@ export default async function GlobalTemplateList({ teamId, page, query }) {
               No Templates found based on your search.
             </p>
 
-            <Link href={`/dashboard/${teamId}/templates`}>
+            <Link href={`/templates`}>
               <Button className="flex gap-2 font-normal text-xs bg-foreground/90 text-background rounded-sm w-fit">
                 <X />
                 Clear Search
@@ -91,10 +92,7 @@ export default async function GlobalTemplateList({ teamId, page, query }) {
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 px-4">
           {templates.map((template, index) => (
-            <Link
-              href={`/dashboard/${teamId}/templates/${template.id}`}
-              key={index}
-            >
+            <Link href={`/templates/${template.id}`} key={index}>
               <Card className="hover:border hover:border-foreground/20 cursor-pointer">
                 <CardHeader>
                   <CardTitle className="text-sm font-semibold flex flex-col gap-3">

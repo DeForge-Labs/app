@@ -6,8 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import AppList from "@/components/layout/dashboard/apps/AppList";
 import SearchSection from "@/components/layout/dashboard/apps/SearchSection";
 
-export default async function Page({ params, searchParams }) {
-  const { id } = await params;
+export default async function Page({ searchParams }) {
   const { p, q } = await searchParams;
   return (
     <>
@@ -24,7 +23,7 @@ export default async function Page({ params, searchParams }) {
             </div>
           </div>
 
-          <Link href={`/dashboard/${id}`}>
+          <Link href={`/dashboard`}>
             <Button className="flex gap-2 font-normal text-xs bg-foreground/90 text-background rounded-sm w-fit">
               <Plus />
               New App
@@ -45,7 +44,7 @@ export default async function Page({ params, searchParams }) {
                   </>
                 }
               >
-                <AppList teamId={id} page={p} query={q} />
+                <AppList page={p} query={q} />
               </Suspense>
             </div>
           </div>

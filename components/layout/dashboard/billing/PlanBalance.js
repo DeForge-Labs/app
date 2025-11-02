@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import UpgradeWindow from "./UpgradeWindow";
+import ErrorDialog from "@/components/ui/ErrorDialog";
 
 export default async function PlanBalance({ teamId }) {
   const plans = [
@@ -78,7 +79,7 @@ export default async function PlanBalance({ teamId }) {
   }
 
   if (!credits?.success) {
-    redirect("/");
+    return <ErrorDialog error={credits?.message} />;
   }
 
   return (

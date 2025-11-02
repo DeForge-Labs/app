@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import ErrorDialog from "@/components/ui/ErrorDialog";
 
 export default async function FavoriteApps({ params }) {
   const { id } = await params;
@@ -16,7 +17,7 @@ export default async function FavoriteApps({ params }) {
         .join("; ");
 
       const response = await fetch(
-        `${process.env.API_URL}/workspace/favorite/${id}`,
+        `${process.env.API_URL}/workspace/favorite`,
         {
           method: "GET",
           headers: {
@@ -42,7 +43,7 @@ export default async function FavoriteApps({ params }) {
   }
 
   if (!favoriteAppsData?.success) {
-    redirect("/");
+    return <ErrorDialog error={favoriteAppsData?.message} />;
   }
 
   return (

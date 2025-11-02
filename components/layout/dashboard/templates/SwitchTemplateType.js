@@ -1,16 +1,13 @@
 "use client";
 
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function SwitchTemplateType() {
   const pathName = usePathname();
   const router = useRouter();
-  const params = useParams();
 
-  const isYourTemplates = pathName.startsWith(
-    `/dashboard/${params.id}/templates/published`
-  );
+  const isYourTemplates = pathName.startsWith(`/templates/published`);
 
   return (
     <Tabs value={isYourTemplates ? "tab-2" : "tab-1"}>
@@ -21,7 +18,7 @@ export default function SwitchTemplateType() {
           value="tab-1"
           onClick={() => {
             if (isYourTemplates) {
-              router.push(`/dashboard/${params.id}/templates`);
+              router.push(`/templates`);
             }
           }}
           className="text-xs"
@@ -32,7 +29,7 @@ export default function SwitchTemplateType() {
           value="tab-2"
           onClick={() => {
             if (!isYourTemplates) {
-              router.push(`/dashboard/${params.id}/templates/published`);
+              router.push(`/templates/published`);
             }
           }}
           className="text-xs"

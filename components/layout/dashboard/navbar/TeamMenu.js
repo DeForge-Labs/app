@@ -14,6 +14,10 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import TeamRadioButton from "./TeamRadioButton";
+import ErrorDialog from "@/components/ui/ErrorDialog";
+import TeamMenuList from "./TeamMenuList";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default async function TeamMenu({ params }) {
   const { id } = await params;
@@ -27,7 +31,7 @@ export default async function TeamMenu({ params }) {
         .map((cookie) => `${cookie.name}=${cookie.value}`)
         .join("; ");
 
-      const response = await fetch(`${process.env.API_URL}/team/get/${id}`, {
+      const response = await fetch(`${process.env.API_URL}/team/get`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -44,50 +48,17 @@ export default async function TeamMenu({ params }) {
     }
   };
 
-  const getAllTeams = async () => {
-    try {
-      const cookieStore = await cookies();
-      const allCookies = cookieStore.getAll();
-
-      const cookieHeader = allCookies
-        .map((cookie) => `${cookie.name}=${cookie.value}`)
-        .join("; ");
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/teams/list`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            cookie: cookieHeader,
-          },
-          credentials: "include",
-        }
-      );
-      const data = await response.json();
-
-      return data;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  };
-
   const teamData = await getTeam();
 
-  const teamsData = await getAllTeams();
-
-  if (!teamData || !teamsData) {
+  if (!teamData) {
     redirect("/server-not-found");
   }
 
-  if (!teamData?.success || !teamsData?.success) {
-    redirect("/");
+  if (!teamData?.success) {
+    return <ErrorDialog error={teamData?.message} />;
   }
 
   const currentTeam = teamData?.team;
-
-  const teams = teamsData?.teams;
 
   return (
     <>
@@ -120,12 +91,19 @@ export default async function TeamMenu({ params }) {
           align="start"
         >
           <MenuRadioGroup value={currentTeam?.id}>
-            {teams?.map((team, index) => {
-              return <TeamRadioButton key={index} team={team} />;
-            })}
+            <Suspense
+              fallback={
+                <>
+                  <Skeleton className="h-9" />
+                  <Skeleton className="h-9 mt-1" />
+                </>
+              }
+            >
+              <TeamMenuList />
+            </Suspense>
           </MenuRadioGroup>
           <MenuSeparator className="bg-foreground/10" />
-          <Link href="/team">
+          <Link href="/teams">
             <MenuItem className="text-info data-highlighted:bg-foreground/5 data-highlighted:text-info cursor-pointer">
               <Plus size={16} />
               Create / Join

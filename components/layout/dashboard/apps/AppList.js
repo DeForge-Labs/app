@@ -9,6 +9,7 @@ import MenuBox from "./MenuBox";
 import IconDialog from "./IconDialog";
 import { Plus } from "lucide-react";
 import PageSection from "./PageSection";
+import ErrorDialog from "@/components/ui/ErrorDialog";
 
 export default async function AppList({ teamId, page, query }) {
   const getApps = async () => {
@@ -21,9 +22,9 @@ export default async function AppList({ teamId, page, query }) {
         .join("; ");
 
       const response = await fetch(
-        `${process.env.API_URL}/workspace/list/${teamId}?page=${
-          page || 1
-        }&query=${query || ""}&limit=10`,
+        `${process.env.API_URL}/workspace/list?page=${page || 1}&query=${
+          query || ""
+        }&limit=10`,
         {
           method: "GET",
           headers: {
@@ -49,7 +50,7 @@ export default async function AppList({ teamId, page, query }) {
   }
 
   if (!appsData?.success) {
-    redirect("/");
+    return <ErrorDialog message={appsData?.message} />;
   }
 
   const workspaces = appsData.workspaces;
@@ -69,7 +70,7 @@ export default async function AppList({ teamId, page, query }) {
             No apps found based on your search.
           </p>
 
-          <Link href={`/dashboard/${teamId}/apps`}>
+          <Link href={`/apps`}>
             <Button className="flex gap-2 font-normal text-xs bg-foreground/90 text-background rounded-sm w-fit">
               <X />
               Clear Search
@@ -87,7 +88,7 @@ export default async function AppList({ teamId, page, query }) {
             You have not created any apps yet.
           </p>
 
-          <Link href={`/dashboard/${teamId}`}>
+          <Link href={`/dashboard`}>
             <Button className="flex gap-2 font-normal text-xs bg-foreground/90 text-background rounded-sm w-fit">
               <Plus />
               New App

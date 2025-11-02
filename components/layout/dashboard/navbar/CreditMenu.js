@@ -14,6 +14,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import BuyCreditDialog from "./BuyCreditDialog";
+import ErrorDialog from "@/components/ui/ErrorDialog";
 
 export default async function CreditMenu({ params }) {
   const { id } = await params;
@@ -51,7 +52,7 @@ export default async function CreditMenu({ params }) {
   }
 
   if (!credits?.success) {
-    redirect("/");
+    return <ErrorDialog error={credits?.message} />;
   }
 
   return (
@@ -85,7 +86,7 @@ export default async function CreditMenu({ params }) {
           <MenuSeparator className="bg-foreground/10" />
 
           <BuyCreditDialog teamId={id} />
-          <Link href={"/dashboard/" + id + "/billing"}>
+          <Link href={"/billing"}>
             <MenuItem className="text-foreground data-highlighted:bg-foreground/5 data-highlighted:text-foreground cursor-pointer !px-[10px]">
               <ExternalLink />
               {credits?.plan === "enterprise" ? "Billing" : "Upgrade Plan"}

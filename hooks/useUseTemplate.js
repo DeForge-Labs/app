@@ -14,7 +14,7 @@ export default function useUseTemplate(setIsOpen) {
       axios.defaults.withCredentials = true;
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/template/duplicate/${teamId}/${templateId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/template/duplicate/${templateId}`,
         {}
       );
 

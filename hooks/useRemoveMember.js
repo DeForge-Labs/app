@@ -17,7 +17,7 @@ export default function useRemoveMember() {
       axios.defaults.withCredentials = true;
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/team/remove/${teamId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/team/remove`,
         { userEmail }
       );
 

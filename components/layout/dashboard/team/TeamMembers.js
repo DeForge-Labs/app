@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { Menu, MenuPopup, MenuTrigger } from "@/components/ui/menu";
 import ChangeRoleButton from "./ChangeRoleButton";
+import ErrorDialog from "@/components/ui/ErrorDialog";
 import RemoveMemberButton from "./RemoveMemberButton";
 
 export default async function TeamMembers({ id }) {
@@ -19,17 +20,14 @@ export default async function TeamMembers({ id }) {
         .map((cookie) => `${cookie.name}=${cookie.value}`)
         .join("; ");
 
-      const response = await fetch(
-        `${process.env.API_URL}/team/members/${id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            cookie: cookieHeader,
-          },
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${process.env.API_URL}/team/members`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: cookieHeader,
+        },
+        credentials: "include",
+      });
       const data = await response.json();
 
       return data;
@@ -46,7 +44,7 @@ export default async function TeamMembers({ id }) {
   }
 
   if (!teamMembersData?.success) {
-    redirect("/");
+    return <ErrorDialog error={teamMembersData?.message} />;
   }
 
   const members = teamMembersData?.members;

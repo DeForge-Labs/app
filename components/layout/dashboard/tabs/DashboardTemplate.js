@@ -4,6 +4,7 @@ import { DynamicIcon } from "lucide-react/dynamic";
 import { Badge } from "@/components/ui/badge";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import ErrorDialog from "@/components/ui/ErrorDialog";
 
 export default async function DashboardTemplate({ teamId }) {
   const getPopularTemplates = async () => {
@@ -33,7 +34,7 @@ export default async function DashboardTemplate({ teamId }) {
   }
 
   if (!popularTemplates?.success) {
-    redirect("/");
+    return <ErrorDialog error={popularTemplates?.message} />;
   }
 
   const templates = popularTemplates?.templates;
@@ -48,7 +49,7 @@ export default async function DashboardTemplate({ teamId }) {
           </p>
         </div>
 
-        <Link href={`/dashboard/${teamId}/templates`}>
+        <Link href={`/templates`}>
           <div className="flex items-center gap-1 text-sm text-foreground/60 group hover:text-foreground hover:cursor-pointer">
             Browse All{" "}
             <ChevronRight className="size-4 group-hover:translate-x-0.5 transition-all group-hover:text-foreground" />
@@ -58,10 +59,7 @@ export default async function DashboardTemplate({ teamId }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {templates.map((template, index) => (
-          <Link
-            href={`/dashboard/${teamId}/templates/${template.id}`}
-            key={index}
-          >
+          <Link href={`/templates/${template.id}`} key={index}>
             <Card className="hover:border hover:border-foreground/20 cursor-pointer">
               <CardHeader>
                 <CardTitle className="text-sm font-semibold flex flex-col gap-3">

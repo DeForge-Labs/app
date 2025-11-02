@@ -32,7 +32,7 @@ export default function TeamForm() {
       const response = await createTeam(name);
       if (response.success) {
         toast.success("Team created successfully");
-        router.push("/team");
+        router.push("/teams");
       } else {
         toast.error(response.message);
       }
@@ -51,7 +51,7 @@ export default function TeamForm() {
       const response = await joinTeam(invitationCode);
 
       if (response) {
-        router.push("/team");
+        router.push("/teams");
       } else {
         toast.error("Something went wrong");
       }
@@ -129,7 +129,7 @@ export default function TeamForm() {
               className="flex-1 h-11 text-xs border-black/10 before:rounded-t-none dark:bg-transparent dark:border-white/10 border-l-0 border-b-0 rounded-br-none rounded-t-none text-destructive"
               variant="outline"
               disabled={isCreating}
-              onClick={() => router.push("/team")}
+              onClick={() => router.push("/teams")}
             >
               Back
             </Button>
@@ -172,7 +172,7 @@ export default function TeamForm() {
               className="flex-1 h-11 text-xs border-black/10 before:rounded-t-none dark:bg-transparent dark:border-white/10 border-l-0 border-b-0 rounded-br-none rounded-t-none text-destructive"
               variant="outline"
               onClick={() => {
-                router.push("/team");
+                router.push("/teams");
               }}
               disabled={isJoining}
             >

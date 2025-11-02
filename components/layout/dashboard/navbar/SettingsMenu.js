@@ -40,7 +40,7 @@ export default async function SettingsMenu({ params }) {
       >
         <MenuGroup>
           <MenuGroupLabel>Quick Actions</MenuGroupLabel>
-          <Link href={"/dashboard/" + id + "/billing"}>
+          <Link href={"/billing"}>
             <MenuItem className="cursor-pointer">
               Billing <ExternalLink className="ms-auto" />
             </MenuItem>

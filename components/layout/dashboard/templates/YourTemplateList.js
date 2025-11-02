@@ -11,6 +11,7 @@ import { Ellipsis } from "lucide-react";
 import ShareDialog from "./ShareDialog";
 import UseTemplateDialog from "./UseTemplateDialog";
 import RevertDialog from "./RevertDialog";
+import ErrorDialog from "@/components/ui/ErrorDialog";
 
 export default async function YourTemplateList({ teamId, page, query }) {
   const getTemplates = async () => {
@@ -23,9 +24,9 @@ export default async function YourTemplateList({ teamId, page, query }) {
         .join("; ");
 
       const response = await fetch(
-        `${process.env.API_URL}/template/list/${teamId}?page=${
-          page || 1
-        }&query=${query || ""}&limit=10`,
+        `${process.env.API_URL}/template/list?page=${page || 1}&query=${
+          query || ""
+        }&limit=10`,
         {
           method: "GET",
           headers: {
@@ -51,7 +52,7 @@ export default async function YourTemplateList({ teamId, page, query }) {
   }
 
   if (!templatesData?.success) {
-    redirect("/");
+    return <ErrorDialog error={templatesData?.message} />;
   }
 
   const templates = templatesData.templates;
@@ -71,7 +72,7 @@ export default async function YourTemplateList({ teamId, page, query }) {
             No Templates found based on your search.
           </p>
 
-          <Link href={`/dashboard/${teamId}/templates/published`}>
+          <Link href={`/templates/published`}>
             <Button className="flex gap-2 font-normal text-xs bg-foreground/90 text-background rounded-sm w-fit">
               <X />
               Clear Search
@@ -99,7 +100,7 @@ export default async function YourTemplateList({ teamId, page, query }) {
           >
             <Link
               className="absolute inset-0"
-              href={`/dashboard/${teamId}/templates/${template?.id}`}
+              href={`/templates/${template?.id}`}
             />
 
             <div className="flex justify-between items-center">

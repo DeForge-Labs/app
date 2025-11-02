@@ -18,7 +18,7 @@ export default function useChangeRole() {
       axios.defaults.withCredentials = true;
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/team/change-role/${teamId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/team/change-role`,
         { role, userEmail }
       );
 

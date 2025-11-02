@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import { Loader2, Search } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useParams } from "next/navigation";
 
 export default function SearchSection({
   route = "apps",
@@ -11,7 +10,6 @@ export default function SearchSection({
 }) {
   const inputRef = useRef(null);
   const router = useRouter();
-  const params = useParams();
   const searchParams = useSearchParams();
   const timerRef = useRef(null);
   const isFirstRender = useRef(true);
@@ -19,9 +17,14 @@ export default function SearchSection({
   const [query, setQuery] = useState(searchParams.get("q") || "");
 
   useEffect(() => {
-    const urlQuery = searchParams.get("q") || "";
-    setQuery(urlQuery);
-  }, [searchParams]);
+    if (isFirstRender.current) {
+      const urlQuery = searchParams.get("q") || "";
+
+      if (urlQuery !== query) {
+        setQuery(urlQuery);
+      }
+    }
+  }, [searchParams, isFirstRender]);
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -31,32 +34,27 @@ export default function SearchSection({
 
     if (timerRef.current) {
       clearTimeout(timerRef.current);
+    }
+
+    setIsLoading(true);
+
+    timerRef.current = setTimeout(() => {
+      const newParams = new URLSearchParams(searchParams.toString());
+
+      if (query) {
+        newParams.set("q", query);
+      } else {
+        newParams.delete("q");
+      }
+
+      newParams.delete("p");
+
+      const queryString = newParams.toString();
+      const url = `/${route}${queryString ? `?${queryString}` : ""}`;
+
+      router.push(url);
       setIsLoading(false);
-    }
-
-    if (params?.id) {
-      setIsLoading(true);
-
-      timerRef.current = setTimeout(() => {
-        const newParams = new URLSearchParams(searchParams.toString());
-
-        if (query) {
-          newParams.set("q", query);
-        } else {
-          newParams.delete("q");
-        }
-
-        newParams.delete("p");
-
-        const queryString = newParams.toString();
-        const url = `/dashboard/${params.id}/${route}${
-          queryString ? `?${queryString}` : ""
-        }`;
-
-        router.push(url);
-        setIsLoading(false);
-      }, 500);
-    }
+    }, 500);
 
     return () => {
       if (timerRef.current) {
@@ -64,7 +62,7 @@ export default function SearchSection({
         setIsLoading(false);
       }
     };
-  }, [query, params?.id, router, searchParams]);
+  }, [query, router, route]);
 
   return (
     <div className="flex items-center justify-between px-4 py-2 border-b border-foreground/15 gap-2">

@@ -19,7 +19,7 @@ export default function useInviteMember() {
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/teams/invite`,
-        { role, teamId }
+        { role }
       );
 
       if (!response.data.success) {

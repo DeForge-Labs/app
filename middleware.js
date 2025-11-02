@@ -36,13 +36,11 @@ export async function middleware(req) {
     }
 
     if (pathname === "/" && lastTeamId) {
-      return NextResponse.redirect(
-        new URL(`/dashboard/${lastTeamId.value}`, req.url)
-      );
+      return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
-    if (pathname === "/" && !lastTeamId) {
-      return NextResponse.redirect(new URL(`/team`, req.url));
+    if (!lastTeamId) {
+      return NextResponse.redirect(new URL("/teams", req.url));
     }
 
     return NextResponse.next();

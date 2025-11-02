@@ -15,12 +15,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 
 export default async function Sidebar({ params }) {
-  const { id } = await params;
   return (
     <div className="w-[240px] bg-foreground/5 relative overflow-y-auto hide-scroll p-2 px-0 flex flex-col">
       <div className="flex flex-col justify-between p-2 py-0 h-full">
         <div className="flex flex-col gap-[2px] relative flex-1">
-          <Link href={`/dashboard/${id}`} className="w-full">
+          <Link href={`/dashboard`} className="w-full">
             <Button
               className="flex gap-2 font-normal text-xs border border-foreground/20 rounded-sm w-full"
               variant="outline"
@@ -32,7 +31,7 @@ export default async function Sidebar({ params }) {
 
           <SearchDialog />
 
-          <Link href={`/dashboard/${id}/apps`} className="w-full">
+          <Link href={`/apps`} className="w-full">
             <Button
               className="flex gap-2 bg-transparent font-normal w-full !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
               variant="outline"
@@ -42,7 +41,7 @@ export default async function Sidebar({ params }) {
             </Button>
           </Link>
 
-          <Link href={`/dashboard/${id}/templates`} className="w-full">
+          <Link href={`/templates`} className="w-full">
             <Button
               className="flex gap-2 bg-transparent font-normal w-full !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
               variant="outline"
@@ -52,7 +51,7 @@ export default async function Sidebar({ params }) {
             </Button>
           </Link>
 
-          <Link href={`/dashboard/${id}/team`} className="w-full">
+          <Link href={`/team`} className="w-full">
             <Button
               className="flex gap-2 bg-transparent font-normal w-full !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
               variant="outline"

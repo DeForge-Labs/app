@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import ErrorDialog from "@/components/ui/ErrorDialog";
 
 export default async function RecentApps({ params }) {
   const { id } = await params;
@@ -15,17 +16,14 @@ export default async function RecentApps({ params }) {
         .map((cookie) => `${cookie.name}=${cookie.value}`)
         .join("; ");
 
-      const response = await fetch(
-        `${process.env.API_URL}/workspace/recent/${id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            cookie: cookieHeader,
-          },
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${process.env.API_URL}/workspace/recent`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: cookieHeader,
+        },
+        credentials: "include",
+      });
       const data = await response.json();
 
       return data;
@@ -42,7 +40,7 @@ export default async function RecentApps({ params }) {
   }
 
   if (!recentAppsData?.success) {
-    redirect("/");
+    return <ErrorDialog error={recentAppsData?.message} />;
   }
 
   return (

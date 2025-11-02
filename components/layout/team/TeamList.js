@@ -1,9 +1,9 @@
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import TeamButton from "./TeamButton";
+import ErrorDialog from "@/components/ui/ErrorDialog";
 
 export default async function TeamList() {
   const getAllTeams = async () => {
@@ -38,7 +38,7 @@ export default async function TeamList() {
   const teamsData = await getAllTeams();
 
   if (!teamsData) {
-    redirect("/");
+    return <ErrorDialog error="Failed to fetch teams" />;
   }
 
   const teams = teamsData.teams;
@@ -57,15 +57,11 @@ export default async function TeamList() {
               </p>
             ))}
           {teams &&
-            teams.map((team) => (
-              <Link href={`/dashboard/${team.teamId}`} key={team.teamId}>
-                <TeamButton team={team} />
-              </Link>
-            ))}
+            teams.map((team) => <TeamButton key={team.teamId} team={team} />)}
         </div>
       </div>
 
-      <Link href="/team/create" className="w-full">
+      <Link href="/teams/create" className="w-full">
         <Button
           className="h-11 flex-1 dark:bg-transparent before:rounded-t-none w-full dark:border-white/10 border-t py-3 border-x-0 border-b-0 border-black/10 text-info items-start justify-start px-4 rounded-b-lg rounded-t-none text-xs"
           variant="outline"
