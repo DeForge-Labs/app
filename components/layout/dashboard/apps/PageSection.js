@@ -15,8 +15,10 @@ export default function PageSection({
   query,
   teamId,
   totalWorkspaces,
+  route = "apps",
+  topLimit = 10,
 }) {
-  if (totalWorkspaces <= 10) return null;
+  if (totalWorkspaces <= topLimit) return null;
 
   const currentPage = parseInt(page) || 1;
 
@@ -32,7 +34,9 @@ export default function PageSection({
     }
 
     const queryString = params.toString();
-    return `/dashboard/${teamId}/apps${queryString ? `?${queryString}` : ""}`;
+    return `/dashboard/${teamId}/${route}${
+      queryString ? `?${queryString}` : ""
+    }`;
   };
 
   const getPageNumbers = () => {

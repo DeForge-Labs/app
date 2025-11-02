@@ -13,6 +13,7 @@ import { HandCoins } from "lucide-react";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import BuyCreditDialog from "./BuyCreditDialog";
 
 export default async function CreditMenu({ params }) {
   const { id } = await params;
@@ -83,14 +84,11 @@ export default async function CreditMenu({ params }) {
 
           <MenuSeparator className="bg-foreground/10" />
 
-          <MenuItem className="text-info data-highlighted:bg-foreground/5 data-highlighted:text-info cursor-pointer">
-            <HandCoins />
-            Buy Credit
-          </MenuItem>
+          <BuyCreditDialog teamId={id} />
           <Link href={"/dashboard/" + id + "/billing"}>
-            <MenuItem className="text-foreground data-highlighted:bg-foreground/5 data-highlighted:text-foreground cursor-pointer">
+            <MenuItem className="text-foreground data-highlighted:bg-foreground/5 data-highlighted:text-foreground cursor-pointer !px-[10px]">
               <ExternalLink />
-              Upgrade Plan
+              {credits?.plan === "enterprise" ? "Billing" : "Upgrade Plan"}
             </MenuItem>
           </Link>
         </MenuGroup>

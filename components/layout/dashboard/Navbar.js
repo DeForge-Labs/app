@@ -10,6 +10,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import CreditMenu from "./navbar/CreditMenu";
 import SettingsMenu from "./navbar/SettingsMenu";
+import FeedbackDialog from "./navbar/FeedbackDialog";
 
 export default function Navbar({ params }) {
   return (
@@ -43,13 +44,7 @@ export default function Navbar({ params }) {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            className="text-xs bg-background font-normal border border-foreground/20 rounded-sm"
-          >
-            Feedback
-          </Button>
-
+          <FeedbackDialog />
           <Suspense
             fallback={
               <Button

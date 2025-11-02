@@ -6,7 +6,8 @@ import Chatbox from "./Chatbox";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function DashboardNew({ params }) {
+export default async function DashboardNew({ params }) {
+  const { id } = await params;
   return (
     <div className="absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll p-6">
       <div className="flex flex-col items-center justify-center gap-2 relative">
@@ -83,7 +84,7 @@ export default function DashboardNew({ params }) {
             </div>
           }
         >
-          <DashboardTemplate />
+          <DashboardTemplate teamId={id} />
         </Suspense>
       </div>
     </div>

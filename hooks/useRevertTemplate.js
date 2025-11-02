@@ -3,33 +3,28 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { useSelector } from "react-redux";
-import useInitialize from "./useInitialize";
+import { useRouter } from "next/navigation";
 
-export default function useRevertTemplate() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function useRevertTemplate(setIsOpen) {
   const [isRevertingTemplate, setIsRevertingTemplate] = useState(false);
-  const team = useSelector((state) => state.team.team);
-  const { loadWorkflow } = useInitialize();
+  const router = useRouter();
 
   const handleRevertTemplate = async (templateId) => {
     try {
       setIsRevertingTemplate(true);
 
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      };
+      axios.defaults.withCredentials = true;
 
       const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_API_URL}/template/revert/${templateId}`,
-        { headers }
+        {}
       );
 
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
 
-      await loadWorkflow(team?.id);
+      router.refresh();
 
       setIsOpen(false);
 
@@ -44,10 +39,7 @@ export default function useRevertTemplate() {
   };
 
   return {
-    isOpen,
-    setIsOpen,
     isRevertingTemplate,
-    setIsRevertingTemplate,
     handleRevertTemplate,
   };
 }

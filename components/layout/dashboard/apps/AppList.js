@@ -2,19 +2,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { Separator } from "@/components/ui/separator";
-import { DynamicIcon } from "lucide-react/dynamic";
-import { Menu, MenuPopup, MenuTrigger } from "@/components/ui/menu";
 import { Button } from "@/components/ui/button";
-import {
-  Copy,
-  Ellipsis,
-  MessageCircleDashed,
-  Pen,
-  SearchX,
-  Star,
-  Trash,
-  X,
-} from "lucide-react";
+import { MessageCircleDashed, SearchX, X } from "lucide-react";
 import Link from "next/link";
 import MenuBox from "./MenuBox";
 import IconDialog from "./IconDialog";
@@ -72,7 +61,7 @@ export default async function AppList({ teamId, page, query }) {
   return (
     <>
       {workspaces.length === 0 && query && (
-        <div className="flex flex-col items-center justify-center h-full bg-foreground/2 w-full max-w-[1360px] border border-foreground/15 border-dashed rounded-sm p-4 gap-2">
+        <div className="flex flex-col items-center justify-center h-full bg-foreground/2 w-full max-w-[1360px] border border-foreground/15 border-dashed rounded-sm p-4 py-6 gap-2">
           <div className="p-4 bg-background rounded-sm border border-foreground/15">
             <SearchX className="w-5 h-5 opacity-70" />
           </div>
@@ -90,7 +79,7 @@ export default async function AppList({ teamId, page, query }) {
       )}
 
       {workspaces.length === 0 && !query && (
-        <div className="flex flex-col items-center justify-center h-full bg-foreground/2 w-full max-w-[1360px] border border-foreground/15 border-dashed rounded-sm p-4 gap-2">
+        <div className="flex flex-col items-center justify-center h-full bg-foreground/2 w-full max-w-[1360px] border border-foreground/15 border-dashed rounded-sm p-4 py-6 gap-2">
           <div className="p-4 bg-background rounded-sm border border-foreground/15">
             <MessageCircleDashed className="w-5 h-5 opacity-70" />
           </div>
@@ -108,7 +97,7 @@ export default async function AppList({ teamId, page, query }) {
       )}
 
       {workspaces.map((app, index) => {
-        const timeAgo = formatDistanceToNow(app.workflow.updatedAt, {
+        const timeAgo = formatDistanceToNow(app.workflow?.updatedAt, {
           addSuffix: true,
         });
 

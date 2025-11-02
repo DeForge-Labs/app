@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import SearchDialog from "./sidebar/SearchDialog";
 import RecentApps from "./sidebar/RecentApps";
+import FavoriteApps from "./sidebar/FavoriteApps";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
@@ -18,7 +19,7 @@ export default async function Sidebar({ params }) {
   return (
     <div className="w-[240px] bg-foreground/5 relative overflow-y-auto hide-scroll p-2 px-0 flex flex-col">
       <div className="flex flex-col justify-between p-2 py-0 h-full">
-        <div className="flex flex-col gap-[2px]">
+        <div className="flex flex-col gap-[2px] relative flex-1">
           <Link href={`/dashboard/${id}`} className="w-full">
             <Button
               className="flex gap-2 font-normal text-xs border border-foreground/20 rounded-sm w-full"
@@ -68,46 +69,56 @@ export default async function Sidebar({ params }) {
             />
           </div>
 
-          <div className="px-2 flex flex-col gap-2 flex-1">
-            <Accordion className="w-full">
-              <AccordionItem>
-                <AccordionTrigger
-                  className="font-normal text-foreground/60 text-xs py-0"
-                  size="xs"
-                >
-                  Favourites
-                </AccordionTrigger>
-                <AccordionPanel className="mt-2">
-                  <div className="bg-foreground/5 p-2 border border-foreground/20 rounded-sm text-xs border-dashed text-center">
-                    Your Favourite apps that you have saved
-                  </div>
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
-
-            <Accordion>
-              <AccordionItem>
-                <AccordionTrigger
-                  className="font-normal text-foreground/60 text-xs py-0"
-                  size="xs"
-                >
-                  Recent Apps
-                </AccordionTrigger>
-                <AccordionPanel className="mt-2">
-                  <Suspense
-                    fallback={
-                      <div className="flex flex-col gap-2">
-                        <Skeleton className="w-full h-9" />
-                        <Skeleton className="w-full h-9" />
-                        <Skeleton className="w-full h-9" />
-                      </div>
-                    }
+          <div className="relative flex-1">
+            <div className="px-2 absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll flex flex-col gap-2">
+              <Accordion className="w-full">
+                <AccordionItem>
+                  <AccordionTrigger
+                    className="font-normal text-foreground/60 text-xs py-0"
+                    size="xs"
                   >
-                    <RecentApps params={params} />
-                  </Suspense>
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
+                    Favourites
+                  </AccordionTrigger>
+                  <AccordionPanel className="mt-2">
+                    <Suspense
+                      fallback={
+                        <div className="flex flex-col gap-2">
+                          <Skeleton className="w-full h-9" />
+                          <Skeleton className="w-full h-9" />
+                          <Skeleton className="w-full h-9" />
+                        </div>
+                      }
+                    >
+                      <FavoriteApps params={params} />
+                    </Suspense>
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
+
+              <Accordion>
+                <AccordionItem>
+                  <AccordionTrigger
+                    className="font-normal text-foreground/60 text-xs py-0"
+                    size="xs"
+                  >
+                    Recent Apps
+                  </AccordionTrigger>
+                  <AccordionPanel className="mt-2">
+                    <Suspense
+                      fallback={
+                        <div className="flex flex-col gap-2">
+                          <Skeleton className="w-full h-9" />
+                          <Skeleton className="w-full h-9" />
+                          <Skeleton className="w-full h-9" />
+                        </div>
+                      }
+                    >
+                      <RecentApps params={params} />
+                    </Suspense>
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
+            </div>
           </div>
         </div>
       </div>

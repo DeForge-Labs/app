@@ -1,11 +1,11 @@
-import { ChevronRight, GitBranch } from "lucide-react";
+import { ChevronRight, GitBranch, User } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { Badge } from "@/components/ui/badge";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
-export default async function DashboardTemplate() {
+export default async function DashboardTemplate({ teamId }) {
   const getPopularTemplates = async () => {
     try {
       const response = await fetch(
@@ -48,15 +48,20 @@ export default async function DashboardTemplate() {
           </p>
         </div>
 
-        <div className="flex items-center gap-1 text-sm text-foreground/60 group hover:text-foreground hover:cursor-pointer">
-          Browse All{" "}
-          <ChevronRight className="size-4 group-hover:translate-x-0.5 transition-all group-hover:text-foreground" />
-        </div>
+        <Link href={`/dashboard/${teamId}/templates`}>
+          <div className="flex items-center gap-1 text-sm text-foreground/60 group hover:text-foreground hover:cursor-pointer">
+            Browse All{" "}
+            <ChevronRight className="size-4 group-hover:translate-x-0.5 transition-all group-hover:text-foreground" />
+          </div>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {templates.map((template, index) => (
-          <Link href={`/template/${template.id}`} key={index}>
+          <Link
+            href={`/dashboard/${teamId}/templates/${template.id}`}
+            key={index}
+          >
             <Card className="hover:border hover:border-foreground/20 cursor-pointer">
               <CardHeader>
                 <CardTitle className="text-sm font-semibold flex flex-col gap-3">
@@ -74,13 +79,17 @@ export default async function DashboardTemplate() {
                   {template?.description}
                 </p>
 
-                <div className="flex gap-2">
-                  <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 border bg-transparent text-foreground/60 border-foreground/60">
+                <div className="flex gap-2 flex-wrap">
+                  <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 border bg-transparent text-foreground/60 border-foreground/60 ">
                     {template?.category}
                   </Badge>
 
                   <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 border bg-transparent text-foreground/60 border-foreground/60">
                     <GitBranch className="size-3" /> {template?.totalClones}
+                  </Badge>
+
+                  <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 bg-transparent text-foreground/60">
+                    <User className="size-3" /> {template?.author}
                   </Badge>
                 </div>
               </CardContent>

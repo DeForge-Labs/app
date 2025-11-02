@@ -5,7 +5,10 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useParams } from "next/navigation";
 
-export default function SearchSection() {
+export default function SearchSection({
+  route = "apps",
+  placeholder = "Search apps...",
+}) {
   const inputRef = useRef(null);
   const router = useRouter();
   const params = useParams();
@@ -46,7 +49,7 @@ export default function SearchSection() {
         newParams.delete("p");
 
         const queryString = newParams.toString();
-        const url = `/dashboard/${params.id}/apps${
+        const url = `/dashboard/${params.id}/${route}${
           queryString ? `?${queryString}` : ""
         }`;
 
@@ -72,7 +75,7 @@ export default function SearchSection() {
       )}
       <Input
         ref={inputRef}
-        placeholder="Search apps..."
+        placeholder={placeholder}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="w-full px-0 border-0 shadow-none has-focus-visible:border-ring has-focus-visible:ring-[0px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none ring-0 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
