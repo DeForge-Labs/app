@@ -5,15 +5,18 @@ import {
   setPaneLeft,
   setPaneRight,
 } from "@/redux/slice/WorkflowSlice";
-import { Button, Tooltip } from "@heroui/react";
+import { Tooltip } from "@heroui/react";
 import {
   AlertCircleIcon,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Code,
   Loader2,
   PanelLeft,
   PanelRight,
+  Play,
+  Rocket,
   Undo2,
 } from "lucide-react";
 import Image from "next/image";
@@ -25,6 +28,12 @@ import { toast } from "sonner";
 import ThemeChanger from "../dashboard/ThemeChanger";
 import { cn } from "@/lib/utils";
 import PublishButton from "./editorWindow/PublishButton";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import OptionsMenu from "./editorNavbar/OptionsMenu";
+import WorkflowCard from "./editorNavbar/WorkflowCard";
 
 export default function EditorNavbar() {
   const isWorkspaceInitializing = useSelector(
@@ -78,148 +87,43 @@ export default function EditorNavbar() {
   };
 
   return (
-    <header className="sticky top-0 z-10 border-b border-black/50 bg-background dark:bg-dark dark:border-background">
-      <div className=" px-5 flex h-16 items-center justify-between py-4">
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            className="p-1 mr-2 border border-black/80 rounded-md dark:border-background dark:text-background"
-            onPress={() => {
-              router.push(`/dashboard/${workspace?.teamId}`);
-            }}
+    <header className="sticky top-0 z-50 bg-foreground/5">
+      <div className="flex items-center justify-between px-2 h-[50px]">
+        <div className="flex items-center gap-1 h-full">
+          <Link
+            href="/dashboard"
+            className="flex items-center ml-1 justify-center space-x-2"
           >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
+            <div className="p-1.5 w-fit rounded-sm hover:bg-foreground/5 border border-foreground/20">
+              <ChevronLeft className="text-foreground/70 size-3" />
+            </div>
+          </Link>
 
-          <Image
-            src="/logo/logo-black.svg"
-            alt="Logo"
-            width={22}
-            height={22}
-            className="dark:invert"
-          />
-          <span className="font-bold inline-block text-2xl dark:text-background">
-            Deforge
+          <span className="flex items-center gap-1 dark:text-background">
+            <WorkflowCard />
           </span>
-          <ChevronRight size={16} className="mt-1 dark:text-background" />
-          <div className="inline-block text-sm mt-0.5 dark:text-background">
-            {isWorkspaceInitializing ? (
-              <Loader2 className="animate-spin w-4 h-4" />
-            ) : (
-              <div className="flex flex-col gap-1 text-[13px]">
-                {workspace?.name}
-                <div className="flex items-center gap-1">
-                  <div
-                    className={`flex items-center gap-1 border border-black/80 text-[10px] w-fit px-2 rounded-md ${cn(
-                      workflow?.status === "LIVE"
-                        ? "bg-green-500/10 border-green-500 text-green-500"
-                        : "bg-red-500/10 border-red-500 text-red-500"
-                    )}`}
-                  >
-                    {workflow?.status === "LIVE" ? (
-                      <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                    ) : (
-                      <div className="h-2 w-2 bg-red-500 rounded-full"></div>
-                    )}
-                    {workflow?.status === "LIVE" ? "Production" : "Testing"}
-                  </div>
-
-                  {(hasUnsavedChanges || hasUnsavedChangesForm) &&
-                    !isWorkspaceInitializing &&
-                    workspace?.workflow?.status !== "LIVE" && (
-                      <div className="flex items-center gap-1 text-[10px] border border-yellow-400 bg-yellow-400/10 text-yellow-700 dark:text-yellow-400 rounded-md px-2">
-                        <div className="h-2 w-2 bg-yellow-400 rounded-full"></div>
-
-                        <span>Unsaved</span>
-                      </div>
-                    )}
-                </div>
-              </div>
-            )}
-          </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <ThemeChanger />
-          <Tooltip
-            className="bg-background border-black/50 border shadow-none dark:border-background rounded-md dark:text-background dark:bg-dark"
-            content={
-              <div className="p-2 text-xs dark:text-background dark:border-background ">
-                <p>Revert to last saved version</p>
-              </div>
-            }
-          >
-            <Button
-              variant="outline"
-              size="icon"
-              className="px-2 min-h-9 border border-black/80 rounded-md dark:border-background dark:text-background"
-              onPress={handleUndoClick}
-              isDisabled={
-                !(
-                  (hasUnsavedChanges && mode === "workflow") ||
-                  (hasUnsavedChangesForm && mode === "form")
-                ) ||
-                isUndoing ||
-                isWorkspaceInitializing ||
-                isFormInitializing ||
-                workspace?.workflow?.status === "LIVE"
-              }
-            >
-              {isUndoing ? (
-                <Loader2 className="animate-spin w-4 h-4" />
-              ) : (
-                <Undo2 className="h-4 w-4" />
-              )}
-            </Button>
-          </Tooltip>
-
+          <OptionsMenu />
           <Button
             variant="outline"
-            size="icon"
-            className="px-2 min-h-9 border border-black/80 rounded-md dark:border-background dark:text-background"
-            onPress={handlePaneLeftClick}
+            className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
           >
-            <PanelLeft className="h-4 w-4" />
+            <Code />
+            API
           </Button>
-
           <Button
             variant="outline"
-            size="icon"
-            className="px-2 min-h-9 border border-black/80 rounded-md dark:border-background dark:text-background"
-            onPress={handlePaneRightClick}
+            className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
           >
-            <PanelRight className="h-4 w-4" />
+            <Play />
+            Execute
           </Button>
-
-          <Button
-            variant="outline"
-            size="icon"
-            className="px-4 min-h-9 bg-black/80 dark:bg-background text-background text-sm rounded-md dark:text-dark"
-            onPress={() => {
-              if (mode === "workflow") {
-                dispatch(setMode("form"));
-              } else {
-                dispatch(setMode("workflow"));
-              }
-            }}
-          >
-            <div className="flex items-center gap-2">
-              {mode === "form" && hasUnsavedChanges && (
-                <div className="h-2 w-2 bg-yellow-400 dark:bg-yellow-500 rounded-full"></div>
-              )}
-              {mode === "workflow" && hasUnsavedChangesForm && (
-                <div className="h-2 w-2 bg-yellow-400 dark:bg-yellow-500 rounded-full"></div>
-              )}
-              <span>
-                {mode === "workflow" ? "Form Editor" : "Workflow Builder"}
-              </span>
-            </div>
+          <Button className="text-xs gap-1.5 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3 bg-foreground/90">
+            <Rocket />
+            Deploy
           </Button>
-
-          <div className="flex items-center gap-0.5">
-            <PublishButton />
-          </div>
         </div>
       </div>
     </header>
