@@ -5,7 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --animate-scroll: scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite;
+  --animate-scroll: scroll var(--animation-duration, 40s)
+    var(--animation-direction, forwards) linear infinite;
   --animate-scroll1: scroll1 30s linear infinite;
 }
 
@@ -27,8 +28,8 @@
 :root {
   --primary: oklch(0.21 0.006 285.885);
   --secondary: oklch(0.967 0.001 286.375);
-  --text: #000000;
-  --dark: #1d1f26;
+  --text: oklch(0% 0 0);
+  --dark: oklch(24.028% 0.01374 272.761);
   --radius: 0.625rem;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
@@ -64,8 +65,9 @@
   --success-foreground: oklch(0.508 0.118 165.612);
   --warning: oklch(0.769 0.188 70.08);
   --warning-foreground: oklch(0.555 0.163 48.998);
-  --background: #f0f0f0;
-  --foreground: oklch(0.141 0.005 285.823);
+  --background: oklch(95.514% 0.00011 271.152);
+  --foreground: oklch(14.077% 0.0044 285.776);
+  --logo-shadow: oklch(59.77% 0.23898 291.11);
 }
 
 @theme {
@@ -194,8 +196,8 @@
   --color-info: var(--info);
   --animate-skeleton: skeleton 2s -1s infinite linear;
   @keyframes skeleton {
-  to {
-    background-position: -200% 0;
+    to {
+      background-position: -200% 0;
     }
   }
 }

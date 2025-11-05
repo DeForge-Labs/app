@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import LoginForm from "@/components/layout/onboard/LoginForm";
+
 import StartContainer from "@/components/ui/StartContainer";
+import LoginForm from "@/components/layout/onboard/LoginForm";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
             />
           </div>
         </Link>
+
         <LoginForm />
       </div>
     </StartContainer>
