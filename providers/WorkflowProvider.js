@@ -7,12 +7,13 @@ import useSocket from "@/hooks/useSocket";
 import { useParams } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setCredits, setLogs, setPlan } from "@/redux/slice/WorkflowSlice";
+import useNodeLibraryStore from "@/store/useNodeLibraryStore";
 
 export default function WorkflowProvider({ children }) {
   const user = useSelector((state) => state.user.user);
   const nodeRegistry = useSelector((state) => state.library.nodeRegistry);
   const { loadWorkspaceById, loadLogs, loadStats } = useInitialize();
-  const { loadNodeRegistry } = useLibrary();
+  const { fetchNodeRegistry } = useNodeLibraryStore();
   const workflow = useSelector((state) => state.workflow.workflow);
   const workspace = useSelector((state) => state.workflow.workspace);
   const {
@@ -26,7 +27,7 @@ export default function WorkflowProvider({ children }) {
 
   // Load node registry once on component mount
   useEffect(() => {
-    loadNodeRegistry();
+    fetchNodeRegistry();
   }, []);
 
   // Load workflow when user, params, and nodeRegistry are available
