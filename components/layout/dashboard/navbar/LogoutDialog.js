@@ -1,43 +1,47 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogPopup,
   DialogTitle,
+  DialogFooter,
+  DialogHeader,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+
 import { LogOut } from "lucide-react";
+
 import { logout } from "@/actions/logout";
 
-export default function LogoutDialog() {
+const LogoutDialog = () => {
   return (
     <Dialog>
       <DialogTrigger
         render={
           <Button
             variant="outline"
-            className="text-destructive data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none  dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent !shadow-none bg-transparent hover:bg-transparent w-full justify-start border-none"
-          >
-            <LogOut size={16} />
-            Logout
-          </Button>
+            className="text-destructive data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none  dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent shadow-none! bg-transparent hover:bg-transparent w-full justify-start border-none"
+          />
         }
-      ></DialogTrigger>
+      >
+        <LogOut size={16} />
+        Logout
+      </DialogTrigger>
+
       <DialogPopup className="sm:max-w-sm">
         <Form>
           <DialogHeader>
             <DialogTitle className={"text-lg font-medium opacity-80"}>
               Logout
             </DialogTitle>
+
             <DialogDescription className={"text-xs"}>
-              Are you sure you want to logout? This will log you out of your
-              account on this device.
+              Are you sure you want to logout? This will end your current
+              session on this device.
             </DialogDescription>
           </DialogHeader>
 
@@ -47,6 +51,7 @@ export default function LogoutDialog() {
             >
               Cancel
             </DialogClose>
+
             <Button
               className="bg-destructive text-background rounded-md border-none text-xs"
               onClick={async () => {
@@ -60,4 +65,6 @@ export default function LogoutDialog() {
       </DialogPopup>
     </Dialog>
   );
-}
+};
+
+export default LogoutDialog;

@@ -1,67 +1,58 @@
+import { Suspense } from "react";
 import { CircleDot } from "lucide-react";
 
-import Link from "next/link";
-import Image from "next/image";
+import Logo from "@/components/ui/Logo";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 
-import { Button } from "@/components/ui/button";
 import TeamMenu from "./navbar/TeamMenu";
-import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import CreditMenu from "./navbar/CreditMenu";
 import SettingsMenu from "./navbar/SettingsMenu";
 import FeedbackDialog from "./navbar/FeedbackDialog";
 
-export default function Navbar({ params }) {
+const Navbar = () => {
   return (
-    <header className="sticky top-0 z-50 bg-foreground/5">
-      <div className="flex items-center justify-between px-2 h-[50px]">
-        <div className="flex items-center gap-4 h-full">
-          <Link
-            href="/"
-            className="flex items-center ml-1 justify-center space-x-2"
-          >
-            <div className="p-1.5 bg-black/80 w-fit rounded-sm shadow-md shadow-[#8754ff]">
-              <Image
-                src="/logo/logo-white.svg"
-                alt="Deforge"
-                width={16}
-                height={16}
-              />
-            </div>
-          </Link>
+    <header className="sticky top-0 z-50 bg-foreground/5 flex items-center justify-between px-2 h-12">
+      <div className="flex items-center gap-4 h-full">
+        <Logo
+          size={16}
+          padding="p-1.5"
+          shadow="shadow-md"
+          rounded="rounded-sm"
+        />
 
-          <Separator
-            orientation="vertical"
-            className={"bg-foreground/10 h-[20px]"}
-          />
+        <Separator orientation="vertical" className="bg-foreground/10 h-5" />
 
-          <span className="flex items-center gap-1 dark:text-background">
-            <Suspense fallback={<Skeleton className="w-[100px] h-[30px]" />}>
-              <TeamMenu params={params} />
-            </Suspense>
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <FeedbackDialog />
-          <Suspense
-            fallback={
-              <Button
-                variant="outline"
-                className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm [&_svg:not([class*='size-'])]:size-3"
-              >
-                <CircleDot />
-                <Skeleton className="w-[30px] h-[20px]" />
-              </Button>
-            }
-          >
-            <CreditMenu params={params} />
+        <span className="flex items-center gap-1 dark:text-background">
+          <Suspense fallback={<Skeleton className="w- h-7" />}>
+            <TeamMenu />
           </Suspense>
+        </span>
+      </div>
 
-          <SettingsMenu params={params} />
-        </div>
+      <div className="flex items-center gap-2">
+        <FeedbackDialog />
+
+        <Suspense
+          fallback={
+            <Button
+              disabled
+              variant="outline"
+              className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm [&_svg:not([class*='size-'])]:size-3"
+            >
+              <CircleDot />
+              <Skeleton className="w-8 h-5" />
+            </Button>
+          }
+        >
+          <CreditMenu />
+        </Suspense>
+
+        <SettingsMenu />
       </div>
     </header>
   );
-}
+};
+
+export default Navbar;

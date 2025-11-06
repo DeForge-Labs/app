@@ -7,21 +7,21 @@ const Logo = ({
   size = 50,
   href = "/",
   alt = "Logo",
-  shadow = true,
   className = "",
   padding = "p-4",
-  shape = "rounded",
+  shadow = "shadow-lg",
+  rounded = "rounded-3xl",
   bgColor = "bg-black/80",
   shadowColor = "#8754ff",
   src = "/logo/logo-white.svg",
 }) => {
   const containerClasses = clsx(
     "mx-auto w-fit",
+    shadow,
     bgColor,
     padding,
-    shape === "rounded" && "rounded-3xl",
-    shape === "circle" && "rounded-full",
-    shadow && `shadow-lg shadow-[${shadowColor}]`,
+    rounded,
+    shadowColor && `shadow-[${shadowColor}]`,
     className
   );
 

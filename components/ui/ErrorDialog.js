@@ -3,69 +3,78 @@
 import {
   Dialog,
   DialogClose,
-  DialogFooter,
-  DialogHeader,
   DialogPopup,
   DialogTitle,
+  DialogFooter,
+  DialogHeader,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+
 import { useRouter } from "next/navigation";
+
 import { logout } from "@/actions/logout";
 
-export default function ErrorDialog({ error }) {
+const DEFAULT_ERROR_MESSAGE = "We cannot process your request at the moment";
+
+const ErrorDialog = ({ error }) => {
   const router = useRouter();
 
   const handleLogout = () => {
     logout();
   };
+
   return (
-    <>
-      <Dialog open={true}>
-        <DialogPopup className="sm:max-w-sm" showCloseButton={false}>
-          <Form onSubmit={(e) => {}}>
-            <DialogHeader>
-              <DialogTitle className={"text-lg font-medium opacity-80"}>
-                Something went wrong
-              </DialogTitle>
-              <DialogDescription className={"text-xs"}>
-                Error occured while fetching data, please try again later.
-              </DialogDescription>
-            </DialogHeader>
-            <Textarea
-              value={
-                error ? error : "We cannot process your request at the moment"
+    <Dialog open={true}>
+      <DialogPopup className="sm:max-w-sm" showCloseButton={false}>
+        <Form>
+          <DialogHeader>
+            <DialogTitle className={"text-lg font-medium opacity-80"}>
+              Something went wrong
+            </DialogTitle>
+
+            <DialogDescription className={"text-xs"}>
+              Error occurred while fetching data. Please try again later.
+            </DialogDescription>
+          </DialogHeader>
+
+          <Textarea
+            readOnly
+            rows={5}
+            className={"font-mono"}
+            aria-label="Error details"
+            style={{ resize: "none" }}
+            value={error || DEFAULT_ERROR_MESSAGE}
+          />
+
+          <DialogFooter>
+            <DialogClose
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="text-xs"
+                  onClick={handleLogout}
+                />
               }
-              style={{ resize: "none" }}
-              rows={5}
-              readOnly
-              className={"font-mono"}
-            />
-            <DialogFooter>
-              <DialogClose
-                render={
-                  <Button
-                    variant="ghost"
-                    className="text-xs"
-                    onClick={handleLogout}
-                  />
-                }
-              >
-                Logout
-              </DialogClose>
-              <Button
-                className="text-background rounded-md border-none text-xs"
-                type="submit"
-                onClick={() => router.refresh()}
-              >
-                Retry
-              </Button>
-            </DialogFooter>
-          </Form>
-        </DialogPopup>
-      </Dialog>
-    </>
+            >
+              Logout
+            </DialogClose>
+
+            <Button
+              type="button"
+              onClick={() => router.refresh()}
+              className="text-background rounded-md border-none text-xs"
+            >
+              Retry
+            </Button>
+          </DialogFooter>
+        </Form>
+      </DialogPopup>
+    </Dialog>
   );
-}
+};
+
+export default ErrorDialog;

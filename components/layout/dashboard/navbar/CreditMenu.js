@@ -1,29 +1,29 @@
+import Link from "next/link";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { CircleDot, ExternalLink } from "lucide-react";
+
+import BuyCreditDialog from "./BuyCreditDialog";
+
 import {
   Menu,
-  MenuGroup,
-  MenuGroupLabel,
   MenuItem,
+  MenuGroup,
   MenuPopup,
-  MenuSeparator,
   MenuTrigger,
+  MenuSeparator,
+  MenuGroupLabel,
 } from "@/components/ui/menu";
 import { Button } from "@/components/ui/button";
-import { CircleDot, ExternalLink } from "lucide-react";
-import { HandCoins } from "lucide-react";
-import { cookies } from "next/headers";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import BuyCreditDialog from "./BuyCreditDialog";
 import ErrorDialog from "@/components/ui/ErrorDialog";
 
-export default async function CreditMenu({ params }) {
-  const { id } = await params;
+const CreditMenu = async () => {
+  const cookieStore = await cookies();
+  const allCookies = cookieStore.getAll();
+  const teamId = cookieStore.get("lastTeamId");
 
   const getCredits = async () => {
     try {
-      const cookieStore = await cookies();
-      const allCookies = cookieStore.getAll();
-
       const cookieHeader = allCookies
         .map((cookie) => `${cookie.name}=${cookie.value}`)
         .join("; ");
@@ -36,6 +36,7 @@ export default async function CreditMenu({ params }) {
         },
         credentials: "include",
       });
+
       const data = await response.json();
 
       return data;
@@ -68,26 +69,30 @@ export default async function CreditMenu({ params }) {
           </Button>
         }
       ></MenuTrigger>
+
       <MenuPopup
-        className="w-[250px] border border-foreground/30 rounded-lg"
         sideOffset={10}
+        className="w-60 border border-foreground/30 rounded-lg"
       >
         <MenuGroup>
           <MenuGroupLabel>Credit Balance</MenuGroupLabel>
-          <MenuItem disabled className="data-disabled:opacity-100">
+
+          <MenuItem disabled className="data-disabled:opacity-100 capitalize">
             Total Credit
-            <div className="ms-auto">{credits?.credits}</div>
+            <span className="ms-auto">{credits?.credits}</span>
           </MenuItem>
-          <MenuItem disabled className="data-disabled:opacity-100">
+
+          <MenuItem disabled className="data-disabled:opacity-100 capitalize">
             Plan
-            <div className="ms-auto capitalize">{credits?.plan}</div>
+            <span className="ms-auto">{credits?.plan}</span>
           </MenuItem>
 
           <MenuSeparator className="bg-foreground/10" />
 
-          <BuyCreditDialog teamId={id} />
+          <BuyCreditDialog teamId={teamId} />
+
           <Link href={"/billing"}>
-            <MenuItem className="text-foreground data-highlighted:bg-foreground/5 data-highlighted:text-foreground cursor-pointer !px-[10px]">
+            <MenuItem className="text-foreground data-highlighted:bg-foreground/5 data-highlighted:text-foreground cursor-pointer px-2.5!">
               <ExternalLink />
               {credits?.plan === "enterprise" ? "Billing" : "Upgrade Plan"}
             </MenuItem>
@@ -96,4 +101,6 @@ export default async function CreditMenu({ params }) {
       </MenuPopup>
     </Menu>
   );
-}
+};
+
+export default CreditMenu;
