@@ -322,15 +322,7 @@ export default function NodeMenu() {
                         <div className="grid grid-cols-1 gap-2">
                           {categorizedNodes[selectedCategory]?.map(
                             (node, index) => (
-                              <motion.div
-                                key={node.type}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{
-                                  duration: 0.12,
-                                  delay: index * 0.02,
-                                }}
-                              >
+                              <motion.div key={node.type}>
                                 <Card
                                   className="cursor-grab hover:shadow-md transition-shadow rounded-md border-foreground/10 p-0 py-3 gap-0"
                                   draggable

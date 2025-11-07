@@ -2,7 +2,6 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import useInitialize from "@/hooks/useInitialize";
-import useLibrary from "@/hooks/useLibrary";
 import useSocket from "@/hooks/useSocket";
 import { useParams } from "next/navigation";
 import { useDispatch } from "react-redux";
@@ -11,9 +10,8 @@ import useNodeLibraryStore from "@/store/useNodeLibraryStore";
 
 export default function WorkflowProvider({ children }) {
   const user = useSelector((state) => state.user.user);
-  const nodeRegistry = useSelector((state) => state.library.nodeRegistry);
   const { loadWorkspaceById, loadLogs, loadStats } = useInitialize();
-  const { fetchNodeRegistry } = useNodeLibraryStore();
+  const { fetchNodeRegistry, nodeRegistry } = useNodeLibraryStore();
   const workflow = useSelector((state) => state.workflow.workflow);
   const workspace = useSelector((state) => state.workflow.workspace);
   const {
@@ -32,7 +30,7 @@ export default function WorkflowProvider({ children }) {
 
   // Load workflow when user, params, and nodeRegistry are available
   useEffect(() => {
-    if (user && nodeRegistry && nodeRegistry.length > 0) {
+    if (nodeRegistry && nodeRegistry.length > 0) {
       if (!params?.id) return;
 
       try {
@@ -40,12 +38,12 @@ export default function WorkflowProvider({ children }) {
         if (!id) return;
 
         loadWorkspaceById(id);
-        initializeWebSocket();
+        // initializeWebSocket();
       } catch (error) {
         console.error("Error parsing params value:", error);
       }
     }
-  }, [user, params?.id, nodeRegistry]);
+  }, [params?.id, nodeRegistry]);
 
   useEffect(() => {
     if (!params?.id) return;

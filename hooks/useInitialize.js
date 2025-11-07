@@ -45,6 +45,7 @@ import {
 import useSocial from "./useSocial";
 import useTeams from "./useTeams";
 import { loadComponents } from "@/redux/slice/formSlice";
+import useWorkspaceStore from "@/store/useWorkspaceStore";
 
 export default function useInitialize() {
   const dispatch = useDispatch();
@@ -52,6 +53,15 @@ export default function useInitialize() {
   const { getEnv } = useEnv();
   const { getSocial } = useSocial();
   const { getTeams, createTeam } = useTeams();
+  const {
+    setWorkspace,
+    setWorkflow,
+    setNodes,
+    setConnections,
+    setIsLoading: setIsWorkspaceLoading,
+    setTeam,
+    setForm,
+  } = useWorkspaceStore();
 
   const loadUser = async (force = true, token = null) => {
     dispatch(setIsInitializing(true));
@@ -413,55 +423,37 @@ export default function useInitialize() {
 
   const loadWorkspaceById = async (workspaceId) => {
     try {
-      dispatch(setIsWorkspaceInitializing(true));
-      dispatch(setWorkflowInitializing(true));
-      dispatch(setIsFormInitializing(true));
-      dispatch(setSelectedNode(null));
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      };
+      setIsWorkspaceLoading(true);
+
+      axios.defaults.withCredentials = true;
 
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/workspace/get/${workspaceId}`,
-        { headers }
+        `${process.env.NEXT_PUBLIC_API_URL}/workspace/get/${workspaceId}`
       );
 
       if (response.data.success) {
-        const type = response.data.workspace.type;
+        setWorkspace(response.data.workspace);
+        setWorkflow({
+          workflow: response.data.workspace.workflow,
+          nodes: response.data.workspace.workflow.nodes,
+          connections: response.data.workspace.workflow.edges,
+        });
 
-        if (type === "FORM") {
-          if (window.location.pathname !== `/form/${workspaceId}`) {
-            router.push(`/form/${workspaceId}`);
-            return;
-          }
-        } else {
-          if (window.location.pathname !== `/editor/${workspaceId}`) {
-            router.push(`/editor/${workspaceId}`);
-            return;
-          }
-        }
+        setForm(response.data.workspace.form);
 
-        dispatch(setEditorWorkspace(response.data.workspace));
-        dispatch(
-          setWorkflow({
-            workflow: response.data.workspace.workflow,
-            nodes: response.data.workspace.workflow.nodes,
-            connections: response.data.workspace.workflow.edges,
-          })
-        );
-        dispatch(setForm(response.data.workspace.form));
+        setTeam(response.data.workspace.team);
 
-        dispatch(
-          loadComponents(
-            response.data.workspace.form.formLayout?.components || []
-          )
-        );
+        // dispatch(
+        //   loadComponents(
+        //     response.data.workspace.form.formLayout?.components || []
+        //   )
+        // );
 
-        await getEnv(response.data.workspace.workflow.id);
+        // await getEnv(response.data.workspace.workflow.id);
 
-        await getSocial(response.data.workspace.workflow.id);
+        // await getSocial(response.data.workspace.workflow.id);
 
-        dispatch(setTeamWorkflow(response.data.workspace.team));
+        // dispatch(setTeamWorkflow(response.data.workspace.team));
       } else {
         toast.error(response.data.message);
         if (response.data.status === 404 || response.data.status === 401) {
@@ -472,9 +464,7 @@ export default function useInitialize() {
       console.log(err);
       toast.error("Failed to load workspace");
     } finally {
-      dispatch(setIsWorkspaceInitializing(false));
-      dispatch(setWorkflowInitializing(false));
-      dispatch(setIsFormInitializing(false));
+      setIsWorkspaceLoading(false);
     }
   };
 

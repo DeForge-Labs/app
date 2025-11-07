@@ -25,7 +25,7 @@ const Navbar = () => {
         <Separator orientation="vertical" className="bg-foreground/10 h-5" />
 
         <span className="flex items-center gap-1 dark:text-background">
-          <Suspense fallback={<Skeleton className="w- h-7" />}>
+          <Suspense fallback={<Skeleton className="w-32 h-7" />}>
             <TeamMenu />
           </Suspense>
         </span>

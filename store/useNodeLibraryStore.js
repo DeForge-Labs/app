@@ -1,12 +1,12 @@
 "use client";
 
 import axios from "axios";
+import { toast } from "sonner";
 import { create } from "zustand";
 
 const initialState = {
   nodeRegistry: [],
   isLoading: true,
-  error: null,
 };
 
 const useNodeLibraryStore = create((set) => ({
@@ -23,10 +23,10 @@ const useNodeLibraryStore = create((set) => ({
       if (response.data.success) {
         set({ nodeRegistry: response.data.nodes });
       } else {
-        set({ error: response.data.message });
+        toast.error(response.data.message);
       }
     } catch (error) {
-      set({ error: error.message });
+      toast.error(error.message);
     } finally {
       set({ isLoading: false });
     }
