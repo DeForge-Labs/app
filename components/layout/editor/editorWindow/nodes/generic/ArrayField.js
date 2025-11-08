@@ -2,8 +2,9 @@
 
 import { Handle, Position } from "reactflow";
 import getColorByType from "@/lib/color-profile";
-import { useSelector } from "react-redux";
 import { useTheme } from "next-themes";
+import useWorkspaceStore from "@/store/useWorkspaceStore";
+import { Badge } from "@/components/ui/badge";
 
 export default function ArrayField({
   field,
@@ -12,14 +13,14 @@ export default function ArrayField({
   isArrayInput,
   isSameNode,
 }) {
-  const selectedHandle = useSelector((state) => state.workflow?.selectedHandle);
+  const { selectedHandle } = useWorkspaceStore();
   const { resolvedTheme } = useTheme();
 
   return (
     <div key={field.name} className="mb-2">
-      <div className="text-xs font-medium mb-1 flex justify-between items-center capitalize">
+      <div className="text-[10px] text-foreground/80 font-medium mb-1 flex justify-between items-center capitalize">
         <span>{field.name}</span>
-        <div className="text-xs">
+        <div className="text-[10px]">
           {totalValidConnections} connection
           {totalValidConnections !== 1 ? "s" : ""}
         </div>
@@ -67,7 +68,7 @@ export default function ArrayField({
                 : matchingInput?.type.toLowerCase() || "any") &&
             !isSameNode && (
               <div
-                className={`w-2 h-2 -left-[16.5px] -top-[4.2px] rounded-full rotate-45 absolute border-opacity-50 `}
+                className={`w-2 h-2 -left-[16.2px] -top-[4.2px] rounded-full rotate-45 absolute border-opacity-50 `}
                 style={{
                   backgroundColor: getColorByType(
                     isArrayInput
@@ -80,19 +81,22 @@ export default function ArrayField({
               ></div>
             )}
         </div>
-        <div className="w-full border border-black/50 rounded-md p-2 bg-black/5 text-xs mt-1 dark:bg-white/5 dark:border-background">
-          <div className="flex justify-between items-center">
-            <span className="font-medium">
+        <Badge
+          variant="outline"
+          className="text-[10px] p-1 px-2 bg-foreground/5 border border-foreground/5 w-full text-foreground/70 capitalize"
+        >
+          <div className="flex justify-between items-center text-wrap">
+            <span className="font-medium text-[10px]">
               Array input - accepts multiple connections
             </span>
           </div>
           {totalValidConnections > 0 && (
-            <div className="mt-1 pt-1 border-t border-black/50 text-xs text-muted-foreground dark:border-background dark:text-background">
+            <div className="mt-1 pt-1 border-t border-black/50 text-[10px] text-muted-foreground dark:border-background dark:text-background">
               {totalValidConnections} connection
               {totalValidConnections !== 1 ? "s" : ""} active
             </div>
           )}
-        </div>
+        </Badge>
       </div>
     </div>
   );

@@ -40,7 +40,9 @@ export async function middleware(req) {
     }
 
     if (!lastTeamId) {
-      return NextResponse.redirect(new URL("/teams", req.url));
+      if (pathname !== "/teams") {
+        return NextResponse.redirect(new URL("/teams", req.url));
+      }
     }
 
     return NextResponse.next();

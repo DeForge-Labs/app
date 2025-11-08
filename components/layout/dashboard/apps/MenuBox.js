@@ -1,7 +1,7 @@
 "use client";
 import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/ui/menu";
 import { Button } from "@/components/ui/button";
-import { Copy, Pen, Star, Trash } from "lucide-react";
+import { Copy, Ellipsis, Pen, Star, Trash } from "lucide-react";
 import { useState } from "react";
 import RenameDialog from "./RenameDialog";
 import DuplicateDialog from "./DuplicateDialog";
@@ -42,7 +42,9 @@ export default function MenuBox({ appId, appName, isFavorite }) {
             <Button
               variant="outline"
               className="flex gap-2 bg-transparent font-normal px-1 min-h-4 !pointer-coarse:after:min-h-4 h-5 w-fit z-10 shadow-none! [:hover,[data-pressed]]:bg-foreground/5 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60 border border-foreground/15"
-            />
+            >
+              <Ellipsis />
+            </Button>
           }
         ></MenuTrigger>
 

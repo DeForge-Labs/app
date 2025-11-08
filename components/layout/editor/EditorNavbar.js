@@ -9,7 +9,7 @@ import useWorkspaceStore from "@/store/useWorkspaceStore";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function EditorNavbar() {
-  const { isLoading } = useWorkspaceStore();
+  const { isWorkspaceInitializing, hasUnsavedChanges } = useWorkspaceStore();
 
   return (
     <header className="sticky top-0 z-50 bg-foreground/5">
@@ -25,7 +25,7 @@ export default function EditorNavbar() {
           </Link>
 
           <span className="flex items-center gap-1 dark:text-background">
-            {isLoading ? (
+            {isWorkspaceInitializing ? (
               <Skeleton className="w-40 h-8 rounded-sm" />
             ) : (
               <WorkflowCard />

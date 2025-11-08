@@ -64,7 +64,6 @@ export default function OptionsMenu() {
           <MenuGroupLabel>Theme</MenuGroupLabel>
           <ThemeRadioButtons />
         </MenuGroup>
-        <MenuSeparator className="bg-foreground/10" />
       </MenuPopup>
     </Menu>
   );

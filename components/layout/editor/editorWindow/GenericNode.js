@@ -3,14 +3,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { Handle, Position, useEdges } from "reactflow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useDispatch } from "react-redux";
-import { updateNodeData } from "@/redux/slice/WorkflowSlice";
 import {
   getNodeTypeByType,
   getCategoryColor,
   isArrayType,
 } from "@/lib/node-registry";
-import { Coins, FileWarning, Link2 } from "lucide-react";
+import { CircleDot, Coins, FileWarning, Link2 } from "lucide-react";
 import getColorByType from "@/lib/color-profile";
 import { useSelector } from "react-redux";
 import { Lock } from "lucide-react";
@@ -26,19 +24,16 @@ import CheckBoxField from "./nodes/generic/CheckBoxField";
 import DateTimeField from "./nodes/generic/DateTimeField";
 import SliderField from "./nodes/generic/SliderField";
 import { useTheme } from "next-themes";
+import useNodeLibraryStore from "@/store/useNodeLibraryStore";
+import useWorkspaceStore from "@/store/useWorkspaceStore";
+import { Badge } from "@/components/ui/badge";
 
 export function GenericNode({ id, type, data }) {
-  const dispatch = useDispatch();
   const edges = useEdges();
   const [connectedInputs, setConnectedInputs] = useState(new Set());
-  const [connectedOutputs, setConnectedOutputs] = useState(new Set());
-  const [totalConnectedInputs, setTotalConnectedInputs] = useState([]);
-  const [totalConnectedOutputs, setTotalConnectedOutputs] = useState([]);
-  const nodeRegistry =
-    useSelector((state) => state.library?.nodeRegistry) || [];
+  const { nodeRegistry } = useNodeLibraryStore();
 
-  const workflow = useSelector((state) => state.workflow?.workflow || null);
-  const selectedNodeId = useSelector((state) => state.workflow?.selectedNodeId);
+  const { workflow, selectedNodeId, updateNodeData } = useWorkspaceStore();
 
   // Get the node type definition
   const nodeType = getNodeTypeByType(type, nodeRegistry);
@@ -64,7 +59,6 @@ export function GenericNode({ id, type, data }) {
       }
     });
 
-    setTotalConnectedInputs(totalConnected);
     setConnectedInputs(connected);
   }, [edges, id]);
 
@@ -84,9 +78,6 @@ export function GenericNode({ id, type, data }) {
         }
       }
     });
-
-    setConnectedOutputs(connected);
-    setTotalConnectedOutputs(totalConnected);
   }, [edges, id]);
 
   const handleChange = useCallback(
@@ -95,14 +86,12 @@ export function GenericNode({ id, type, data }) {
         return;
       }
 
-      dispatch(
-        updateNodeData({
-          nodeId: id,
-          newData: { ...data, [name]: value },
-        })
-      );
+      updateNodeData({
+        nodeId: id,
+        newData: { ...data, [name]: value },
+      });
     },
-    [dispatch, id, data]
+    [id, data]
   );
 
   if (!nodeType) {
@@ -136,7 +125,10 @@ export function GenericNode({ id, type, data }) {
     const isArrayInput = matchingInput && isArrayType(matchingInput.type);
 
     // Get current value or use default from field definition
-    const currentValue = data[field.name] !== undefined ? data[field.name] : "";
+    const currentValue =
+      data[field.name] !== undefined && data[field.name] !== null
+        ? data[field.name]
+        : "";
 
     switch (field.type) {
       case "Text":
@@ -322,16 +314,14 @@ export function GenericNode({ id, type, data }) {
 
   // Render output handles
   const renderOutputs = (outputs) => {
-    const selectedHandle = useSelector(
-      (state) => state.workflow?.selectedHandle
-    );
+    const { selectedHandle } = useWorkspaceStore();
     const { resolvedTheme } = useTheme();
     const isSameNode = selectedNodeId === id;
 
     return outputs.map((output, index) => {
       return (
         <div key={output.name} className="mb-2 relative">
-          <div className="text-xs font-medium text-right capitalize">
+          <div className="text-[10px] text-right font-medium text-foreground/80 capitalize">
             {output.name}
           </div>
           <div className="flex items-center relative">
@@ -351,7 +341,7 @@ export function GenericNode({ id, type, data }) {
             ></Handle>
 
             <div
-              className={`w-2 h-2 -right-[16.5px] -top-[12px] rounded-none rotate-45 absolute border-opacity-50 ${
+              className={`w-2 h-2 -right-[16.2px] -top-[12px] rounded-none rotate-45 absolute border-opacity-50 ${
                 selectedHandle?.split("-")[0] === "input" &&
                 selectedHandle?.split("-")[2]?.toLowerCase() ===
                   (output?.type.toLowerCase() || "any") &&
@@ -371,7 +361,7 @@ export function GenericNode({ id, type, data }) {
                 (output?.type.toLowerCase() || "any") &&
               !isSameNode && (
                 <div
-                  className={`w-2 h-2 -right-[16.5px] -top-[12px] rounded-none rotate-45 absolute border-opacity-50`}
+                  className={`w-2 h-2 -right-[16.2px] -top-[12px] rounded-none rotate-45 absolute border-opacity-50`}
                   style={{
                     backgroundColor: getColorByType(output?.type.toLowerCase()),
                     borderColor: "black",
@@ -403,18 +393,14 @@ export function GenericNode({ id, type, data }) {
   };
 
   return (
-    <Card
-      className={`w-64 border-black/50 bg-background relative dark:border-background dark:text-background rounded-md dark:bg-zinc-900 ${cn(
-        workflow?.status === "LIVE" && "border-red-500 dark:border-red-500"
-      )} `}
-    >
+    <Card className={`w-56 relative py-0`}>
       {workflow?.status === "LIVE" && (
         <div className="absolute -top-2 -right-3 bg-dark dark:bg-white h-6 w-6 rounded-full flex items-center justify-center text-background dark:text-dark">
           <Lock className="h-3 w-3" />
         </div>
       )}
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 border-b border-black/50 dark:border-background mb-5">
-        <CardTitle className="text-sm font-medium">
+      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 p-3 border-b border-foreground/15 [.border-b]:pb-3">
+        <CardTitle className="text-[10px] font-medium">
           <div className="flex items-center">
             {data.label || nodeType.title}
           </div>
@@ -423,15 +409,16 @@ export function GenericNode({ id, type, data }) {
         {/* Render minimum credit requirement */}
 
         <div className="flex items-center justify-end">
-          <div className="p-1 py-0.5 border-black/50 rounded-md border dark:border-background dark:text-background">
-            <div className="flex items-center gap-1 text-xs">
-              <Coins className="h-4 w-4" />
-              <span>{nodeType?.credit ? nodeType.credit : "0"}</span>
-            </div>
-          </div>
+          <Badge
+            variant="outline"
+            className="text-[10px] px-1.5 py-0.5 bg-foreground/5 [&_svg:not([class*='size-'])]:size-2.5 border border-foreground/5 text-foreground/70 capitalize"
+          >
+            <CircleDot />
+            <p>{nodeType?.credit ? nodeType.credit : "0"}</p>
+          </Badge>
         </div>
       </CardHeader>
-      <CardContent className="p-3 pt-0 space-y-4">
+      <CardContent className="p-3 pb-2 pt-0 space-y-2">
         <div className="space-y-2">
           {/* Render outputs */}
           {renderOutputs(nodeType.outputs)}
@@ -449,9 +436,9 @@ export function GenericNode({ id, type, data }) {
 
         {/* Render Connection Warning */}
         {nodeType.fields.some((field) => field.type === "social") && (
-          <div className="text-xs text-blue-500 flex pb-2">
-            <Link2 className="mr-2 h-7 w-7" />
-            <span className="text-xs w-fit">
+          <div className="text-xs text-blue-500 flex pb-2 pt-2">
+            <Link2 className="mr-2 size-4" />
+            <span className="text-[10px] w-fit">
               This Node requires Connections, Select this node to customize its
               properties
             </span>
@@ -460,9 +447,9 @@ export function GenericNode({ id, type, data }) {
 
         {/* Render Environment Warning */}
         {nodeType.fields.some((field) => field.type === "env") && (
-          <div className="text-xs text-red-500 flex pb-2">
-            <FileWarning className="mr-2 h-7 w-7" />
-            <span className="text-xs w-fit">
+          <div className="text-xs text-red-500 flex pb-2 pt-2">
+            <FileWarning className="mr-2 size-4" />
+            <span className="text-[10px] w-fit">
               This Node requires Environment Variables, Select this node to
               customize its properties
             </span>

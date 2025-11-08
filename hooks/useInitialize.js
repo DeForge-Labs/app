@@ -58,8 +58,9 @@ export default function useInitialize() {
     setWorkflow,
     setNodes,
     setConnections,
-    setIsLoading: setIsWorkspaceLoading,
+    setIsWorkspaceInitializing,
     setTeam,
+    setIsWorkflowInitializing,
     setForm,
   } = useWorkspaceStore();
 
@@ -423,7 +424,8 @@ export default function useInitialize() {
 
   const loadWorkspaceById = async (workspaceId) => {
     try {
-      setIsWorkspaceLoading(true);
+      setIsWorkspaceInitializing(true);
+      setIsWorkflowInitializing(true);
 
       axios.defaults.withCredentials = true;
 
@@ -464,7 +466,8 @@ export default function useInitialize() {
       console.log(err);
       toast.error("Failed to load workspace");
     } finally {
-      setIsWorkspaceLoading(false);
+      setIsWorkspaceInitializing(false);
+      setIsWorkflowInitializing(false);
     }
   };
 
