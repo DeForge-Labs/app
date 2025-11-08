@@ -1,7 +1,7 @@
 "use client";
 import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/ui/menu";
 import { Button } from "@/components/ui/button";
-import { Copy, Ellipsis, Pen, Star, Trash } from "lucide-react";
+import { Copy, Pen, Star, Trash } from "lucide-react";
 import { useState } from "react";
 import RenameDialog from "./RenameDialog";
 import DuplicateDialog from "./DuplicateDialog";
@@ -10,8 +10,8 @@ import useFavoriteWorkspace from "@/hooks/useFavoriteWorkspace";
 
 export default function MenuBox({ appId, appName, isFavorite }) {
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
-  const [isDuplicateDialogOpen, setIsDuplicateDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDuplicateDialogOpen, setIsDuplicateDialogOpen] = useState(false);
 
   const { handleFavoriteWorkflow } = useFavoriteWorkspace();
   return (
@@ -40,30 +40,28 @@ export default function MenuBox({ appId, appName, isFavorite }) {
         <MenuTrigger
           render={
             <Button
-              className="flex gap-2 bg-transparent font-normal px-1 min-h-4 !pointer-coarse:after:min-h-4 h-5 w-fit z-10 !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60 border border-foreground/15"
               variant="outline"
-            >
-              <Ellipsis />
-            </Button>
+              className="flex gap-2 bg-transparent font-normal px-1 min-h-4 !pointer-coarse:after:min-h-4 h-5 w-fit z-10 shadow-none! [:hover,[data-pressed]]:bg-foreground/5 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60 border border-foreground/15"
+            />
           }
         ></MenuTrigger>
 
         <MenuPopup
           align="end"
           sideOffset={5}
-          className={" border border-foreground/30 rounded-lg w-[160px]"}
+          className="border border-foreground/30 rounded-lg w-40"
         >
           <Button
             variant="outline"
             onClick={() => setIsRenameDialogOpen(true)}
-            className="data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent !shadow-none bg-transparent hover:bg-transparent w-full justify-start border-none"
+            className="data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent shadow-none! bg-transparent hover:bg-transparent w-full justify-start border-none"
           >
             <Pen className="w-4 h-4" /> Rename
           </Button>
           <Button
             variant="outline"
             onClick={() => setIsDuplicateDialogOpen(true)}
-            className="data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent !shadow-none bg-transparent hover:bg-transparent w-full justify-start border-none"
+            className="data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent shadow-none! bg-transparent hover:bg-transparent w-full justify-start border-none"
           >
             <Copy className="w-4 h-4" /> Duplicate
           </Button>
@@ -99,7 +97,7 @@ export default function MenuBox({ appId, appName, isFavorite }) {
           <Button
             variant="outline"
             onClick={() => setIsDeleteDialogOpen(true)}
-            className="text-destructive data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent !shadow-none bg-transparent hover:bg-transparent w-full justify-start border-none"
+            className="text-destructive data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent shadow-none! bg-transparent hover:bg-transparent w-full justify-start border-none"
           >
             <Trash className="w-4 h-4" /> Delete
           </Button>

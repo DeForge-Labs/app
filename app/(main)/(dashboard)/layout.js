@@ -4,7 +4,7 @@ import Sidebar from "@/components/layout/dashboard/Sidebar";
 export default function DashboardLayout({ children, params }) {
   return (
     <div className="flex flex-col w-screen max-h-screen h-screen overflow-hidden dark:bg-dark">
-      <Navbar params={params} />
+      <Navbar />
 
       <div className="flex-1 flex">
         <Sidebar params={params} />

@@ -1,30 +1,34 @@
 "use client";
-import { Input } from "@/components/ui/input";
+
 import { Loader2, Search } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useRef, useEffect, useCallback } from "react";
+
+import { Input } from "@/components/ui/input";
+
+const DEBOUNCE_DELAY = 500;
 
 export default function SearchSection({
   route = "apps",
   placeholder = "Search apps...",
 }) {
-  const inputRef = useRef(null);
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const inputRef = useRef(null);
   const timerRef = useRef(null);
   const isFirstRender = useRef(true);
+
   const [isLoading, setIsLoading] = useState(false);
-  const [query, setQuery] = useState(searchParams.get("q") || "");
+  const [query, setQuery] = useState(() => searchParams.get("q") || "");
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      const urlQuery = searchParams.get("q") || "";
+    const urlQuery = searchParams.get("q") || "";
 
-      if (urlQuery !== query) {
-        setQuery(urlQuery);
-      }
+    if (urlQuery !== query) {
+      setQuery(urlQuery);
     }
-  }, [searchParams, isFirstRender]);
+  }, [searchParams]);
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -41,8 +45,8 @@ export default function SearchSection({
     timerRef.current = setTimeout(() => {
       const newParams = new URLSearchParams(searchParams.toString());
 
-      if (query) {
-        newParams.set("q", query);
+      if (query.trim()) {
+        newParams.set("q", query.trim());
       } else {
         newParams.delete("q");
       }
@@ -52,31 +56,42 @@ export default function SearchSection({
       const queryString = newParams.toString();
       const url = `/${route}${queryString ? `?${queryString}` : ""}`;
 
-      router.push(url);
+      router.push(url, { scroll: false });
       setIsLoading(false);
-    }, 500);
+    }, DEBOUNCE_DELAY);
 
+    // Cleanup
     return () => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
         setIsLoading(false);
       }
     };
-  }, [query, router, route]);
+  }, [query, router, route, searchParams]);
+
+  const handleChange = useCallback((e) => {
+    setQuery(e.target.value);
+  }, []);
 
   return (
     <div className="flex items-center justify-between px-4 py-2 border-b border-foreground/15 gap-2">
       {isLoading ? (
-        <Loader2 className="w-4 h-4 opacity-50 animate-spin" />
+        <Loader2
+          aria-hidden="true"
+          className="w-4 h-4 opacity-50 animate-spin"
+        />
       ) : (
-        <Search className="w-4 h-4 opacity-50" />
+        <Search className="w-4 h-4 opacity-50" aria-hidden="true" />
       )}
+
       <Input
-        ref={inputRef}
-        placeholder={placeholder}
+        type="search"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className="w-full px-0 border-0 shadow-none has-focus-visible:border-ring has-focus-visible:ring-[0px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none ring-0 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
+        ref={inputRef}
+        onChange={handleChange}
+        aria-label={placeholder}
+        placeholder={placeholder}
+        className="w-full px-0 border-0 shadow-none has-focus-visible:border-ring has-focus-visible:ring-0 not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none ring-0 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
       />
     </div>
   );

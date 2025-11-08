@@ -1,28 +1,30 @@
-import { Users, LayoutGrid, Globe, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
+import { Suspense } from "react";
+import { Users, LayoutGrid, Globe, Plus, Files } from "lucide-react";
+
 import {
   Accordion,
   AccordionItem,
   AccordionPanel,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import SearchDialog from "./sidebar/SearchDialog";
-import RecentApps from "./sidebar/RecentApps";
-import FavoriteApps from "./sidebar/FavoriteApps";
-import { Suspense } from "react";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
+
+import RecentApps from "./sidebar/RecentApps";
+import SearchDialog from "./sidebar/SearchDialog";
+import FavoriteApps from "./sidebar/FavoriteApps";
 
 export default async function Sidebar({ params }) {
   return (
-    <div className="w-[240px] bg-foreground/5 relative overflow-y-auto hide-scroll p-2 px-0 flex flex-col">
+    <div className="w-60 bg-foreground/5 relative overflow-y-auto hide-scroll p-2 px-0 flex flex-col">
       <div className="flex flex-col justify-between p-2 py-0 h-full">
-        <div className="flex flex-col gap-[2px] relative flex-1">
-          <Link href={`/dashboard`} className="w-full">
+        <div className="flex flex-col gap-0.5 relative flex-1">
+          <Link href="/dashboard" className="w-full">
             <Button
-              className="flex gap-2 font-normal text-xs border border-foreground/20 rounded-sm w-full"
               variant="outline"
+              className="flex gap-2 font-normal text-xs border border-foreground/20 rounded-sm w-full"
             >
               <Plus />
               New App
@@ -31,40 +33,50 @@ export default async function Sidebar({ params }) {
 
           <SearchDialog />
 
-          <Link href={`/apps`} className="w-full">
+          <Link href="/apps" className="w-full">
             <Button
-              className="flex gap-2 bg-transparent font-normal w-full !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
               variant="outline"
+              className="flex gap-2 bg-transparent font-normal w-full shadow-none! [:hover,[data-pressed]]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
             >
               <LayoutGrid />
               Apps
             </Button>
           </Link>
 
-          <Link href={`/templates`} className="w-full">
+          <Link href="/templates" className="w-full">
             <Button
-              className="flex gap-2 bg-transparent font-normal w-full !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
               variant="outline"
+              className="flex gap-2 bg-transparent font-normal w-full shadow-none! [:hover,[data-pressed]]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
             >
               <Globe />
               Templates
             </Button>
           </Link>
 
-          <Link href={`/team`} className="w-full">
+          <Link href="/team" className="w-full">
             <Button
-              className="flex gap-2 bg-transparent font-normal w-full !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
               variant="outline"
+              className="flex gap-2 bg-transparent font-normal w-full shadow-none! [:hover,[data-pressed]]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
             >
               <Users />
               Team
             </Button>
           </Link>
 
+          <Link href="/files" className="w-full">
+            <Button
+              variant="outline"
+              className="flex gap-2 bg-transparent font-normal w-full shadow-none! [:hover,[data-pressed]]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
+            >
+              <Files />
+              Files
+            </Button>
+          </Link>
+
           <div className="px-2 my-2">
             <Separator
-              className="bg-foreground/10 w-[80%]"
               orientation="horizontal"
+              className="bg-foreground/10 w-[80%]"
             />
           </div>
 
@@ -78,6 +90,7 @@ export default async function Sidebar({ params }) {
                   >
                     Favourites
                   </AccordionTrigger>
+
                   <AccordionPanel className="mt-2">
                     <Suspense
                       fallback={
@@ -102,6 +115,7 @@ export default async function Sidebar({ params }) {
                   >
                     Recent Apps
                   </AccordionTrigger>
+
                   <AccordionPanel className="mt-2">
                     <Suspense
                       fallback={
@@ -127,6 +141,7 @@ export default async function Sidebar({ params }) {
           <div className="font-semibold text-foreground/50 text-[10px]">
             New Update
           </div>
+
           <div className="text-xs text-foreground/70">
             Full UI Overhaul and Chat to Create AI Agents
           </div>
