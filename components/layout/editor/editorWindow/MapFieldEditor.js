@@ -42,7 +42,7 @@ export default function MapFieldEditor({ value, onChange, disabled = false }) {
     <div className="space-y-2">
       {/* Existing key-value pairs */}
       {entries.length > 0 && !disabled ? (
-        <Card className="border-dashed border-black/50 shadow-none py-0 rounded-sm">
+        <Card className="border-dashed border-foreground/50 shadow-none py-0 rounded-sm before:shadow-none">
           <CardContent className="p-2 space-y-2">
             {entries.map(([key, val]) => (
               <div key={key} className="flex items-center gap-2">
@@ -66,6 +66,7 @@ export default function MapFieldEditor({ value, onChange, disabled = false }) {
                     variant="outline"
                     size="icon"
                     onClick={() => handleRemoveEntry(key)}
+                    className="h-[30px]"
                   >
                     <Trash2 className="size-3 text-red-400" />
                   </Button>
@@ -76,7 +77,7 @@ export default function MapFieldEditor({ value, onChange, disabled = false }) {
         </Card>
       ) : (
         !disabled && (
-          <div className="text-[10px] border border-dashed border-border rounded-md text-center p-2 ">
+          <div className="text-[10px] border border-dashed border-foreground/50 rounded-md text-center p-2 ">
             No entries yet. Add a key-value pair in the input fields below.
           </div>
         )
@@ -108,7 +109,8 @@ export default function MapFieldEditor({ value, onChange, disabled = false }) {
             className="flex-1 rounded-sm dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
           />
           <Button
-            variant=""
+            variant="ghost"
+            className="rounded-sm bg-foreground/5 hover:bg-foreground/10 border border-foreground/15 h-[30px]"
             size="icon"
             onClick={handleAddEntry}
             disabled={!newKey.trim()}

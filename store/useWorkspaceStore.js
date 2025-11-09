@@ -165,6 +165,7 @@ const initialState = {
   credits: 0,
   plan: "free",
   isStatsInitializing: true,
+  showCustomizerPanel: false,
 };
 
 const useWorkflowStore = create((set, get) => ({
@@ -254,6 +255,8 @@ const useWorkflowStore = create((set, get) => ({
   setWorkflowEnv: (workflowEnv) => set({ workflowEnv }),
 
   setPanel: (panel) => set({ panel }),
+
+  setShowCustomizerPanel: (showCustomizerPanel) => set({ showCustomizerPanel }),
 
   // Complex actions
   onNodesChange: (changes) =>
@@ -418,6 +421,8 @@ const useWorkflowStore = create((set, get) => ({
       const updatedConnections = state.connections.filter(
         (edge) => edge.source !== nodeId && edge.target !== nodeId
       );
+
+      state.showCustomizerPanel = false;
 
       const updatedSelectedNode =
         state.selectedNode?.id === nodeId ? null : state.selectedNode;

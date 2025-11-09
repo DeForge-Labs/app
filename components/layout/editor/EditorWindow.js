@@ -9,23 +9,27 @@ import FormMenu from "./formWindow/FormMenu";
 import Canvas from "./formWindow/Canvas";
 import SmallEditor from "./formWindow/SmallEditor";
 import NodePanel from "./formWindow/NodePanel";
+import useWorkspaceStore from "@/store/useWorkspaceStore";
 
 export default function EditorWindow() {
+  const { showCustomizerPanel } = useWorkspaceStore();
   return (
     <div className="flex flex-1 relative">
-      <div className="w-80 h-full p-2 overflow-y-auto hide-scroll absolute left-0 top-0 z-10">
+      <div className="h-full p-2 overflow-y-auto hide-scroll absolute left-0 top-0">
         <NodeMenu />
       </div>
 
-      <div className="flex-1 relative flex flex-col">
+      <div className="flex-1 relative flex flex-col z-10">
         <NodeEditor />
 
         <ToolPanel />
       </div>
 
-      {/* <div className="lg:w-80 w-64 border-l bg-black/5 h-full border-black/50 overflow-y-auto hide-scroll dark:border-background dark:text-background absolute right-0 top-0">
-        <CustomizerPanel />
-      </div> */}
+      {showCustomizerPanel && (
+        <div className="h-full p-2 overflow-y-auto hide-scroll absolute right-0">
+          <CustomizerPanel />
+        </div>
+      )}
     </div>
   );
 }

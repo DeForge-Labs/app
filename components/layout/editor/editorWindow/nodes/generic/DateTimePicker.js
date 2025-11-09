@@ -114,7 +114,7 @@ export default function DateTimePicker({ value, onChange, isDisabled }) {
           step="1"
           value={time}
           onChange={handleTimeChange}
-          style={{ fontSize: "10px" }}
+          style={{ fontSize: "10px", textAlign: "center" }}
           disabled={isDisabled}
           className="rounded-sm [&>input]:px-1 h-full dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
         />

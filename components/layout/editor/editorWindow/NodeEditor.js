@@ -33,6 +33,7 @@ function Flow() {
     deleteEdge,
     setSelectedHandle,
     setSelectedNodeId,
+    setShowCustomizerPanel,
   } = useWorkspaceStore();
 
   const { project } = useReactFlow();
@@ -236,6 +237,7 @@ function Flow() {
   const onNodeClick = useCallback(
     (_, node) => {
       setSelectedNode(node);
+      setShowCustomizerPanel(true);
       // Hide context menus if they're open
       setNodeContextMenu({ ...nodeContextMenu, visible: false });
       setEdgeContextMenu({ ...edgeContextMenu, visible: false });
@@ -312,6 +314,7 @@ function Flow() {
 
   // Hide context menus when clicking on the canvas
   const onPaneClick = useCallback(() => {
+    setShowCustomizerPanel(false);
     setNodeContextMenu({ ...nodeContextMenu, visible: false });
     setEdgeContextMenu({ ...edgeContextMenu, visible: false });
   }, [nodeContextMenu, edgeContextMenu]);

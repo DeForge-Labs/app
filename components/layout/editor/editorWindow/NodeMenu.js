@@ -105,7 +105,7 @@ export default function NodeMenu() {
             exit={{ scale: 0 }}
             transition={{ duration: 0.15 }}
             onClick={() => setIsMinimized(false)}
-            className="w-12 h-12 rounded-lg bg-background hover:bg-foreground/5 border border-foreground/15 flex items-center justify-center cursor-pointer transition-colors shadow-lg"
+            className="w-12 h-12 rounded-lg relative z-20 bg-background hover:bg-foreground/5 border border-foreground/15 flex items-center justify-center cursor-pointer transition-colors shadow-lg"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -124,15 +124,15 @@ export default function NodeMenu() {
               opacity: { duration: 0.2 },
               layout: { duration: 0.3, ease: "easeInOut" },
             }}
-            className="flex flex-col bg-background border border-foreground/15 rounded-lg overflow-hidden max-h-full"
+            className="flex flex-col w-80 relative z-20 bg-background border border-foreground/15 rounded-lg overflow-hidden max-h-full"
           >
             {/* Header */}
             <motion.div
               layout="position"
-              className="flex gap-2 text-sm border-b border-foreground/15 p-4 relative z-10 shrink-0"
+              className="flex gap-2 text-sm border-b border-foreground/15 p-4 relative z-20 shrink-0"
             >
               <div
-                className="absolute right-2 top-2 z-10 p-1 hover:bg-foreground/5 rounded-sm cursor-pointer"
+                className="absolute right-2 top-2 z-20 p-1 hover:bg-foreground/5 rounded-sm cursor-pointer"
                 onClick={() => setIsMinimized(true)}
               >
                 <X className="size-3" />
@@ -149,7 +149,7 @@ export default function NodeMenu() {
             {/* Search Bar */}
             <motion.div
               layout="position"
-              className="flex items-center justify-between px-4 py-2 border-b border-foreground/15 gap-2 z-10 shrink-0"
+              className="flex items-center justify-between px-4 py-2 border-b border-foreground/15 gap-2 z-20 shrink-0"
             >
               <Search className="w-4 h-4 opacity-50" />
               <Input
@@ -169,7 +169,7 @@ export default function NodeMenu() {
             {/* Content Area */}
             <motion.div
               layout="position"
-              className="flex flex-col overflow-hidden relative z-10 flex-1 min-h-0"
+              className="flex flex-col overflow-hidden relative z-20 flex-1 min-h-0"
             >
               {isNodeRegistryInitializing ? (
                 <NodeLoader />

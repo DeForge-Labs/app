@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@heroui/react";
-import { Input } from "@heroui/react";
-import { Link2Off } from "lucide-react";
+import TypeBadge from "./common/TypeBadge";
+import DisconnectButton from "./common/DisconnectButton";
+import { Input } from "@/components/ui/input";
 
 export default function TextField({
   field,
@@ -11,29 +11,16 @@ export default function TextField({
   selectedNode,
   handleChange,
   handleDisconnect,
-  nodeType,
 }) {
   return (
-    <div key={field.name} className="space-y-2">
-      <div className="flex justify-between items-center dark:text-background dark:border-background">
-        <div className="text-sm font-medium capitalize dark:text-background">
+    <div key={field.name} className="space-y-1">
+      <div className="flex justify-between items-center">
+        <div className="text-xs font-medium text-foreground/80 capitalize flex items-center gap-1">
           {field.name}
-          {isInput && (
-            <span className="ml-1 text-xs text-black/50 dark:text-background">
-              {nodeType.inputs.find((i) => i.name === field.name)?.type}
-            </span>
-          )}
+          {isInput && <TypeBadge type={field.type} />}
         </div>
         {isInput && isConnected && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-6 px-2 text-xs bg-black/80 text-background dark:bg-background dark:text-black"
-            onPress={() => handleDisconnect(field.name)}
-          >
-            <Link2Off className="h-3 w-3" />
-            Disconnect
-          </Button>
+          <DisconnectButton handleDisconnect={handleDisconnect} input={field} />
         )}
       </div>
       <Input
@@ -42,11 +29,11 @@ export default function TextField({
         onChange={(e) => handleChange(field.name, e.target.value)}
         placeholder={field.value}
         disabled={isInput && isConnected}
-        className="border-black/50 border rounded-lg dark:border-background dark:text-background"
-        variant="outline"
+        className="border border-foreground/60 rounded-sm dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
+        style={{ fontSize: "12px" }}
       />
 
-      <div className="text-[10px]">{field.desc}</div>
+      <div className="text-[10px] text-foreground/60">{field.desc}</div>
     </div>
   );
 }

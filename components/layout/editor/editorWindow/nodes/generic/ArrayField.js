@@ -83,7 +83,7 @@ export default function ArrayField({
         </div>
         <Badge
           variant="outline"
-          className="text-[10px] p-1 px-2 bg-foreground/5 border border-foreground/5 w-full text-foreground/70 capitalize"
+          className="text-[10px] p-1 px-2 bg-foreground/5 flex flex-col border border-foreground/5 w-full text-foreground/70 capitalize"
         >
           <div className="flex justify-between items-center text-wrap">
             <span className="font-medium text-[10px]">
@@ -91,7 +91,7 @@ export default function ArrayField({
             </span>
           </div>
           {totalValidConnections > 0 && (
-            <div className="mt-1 pt-1 border-t border-black/50 text-[10px] text-muted-foreground dark:border-background dark:text-background">
+            <div className="pt-1 border-t w-full border-foreground/50 text-[10px] text-foreground/60">
               {totalValidConnections} connection
               {totalValidConnections !== 1 ? "s" : ""} active
             </div>

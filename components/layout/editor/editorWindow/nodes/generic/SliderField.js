@@ -1,7 +1,6 @@
 "use client";
 
 import { Handle, Position } from "reactflow";
-import { useEffect, useState } from "react";
 import getColorByType from "@/lib/color-profile";
 import { useTheme } from "next-themes";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
@@ -78,7 +77,7 @@ export default function SliderField({
         )}
 
         <Slider
-          value={currentValue || field.value}
+          value={currentValue || 0}
           defaultValue={field.value}
           onValueChange={(value) => {
             handleChange(field.name, value);
