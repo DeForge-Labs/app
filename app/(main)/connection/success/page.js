@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import StartContainer from "@/components/ui/StartContainer";
+import Logo from "@/components/ui/Logo";
 
 export default function ConnectionSuccess() {
   const searchParams = useSearchParams();
@@ -104,29 +105,18 @@ export default function ConnectionSuccess() {
 
   return (
     <StartContainer>
-      <div className="flex flex-col w-[350px] dark:bg-dark dark:text-background">
+      <div className="flex flex-col w-[350px]">
         <Link href="/" className="flex items-center justify-center space-x-2">
-          <Image
-            src="/logo/logo-black.svg"
-            alt="Logo"
-            width={27}
-            height={27}
-            className="dark:invert"
-          />
-          <span className="font-bold inline-block text-4xl dark:text-background">
-            Deforge
-          </span>
+          <Logo size={50} />
         </Link>
 
         <div className="flex flex-col items-center justify-center mt-10 h-[300px]">
-          <div className="text-2xl font-bold dark:text-background">
+          <div className="text-2xl font-bold text-foreground ">
             {isSuccess ? "Success!" : "Error"}
           </div>
-          <div className="text-sm text-gray-500 dark:text-background">
-            {message}
-          </div>
+          <div className="text-sm text-gray-500 text-foreground">{message}</div>
 
-          <div className="text-sm text-gray-500 dark:text-background">
+          <div className="text-sm text-gray-500 text-foreground">
             {isProcessing ? (
               <>
                 <p>Processing...</p>
