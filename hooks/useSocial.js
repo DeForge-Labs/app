@@ -1,26 +1,20 @@
 "use client";
 
 import axios from "axios";
-import { useDispatch } from "react-redux";
 import { toast } from "sonner";
-import { setWorkflowSocial } from "@/redux/slice/WorkflowSlice";
+import useWorkspaceStore from "@/store/useWorkspaceStore";
 
 export default function useSocial() {
-  const dispatch = useDispatch();
+  const { setWorkflowSocial } = useWorkspaceStore();
 
   const getSocial = async (workflowId) => {
     try {
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      };
-
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/workflow/getSocial/${workflowId}`,
-        {},
-        { headers }
+        {}
       );
 
-      dispatch(setWorkflowSocial(response.data.social));
+      setWorkflowSocial(response.data.social);
 
       return response.data.social;
     } catch (err) {

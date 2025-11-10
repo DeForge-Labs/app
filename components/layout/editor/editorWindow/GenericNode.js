@@ -8,7 +8,14 @@ import {
   getCategoryColor,
   isArrayType,
 } from "@/lib/node-registry";
-import { CircleDot, Coins, FileWarning, Link2 } from "lucide-react";
+import {
+  CircleDot,
+  Coins,
+  FileWarning,
+  Link2,
+  ShieldAlert,
+  ShieldUser,
+} from "lucide-react";
 import getColorByType from "@/lib/color-profile";
 import { useSelector } from "react-redux";
 import { Lock } from "lucide-react";
@@ -399,6 +406,30 @@ export function GenericNode({ id, type, data }) {
           <Lock className="h-3 w-3" />
         </div>
       )}
+
+      <div className="absolute -top-7 flex items-center gap-2">
+        {/* Render Environment Warning */}
+        {nodeType.fields.some((field) => field.type === "env") && (
+          <Badge
+            variant="outline"
+            className="text-[10px] px-1.5 py-0.5 h-5 bg-red-200 dark:bg-red-700 w-fit flex justify-between items-center border mb-4 border-red-200 dark:border-red-700 text-red-700 dark:text-red-200 capitalize"
+          >
+            <ShieldAlert className="" />
+            Env
+          </Badge>
+        )}
+
+        {nodeType.fields.some((field) => field.type === "social") && (
+          <Badge
+            variant="outline"
+            className="text-[10px] px-1.5 py-0.5 h-5 bg-blue-200 dark:bg-blue-700 w-fit flex justify-between items-center border mb-4 border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-200 capitalize"
+          >
+            <ShieldUser className="" />
+            Social
+          </Badge>
+        )}
+      </div>
+
       <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 p-3 border-b border-foreground/15 [.border-b]:pb-3">
         <CardTitle className="text-[10px] font-medium">
           <div className="flex items-center">
@@ -433,28 +464,6 @@ export function GenericNode({ id, type, data }) {
           {/* Render fields with their handles */}
           {nodeType.fields.map(renderField)}
         </div>
-
-        {/* Render Connection Warning */}
-        {nodeType.fields.some((field) => field.type === "social") && (
-          <div className="text-xs text-blue-500 flex pb-2 pt-2">
-            <Link2 className="mr-2 size-4" />
-            <span className="text-[10px] w-fit">
-              This Node requires Connections, Select this node to customize its
-              properties
-            </span>
-          </div>
-        )}
-
-        {/* Render Environment Warning */}
-        {nodeType.fields.some((field) => field.type === "env") && (
-          <div className="text-xs text-red-500 flex pb-2 pt-2">
-            <FileWarning className="mr-2 size-4" />
-            <span className="text-[10px] w-fit">
-              This Node requires Environment Variables, Select this node to
-              customize its properties
-            </span>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

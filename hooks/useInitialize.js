@@ -451,11 +451,9 @@ export default function useInitialize() {
         //   )
         // );
 
-        // await getEnv(response.data.workspace.workflow.id);
+        await getEnv(response.data.workspace.workflow.id);
 
-        // await getSocial(response.data.workspace.workflow.id);
-
-        // dispatch(setTeamWorkflow(response.data.workspace.team));
+        await getSocial(response.data.workspace.workflow.id);
       } else {
         toast.error(response.data.message);
         if (response.data.status === 404 || response.data.status === 401) {

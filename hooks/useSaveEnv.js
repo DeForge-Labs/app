@@ -2,28 +2,23 @@
 
 import { useState } from "react";
 import useEnv from "./useEnv";
-import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import axios from "axios";
+import useWorkspaceStore from "@/store/useWorkspaceStore";
 
 export default function useSaveEnv() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSavingEnv, setIsSavingEnv] = useState(false);
   const { getEnv } = useEnv();
-  const workflow = useSelector((state) => state.workflow.workflow);
+  const { workflow } = useWorkspaceStore();
 
   const handleSaveEnv = async (key, value, setValue) => {
     try {
       setIsSavingEnv(true);
 
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      };
-
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/workflow/saveEnv/${workflow?.id}`,
-        { key, value },
-        { headers }
+        { key, value }
       );
 
       if (!response.data.success) {

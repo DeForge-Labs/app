@@ -1,17 +1,14 @@
 "use client";
 
-import { Button } from "@heroui/react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   BookOpen,
   CircleDot,
-  Coins,
-  Lock,
-  StickyNote,
+  ShieldAlert,
+  ShieldUser,
   Trash,
   X,
 } from "lucide-react";
-import { getNodeTypeByType, isArrayType } from "@/lib/node-registry";
+import { getNodeTypeByType } from "@/lib/node-registry";
 import { useEffect, useState } from "react";
 import EnvField from "./nodes/customizer/EnvField";
 import TextField from "./nodes/customizer/TextField";
@@ -132,7 +129,7 @@ export default function CustomizerPanel() {
   };
 
   return (
-    <div className="flex flex-col w-80 bg-background border border-foreground/15 rounded-lg overflow-hidden max-h-full relative z-20">
+    <div className="flex flex-col w-72 bg-background border border-foreground/15 rounded-lg overflow-hidden max-h-full relative z-20">
       <div className="flex flex-col gap-2 text-sm border-b border-foreground/15 p-4 relative z-10 shrink-0">
         <div
           className="absolute right-2 top-2 z-10 p-1 hover:bg-foreground/5 rounded-sm cursor-pointer"
@@ -387,8 +384,14 @@ export default function CustomizerPanel() {
           {nodeType.fields.some((field) => field.type === "env") && (
             <div className="flex flex-col gap-2 p-4 border-t border-foreground/15">
               {nodeType.fields.some((field) => field.type === "env") && (
-                <div className="space-y-2">
-                  <h3 className="text-sm">Environment Variables</h3>
+                <div className="">
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] px-1.5 py-0.5 h-5 bg-red-200 dark:bg-red-700 w-fit flex justify-between items-center border mb-4 border-red-200 dark:border-red-700 text-red-700 dark:text-red-200 capitalize"
+                  >
+                    <ShieldAlert className="" />
+                    Environment Variables
+                  </Badge>
                   <div className="flex flex-col gap-4">
                     {nodeType.fields.map((field, index) => {
                       return (
@@ -406,8 +409,14 @@ export default function CustomizerPanel() {
           {nodeType.fields.some((field) => field.type === "social") && (
             <div className="flex flex-col gap-2 p-4 border-t border-foreground/15">
               {nodeType.fields.some((field) => field.type === "social") && (
-                <div className="space-y-2">
-                  <h3 className="text-sm">Connections</h3>
+                <div className="">
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] px-1.5 py-0.5 h-5 bg-blue-200 dark:bg-blue-700 w-fit flex justify-between items-center border mb-4 border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-200 capitalize"
+                  >
+                    <ShieldUser className="" />
+                    Social Connections
+                  </Badge>
 
                   {nodeType.fields.map((field, index) => {
                     return (
