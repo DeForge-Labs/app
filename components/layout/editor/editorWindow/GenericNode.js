@@ -8,18 +8,9 @@ import {
   getCategoryColor,
   isArrayType,
 } from "@/lib/node-registry";
-import {
-  CircleDot,
-  Coins,
-  FileWarning,
-  Link2,
-  ShieldAlert,
-  ShieldUser,
-} from "lucide-react";
+import { CircleDot, ShieldAlert, ShieldUser } from "lucide-react";
 import getColorByType from "@/lib/color-profile";
-import { useSelector } from "react-redux";
 import { Lock } from "lucide-react";
-import { cn } from "@/lib/utils";
 import TextField from "./nodes/generic/TextField";
 import NumberField from "./nodes/generic/NumberField";
 import TextAreaField from "./nodes/generic/TextAreaField";
@@ -40,7 +31,8 @@ export function GenericNode({ id, type, data }) {
   const [connectedInputs, setConnectedInputs] = useState(new Set());
   const { nodeRegistry } = useNodeLibraryStore();
 
-  const { workflow, selectedNodeId, updateNodeData } = useWorkspaceStore();
+  const { workflow, selectedNodeId, updateNodeData, selectedNode } =
+    useWorkspaceStore();
 
   // Get the node type definition
   const nodeType = getNodeTypeByType(type, nodeRegistry);
@@ -402,9 +394,13 @@ export function GenericNode({ id, type, data }) {
   return (
     <Card className={`w-56 relative py-0`}>
       {workflow?.status === "LIVE" && (
-        <div className="absolute -top-2 -right-3 bg-dark dark:bg-white h-6 w-6 rounded-full flex items-center justify-center text-background dark:text-dark">
+        <div className="absolute -top-2 -right-3 bg-foreground h-6 w-6 rounded-full flex items-center justify-center text-background">
           <Lock className="h-3 w-3" />
         </div>
+      )}
+
+      {selectedNode?.id === id && (
+        <div className="absolute top-0 left-0 h-full w-full rounded-2xl flex items-center justify-center border border-dashed border-foreground/50"></div>
       )}
 
       <div className="absolute -top-7 flex items-center gap-2">

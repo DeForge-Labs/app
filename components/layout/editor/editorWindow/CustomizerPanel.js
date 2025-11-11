@@ -28,7 +28,8 @@ import useNodeLibraryStore from "@/store/useNodeLibraryStore";
 import { Badge } from "@/components/ui/badge";
 
 export default function CustomizerPanel() {
-  const { selectedNode, deleteEdge, updateNodeData } = useWorkspaceStore();
+  const { selectedNode, deleteEdge, updateNodeData, setSelectedNode } =
+    useWorkspaceStore();
   const { connections: edges } = useWorkspaceStore();
   const [connectedInputs, setConnectedInputs] = useState(new Map());
   const [totalConnectedInputs, setTotalConnectedInputs] = useState([]);
@@ -66,26 +67,14 @@ export default function CustomizerPanel() {
   }, [edges, selectedNode]);
 
   if (!selectedNode) {
-    return (
-      <div className="flex h-full items-center justify-center text-center text-muted-foreground p-4 opacity-50">
-        <div>
-          <p>Select a node to customize its properties</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   // Get the node type definition
   const nodeType = getNodeTypeByType(selectedNode.type, nodeRegistry);
 
   if (!nodeType) {
-    return (
-      <div className="flex h-full items-center justify-center text-center text-muted-foreground p-4 opacity-50">
-        <div>
-          <p>Unknown node type: {selectedNode.type}</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   const handleChange = (key, value) => {
@@ -135,6 +124,7 @@ export default function CustomizerPanel() {
           className="absolute right-2 top-2 z-10 p-1 hover:bg-foreground/5 rounded-sm cursor-pointer"
           onClick={() => {
             setShowCustomizerPanel(false);
+            setSelectedNode(null);
           }}
         >
           <X className="size-3" />

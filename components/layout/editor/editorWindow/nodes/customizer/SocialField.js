@@ -54,7 +54,7 @@ export default function SocialField({ field }) {
               onClick={() => {
                 setIsOpen(true);
               }}
-              isDisabled={workflow?.status === "LIVE"}
+              disabled={workflow?.status === "LIVE"}
             >
               Connect
             </Button>
@@ -65,7 +65,7 @@ export default function SocialField({ field }) {
               onClick={() => {
                 setIsOpen(true);
               }}
-              isDisabled={workflow?.status === "LIVE"}
+              disabled={workflow?.status === "LIVE"}
             >
               Disconnect
             </Button>

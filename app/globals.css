@@ -251,3 +251,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+.st0 {
+  stroke-width: 1px;
+  stroke-dasharray: 36000;
+  fill: transparent;
+  animation: effectLogo 3s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes effectLogo {
+  from{
+    fill: #000000;
+    stroke-dashoffset: 0;
+  } to {
+    fill: #000000;
+    stroke-dashoffset: 36000;
+  }
+}

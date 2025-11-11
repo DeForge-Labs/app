@@ -315,6 +315,7 @@ function Flow() {
   // Hide context menus when clicking on the canvas
   const onPaneClick = useCallback(() => {
     setShowCustomizerPanel(false);
+    setSelectedNode(null);
     setNodeContextMenu({ ...nodeContextMenu, visible: false });
     setEdgeContextMenu({ ...edgeContextMenu, visible: false });
   }, [nodeContextMenu, edgeContextMenu]);

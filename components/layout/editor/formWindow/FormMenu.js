@@ -1,9 +1,26 @@
 "use client";
 
-import { Type, Heading1, Heading2, Heading3, Minus, Link } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import {
+  Type,
+  Heading1,
+  Heading2,
+  Heading3,
+  Minus,
+  Link,
+  SquareMousePointer,
+  X,
+  Plus,
+} from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { motion, AnimatePresence } from "framer-motion";
 
 const componentTypes = [
+  {
+    type: "node",
+    label: "Node Component",
+    icon: SquareMousePointer,
+    description: "Add a node component to the form",
+  },
   {
     type: "paragraph",
     label: "Paragraph",
@@ -49,7 +66,7 @@ const componentTypes = [
   },
 ];
 
-export default function FormMenu() {
+export default function FormMenu({ isMinimized = false, setIsMinimized }) {
   const handleDragStart = (e, componentType) => {
     e.dataTransfer.setData(
       "application/json",
@@ -63,40 +80,114 @@ export default function FormMenu() {
   };
 
   return (
-    <div className="flex flex-col gap-4 absolute p-4 w-full">
-      <h2 className="font-semibold text-xl dark:text-background">
-        Form Components
-      </h2>
-      <div className="space-y-2">
-        {componentTypes.map((component) => {
-          const IconComponent = component.icon;
-          return (
-            <Card
-              key={component.type}
-              draggable
-              onDragStart={(e) => handleDragStart(e, component)}
-              className="cursor-grab bg-background border rounded-lg border-black/50 hover:shadow-md dark:border-background dark:text-background dark:bg-zinc-900 active:cursor-grabbing"
+    <>
+      <AnimatePresence mode="wait">
+        {isMinimized ? (
+          // Minimized Plus Button
+          <motion.button
+            key="minimized"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            transition={{ duration: 0.15 }}
+            onClick={() => setIsMinimized(false)}
+            className="w-12 h-12 rounded-lg relative z-20 bg-background hover:bg-foreground/5 border border-foreground/15 flex items-center justify-center cursor-pointer transition-colors shadow-lg"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Plus className="size-5" />
+          </motion.button>
+        ) : (
+          // Full Form Components Menu
+          <motion.div
+            key="expanded"
+            layout
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            transition={{
+              scale: { duration: 0.2 },
+              opacity: { duration: 0.2 },
+              layout: { duration: 0.3, ease: "easeInOut" },
+            }}
+            className="flex flex-col w-80 relative z-20 bg-background border border-foreground/15 rounded-lg overflow-hidden max-h-full"
+          >
+            {/* Header */}
+            <motion.div
+              layout="position"
+              className="flex gap-2 text-sm border-b border-foreground/15 p-4 relative z-20 shrink-0"
             >
-              <div className="flex items-center gap-2 p-3">
-                <div className="bg-black/5 dark:bg-white/5 p-2 rounded-lg">
-                  <IconComponent className="w-6 h-6 dark:text-background" />
+              {setIsMinimized && (
+                <div
+                  className="absolute right-2 top-2 z-20 p-1 hover:bg-foreground/5 rounded-sm cursor-pointer"
+                  onClick={() => setIsMinimized(true)}
+                >
+                  <X className="size-3" />
                 </div>
-                <div className="text-sm dark:text-background flex flex-col flex-1 gap-1">
-                  <p className="font-semibold">{component.label}</p>
-                  <p className="text-xs opacity-70">{component.description}</p>
-                </div>
+              )}
+              <SquareMousePointer className="size-4 mt-1" />
+              <div className="flex flex-col">
+                <p>Form Components</p>
+                <p className="text-xs text-muted-foreground max-w-[200px]">
+                  Click on the component to add it to the form
+                </p>
               </div>
-            </Card>
-          );
-        })}
-      </div>
+            </motion.div>
 
-      <div className="p-3 bg-black/5 dark:bg-white/5 rounded-lg border border-black/50 dark:border-background dark:text-background">
-        <p className="text-xs  dark:text-background">
-          <strong>How to use:</strong> Drag components from here to the canvas
-          area to build your form.
-        </p>
-      </div>
-    </div>
+            {/* Content Area */}
+            <motion.div
+              layout="position"
+              className="overflow-y-auto p-4 custom-scrollbar flex-1 min-h-0"
+            >
+              <div className="space-y-2">
+                {componentTypes.map((component, index) => {
+                  const IconComponent = component.icon;
+                  return (
+                    <motion.div
+                      key={component.type}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{
+                        duration: 0.12,
+                        delay: index * 0.02,
+                      }}
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Card
+                          className="hover:shadow-md transition-shadow rounded-md border-foreground/10 p-0 py-3 gap-0 cursor-pointer"
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, component)}
+                        >
+                          <div className="flex items-center gap-2 px-4">
+                            <div className="p-2 rounded-lg bg-foreground/5">
+                              <IconComponent className="size-6 opacity-60" />
+                            </div>
+                            <div>
+                              <CardHeader className="p-0 px-2">
+                                <CardTitle className="text-xs font-medium">
+                                  {component.label}
+                                </CardTitle>
+                              </CardHeader>
+                              <CardContent className="px-2 -mt-1">
+                                <p className="text-[10px] text-muted-foreground">
+                                  {component.description}
+                                </p>
+                              </CardContent>
+                            </div>
+                          </div>
+                        </Card>
+                      </motion.div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

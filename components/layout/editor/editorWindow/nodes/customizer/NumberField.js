@@ -30,18 +30,6 @@ export default function NumberField({
           <DisconnectButton handleDisconnect={handleDisconnect} input={field} />
         )}
       </div>
-      {/* <Input
-        id={field.name}
-        type="number"
-        value={selectedNode.data[field.name] || field.value}
-        onChange={(e) =>
-          handleChange(field.name, Number.parseFloat(e.target.value))
-        }
-        placeholder={field.value?.toString()}
-        className="mt-2 border border-black/50 rounded-lg dark:border-background dark:text-background"
-        variant="outline"
-        disabled={isInput && isConnected}
-      /> */}
 
       <NumField
         defaultValue={0}

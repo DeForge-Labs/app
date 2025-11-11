@@ -7,12 +7,14 @@ import OptionsMenu from "./editorNavbar/OptionsMenu";
 import WorkflowCard from "./editorNavbar/WorkflowCard";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
 import { Skeleton } from "@/components/ui/skeleton";
+import ModeSwitcher from "./editorWindow/nodes/ModeSwitcher";
 
 export default function EditorNavbar() {
   const { isWorkspaceInitializing, hasUnsavedChanges } = useWorkspaceStore();
 
   return (
-    <header className="sticky top-0 z-50 bg-foreground/5">
+    <header className="sticky top-0 z-50 bg-foreground/5 relative">
+      <ModeSwitcher />
       <div className="flex items-center justify-between px-2 h-[50px]">
         <div className="flex items-center gap-1 h-full">
           <Link
