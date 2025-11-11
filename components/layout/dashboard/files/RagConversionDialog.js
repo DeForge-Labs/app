@@ -24,7 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 const RAG_STATUS_INFO = {
-  "Not Requested": {
+  "not-requested": {
     icon: Database,
     color: "text-gray-500",
     bg: "bg-gray-100 dark:bg-gray-800",
@@ -215,12 +215,11 @@ export default function RagConversionDialog({
 
   const statusInfo =
     RAG_STATUS_INFO[ragStatus] || RAG_STATUS_INFO["not-requested"];
-
   const StatusIcon = statusInfo.icon;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle className="text-lg font-medium opacity-80">
             RAG Database Conversion
@@ -249,14 +248,14 @@ export default function RagConversionDialog({
                 />
 
                 <div className="flex-1">
-                  <p className="font-medium text-sm">{statusInfo.label}</p>
-                  <p className="text-xs text-foreground/70 mt-0.5">
+                  <p className="font-medium text-xs">{statusInfo.label}</p>
+                  <p className="text-[10px] text-foreground/70 mt-0.5">
                     {statusInfo.description}
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-1 text-sm">
+              <div className="space-y-1 text-xs">
                 <div className="flex justify-between">
                   <span className="text-foreground/70">File:</span>
 
@@ -270,7 +269,9 @@ export default function RagConversionDialog({
 
                 <div className="flex justify-between">
                   <span className="text-foreground/70">Status:</span>
-                  <span className="font-medium capitalize">{ragStatus}</span>
+                  <span className="font-medium capitalize">
+                    {ragStatus?.replace(/-/g, " ") || "not requested"}
+                  </span>
                 </div>
 
                 {ragTableName && (
@@ -283,11 +284,13 @@ export default function RagConversionDialog({
                 )}
               </div>
 
-              {ragStatus === "not-requested" && (
-                <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              {(!ragStatus ||
+                ragStatus === "not-requested" ||
+                !RAG_STATUS_INFO[ragStatus]) && (
+                <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-[10px]">
                   <AlertCircle className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
 
-                  <div className="text-xs text-blue-900 dark:text-blue-100">
+                  <div className="text-blue-900 dark:text-blue-100">
                     <p className="font-medium mb-1">Supported formats:</p>
                     <p className="text-blue-700 dark:text-blue-200">
                       PDF, DOCX, PPTX, XLSX, HTML, XML, JSON, CSV, TXT, MD, RST,
@@ -299,24 +302,30 @@ export default function RagConversionDialog({
             </div>
 
             <DialogFooter>
-              <Button variant="ghost" onClick={() => onOpenChange(false)}>
+              <Button
+                variant="ghost"
+                className="text-xs"
+                onClick={() => onOpenChange(false)}
+              >
                 Close
               </Button>
 
-              {ragStatus === "Not Requested" && (
+              {(!ragStatus ||
+                ragStatus === "not-requested" ||
+                !RAG_STATUS_INFO[ragStatus]) && (
                 <Button
                   onClick={handleConvert}
                   disabled={isConverting}
-                  className="bg-foreground/90 text-background"
+                  className="bg-foreground/90 text-background text-xs"
                 >
                   {isConverting ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="h-4 w-4 animate-spin" />
                       Starting...
                     </>
                   ) : (
                     <>
-                      <Database className="mr-2 h-4 w-4" />
+                      <Database className="h-4 w-4" />
                       Convert (30 credits)
                     </>
                   )}
@@ -326,12 +335,13 @@ export default function RagConversionDialog({
               {(ragStatus === "queued" || ragStatus === "processing") && (
                 <Button
                   variant="outline"
+                  className="text-xs"
                   onClick={checkStatus}
                   disabled={isChecking}
                 >
                   {isChecking ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="h-4 w-4 animate-spin" />
                       Checking...
                     </>
                   ) : (
@@ -344,11 +354,11 @@ export default function RagConversionDialog({
                 <Button
                   onClick={handleConvert}
                   disabled={isConverting}
-                  className="bg-foreground/90 text-background"
+                  className="bg-foreground/90 text-background text-xs"
                 >
                   {isConverting ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="h-4 w-4 animate-spin" />
                       Retrying...
                     </>
                   ) : (

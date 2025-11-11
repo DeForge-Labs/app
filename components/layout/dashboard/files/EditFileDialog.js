@@ -64,7 +64,7 @@ const EditFileDialog = ({ fileKey, fileName, open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={!isRenaming}>
+      <DialogContent showCloseButton={!isRenaming} className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle className="text-lg font-medium opacity-80">
             Rename File
@@ -76,28 +76,23 @@ const EditFileDialog = ({ fileKey, fileName, open, onOpenChange }) => {
           </DialogDescription>
         </DialogHeader>
 
-        <div>
-          <label htmlFor="fileName" className="text-[10px]">
-            File Name
-          </label>
-
-          <Input
-            id="fileName"
-            value={newFileName}
-            disabled={isRenaming}
-            placeholder={fileName}
-            onChange={(e) => setNewFileName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !isRenaming) {
-                handleRename();
-              }
-            }}
-          />
-        </div>
+        <Input
+          id="fileName"
+          value={newFileName}
+          disabled={isRenaming}
+          placeholder={fileName}
+          onChange={(e) => setNewFileName(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !isRenaming) {
+              handleRename();
+            }
+          }}
+        />
 
         <DialogFooter>
           <Button
             variant="ghost"
+            className="text-xs"
             disabled={isRenaming}
             onClick={() => onOpenChange(false)}
           >
@@ -106,7 +101,7 @@ const EditFileDialog = ({ fileKey, fileName, open, onOpenChange }) => {
 
           <Button
             onClick={handleRename}
-            className="bg-foreground/90 text-background"
+            className="bg-foreground/90 text-background text-xs"
             disabled={isRenaming || !newFileName || newFileName === fileName}
           >
             {isRenaming ? (

@@ -147,7 +147,7 @@ const UploadFileDialog = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent showCloseButton={!isUploading}>
+      <DialogContent showCloseButton={!isUploading} className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle className="text-lg font-medium opacity-80">
             Upload File
@@ -175,11 +175,11 @@ const UploadFileDialog = ({ open, onOpenChange }) => {
             >
               <FileUp className="w-9 h-9 mx-auto mb-2 opacity-50" />
 
-              <p className="text-sm text-foreground/70 mb-1">
+              <p className="text-xs text-foreground/70">
                 Click to select a file or drag and drop
               </p>
 
-              <p className="text-xs text-foreground/50">
+              <p className="text-[10px] text-foreground/50">
                 All file types supported
               </p>
             </div>
@@ -190,11 +190,11 @@ const UploadFileDialog = ({ open, onOpenChange }) => {
                   <FileUp className="w-8 h-8 opacity-50 shrink-0" />
 
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
+                    <p className="text-xs font-medium truncate">
                       {selectedFile.name}
                     </p>
 
-                    <p className="text-xs text-foreground/60">
+                    <p className="text-[10px] text-foreground/60">
                       {formatFileSize(selectedFile.size)}
                     </p>
                   </div>
@@ -239,23 +239,28 @@ const UploadFileDialog = ({ open, onOpenChange }) => {
         </div>
 
         <DialogFooter>
-          <Button variant="ghost" onClick={handleClose} disabled={isUploading}>
+          <Button
+            variant="ghost"
+            className="text-xs"
+            onClick={handleClose}
+            disabled={isUploading}
+          >
             Cancel
           </Button>
 
           <Button
             onClick={handleUpload}
             disabled={!selectedFile || isUploading}
-            className="bg-foreground/90 text-background"
+            className="bg-foreground/90 text-background text-xs"
           >
             {isUploading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 Uploading...
               </>
             ) : (
               <>
-                <Upload className="mr-2 h-4 w-4" />
+                <Upload className="h-4 w-4" />
                 Upload
               </>
             )}

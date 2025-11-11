@@ -13,9 +13,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 
 import RecentApps from "./sidebar/RecentApps";
-import SearchDialog from "./sidebar/SearchDialog";
-import FavoriteApps from "./sidebar/FavoriteApps";
 import SearchButton from "./sidebar/SeachButton";
+import FavoriteApps from "./sidebar/FavoriteApps";
 
 const NAV_ITEMS = [
   { href: "/apps", icon: LayoutGrid, label: "Apps" },
@@ -67,7 +66,7 @@ function AccordionSection({ title, children }) {
   );
 }
 
-export default function Sidebar({ params }) {
+const Sidebar = ({ params }) => {
   return (
     <div className="w-60 bg-foreground/5 relative overflow-y-auto hide-scroll p-2 px-0 flex flex-col">
       <div className="flex flex-col justify-between p-2 py-0 h-full flex-1 gap-0.5 relative">
@@ -107,7 +106,7 @@ export default function Sidebar({ params }) {
         </div>
       </div>
 
-      <div className="flex flex-col px-2 p-2 bg-foreground/5 rounded-sm border border-foreground/20 space-y-1">
+      <div className="flex flex-col mx-2 px-2 p-2 bg-foreground/5 rounded-sm border border-foreground/20 space-y-1">
         <div className="font-semibold text-foreground/50 text-[10px]">
           New Update
         </div>
@@ -118,4 +117,6 @@ export default function Sidebar({ params }) {
       </div>
     </div>
   );
-}
+};
+
+export default Sidebar;

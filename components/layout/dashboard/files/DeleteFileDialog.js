@@ -52,11 +52,13 @@ const DeleteFileDialog = ({ fileKey, fileName, open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false}>
+      <DialogContent showCloseButton={false} className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle>Delete File</DialogTitle>
+          <DialogTitle className="text-lg font-medium opacity-80">
+            Delete File
+          </DialogTitle>
 
-          <DialogDescription>
+          <DialogDescription className="text-xs">
             Are you sure you want to delete{" "}
             <span className="font-semibold">{fileName}</span>? This action
             cannot be undone.
@@ -66,6 +68,7 @@ const DeleteFileDialog = ({ fileKey, fileName, open, onOpenChange }) => {
         <DialogFooter>
           <Button
             variant="ghost"
+            className="text-xs"
             disabled={isDeleting}
             onClick={() => onOpenChange(false)}
           >
@@ -75,7 +78,7 @@ const DeleteFileDialog = ({ fileKey, fileName, open, onOpenChange }) => {
           <Button
             disabled={isDeleting}
             onClick={handleDelete}
-            className="bg-red-600 hover:bg-red-700 focus:ring-red-600 text-white"
+            className="bg-red-600 hover:bg-red-700 focus:ring-red-600 text-white text-xs"
           >
             {isDeleting ? (
               <>
