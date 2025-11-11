@@ -1,42 +1,39 @@
-import { Button } from "@/components/ui/button";
-import { cookies } from "next/headers";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+
+import { Button } from "@/components/ui/button";
 import ErrorDialog from "@/components/ui/ErrorDialog";
 
-export default async function FavoriteApps({ params }) {
-  const { id } = await params;
+const getFavoriteAppsData = async () => {
+  try {
+    const cookieStore = await cookies();
+    const allCookies = cookieStore.getAll();
 
-  const getFavoriteApps = async () => {
-    try {
-      const cookieStore = await cookies();
-      const allCookies = cookieStore.getAll();
+    const cookieHeader = allCookies
+      .map((cookie) => `${cookie.name}=${cookie.value}`)
+      .join("; ");
 
-      const cookieHeader = allCookies
-        .map((cookie) => `${cookie.name}=${cookie.value}`)
-        .join("; ");
+    const response = await fetch(`${process.env.API_URL}/workspace/favorite`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        cookie: cookieHeader,
+      },
+      credentials: "include",
+    });
 
-      const response = await fetch(
-        `${process.env.API_URL}/workspace/favorite`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            cookie: cookieHeader,
-          },
-          credentials: "include",
-        }
-      );
-      const data = await response.json();
+    const data = await response.json();
 
-      return data;
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-  };
+    return data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
 
-  const favoriteAppsData = await getFavoriteApps();
+const FavoriteApps = async () => {
+  const favoriteAppsData = await getFavoriteAppsData();
 
   if (!favoriteAppsData) {
     redirect("/server-not-found");
@@ -53,11 +50,12 @@ export default async function FavoriteApps({ params }) {
           Your Favourite apps that you have saved
         </div>
       )}
+
       {favoriteAppsData?.workspaces?.map((workspace, index) => {
         return (
           <Link href={`/editor/${workspace?.id}`} key={index}>
             <Button
-              className="flex gap-2 bg-transparent w-full font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
+              className="flex gap-2 bg-transparent w-full font-normal shadow-none! [:hover,[data-pressed]]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60"
               variant="outline"
             >
               {workspace?.name?.length > 20
@@ -69,4 +67,6 @@ export default async function FavoriteApps({ params }) {
       })}
     </>
   );
-}
+};
+
+export default FavoriteApps;
