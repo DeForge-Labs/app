@@ -1,27 +1,29 @@
 "use client";
 
-import { useState } from "react";
 import {
-  MoreVertical,
-  Download,
+  Eye,
   Edit,
   Trash2,
+  Download,
   Database,
-  Eye,
+  MoreVertical,
 } from "lucide-react";
+import axios from "axios";
+import { toast } from "sonner";
+import { useState } from "react";
+
 import {
   Menu,
-  MenuTrigger,
-  MenuPopup,
   MenuItem,
+  MenuPopup,
+  MenuTrigger,
   MenuSeparator,
 } from "@/components/ui/menu";
 import { Button } from "@/components/ui/button";
-import DeleteFileDialog from "./DeleteFileDialog";
+
 import EditFileDialog from "./EditFileDialog";
+import DeleteFileDialog from "./DeleteFileDialog";
 import RagConversionDialog from "./RagConversionDialog";
-import axios from "axios";
-import { toast } from "sonner";
 
 export default function FileMenuBox({
   fileKey,
@@ -29,9 +31,9 @@ export default function FileMenuBox({
   ragStatus,
   ragTableName,
 }) {
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showEditDialog, setShowEditDialog] = useState(false);
   const [showRagDialog, setShowRagDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleDownload = async (e) => {
     e.preventDefault();
@@ -39,13 +41,12 @@ export default function FileMenuBox({
 
     try {
       const response = await axios.post(
-        "/api/storage/download",
+        `${process.env.NEXT_PUBLIC_API_URL}/storage/download`,
         { fileKey },
         { withCredentials: true }
       );
 
       if (response.data.success) {
-        // Open the signed URL in a new tab to trigger download
         window.open(response.data.fileURL, "_blank");
         toast.success("Download started");
       } else {
@@ -60,39 +61,45 @@ export default function FileMenuBox({
   const handleEdit = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
     setShowEditDialog(true);
   };
 
   const handleDelete = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
     setShowDeleteDialog(true);
   };
 
   const handleRagConversion = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
     setShowRagDialog(true);
   };
 
   const handleViewRagStatus = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
     setShowRagDialog(true);
   };
 
   return (
     <>
       <Menu>
-        <MenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-sm hover:bg-foreground/5"
-          >
-            <MoreVertical className="h-4 w-4" />
-            <span className="sr-only">Open file menu</span>
-          </Button>
+        <MenuTrigger
+          render={
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8 rounded-sm hover:bg-foreground/5"
+            />
+          }
+        >
+          <MoreVertical className="h-4 w-4" />
+          <span className="sr-only">Open file menu</span>
         </MenuTrigger>
 
         <MenuPopup align="end" className="w-48">

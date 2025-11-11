@@ -1,26 +1,22 @@
 "use client";
 
+import axios from "axios";
+import { toast } from "sonner";
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+
 import {
   Dialog,
+  DialogTitle,
+  DialogHeader,
+  DialogFooter,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
-import axios from "axios";
 
-export default function DeleteFileDialog({
-  fileKey,
-  fileName,
-  open,
-  onOpenChange,
-}) {
+const DeleteFileDialog = ({ fileKey, fileName, open, onOpenChange }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
@@ -28,13 +24,17 @@ export default function DeleteFileDialog({
     setIsDeleting(true);
 
     try {
-      const response = await axios.delete("/api/storage/delete", {
-        data: { fileKey },
-        withCredentials: true,
-      });
+      const response = await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/storage/delete`,
+        {
+          data: { fileKey },
+          withCredentials: true,
+        }
+      );
 
       if (response.data.success) {
         toast.success("File deleted successfully!");
+
         onOpenChange(false);
         router.refresh();
       } else {
@@ -55,6 +55,7 @@ export default function DeleteFileDialog({
       <DialogContent showCloseButton={false}>
         <DialogHeader>
           <DialogTitle>Delete File</DialogTitle>
+
           <DialogDescription>
             Are you sure you want to delete{" "}
             <span className="font-semibold">{fileName}</span>? This action
@@ -64,15 +65,16 @@ export default function DeleteFileDialog({
 
         <DialogFooter>
           <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
+            variant="ghost"
             disabled={isDeleting}
+            onClick={() => onOpenChange(false)}
           >
             Cancel
           </Button>
+
           <Button
-            onClick={handleDelete}
             disabled={isDeleting}
+            onClick={handleDelete}
             className="bg-red-600 hover:bg-red-700 focus:ring-red-600 text-white"
           >
             {isDeleting ? (
@@ -88,4 +90,6 @@ export default function DeleteFileDialog({
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default DeleteFileDialog;

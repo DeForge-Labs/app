@@ -1,8 +1,6 @@
-import Link from "next/link";
 import { Suspense } from "react";
-import { LayoutGrid, Upload } from "lucide-react";
+import { LayoutGrid } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import FileList from "@/components/layout/dashboard/files/FileList";
@@ -46,12 +44,10 @@ const FilesPage = async ({ searchParams }) => {
       <SearchSection route="files" placeholder="Search files..." />
 
       <main className="flex flex-col flex-1 relative">
-        <div className="absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll p-4">
-          <div className="flex flex-col space-y-4 items-center">
-            <Suspense fallback={LOADING_SKELETON}>
-              <FileList page={p} query={q} />
-            </Suspense>
-          </div>
+        <div className="absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll p-4 flex flex-col space-y-4 items-center">
+          <Suspense fallback={LOADING_SKELETON}>
+            <FileList page={p} query={q} />
+          </Suspense>
         </div>
       </main>
     </div>

@@ -1,35 +1,37 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import {
+  Clock,
+  Loader2,
+  XCircle,
+  Database,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
+import axios from "axios";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+
 import {
   Dialog,
+  DialogTitle,
+  DialogHeader,
+  DialogFooter,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Loader2,
-  Database,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  AlertCircle,
-} from "lucide-react";
-import { toast } from "sonner";
-import axios from "axios";
 
 const RAG_STATUS_INFO = {
-  "not-requested": {
+  "Not Requested": {
     icon: Database,
     color: "text-gray-500",
     bg: "bg-gray-100 dark:bg-gray-800",
     label: "Not Converted",
     description: "This file has not been converted to RAG database yet.",
   },
+
   queued: {
     icon: Clock,
     color: "text-blue-500",
@@ -37,6 +39,7 @@ const RAG_STATUS_INFO = {
     label: "Queued",
     description: "File is waiting in queue for conversion.",
   },
+
   processing: {
     icon: Loader2,
     color: "text-yellow-500",
@@ -45,6 +48,7 @@ const RAG_STATUS_INFO = {
     description: "File is currently being converted.",
     animate: true,
   },
+
   done: {
     icon: CheckCircle2,
     color: "text-green-500",
@@ -52,6 +56,7 @@ const RAG_STATUS_INFO = {
     label: "Completed",
     description: "File has been successfully converted to RAG database.",
   },
+
   failed: {
     icon: XCircle,
     color: "text-red-500",
@@ -69,14 +74,17 @@ export default function RagConversionDialog({
   open,
   onOpenChange,
 }) {
+  const router = useRouter();
+
   const [ragStatus, setRagStatus] = useState(
     initialRagStatus || "not-requested"
   );
-  const [ragTableName, setRagTableName] = useState(initialRagTableName);
-  const [isConverting, setIsConverting] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(true);
   const [isChecking, setIsChecking] = useState(false);
+  const [isConverting, setIsConverting] = useState(false);
   const [pollingInterval, setPollingInterval] = useState(null);
-  const router = useRouter();
+  const [ragTableName, setRagTableName] = useState(initialRagTableName);
 
   // Update local state when props change
   useEffect(() => {
@@ -84,10 +92,13 @@ export default function RagConversionDialog({
     setRagTableName(initialRagTableName);
   }, [initialRagStatus, initialRagTableName]);
 
-  // Check status when dialog opens
+  // Check status when dialog opens (this runs first)
   useEffect(() => {
     if (open && fileKey) {
-      checkStatus();
+      setIsLoading(true);
+      checkStatus().finally(() => setIsLoading(false));
+    } else {
+      setIsLoading(false);
     }
   }, [open, fileKey]);
 
@@ -96,7 +107,7 @@ export default function RagConversionDialog({
     if (open && (ragStatus === "queued" || ragStatus === "processing")) {
       const interval = setInterval(() => {
         checkStatus();
-      }, 5000); // Poll every 5 seconds
+      }, 5000);
 
       setPollingInterval(interval);
 
@@ -128,7 +139,7 @@ export default function RagConversionDialog({
     try {
       const encodedKey = encodeURIComponent(fileKey);
       const response = await axios.get(
-        `/api/storage/rag-status/${encodedKey}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/storage/rag-status/${encodedKey}`,
         {
           withCredentials: true,
         }
@@ -136,6 +147,7 @@ export default function RagConversionDialog({
 
       if (response.data.success) {
         setRagStatus(response.data.status);
+
         if (response.data.tableName) {
           setRagTableName(response.data.tableName);
         }
@@ -149,6 +161,7 @@ export default function RagConversionDialog({
             clearInterval(pollingInterval);
             setPollingInterval(null);
           }
+
           router.refresh();
         }
       }
@@ -164,7 +177,7 @@ export default function RagConversionDialog({
 
     try {
       const response = await axios.post(
-        "/api/storage/convert-to-rag",
+        `${process.env.NEXT_PUBLIC_API_URL}/storage/convert-to-rag`,
         { fileKey },
         { withCredentials: true }
       );
@@ -181,6 +194,7 @@ export default function RagConversionDialog({
           const interval = setInterval(() => {
             checkStatus();
           }, 5000);
+
           setPollingInterval(interval);
         }
 
@@ -201,136 +215,150 @@ export default function RagConversionDialog({
 
   const statusInfo =
     RAG_STATUS_INFO[ragStatus] || RAG_STATUS_INFO["not-requested"];
+
   const StatusIcon = statusInfo.icon;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>RAG Database Conversion</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-lg font-medium opacity-80">
+            RAG Database Conversion
+          </DialogTitle>
+
+          <DialogDescription className="text-xs">
             Convert this file to a vector database for use with AI models. Costs
             30 credits.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          {/* Status Display */}
-          <div
-            className={`flex items-center gap-3 p-4 rounded-lg ${statusInfo.bg}`}
-          >
-            <StatusIcon
-              className={`w-6 h-6 ${statusInfo.color} ${
-                statusInfo.animate ? "animate-spin" : ""
-              }`}
-            />
-            <div className="flex-1">
-              <p className="font-medium text-sm">{statusInfo.label}</p>
-              <p className="text-xs text-foreground/70 mt-0.5">
-                {statusInfo.description}
-              </p>
-            </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="w-6 h-6 animate-spin text-foreground/50" />
           </div>
-
-          {/* File Info */}
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-foreground/70">File:</span>
-              <span
-                className="font-medium truncate max-w-[200px]"
-                title={fileName}
+        ) : (
+          <>
+            <div className="space-y-3">
+              <div
+                className={`flex items-center gap-3 p-4 rounded-lg ${statusInfo.bg}`}
               >
-                {fileName}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-foreground/70">Status:</span>
-              <span className="font-medium capitalize">{ragStatus}</span>
-            </div>
-            {ragTableName && (
-              <div className="flex justify-between">
-                <span className="text-foreground/70">Table:</span>
-                <span className="font-mono text-xs bg-foreground/5 px-2 py-1 rounded">
-                  {ragTableName}
-                </span>
+                <StatusIcon
+                  className={`w-6 h-6 ${statusInfo.color} ${
+                    statusInfo.animate ? "animate-spin" : ""
+                  }`}
+                />
+
+                <div className="flex-1">
+                  <p className="font-medium text-sm">{statusInfo.label}</p>
+                  <p className="text-xs text-foreground/70 mt-0.5">
+                    {statusInfo.description}
+                  </p>
+                </div>
               </div>
-            )}
-          </div>
 
-          {/* Supported File Types Info */}
-          {ragStatus === "not-requested" && (
-            <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-              <AlertCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
-              <div className="text-xs text-blue-900 dark:text-blue-100">
-                <p className="font-medium mb-1">Supported formats:</p>
-                <p className="text-blue-700 dark:text-blue-200">
-                  PDF, DOCX, PPTX, XLSX, HTML, XML, JSON, CSV, TXT, MD, RST,
-                  IPYNB
-                </p>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-foreground/70">File:</span>
+
+                  <span
+                    className="font-medium truncate max-w-[200px]"
+                    title={fileName}
+                  >
+                    {fileName}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-foreground/70">Status:</span>
+                  <span className="font-medium capitalize">{ragStatus}</span>
+                </div>
+
+                {ragTableName && (
+                  <div className="flex justify-between">
+                    <span className="text-foreground/70">Table:</span>
+                    <span className="font-mono text-xs bg-foreground/5 px-2 py-1 rounded">
+                      {ragTableName}
+                    </span>
+                  </div>
+                )}
               </div>
+
+              {ragStatus === "not-requested" && (
+                <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <AlertCircle className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+
+                  <div className="text-xs text-blue-900 dark:text-blue-100">
+                    <p className="font-medium mb-1">Supported formats:</p>
+                    <p className="text-blue-700 dark:text-blue-200">
+                      PDF, DOCX, PPTX, XLSX, HTML, XML, JSON, CSV, TXT, MD, RST,
+                      IPYNB
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Close
-          </Button>
+            <DialogFooter>
+              <Button variant="ghost" onClick={() => onOpenChange(false)}>
+                Close
+              </Button>
 
-          {ragStatus === "not-requested" && (
-            <Button
-              onClick={handleConvert}
-              disabled={isConverting}
-              className="bg-foreground/90 text-background"
-            >
-              {isConverting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Starting...
-                </>
-              ) : (
-                <>
-                  <Database className="mr-2 h-4 w-4" />
-                  Convert (30 credits)
-                </>
+              {ragStatus === "Not Requested" && (
+                <Button
+                  onClick={handleConvert}
+                  disabled={isConverting}
+                  className="bg-foreground/90 text-background"
+                >
+                  {isConverting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Starting...
+                    </>
+                  ) : (
+                    <>
+                      <Database className="mr-2 h-4 w-4" />
+                      Convert (30 credits)
+                    </>
+                  )}
+                </Button>
               )}
-            </Button>
-          )}
 
-          {(ragStatus === "queued" || ragStatus === "processing") && (
-            <Button
-              onClick={checkStatus}
-              disabled={isChecking}
-              variant="outline"
-            >
-              {isChecking ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Checking...
-                </>
-              ) : (
-                "Refresh Status"
+              {(ragStatus === "queued" || ragStatus === "processing") && (
+                <Button
+                  variant="outline"
+                  onClick={checkStatus}
+                  disabled={isChecking}
+                >
+                  {isChecking ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Checking...
+                    </>
+                  ) : (
+                    "Refresh Status"
+                  )}
+                </Button>
               )}
-            </Button>
-          )}
 
-          {ragStatus === "failed" && (
-            <Button
-              onClick={handleConvert}
-              disabled={isConverting}
-              className="bg-foreground/90 text-background"
-            >
-              {isConverting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Retrying...
-                </>
-              ) : (
-                "Retry Conversion"
+              {ragStatus === "failed" && (
+                <Button
+                  onClick={handleConvert}
+                  disabled={isConverting}
+                  className="bg-foreground/90 text-background"
+                >
+                  {isConverting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Retrying...
+                    </>
+                  ) : (
+                    "Retry Conversion"
+                  )}
+                </Button>
               )}
-            </Button>
-          )}
-        </DialogFooter>
+            </DialogFooter>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
