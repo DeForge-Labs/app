@@ -1,13 +1,5 @@
 "use client";
 
-import { useSelector, useDispatch } from "react-redux";
-import {
-  addComponent,
-  selectComponent,
-  reorderComponents,
-  setIsPreview,
-  setIsSelector,
-} from "@/redux/slice/formSlice";
 import ComponentRenderer from "./ComponentRenderer";
 import PreviewRenderer from "./PreviewRenderer";
 import DropZone from "./DropZone";
@@ -16,6 +8,9 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import LogoAnimation from "@/components/ui/LogoAnimation";
 import { Button } from "@heroui/react";
+import useFormStore from "@/store/useFormStore";
+import useWorkspaceStore from "@/store/useWorkspaceStore";
+import { Card } from "@/components/ui/card";
 
 const tabs = [
   { type: "separator" },
@@ -45,22 +40,21 @@ const spanVariants = {
 const transition = { delay: 0.1, type: "spring", bounce: 0, duration: 0.6 };
 
 export default function Canvas() {
-  const dispatch = useDispatch();
-  const components = useSelector((state) => state.form.components);
-  const selectedComponentId = useSelector(
-    (state) => state.form.selectedComponentId
-  );
-  const isPreviewMode = useSelector((state) => state.form.isPreview);
+  const {
+    components,
+    selectedComponentId,
+    isPreviewMode,
+    addComponent,
+    selectComponent,
+    reorderComponents,
+    setIsPreview,
+    setIsSelector,
+  } = useFormStore();
+
+  const { isFormInitializing } = useWorkspaceStore();
   const [panel, setPanel] = useState(1);
 
-  const isSelector = useSelector((state) => state.form.isSelector);
-  const workflow = useSelector((state) => state.workflow.workflow);
-
   const [draggedIndex, setDraggedIndex] = useState(null);
-
-  const isFormInitializing = useSelector(
-    (state) => state.workflow.isFormInitializing
-  );
 
   if (isFormInitializing) {
     return <LogoAnimation opacity={0.5} />;
@@ -70,35 +64,13 @@ export default function Canvas() {
     <div className="mx-1 h-[24px] w-[1.2px] bg-black/50" aria-hidden="true" />
   );
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-
-    if (workflow.status === "LIVE") {
-      return;
-    }
-
-    // Check if this is a component from sidebar (JSON data)
-    const jsonData = e.dataTransfer.getData("application/json");
-
-    if (jsonData) {
-      try {
-        const componentData = JSON.parse(jsonData);
-        dispatch(addComponent(componentData));
-      } catch (error) {
-        console.error("Error parsing component data:", error);
-      }
-    }
-
-    setDraggedIndex(null);
-  };
-
   const handleDragOver = (e) => {
     e.preventDefault();
   };
 
   const handleCanvasClick = (e) => {
     if (e.target === e.currentTarget) {
-      dispatch(selectComponent(null));
+      selectComponent(null);
     }
   };
 
@@ -106,7 +78,7 @@ export default function Canvas() {
     <div className="flex items-center fixed justify-center gap-2 left-1/2 -translate-x-1/2 rounded-b-lg border bg-white p-2 px-3 border-black/50 border-t-0 shadow-sm z-10">
       <Button
         onPress={() => {
-          dispatch(setIsSelector(true));
+          setIsSelector(true);
         }}
         variant="icon"
         className={cn(
@@ -129,7 +101,7 @@ export default function Canvas() {
             key={tab.title}
             onClick={() => {
               setPanel(index);
-              dispatch(setIsPreview(tab.isPreview));
+              setIsPreview(tab.isPreview);
             }}
             className={cn(
               "relative flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-300 gap-2",
@@ -155,7 +127,7 @@ export default function Canvas() {
     const [movedComponent] = newComponents.splice(fromIndex, 1);
     newComponents.splice(toIndex, 0, movedComponent);
 
-    dispatch(reorderComponents(newComponents));
+    reorderComponents(newComponents);
   };
 
   const handleDropZoneReorder = (
@@ -169,7 +141,7 @@ export default function Canvas() {
         ...newComponent,
         order: targetIndex,
       };
-      dispatch(addComponent(componentWithOrder));
+      addComponent(componentWithOrder);
     } else if (draggedFromIndex !== null) {
       // Handle component reordering
       handleReorder(draggedFromIndex, targetIndex);
@@ -182,7 +154,6 @@ export default function Canvas() {
     return (
       <div className="h-full absolute bg-background dark:bg-dark w-full overflow-y-auto hide-scroll">
         <div className="h-full relative w-full">
-          {renderPanelSwitcher()}
           <div className="min-h-full p-8 pt-20 pb-20">
             {components.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-96 border-2 border-dashed border-gray-300 rounded-lg">
@@ -208,28 +179,30 @@ export default function Canvas() {
   }
 
   return (
-    <div className="h-full absolute bg-background dark:bg-dark w-full overflow-y-auto hide-scroll">
+    <div className="h-full absolute w-full overflow-y-auto hide-scroll">
       <div className="h-full relative w-full">
-        {renderPanelSwitcher()}
         <div
-          className="p-8 pt-20 pb-20 min-h-full flex flex-col items-center"
-          onDrop={handleDrop}
+          className="p-2 pl-0 min-h-full flex flex-col items-center max-w-4xl mx-auto"
           onDragOver={handleDragOver}
           onClick={handleCanvasClick}
         >
           {components.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-96 w-full border-2 border-black/50 dark:border-white/50 border-dashed rounded-lg">
-              <Plus className="w-12 h-12 dark:text-background mb-4" />
-              <h3 className="text-lg font-medium dark:text-background mb-2">
-                Start building your form
-              </h3>
-              <p className="text-gray-500 dark:text-background text-center max-w-sm">
-                Drag components from the sidebar to this area to start building
-                your form.
-              </p>
-            </div>
+            <Card className="border border-foreground/10 w-full max-w-5xl flex-1 rounded-2xl min-h-full relative">
+              <div className="absolute flex flex-col items-center justify-center bg-foreground/2 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[calc(100%-32px)] w-[calc(100%-32px)] border-2 border-foreground/30 border-dashed rounded-xl">
+                <div className="mb-4 bg-foreground rounded-xl p-4 opacity-80">
+                  <Plus className="w-12 h-12 text-background" />
+                </div>
+                <h3 className="text-lg font-medium text-foreground mb-1">
+                  Start building your form
+                </h3>
+                <p className="text-sm text-foreground/50 text-center max-w-sm">
+                  Click Components from the left sidebar to add them to your
+                  form.
+                </p>
+              </div>
+            </Card>
           ) : (
-            <div className="border border-black/50 dark:border-white/50 rounded-lg p-8 w-full max-w-5xl py-12">
+            <Card className="border border-foreground/10 p-8 w-full flex-1 max-w-5xl py-12 min-h-full rounded-2xl">
               <div className="max-w-full">
                 {/* Drop zone before first component */}
                 <DropZone
@@ -266,7 +239,7 @@ export default function Canvas() {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           )}
         </div>
       </div>

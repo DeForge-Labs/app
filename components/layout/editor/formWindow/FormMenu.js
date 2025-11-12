@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
+import useFormStore from "@/store/useFormStore";
 
 const componentTypes = [
   {
@@ -67,16 +68,14 @@ const componentTypes = [
 ];
 
 export default function FormMenu({ isMinimized = false, setIsMinimized }) {
-  const handleDragStart = (e, componentType) => {
-    e.dataTransfer.setData(
-      "application/json",
-      JSON.stringify({
-        type: componentType.type,
-        content: componentType.defaultContent,
-        url: componentType.url || undefined,
-        component: "form",
-      })
-    );
+  const { addComponent } = useFormStore();
+  const add = (componentType) => {
+    addComponent({
+      type: componentType.type,
+      content: componentType.defaultContent,
+      url: componentType.url || undefined,
+      component: "form",
+    });
   };
 
   return (
@@ -158,8 +157,7 @@ export default function FormMenu({ isMinimized = false, setIsMinimized }) {
                       >
                         <Card
                           className="hover:shadow-md transition-shadow rounded-md border-foreground/10 p-0 py-3 gap-0 cursor-pointer"
-                          draggable
-                          onDragStart={(e) => handleDragStart(e, component)}
+                          onClick={() => add(component)}
                         >
                           <div className="flex items-center gap-2 px-4">
                             <div className="p-2 rounded-lg bg-foreground/5">

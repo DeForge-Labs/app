@@ -20,8 +20,13 @@ export default function EditorWindow() {
         {mode === "form" && <FormMenu />}
       </div>
 
-      <div className="flex-1 relative flex flex-col z-10">
+      <div className="flex-1 relative flex flex-col z-10 bg-background">
         {mode === "workflow" && <NodeEditor />}
+        {mode === "form" && (
+          <div className="ml-84 flex h-full relative">
+            <Canvas />
+          </div>
+        )}
       </div>
 
       {showCustomizerPanel && (

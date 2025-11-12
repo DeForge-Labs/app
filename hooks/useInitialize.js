@@ -46,6 +46,7 @@ import useSocial from "./useSocial";
 import useTeams from "./useTeams";
 import { loadComponents } from "@/redux/slice/formSlice";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
+import useFormStore from "@/store/useFormStore";
 
 export default function useInitialize() {
   const dispatch = useDispatch();
@@ -62,7 +63,10 @@ export default function useInitialize() {
     setTeam,
     setIsWorkflowInitializing,
     setForm,
+    setIsFormInitializing,
   } = useWorkspaceStore();
+
+  const { loadComponents } = useFormStore();
 
   const loadUser = async (force = true, token = null) => {
     dispatch(setIsInitializing(true));
@@ -426,6 +430,7 @@ export default function useInitialize() {
     try {
       setIsWorkspaceInitializing(true);
       setIsWorkflowInitializing(true);
+      setIsFormInitializing(true);
 
       axios.defaults.withCredentials = true;
 
@@ -445,11 +450,9 @@ export default function useInitialize() {
 
         setTeam(response.data.workspace.team);
 
-        // dispatch(
-        //   loadComponents(
-        //     response.data.workspace.form.formLayout?.components || []
-        //   )
-        // );
+        loadComponents(
+          response.data.workspace.form.formLayout?.components || []
+        );
 
         await getEnv(response.data.workspace.workflow.id);
 
@@ -466,6 +469,7 @@ export default function useInitialize() {
     } finally {
       setIsWorkspaceInitializing(false);
       setIsWorkflowInitializing(false);
+      setIsFormInitializing(false);
     }
   };
 

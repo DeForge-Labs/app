@@ -1,17 +1,11 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  updateComponent,
-  deleteComponent,
-  selectComponent,
-} from "@/redux/slice/formSlice";
-import { Button, Input } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Trash2, Edit3, GripVertical, Save, AlertCircle } from "lucide-react";
 import { getNodeTypeByType } from "@/lib/node-registry";
 import TextField from "./componentRenderer/TextField";
-import { updateNodeData } from "@/redux/slice/WorkflowSlice";
 import NumberField from "./componentRenderer/NumberField";
 import TextAreaField from "./componentRenderer/TextAreaField";
 import SelectField from "./componentRenderer/SelectField";
@@ -21,6 +15,10 @@ import DateTimeField from "./componentRenderer/DateTimeField";
 import SliderField from "./componentRenderer/SliderField";
 import SocialField from "./componentRenderer/SocialField";
 import EnvField from "./componentRenderer/EnvField";
+import useNodeLibraryStore from "@/store/useNodeLibraryStore";
+import useFormStore from "@/store/useFormStore";
+import useWorkflowStore from "@/store/useWorkspaceStore";
+import MarkdownRenderer from "../../template/MarkdownRenderer";
 
 export default function ComponentRenderer({
   component,
@@ -30,13 +28,14 @@ export default function ComponentRenderer({
   draggedIndex,
   setDraggedIndex,
 }) {
-  const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(component.content);
   const [editUrl, setEditUrl] = useState(component.url || "");
   const [dragOverIndex, setDragOverIndex] = useState(null);
   const inputRef = useRef(null);
   const editingContainerRef = useRef(null);
+  const { updateNodeData } = useWorkflowStore();
+  const { updateComponent, deleteComponent, selectComponent } = useFormStore();
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -47,7 +46,7 @@ export default function ComponentRenderer({
 
   const handleClick = (e) => {
     e.stopPropagation();
-    dispatch(selectComponent(component.id));
+    selectComponent(component.id);
   };
 
   const handleDoubleClick = (e) => {
@@ -62,7 +61,7 @@ export default function ComponentRenderer({
     if (component.type === "link") {
       updates.url = editUrl;
     }
-    dispatch(updateComponent(updates));
+    updateComponent(updates);
     setIsEditing(false);
   };
 
@@ -100,7 +99,7 @@ export default function ComponentRenderer({
   };
 
   const handleDelete = (e) => {
-    dispatch(deleteComponent(component.id));
+    deleteComponent(component.id);
   };
 
   // Drag and drop handlers
@@ -157,7 +156,8 @@ export default function ComponentRenderer({
               onBlur={handleBlur}
               onKeyDown={handleKeyDown}
               placeholder="Link text"
-              className="font-medium border rounded-lg border-black/50 dark:border-background dark:text-background"
+              className="rounded-sm border border-foreground/50 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
+              style={{ fontSize: "12px" }}
             />
             <Input
               value={editUrl}
@@ -165,22 +165,23 @@ export default function ComponentRenderer({
               onBlur={handleBlur}
               onKeyDown={handleKeyDown}
               placeholder="https://example.com"
-              className="text-sm border rounded-lg border-black/50 dark:border-background dark:text-background"
+              className="rounded-sm border border-foreground/50 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
+              style={{ fontSize: "12px" }}
             />
             <div className="flex gap-2 mt-1">
               <Button
                 size="sm"
-                className="bg-dark text-background dark:bg-background dark:text-dark"
-                onPress={handleSave}
+                className="rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3"
+                onClick={handleSave}
               >
-                <Save className="w-3 h-3" />
+                <Save />
                 Save
               </Button>
               <Button
                 size="sm"
                 variant="outline"
-                onPress={handleCancel}
-                className="border border-black/50 dark:border-background dark:text-background"
+                onClick={handleCancel}
+                className="rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3 border border-foreground/20"
               >
                 Cancel
               </Button>
@@ -198,7 +199,7 @@ export default function ComponentRenderer({
           onChange={(e) => setEditContent(e.target.value)}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          className="w-full bg-transparent border-none outline-none resize-none dark:text-background"
+          className="w-full bg-transparent border-none outline-none resize-none text-foreground"
           style={{
             fontSize:
               component.type === "heading1"
@@ -221,28 +222,24 @@ export default function ComponentRenderer({
     switch (component.type) {
       case "heading1":
         return (
-          <h1 className="text-4xl font-bold text-dark dark:text-background">
+          <h1 className="text-4xl font-bold text-foreground">
             {component.content}
           </h1>
         );
       case "heading2":
         return (
-          <h2 className="text-2xl font-bold text-dark dark:text-background">
+          <h2 className="text-2xl font-bold text-foreground">
             {component.content}
           </h2>
         );
       case "heading3":
         return (
-          <h3 className="text-xl font-bold text-dark dark:text-background">
+          <h3 className="text-xl font-bold text-foreground">
             {component.content}
           </h3>
         );
       case "paragraph":
-        return (
-          <p className="text-dark dark:text-background leading-relaxed whitespace-pre-wrap">
-            {component.content}
-          </p>
-        );
+        return <MarkdownRenderer content={component.content} />;
       case "link":
         return (
           <a
@@ -257,7 +254,7 @@ export default function ComponentRenderer({
       case "divider":
         return (
           <hr
-            className={"border-dark dark:border-background"}
+            className={"border-foreground"}
             style={{
               marginTop: isSelected ? "0.5rem" : "0",
               marginBottom: isSelected ? "0.5rem" : "0",
@@ -271,11 +268,9 @@ export default function ComponentRenderer({
   };
 
   const renderNodeComponent = () => {
-    const nodes = useSelector((state) => state.workflow.nodes);
-    const edges = useSelector((state) => state.workflow.connections || []);
-    const nodeRegistry = useSelector(
-      (state) => state.library?.nodeRegistry || []
-    );
+    const { nodes, connections: edges, workflow } = useWorkflowStore();
+
+    const { nodeRegistry } = useNodeLibraryStore();
     const node =
       nodes && nodes.find((node) => node.id === component?.id?.split("|")[0]);
     const nodeTypes = node && getNodeTypeByType(node?.type, nodeRegistry);
@@ -290,8 +285,6 @@ export default function ComponentRenderer({
     const isInput = !!matchingInput;
 
     const [connectedInputs, setConnectedInputs] = useState(new Map());
-    const workflow = useSelector((state) => state.workflow?.workflow);
-    const dispatch = useDispatch();
 
     if (!node) {
       return (
@@ -314,12 +307,11 @@ export default function ComponentRenderer({
       if (workflow?.status === "LIVE") {
         return;
       }
-      dispatch(
-        updateNodeData({
-          nodeId: node.id,
-          newData: { ...node.data, [key]: value },
-        })
-      );
+
+      updateNodeData({
+        nodeId: node.id,
+        newData: { ...node.data, [key]: value },
+      });
     };
 
     useEffect(() => {
@@ -469,14 +461,12 @@ export default function ComponentRenderer({
 
   return (
     <div
-      className={`relative group rounded-lg transition-all duration-200 ${
+      className={`relative group rounded-sm transition-all duration-200 group ${
         isSelected
-          ? "ring-1 ring-black/50 dark:ring-white bg-black/5 dark:bg-white/5 min-h-12"
-          : "hover:bg-black/5 dark:hover:bg-white/5"
+          ? "bg-foreground/5 border border-foreground/10 min-h-12"
+          : "hover:bg-foreground/5 hover:border hover:border-foreground/10"
       } ${isDragging ? "opacity-50 scale-95 shadow-lg" : ""} ${
-        isDropTarget
-          ? "ring-1 ring-black/50 dark:ring-white bg-black/5 dark:bg-white/5"
-          : ""
+        isDropTarget ? "ring-1 ring-foreground/10" : ""
       }`}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
@@ -510,28 +500,24 @@ export default function ComponentRenderer({
         )}
 
         {/* Action buttons */}
-        {isSelected && !isEditing && (
-          <div className="absolute top-2 right-2 flex gap-1 opacity-100 transition-opacity">
+        {!isEditing && (
+          <div className="absolute -top-4 right-2 gap-1 opacity-90 transition-opacity hidden group-hover:flex">
             {component.type !== "divider" &&
               component.component !== "component" && (
                 <Button
-                  variant="outline"
-                  size="icon"
-                  className="border-black/80 border p-2 rounded-lg dark:border-background dark:text-background"
-                  onPress={(e) => {
+                  className="py-0 rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3"
+                  onClick={(e) => {
                     setIsEditing(true);
                   }}
                 >
-                  <Edit3 className="w-3 h-3" />
+                  <Edit3 /> Edit
                 </Button>
               )}
             <Button
-              variant="outline"
-              size="icon"
-              className="border-black/80 border p-2 rounded-lg dark:border-background dark:text-background"
-              onPress={handleDelete}
+              className="border-black/80 py-0 border rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3"
+              onClick={handleDelete}
             >
-              <Trash2 className="w-3 h-3" />
+              <Trash2 /> Delete
             </Button>
           </div>
         )}

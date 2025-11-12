@@ -9,7 +9,7 @@ export default function ModeSwitcher() {
       <Tabs value={mode}>
         <TabsList
           className={
-            "bg-background [&>span]:bg-foreground/90 [&>span]:rounded-sm rounded-sm"
+            "bg-background [&>span]:bg-foreground/90 dark:[&>span]:bg-foreground/90 [&>span]:rounded-sm rounded-sm"
           }
         >
           <TabsTab
