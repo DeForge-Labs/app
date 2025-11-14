@@ -510,6 +510,13 @@ export default function ComponentRenderer({
                 <Edit3 /> Edit
               </Button>
             )}
+
+            {component.type === "component" && component.content?.nodeId && (
+              <SelectComponentButton
+                component={component}
+                text="Edit Component"
+              />
+            )}
             <Button
               className="border-black/80 py-0 border rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3"
               onClick={handleDelete}

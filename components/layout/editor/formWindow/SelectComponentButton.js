@@ -18,7 +18,10 @@ import NodeEditor from "../editorWindow/NodeEditor";
 import ComponentPanel from "./ComponentPanel";
 import useFormStore from "@/store/useFormStore";
 
-export default function SelectComponentButton({ component }) {
+export default function SelectComponentButton({
+  component,
+  text = "Select Node Component",
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedComponent, setSelectedComponent] = useState(null);
   const { updateComponent } = useFormStore();
@@ -40,10 +43,10 @@ export default function SelectComponentButton({ component }) {
       <DialogTrigger
         render={
           <Button
-            className="py-0 rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3 opacity-90"
+            className="py-0 rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3"
             onClick={() => {}}
           >
-            <Workflow /> Select Node Component
+            <Workflow /> {text}
           </Button>
         }
       ></DialogTrigger>
