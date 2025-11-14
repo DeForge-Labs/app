@@ -33,7 +33,7 @@ export default function TextAreaField({
         value={selectedNode.data[field.name] || ""}
         onChange={(e) => handleChange(field.name, e.target.value)}
         placeholder={field.value}
-        className="mt-0.5 rounded-sm border border-foreground/60 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
+        className="mt-0.5 rounded-sm dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
         disabled={isInput && isConnected}
         variant="outline"
         rows={3}

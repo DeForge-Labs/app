@@ -118,7 +118,7 @@ export default function CustomizerPanel() {
   };
 
   return (
-    <div className="flex flex-col w-72 bg-background border border-foreground/15 rounded-lg overflow-hidden max-h-full relative z-20">
+    <div className="flex flex-col w-72 bg-card border border-foreground/15 rounded-lg overflow-hidden max-h-full relative z-20">
       <div className="flex flex-col gap-2 text-sm border-b border-foreground/15 p-4 relative z-10 shrink-0">
         <div
           className="absolute right-2 top-2 z-10 p-1 hover:bg-foreground/5 rounded-sm cursor-pointer"

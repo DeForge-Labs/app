@@ -17,7 +17,7 @@ import useFormStore from "@/store/useFormStore";
 
 const componentTypes = [
   {
-    type: "node",
+    type: "component",
     label: "Node Component",
     icon: SquareMousePointer,
     description: "Add a node component to the form",

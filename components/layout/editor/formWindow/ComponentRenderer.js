@@ -3,7 +3,14 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Edit3, GripVertical, Save, AlertCircle } from "lucide-react";
+import {
+  Trash2,
+  Edit3,
+  GripVertical,
+  Save,
+  AlertCircle,
+  Workflow,
+} from "lucide-react";
 import { getNodeTypeByType } from "@/lib/node-registry";
 import TextField from "./componentRenderer/TextField";
 import NumberField from "./componentRenderer/NumberField";
@@ -19,6 +26,7 @@ import useNodeLibraryStore from "@/store/useNodeLibraryStore";
 import useFormStore from "@/store/useFormStore";
 import useWorkflowStore from "@/store/useWorkspaceStore";
 import MarkdownRenderer from "../../template/MarkdownRenderer";
+import SelectComponentButton from "./SelectComponentButton";
 
 export default function ComponentRenderer({
   component,
@@ -51,7 +59,7 @@ export default function ComponentRenderer({
 
   const handleDoubleClick = (e) => {
     e.stopPropagation();
-    if (component.type !== "divider" && component.component !== "component") {
+    if (component.type !== "divider" && component.type !== "component") {
       setIsEditing(true);
     }
   };
@@ -256,9 +264,8 @@ export default function ComponentRenderer({
           <hr
             className={"border-foreground"}
             style={{
-              marginTop: isSelected ? "0.5rem" : "0",
-              marginBottom: isSelected ? "0.5rem" : "0",
-              marginRight: isSelected ? "2.75rem" : "0",
+              marginTop: isSelected ? "0.6rem" : "0.4rem",
+              marginBottom: isSelected ? "0.6rem" : "0.4rem",
             }}
           />
         );
@@ -272,11 +279,11 @@ export default function ComponentRenderer({
 
     const { nodeRegistry } = useNodeLibraryStore();
     const node =
-      nodes && nodes.find((node) => node.id === component?.id?.split("|")[0]);
+      nodes && nodes.find((node) => node.id === component?.content?.nodeId);
     const nodeTypes = node && getNodeTypeByType(node?.type, nodeRegistry);
     const selectedField =
       nodeTypes &&
-      nodeTypes?.fields.find((field) => field.name === component.name);
+      nodeTypes?.fields.find((field) => field.name === component.content?.name);
 
     const matchingInput =
       nodeTypes &&
@@ -285,34 +292,6 @@ export default function ComponentRenderer({
     const isInput = !!matchingInput;
 
     const [connectedInputs, setConnectedInputs] = useState(new Map());
-
-    if (!node) {
-      return (
-        <div className="pr-7">
-          <div
-            className={`h-full flex gap-2 text-xs items-center justify-center border w-fit border-red-500 rounded-lg p-2 ${
-              isSelected ? "-mt-2" : ""
-            }`}
-          >
-            <AlertCircle className="w-4 h-4 text-red-500" />
-            <div className="text-red-500">
-              Node is either deleted or not found, Please remove the Component
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    const handleChange = (key, value) => {
-      if (workflow?.status === "LIVE") {
-        return;
-      }
-
-      updateNodeData({
-        nodeId: node.id,
-        newData: { ...node.data, [key]: value },
-      });
-    };
 
     useEffect(() => {
       if (!node) return;
@@ -330,6 +309,25 @@ export default function ComponentRenderer({
       });
       setConnectedInputs(connected);
     }, [edges, node]);
+
+    if (!node) {
+      return (
+        <div className="pr-7">
+          <SelectComponentButton component={component} />
+        </div>
+      );
+    }
+
+    const handleChange = (key, value) => {
+      if (workflow?.status === "LIVE") {
+        return;
+      }
+
+      updateNodeData({
+        nodeId: node.id,
+        newData: { ...node.data, [key]: value },
+      });
+    };
 
     const isConnected = connectedInputs.has(selectedField?.name);
 
@@ -461,10 +459,10 @@ export default function ComponentRenderer({
 
   return (
     <div
-      className={`relative group rounded-sm transition-all duration-200 group ${
+      className={`relative group rounded-sm transition-all duration-200 group border border-transparent ${
         isSelected
-          ? "bg-foreground/5 border border-foreground/10 min-h-12"
-          : "hover:bg-foreground/5 hover:border hover:border-foreground/10"
+          ? "bg-foreground/4 border-foreground/10 min-h-12"
+          : "hover:bg-foreground/5 hover:border-foreground/10"
       } ${isDragging ? "opacity-50 scale-95 shadow-lg" : ""} ${
         isDropTarget ? "ring-1 ring-foreground/10" : ""
       }`}
@@ -487,14 +485,14 @@ export default function ComponentRenderer({
           </div>
         )}
 
-        {component.component !== "component" && (
+        {component.type !== "component" && (
           <div className={isSelected ? "ml-8 mb-[10px]" : ""}>
             {renderComponent()}
           </div>
         )}
 
-        {component.component === "component" && (
-          <div className={isSelected ? "ml-8 mt-2" : ""}>
+        {component.type === "component" && (
+          <div className={isSelected ? "ml-8" : ""}>
             {renderNodeComponent()}
           </div>
         )}
@@ -502,17 +500,16 @@ export default function ComponentRenderer({
         {/* Action buttons */}
         {!isEditing && (
           <div className="absolute -top-4 right-2 gap-1 opacity-90 transition-opacity hidden group-hover:flex">
-            {component.type !== "divider" &&
-              component.component !== "component" && (
-                <Button
-                  className="py-0 rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3"
-                  onClick={(e) => {
-                    setIsEditing(true);
-                  }}
-                >
-                  <Edit3 /> Edit
-                </Button>
-              )}
+            {component.type !== "divider" && component.type !== "component" && (
+              <Button
+                className="py-0 rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3"
+                onClick={(e) => {
+                  setIsEditing(true);
+                }}
+              >
+                <Edit3 /> Edit
+              </Button>
+            )}
             <Button
               className="border-black/80 py-0 border rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3"
               onClick={handleDelete}
@@ -526,7 +523,7 @@ export default function ComponentRenderer({
         {isSelected &&
           !isEditing &&
           component.type !== "divider" &&
-          component.component !== "component" && (
+          component.type !== "component" && (
             <div className="absolute bottom-2 left-12 text-xs text-black/50 dark:text-white/50 opacity-100 transition-opacity">
               Double-click to edit
             </div>
@@ -537,7 +534,7 @@ export default function ComponentRenderer({
           component.type !== "divider" &&
           component.type !== "link" &&
           component.type !== "paragraph" &&
-          component.component !== "component" && (
+          component.type !== "component" && (
             <div className="absolute bottom-2 left-12 text-xs text-black/50 dark:text-white/50 opacity-100 transition-opacity">
               Click Enter to save
             </div>

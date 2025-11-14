@@ -29,7 +29,7 @@ export default function TextField({
         onChange={(e) => handleChange(field.name, e.target.value)}
         placeholder={field.value}
         disabled={isInput && isConnected}
-        className="border border-foreground/60 rounded-sm dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
+        className="rounded-sm dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
         style={{ fontSize: "12px" }}
       />
 

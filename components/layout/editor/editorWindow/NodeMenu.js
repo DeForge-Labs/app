@@ -124,7 +124,7 @@ export default function NodeMenu() {
               opacity: { duration: 0.2 },
               layout: { duration: 0.3, ease: "easeInOut" },
             }}
-            className="flex flex-col w-80 relative z-20 bg-background border border-foreground/15 rounded-lg overflow-hidden max-h-full"
+            className="flex flex-col w-80 relative z-20 bg-card border border-foreground/15 rounded-lg overflow-hidden max-h-full"
           >
             {/* Header */}
             <motion.div
@@ -230,7 +230,7 @@ export default function NodeMenu() {
                                 }}
                               >
                                 <Card
-                                  className="cursor-grab hover:shadow-md transition-shadow rounded-md border-foreground/10 p-0 py-3 gap-0"
+                                  className="cursor-grab hover:shadow-md bg-background transition-shadow rounded-md border-foreground/10 p-0 py-3 gap-0"
                                   draggable
                                   onDragStart={(e) => onDragStart(e, node)}
                                 >
@@ -324,7 +324,7 @@ export default function NodeMenu() {
                             (node, index) => (
                               <motion.div key={node.type}>
                                 <Card
-                                  className="cursor-grab hover:shadow-md transition-shadow rounded-md border-foreground/10 p-0 py-3 gap-0"
+                                  className="cursor-grab hover:shadow-md bg-background transition-shadow rounded-md border-foreground/10 p-0 py-3 gap-0"
                                   draggable
                                   onDragStart={(e) => onDragStart(e, node)}
                                 >

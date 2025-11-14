@@ -45,7 +45,7 @@ export default function SelectField({
         onValueChange={(item) => handleChange(field.name, item.value)}
         disabled={isInput && isConnected}
       >
-        <SelectTrigger className="rounded-sm before:rounded-sm border border-foreground/60">
+        <SelectTrigger className="rounded-sm before:rounded-sm">
           <SelectValue className="text-[12px]" />
         </SelectTrigger>
         <SelectPopup alignItemWithTrigger={false}>
