@@ -23,7 +23,9 @@ export default function SelectComponentButton({
   text = "Select Node Component",
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedComponent, setSelectedComponent] = useState(null);
+  const [selectedComponent, setSelectedComponent] = useState(
+    component?.content ? component?.content : null
+  );
   const { updateComponent } = useFormStore();
 
   const handleIsOpenChange = (open) => {

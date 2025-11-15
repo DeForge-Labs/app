@@ -10,6 +10,7 @@ import Canvas from "./formWindow/Canvas";
 import SmallEditor from "./formWindow/SmallEditor";
 import NodePanel from "./formWindow/NodePanel";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
+import FormToolPanel from "./formWindow/FormToolPanel";
 
 export default function EditorWindow() {
   const { showCustomizerPanel, mode } = useWorkspaceStore();
@@ -25,6 +26,7 @@ export default function EditorWindow() {
         {mode === "form" && (
           <div className="ml-84 flex h-full relative">
             <Canvas />
+            <FormToolPanel />
           </div>
         )}
       </div>

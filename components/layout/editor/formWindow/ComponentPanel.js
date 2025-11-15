@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  BookOpen,
-  CircleDot,
-  ShieldAlert,
-  ShieldUser,
-  Trash,
-  X,
-} from "lucide-react";
+import { ShieldAlert, ShieldUser, X } from "lucide-react";
 import { getNodeTypeByType } from "@/lib/node-registry";
 import { useEffect, useState } from "react";
 import EnvField from "../editorWindow/nodes/customizer/EnvField";
@@ -15,9 +8,9 @@ import TextField from "../editorWindow/nodes/customizer/TextField";
 import NumberField from "../editorWindow/nodes/customizer/NumberField";
 import TextAreaField from "../editorWindow/nodes/customizer/TextAreaField";
 import SelectField from "../editorWindow/nodes/customizer/SelectField";
-import ArrayField from "../editorWindow/nodes/customizer/ArrayField";
+
 import MapField from "../editorWindow/nodes/customizer/MapField";
-import StandaloneField from "../editorWindow/nodes/customizer/StandaloneField";
+
 import CheckBoxField from "../editorWindow/nodes/customizer/CheckBoxField";
 import DateTimeField from "../editorWindow/nodes/customizer/DateTimeField";
 import SliderField from "../editorWindow/nodes/customizer/SliderField";
@@ -25,8 +18,7 @@ import SocialField from "../editorWindow/nodes/customizer/SocialField";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
 import useNodeLibraryStore from "@/store/useNodeLibraryStore";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+
 import ComponentHolder from "./ComponentHolder";
 
 export default function ComponentPanel({
@@ -103,25 +95,6 @@ export default function ComponentPanel({
     }
   };
 
-  const handleDisconnectExact = (edgeId) => {
-    if (workflow?.status === "LIVE") {
-      return;
-    }
-    deleteEdge(edgeId);
-  };
-
-  const handleDisconnectAll = (inputName) => {
-    if (workflow?.status === "LIVE") {
-      return;
-    }
-    const edgeIds = totalConnectedInputs.filter(
-      (input) => input.inputName === inputName
-    );
-    edgeIds.forEach((edgeId) => {
-      deleteEdge(edgeId.edgeId);
-    });
-  };
-
   return (
     <div className="flex flex-col w-80 bg-card border border-foreground/15 rounded-lg overflow-hidden max-h-full relative z-20">
       <div className="flex flex-col gap-2 text-sm border-b border-foreground/15 p-4 relative z-10 shrink-0">
@@ -138,7 +111,7 @@ export default function ComponentPanel({
         <div className="flex flex-col max-w-[250px]">
           <p>Select Component</p>
           <p className="text-xs text-muted-foreground max-w-64">
-            Click to select the component from{" "}
+            Click to select the component from <br />
             <span className="font-semibold">{nodeType?.title}</span>
           </p>
         </div>

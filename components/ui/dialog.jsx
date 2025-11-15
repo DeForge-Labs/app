@@ -46,7 +46,7 @@ function DialogPopup({
       <DialogBackdrop />
       <div className="fixed inset-0 z-50">
         <div
-          className={cn("flex h-[100dvh] flex-col items-center overflow-hidden pt-6 max-sm:before:flex-1 sm:overflow-y-auto sm:p-4  sm:after:flex-1",`sm:before:basis-[${beforeBasis}]`)}>
+          className={cn("flex h-[100dvh] flex-col items-center overflow-hidden pt-6 max-sm:before:flex-1 sm:overflow-y-auto sm:p-4 sm:before:basis-[20vh]  sm:after:flex-1",`sm:before:basis-[${beforeBasis}]`)}>
           <DialogPrimitive.Popup
             data-slot="dialog-popup"
             className={cn(

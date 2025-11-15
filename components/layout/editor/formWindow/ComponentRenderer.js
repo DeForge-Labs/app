@@ -12,21 +12,22 @@ import {
   Workflow,
 } from "lucide-react";
 import { getNodeTypeByType } from "@/lib/node-registry";
-import TextField from "./componentRenderer/TextField";
-import NumberField from "./componentRenderer/NumberField";
-import TextAreaField from "./componentRenderer/TextAreaField";
-import SelectField from "./componentRenderer/SelectField";
-import MapField from "./componentRenderer/MapFields";
-import CheckBoxField from "./componentRenderer/CheckBoxField";
-import DateTimeField from "./componentRenderer/DateTimeField";
-import SliderField from "./componentRenderer/SliderField";
-import SocialField from "./componentRenderer/SocialField";
-import EnvField from "./componentRenderer/EnvField";
+import TextField from "../editorWindow/nodes/customizer/TextField";
+import NumberField from "../editorWindow/nodes/customizer/NumberField";
+import TextAreaField from "../editorWindow/nodes/customizer/TextAreaField";
+import SelectField from "../editorWindow/nodes/customizer/SelectField";
+import CheckBoxField from "../editorWindow/nodes/customizer/CheckBoxField";
+import DateTimeField from "../editorWindow/nodes/customizer/DateTimeField";
+import SliderField from "../editorWindow/nodes/customizer/SliderField";
+import SocialField from "../editorWindow/nodes/customizer/SocialField";
+import EnvField from "../editorWindow/nodes/customizer/EnvField";
+import MapField from "../editorWindow/nodes/customizer/MapField";
 import useNodeLibraryStore from "@/store/useNodeLibraryStore";
 import useFormStore from "@/store/useFormStore";
 import useWorkflowStore from "@/store/useWorkspaceStore";
 import MarkdownRenderer from "../../template/MarkdownRenderer";
 import SelectComponentButton from "./SelectComponentButton";
+import RunButton from "./RunButton";
 
 export default function ComponentRenderer({
   component,
@@ -269,6 +270,8 @@ export default function ComponentRenderer({
             }}
           />
         );
+      case "run":
+        return <RunButton />;
       default:
         return null;
     }
@@ -280,6 +283,7 @@ export default function ComponentRenderer({
     const { nodeRegistry } = useNodeLibraryStore();
     const node =
       nodes && nodes.find((node) => node.id === component?.content?.nodeId);
+
     const nodeTypes = node && getNodeTypeByType(node?.type, nodeRegistry);
     const selectedField =
       nodeTypes &&
@@ -406,6 +410,7 @@ export default function ComponentRenderer({
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "CheckBox":
@@ -418,6 +423,7 @@ export default function ComponentRenderer({
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "Date":
@@ -430,6 +436,7 @@ export default function ComponentRenderer({
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "Slider":
@@ -442,6 +449,7 @@ export default function ComponentRenderer({
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "social":
@@ -485,7 +493,11 @@ export default function ComponentRenderer({
           </div>
         )}
 
-        {component.type !== "component" && (
+        {component.type === "run" && (
+          <div className={isSelected ? "ml-8" : ""}>{renderComponent()}</div>
+        )}
+
+        {component.type !== "component" && component.type !== "run" && (
           <div className={isSelected ? "ml-8 mb-[10px]" : ""}>
             {renderComponent()}
           </div>
@@ -500,16 +512,18 @@ export default function ComponentRenderer({
         {/* Action buttons */}
         {!isEditing && (
           <div className="absolute -top-4 right-2 gap-1 opacity-90 transition-opacity hidden group-hover:flex">
-            {component.type !== "divider" && component.type !== "component" && (
-              <Button
-                className="py-0 rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3"
-                onClick={(e) => {
-                  setIsEditing(true);
-                }}
-              >
-                <Edit3 /> Edit
-              </Button>
-            )}
+            {component.type !== "divider" &&
+              component.type !== "component" &&
+              component.type !== "run" && (
+                <Button
+                  className="py-0 rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3"
+                  onClick={(e) => {
+                    setIsEditing(true);
+                  }}
+                >
+                  <Edit3 /> Edit
+                </Button>
+              )}
 
             {component.type === "component" && component.content?.nodeId && (
               <SelectComponentButton
@@ -530,7 +544,8 @@ export default function ComponentRenderer({
         {isSelected &&
           !isEditing &&
           component.type !== "divider" &&
-          component.type !== "component" && (
+          component.type !== "component" &&
+          component.type !== "run" && (
             <div className="absolute bottom-2 left-12 text-xs text-black/50 dark:text-white/50 opacity-100 transition-opacity">
               Double-click to edit
             </div>
@@ -541,7 +556,8 @@ export default function ComponentRenderer({
           component.type !== "divider" &&
           component.type !== "link" &&
           component.type !== "paragraph" &&
-          component.type !== "component" && (
+          component.type !== "component" &&
+          component.type !== "run" && (
             <div className="absolute bottom-2 left-12 text-xs text-black/50 dark:text-white/50 opacity-100 transition-opacity">
               Click Enter to save
             </div>
@@ -550,7 +566,8 @@ export default function ComponentRenderer({
         {isSelected &&
           isEditing &&
           component.type === "paragraph" &&
-          component.component !== "component" && (
+          component.component !== "component" &&
+          component.type !== "run" && (
             <div className="absolute bottom-2 left-12 text-xs text-black/50 dark:text-white/50 opacity-100 transition-opacity">
               Click Outside to save
             </div>

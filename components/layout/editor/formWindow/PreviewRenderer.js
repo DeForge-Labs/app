@@ -1,35 +1,36 @@
 "use client";
-import { useSelector } from "react-redux";
+
 import { getNodeTypeByType } from "@/lib/node-registry";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { updateNodeData } from "@/redux/slice/WorkflowSlice";
 import { AlertCircle } from "lucide-react";
 import { useEffect } from "react";
-import TextField from "./componentRenderer/TextField";
-import NumberField from "./componentRenderer/NumberField";
-import TextAreaField from "./componentRenderer/TextAreaField";
-import SelectField from "./componentRenderer/SelectField";
-import MapField from "./componentRenderer/MapFields";
-import CheckBoxField from "./componentRenderer/CheckBoxField";
-import DateTimeField from "./componentRenderer/DateTimeField";
-import SliderField from "./componentRenderer/SliderField";
-import SocialField from "./componentRenderer/SocialField";
-import EnvField from "./componentRenderer/EnvField";
+import TextField from "../editorWindow/nodes/customizer/TextField";
+import NumberField from "../editorWindow/nodes/customizer/NumberField";
+import TextAreaField from "../editorWindow/nodes/customizer/TextAreaField";
+import SelectField from "../editorWindow/nodes/customizer/SelectField";
+import CheckBoxField from "../editorWindow/nodes/customizer/CheckBoxField";
+import DateTimeField from "../editorWindow/nodes/customizer/DateTimeField";
+import SliderField from "../editorWindow/nodes/customizer/SliderField";
+import SocialField from "../editorWindow/nodes/customizer/SocialField";
+import EnvField from "../editorWindow/nodes/customizer/EnvField";
+import MapField from "../editorWindow/nodes/customizer/MapField";
+import useWorkflowStore from "@/store/useWorkspaceStore";
+import useNodeLibraryStore from "@/store/useNodeLibraryStore";
+import MarkdownRenderer from "../../template/MarkdownRenderer";
+import RunButton from "./RunButton";
 
 export default function PreviewRenderer({ component, isTemplate = false }) {
   const renderNodeComponent = () => {
-    const nodes = useSelector((state) => state.workflow.nodes);
-    const edges = useSelector((state) => state.workflow.connections || []);
-    const nodeRegistry = useSelector(
-      (state) => state.library?.nodeRegistry || []
-    );
+    const { nodes, connections: edges, workflow } = useWorkflowStore();
+
+    const { nodeRegistry } = useNodeLibraryStore();
     const node =
-      nodes && nodes.find((node) => node.id === component?.id?.split("|")[0]);
+      nodes && nodes.find((node) => node.id === component?.content?.nodeId);
+
     const nodeTypes = node && getNodeTypeByType(node?.type, nodeRegistry);
     const selectedField =
       nodeTypes &&
-      nodeTypes?.fields.find((field) => field.name === component.name);
+      nodeTypes?.fields.find((field) => field.name === component.content?.name);
 
     const matchingInput =
       nodeTypes &&
@@ -38,8 +39,8 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
     const isInput = !!matchingInput;
 
     const [connectedInputs, setConnectedInputs] = useState(new Map());
-    const workflow = useSelector((state) => state.workflow?.workflow);
-    const dispatch = useDispatch();
+
+    const { updateNodeData } = useWorkflowStore();
 
     if (!node) {
       return (
@@ -60,12 +61,11 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
       if (workflow?.status === "LIVE") {
         return;
       }
-      dispatch(
-        updateNodeData({
-          nodeId: node.id,
-          newData: { ...node.data, [key]: value },
-        })
-      );
+
+      updateNodeData({
+        nodeId: node.id,
+        newData: { ...node.data, [key]: value },
+      });
     };
 
     useEffect(() => {
@@ -160,6 +160,7 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "CheckBox":
@@ -172,6 +173,7 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "Date":
@@ -184,6 +186,7 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "Slider":
@@ -196,6 +199,7 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "social":
@@ -240,11 +244,7 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
           </h3>
         );
       case "paragraph":
-        return (
-          <p className="text-dark dark:text-background leading-relaxed mb-4 whitespace-pre-wrap">
-            {component.content}
-          </p>
-        );
+        return <MarkdownRenderer content={component.content} />;
       case "link":
         return (
           <div className="mb-4">
@@ -260,14 +260,16 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
         );
       case "divider":
         return <hr className="border-dark dark:border-background my-6" />;
+      case "run":
+        return <RunButton />;
       default:
         return null;
     }
   };
 
   return (
-    <div>
-      {component.component === "component"
+    <div className="">
+      {component.type === "component"
         ? renderNodeComponent()
         : renderComponent()}
     </div>

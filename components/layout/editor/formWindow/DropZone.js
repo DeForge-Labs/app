@@ -133,7 +133,7 @@ export default function DropZone({ index, isDragging, onDrop }) {
       onDrop={handleDrop}
     >
       <div
-        className={`w-full h-full rounded-lg transition-all duration-200 flex items-center justify-center ${
+        className={`w-full h-full rounded-sm transition-all duration-200 flex items-center justify-center ${
           isHovered
             ? "border-2 border-dashed border-blue-500 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-400"
             : "border-2 border-dashed border-gray-300 bg-gray-50 dark:bg-gray-800/20 dark:border-gray-600 opacity-60"
@@ -141,11 +141,11 @@ export default function DropZone({ index, isDragging, onDrop }) {
       >
         {isHovered ? (
           <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
-            <div className="w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full animate-pulse" />
-            <span className="text-sm font-medium">
+            <div className="w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-sm animate-pulse" />
+            <span className="text-xs font-medium">
               {index === 0 ? "Drop component at top" : "Drop component here"}
             </span>
-            <div className="w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full animate-pulse" />
+            <div className="w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-sm animate-pulse" />
           </div>
         ) : (
           <div className="text-xs text-gray-400 dark:text-gray-500 font-medium">
