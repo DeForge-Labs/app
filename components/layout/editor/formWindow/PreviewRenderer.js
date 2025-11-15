@@ -227,19 +227,19 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
     switch (component.type) {
       case "heading1":
         return (
-          <h1 className="text-4xl font-bold dark:text-background text-dark mb-4">
+          <h1 className="text-4xl font-bold text-foreground mb-4">
             {component.content}
           </h1>
         );
       case "heading2":
         return (
-          <h2 className="text-2xl font-bold dark:text-background text-dark mb-3">
+          <h2 className="text-2xl font-bold text-foreground mb-3">
             {component.content}
           </h2>
         );
       case "heading3":
         return (
-          <h3 className="text-xl font-bold dark:text-background text-dark mb-2">
+          <h3 className="text-xl font-bold text-foreground mb-2">
             {component.content}
           </h3>
         );
@@ -259,7 +259,7 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
           </div>
         );
       case "divider":
-        return <hr className="border-dark dark:border-background my-6" />;
+        return <hr className="border-foreground my-6" />;
       case "run":
         return <RunButton />;
       default:

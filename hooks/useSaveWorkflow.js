@@ -4,25 +4,22 @@ import { useState } from "react";
 import useInitialize from "./useInitialize";
 import axios from "axios";
 import { toast } from "sonner";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import useWorkflowStore from "@/store/useWorkspaceStore";
+import useFormStore from "@/store/useFormStore";
 
 export default function useSaveWorkflow() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSavingWorkflow, setIsSavingWorkflow] = useState(false);
   const { loadWorkflowById, loadFormById } = useInitialize();
-  const workflow = useSelector((state) => state.workflow.workflow);
-  const form = useSelector((state) => state.workflow.form);
-  const hasUnsavedChanges = useSelector(
-    (state) => state.workflow.hasUnsavedChanges
-  );
-  const hasUnsavedChangesForm = useSelector(
-    (state) => state.form.hasUnsavedChanges
-  );
-  const components = useSelector((state) => state.form.components);
-  const dispatch = useDispatch();
-  const nodes = useSelector((state) => state.workflow.nodes);
-  const connections = useSelector((state) => state.workflow.connections);
+  const {
+    nodes,
+    connections,
+    hasUnsavedChanges: hasUnsavedChanges,
+    form,
+    workflow,
+  } = useWorkflowStore();
+  const { hasUnsavedChanges: hasUnsavedChangesForm, components } =
+    useFormStore();
 
   const handleSaveWorkflow = async () => {
     try {
@@ -33,22 +30,19 @@ export default function useSaveWorkflow() {
         return;
       }
 
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      };
+      axios.defaults.withCredentials = true;
 
       if (hasUnsavedChanges) {
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL}/workflow/save/${workflow?.id}`,
-          { nodes, edges: connections },
-          { headers }
+          { nodes, edges: connections }
         );
 
         if (!response.data.success) {
           throw new Error(response.data.message);
         }
 
-        loadWorkflowById(workflow?.id);
+        await loadWorkflowById(workflow?.id);
         setIsOpen(false);
 
         toast.success(response.data.message);
@@ -62,15 +56,14 @@ export default function useSaveWorkflow() {
               components,
               lastSaved: new Date().toISOString(),
             },
-          },
-          { headers }
+          }
         );
 
         if (!response.data.success) {
           throw new Error(response.data.message);
         }
 
-        loadFormById(form?.id);
+        await loadFormById(form?.id);
         setIsOpen(false);
 
         toast.success(response.data.message);

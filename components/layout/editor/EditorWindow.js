@@ -13,7 +13,12 @@ import useWorkspaceStore from "@/store/useWorkspaceStore";
 import FormToolPanel from "./formWindow/FormToolPanel";
 
 export default function EditorWindow() {
-  const { showCustomizerPanel, mode } = useWorkspaceStore();
+  const {
+    showCustomizerPanel,
+    mode,
+    isWorkflowInitializing,
+    isFormInitializing,
+  } = useWorkspaceStore();
   return (
     <div className="flex flex-1 relative">
       <div className="h-full p-2 overflow-y-auto hide-scroll absolute left-0 top-0">
@@ -23,15 +28,16 @@ export default function EditorWindow() {
 
       <div className="flex-1 relative flex flex-col z-10 bg-background">
         {mode === "workflow" && <NodeEditor />}
+        {mode === "workflow" && !isWorkflowInitializing && <ToolPanel />}
         {mode === "form" && (
           <div className="ml-84 flex h-full relative">
             <Canvas />
-            <FormToolPanel />
+            {!isFormInitializing && <FormToolPanel />}
           </div>
         )}
       </div>
 
-      {showCustomizerPanel && (
+      {showCustomizerPanel && !isWorkflowInitializing && (
         <div className="h-full p-2 overflow-y-auto hide-scroll absolute right-0">
           {mode === "workflow" && <CustomizerPanel />}
         </div>

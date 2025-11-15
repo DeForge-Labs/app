@@ -9,6 +9,8 @@ export default function useEnv() {
 
   const getEnv = async (workflowId) => {
     try {
+      axios.defaults.withCredentials = true;
+
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/workflow/getEnv/${workflowId}`,
         {}

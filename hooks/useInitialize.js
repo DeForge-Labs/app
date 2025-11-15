@@ -279,26 +279,22 @@ export default function useInitialize() {
 
   const loadWorkflowById = async (workflowId) => {
     try {
-      dispatch(setWorkflowInitializing(true));
-      dispatch(setSelectedNode(null));
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      };
+      setIsWorkflowInitializing(true);
+      setSelectedNode(null);
+
+      axios.defaults.withCredentials = true;
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/workflow/get/${workflowId}`,
-        {},
-        { headers }
+        {}
       );
 
       if (response.data.success) {
-        dispatch(
-          setWorkflow({
-            workflow: response.data.workflow,
-            nodes: response.data.workflow.nodes,
-            connections: response.data.workflow.edges,
-          })
-        );
+        setWorkflow({
+          workflow: response.data.workflow,
+          nodes: response.data.workflow.nodes,
+          connections: response.data.workflow.edges,
+        });
 
         await getEnv(workflowId);
 
@@ -313,27 +309,24 @@ export default function useInitialize() {
       console.log(err);
       toast.error("Failed to load workflow");
     } finally {
-      dispatch(setWorkflowInitializing(false));
+      setIsWorkflowInitializing(false);
     }
   };
 
   const loadFormById = async (formId) => {
     try {
-      dispatch(setIsFormInitializing(true));
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      };
+      setIsFormInitializing(true);
+
+      axios.defaults.withCredentials = true;
 
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/form/get/${formId}`,
-        { headers }
+        `${process.env.NEXT_PUBLIC_API_URL}/form/get/${formId}`
       );
 
       if (response.data.success) {
-        dispatch(setForm(response.data.form));
-        dispatch(
-          loadComponents(response.data.form.formLayout?.components || [])
-        );
+        setForm(response.data.form);
+
+        loadComponents(response.data.form.formLayout?.components || []);
       } else {
         toast.error(response.data.message);
         if (response.data.status === 404 || response.data.status === 401) {
@@ -344,7 +337,7 @@ export default function useInitialize() {
       console.log(err);
       toast.error("Failed to load form");
     } finally {
-      dispatch(setIsFormInitializing(false));
+      setIsFormInitializing(false);
     }
   };
 
