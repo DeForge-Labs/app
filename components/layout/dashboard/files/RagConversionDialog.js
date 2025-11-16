@@ -8,10 +8,9 @@ import {
   AlertCircle,
   CheckCircle2,
 } from "lucide-react";
-import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 
 import {
   Dialog,
@@ -23,199 +22,206 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-const RAG_STATUS_INFO = {
-  "not-requested": {
-    icon: Database,
-    color: "text-gray-500",
-    bg: "bg-gray-100 dark:bg-gray-800",
-    label: "Not Converted",
-    description: "This file has not been converted to RAG database yet.",
-  },
-
-  queued: {
-    icon: Clock,
-    color: "text-blue-500",
-    bg: "bg-blue-100 dark:bg-blue-900/20",
-    label: "Queued",
-    description: "File is waiting in queue for conversion.",
-  },
-
-  processing: {
-    icon: Loader2,
-    color: "text-yellow-500",
-    bg: "bg-yellow-100 dark:bg-yellow-900/20",
-    label: "Processing",
-    description: "File is currently being converted.",
-    animate: true,
-  },
-
-  done: {
-    icon: CheckCircle2,
-    color: "text-green-500",
-    bg: "bg-green-100 dark:bg-green-900/20",
-    label: "Completed",
-    description: "File has been successfully converted to RAG database.",
-  },
-
-  failed: {
-    icon: XCircle,
-    color: "text-red-500",
-    bg: "bg-red-100 dark:bg-red-900/20",
-    label: "Failed",
-    description: "Conversion failed. You can try again.",
-  },
-};
-
-export default function RagConversionDialog({
+const RagConversionDialog = ({
   fileKey,
   fileName,
   ragStatus: initialRagStatus,
   ragTableName: initialRagTableName,
   open,
   onOpenChange,
-}) {
+}) => {
   const router = useRouter();
 
+  const [loading, setLoading] = useState(true);
+  const [checking, setChecking] = useState(false);
+  const [converting, setConverting] = useState(false);
+
+  const [ragTableName, setRagTableName] = useState(initialRagTableName);
   const [ragStatus, setRagStatus] = useState(
     initialRagStatus || "not-requested"
   );
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [isChecking, setIsChecking] = useState(false);
-  const [isConverting, setIsConverting] = useState(false);
-  const [pollingInterval, setPollingInterval] = useState(null);
-  const [ragTableName, setRagTableName] = useState(initialRagTableName);
+  const intervalRef = useRef(null);
 
-  // Update local state when props change
-  useEffect(() => {
-    setRagStatus(initialRagStatus || "not-requested");
-    setRagTableName(initialRagTableName);
-  }, [initialRagStatus, initialRagTableName]);
+  const statusInfo = useMemo(
+    () =>
+      ({
+        "not-requested": {
+          icon: Database,
+          color: "text-gray-500",
+          bg: "bg-gray-100 dark:bg-gray-800",
+          label: "Not Converted",
+          description: "This file has not been converted to RAG database yet.",
+        },
 
-  // Check status when dialog opens (this runs first)
+        queued: {
+          icon: Clock,
+          color: "text-blue-500",
+          bg: "bg-blue-100 dark:bg-blue-900/20",
+          label: "Queued",
+          description: "File is waiting in queue for conversion.",
+        },
+
+        processing: {
+          icon: Loader2,
+          color: "text-yellow-500",
+          bg: "bg-yellow-100 dark:bg-yellow-900/20",
+          label: "Processing",
+          description: "File is currently being converted.",
+          animate: true,
+        },
+
+        done: {
+          icon: CheckCircle2,
+          color: "text-green-500",
+          bg: "bg-green-100 dark:bg-green-900/20",
+          label: "Completed",
+          description: "File has been successfully converted to RAG database.",
+        },
+
+        failed: {
+          icon: XCircle,
+          color: "text-red-500",
+          bg: "bg-red-100 dark:bg-red-900/20",
+          label: "Failed",
+          description: "Conversion failed. You can try again.",
+        },
+      }[ragStatus] || {
+        icon: Database,
+        color: "text-gray-500",
+        bg: "bg-gray-100 dark:bg-gray-800",
+        label: "Not Converted",
+        description: "This file has not been converted to RAG database yet.",
+      }),
+    [ragStatus]
+  );
+
+  const StatusIcon = statusInfo.icon;
+
   useEffect(() => {
-    if (open && fileKey) {
-      setIsLoading(true);
-      checkStatus().finally(() => setIsLoading(false));
+    if (open) {
+      setRagStatus(initialRagStatus || "not-requested");
+      setRagTableName(initialRagTableName);
+
+      refreshStatus();
     } else {
-      setIsLoading(false);
+      cleanupPolling();
+      setLoading(true);
     }
-  }, [open, fileKey]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, initialRagStatus, initialRagTableName]);
 
-  // Start polling when status is queued or processing
   useEffect(() => {
-    if (open && (ragStatus === "queued" || ragStatus === "processing")) {
-      const interval = setInterval(() => {
-        checkStatus();
-      }, 5000);
+    if (!open) return;
 
-      setPollingInterval(interval);
-
-      return () => {
-        if (interval) {
-          clearInterval(interval);
-        }
-      };
+    if (ragStatus === "queued" || ragStatus === "processing") {
+      startPolling();
     } else {
-      if (pollingInterval) {
-        clearInterval(pollingInterval);
-        setPollingInterval(null);
-      }
+      cleanupPolling();
     }
-  }, [open, ragStatus]);
 
-  // Cleanup polling on unmount
-  useEffect(() => {
-    return () => {
-      if (pollingInterval) {
-        clearInterval(pollingInterval);
-      }
-    };
-  }, [pollingInterval]);
+    return cleanupPolling;
+  }, [ragStatus, open]);
 
-  const checkStatus = async () => {
-    setIsChecking(true);
+  const cleanupPolling = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
+  const startPolling = () => {
+    if (intervalRef.current) return;
+    intervalRef.current = setInterval(refreshStatus, 5000);
+  };
+
+  const fetchJson = async (input, init = {}) => {
+    const res = await fetch(input, init);
+
+    let data;
 
     try {
-      const encodedKey = encodeURIComponent(fileKey);
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/storage/rag-status/${encodedKey}`,
-        {
-          withCredentials: true,
-        }
-      );
+      data = await res.json();
+    } catch (err) {
+      data = null;
+    }
 
-      if (response.data.success) {
-        setRagStatus(response.data.status);
+    return { ok: res.ok, status: res.status, data };
+  };
 
-        if (response.data.tableName) {
-          setRagTableName(response.data.tableName);
-        }
+  const refreshStatus = async () => {
+    if (!fileKey) return;
 
-        // Stop polling if status is done or failed
-        if (
-          response.data.status === "done" ||
-          response.data.status === "failed"
-        ) {
-          if (pollingInterval) {
-            clearInterval(pollingInterval);
-            setPollingInterval(null);
-          }
+    setChecking(true);
 
+    try {
+      const url = `${
+        process.env.NEXT_PUBLIC_API_URL
+      }/storage/rag-status/${encodeURIComponent(fileKey)}`;
+
+      const { ok, data } = await fetchJson(url, {
+        method: "GET",
+        cache: "no-store",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (ok && data?.success) {
+        const { status, tableName } = data;
+
+        setRagStatus(status);
+        if (tableName) setRagTableName(tableName);
+
+        if (status === "done" || status === "failed") {
+          cleanupPolling();
           router.refresh();
         }
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Status check error:", error);
     } finally {
-      setIsChecking(false);
+      setLoading(false);
+      setChecking(false);
     }
   };
 
   const handleConvert = async () => {
-    setIsConverting(true);
+    setConverting(true);
 
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/storage/convert-to-rag`,
-        { fileKey },
-        { withCredentials: true }
-      );
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/storage/convert-to-rag`;
 
-      if (response.data.success) {
-        setRagStatus(response.data.status);
+      const { ok, data } = await fetchJson(url, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileKey }),
+      });
+
+      if (ok && data?.success) {
+        const { status } = data;
+
+        setRagStatus(status);
+
         toast.success("Conversion started! This may take a few minutes.");
 
-        // Start polling
-        if (
-          response.data.status === "queued" ||
-          response.data.status === "processing"
-        ) {
-          const interval = setInterval(() => {
-            checkStatus();
-          }, 5000);
-
-          setPollingInterval(interval);
+        if (status === "queued" || status === "processing") {
+          startPolling();
         }
 
         router.refresh();
       } else {
-        toast.error(response.data.message || "Conversion request failed");
+        toast.error(data?.message || "Conversion request failed");
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Conversion error:", error);
-      toast.error(
-        error.response?.data?.message ||
-          "An error occurred while starting conversion"
-      );
+      toast.error("An error occurred while starting conversion");
     } finally {
-      setIsConverting(false);
+      setConverting(false);
     }
   };
-
-  const statusInfo =
-    RAG_STATUS_INFO[ragStatus] || RAG_STATUS_INFO["not-requested"];
-  const StatusIcon = statusInfo.icon;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -231,7 +237,7 @@ export default function RagConversionDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {isLoading ? (
+        {loading ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="w-6 h-6 animate-spin text-foreground/50" />
           </div>
@@ -249,6 +255,7 @@ export default function RagConversionDialog({
 
                 <div className="flex-1">
                   <p className="font-medium text-xs">{statusInfo.label}</p>
+
                   <p className="text-[10px] text-foreground/70 mt-0.5">
                     {statusInfo.description}
                   </p>
@@ -260,8 +267,8 @@ export default function RagConversionDialog({
                   <span className="text-foreground/70">File:</span>
 
                   <span
-                    className="font-medium truncate max-w-[200px]"
                     title={fileName}
+                    className="font-medium truncate max-w-[200px]"
                   >
                     {fileName}
                   </span>
@@ -269,6 +276,7 @@ export default function RagConversionDialog({
 
                 <div className="flex justify-between">
                   <span className="text-foreground/70">Status:</span>
+
                   <span className="font-medium capitalize">
                     {ragStatus?.replace(/-/g, " ") || "not requested"}
                   </span>
@@ -277,6 +285,7 @@ export default function RagConversionDialog({
                 {ragTableName && (
                   <div className="flex justify-between">
                     <span className="text-foreground/70">Table:</span>
+
                     <span className="font-mono text-xs bg-foreground/5 px-2 py-1 rounded">
                       {ragTableName}
                     </span>
@@ -284,14 +293,13 @@ export default function RagConversionDialog({
                 )}
               </div>
 
-              {(!ragStatus ||
-                ragStatus === "not-requested" ||
-                !RAG_STATUS_INFO[ragStatus]) && (
+              {ragStatus === "not-requested" && (
                 <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-[10px]">
                   <AlertCircle className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
 
                   <div className="text-blue-900 dark:text-blue-100">
                     <p className="font-medium mb-1">Supported formats:</p>
+
                     <p className="text-blue-700 dark:text-blue-200">
                       PDF, DOCX, PPTX, XLSX, HTML, XML, JSON, CSV, TXT, MD, RST,
                       IPYNB
@@ -310,23 +318,19 @@ export default function RagConversionDialog({
                 Close
               </Button>
 
-              {(!ragStatus ||
-                ragStatus === "not-requested" ||
-                !RAG_STATUS_INFO[ragStatus]) && (
+              {ragStatus === "not-requested" && (
                 <Button
                   onClick={handleConvert}
-                  disabled={isConverting}
+                  disabled={converting}
                   className="bg-foreground/90 text-background text-xs"
                 >
-                  {isConverting ? (
+                  {converting ? (
                     <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Starting...
+                      <Loader2 className="h-4 w-4 animate-spin" /> Starting...
                     </>
                   ) : (
                     <>
-                      <Database className="h-4 w-4" />
-                      Convert (30 credits)
+                      <Database className="h-4 w-4" /> Convert (30 credits)
                     </>
                   )}
                 </Button>
@@ -336,13 +340,12 @@ export default function RagConversionDialog({
                 <Button
                   variant="outline"
                   className="text-xs"
-                  onClick={checkStatus}
-                  disabled={isChecking}
+                  disabled={checking}
+                  onClick={refreshStatus}
                 >
-                  {isChecking ? (
+                  {checking ? (
                     <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Checking...
+                      <Loader2 className="h-4 w-4 animate-spin" /> Checking...
                     </>
                   ) : (
                     "Refresh Status"
@@ -352,14 +355,13 @@ export default function RagConversionDialog({
 
               {ragStatus === "failed" && (
                 <Button
+                  disabled={converting}
                   onClick={handleConvert}
-                  disabled={isConverting}
                   className="bg-foreground/90 text-background text-xs"
                 >
-                  {isConverting ? (
+                  {converting ? (
                     <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Retrying...
+                      <Loader2 className="h-4 w-4 animate-spin" /> Retrying...
                     </>
                   ) : (
                     "Retry Conversion"
@@ -372,4 +374,6 @@ export default function RagConversionDialog({
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default RagConversionDialog;

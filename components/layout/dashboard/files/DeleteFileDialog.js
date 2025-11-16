@@ -1,10 +1,9 @@
 "use client";
 
-import axios from "axios";
 import { toast } from "sonner";
-import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState, useCallback } from "react";
 
 import {
   Dialog,
@@ -17,38 +16,39 @@ import {
 import { Button } from "@/components/ui/button";
 
 const DeleteFileDialog = ({ fileKey, fileName, open, onOpenChange }) => {
-  const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
-  const handleDelete = async () => {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = useCallback(async () => {
     setIsDeleting(true);
 
-    try {
-      const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_URL}/storage/delete`,
-        {
-          data: { fileKey },
-          withCredentials: true,
-        }
-      );
-
-      if (response.data.success) {
-        toast.success("File deleted successfully!");
-
-        onOpenChange(false);
-        router.refresh();
-      } else {
-        toast.error(response.data.message || "Delete failed");
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/storage/delete`,
+      {
+        method: "DELETE",
+        credentials: "include",
+        body: JSON.stringify({ fileKey }),
+        headers: { "Content-Type": "application/json" },
       }
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast.error(
-        error.response?.data?.message || "An error occurred while deleting"
-      );
-    } finally {
+    );
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      toast.error(data?.message || "Delete failed");
       setIsDeleting(false);
+      return;
     }
-  };
+
+    toast.success("File deleted successfully!");
+
+    onOpenChange(false);
+
+    setTimeout(() => router.refresh(), 150);
+
+    setIsDeleting(false);
+  }, [fileKey, onOpenChange, router]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

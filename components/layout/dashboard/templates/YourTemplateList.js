@@ -127,8 +127,8 @@ export default async function YourTemplateList({ teamId, page, query }) {
                 <MenuTrigger
                   render={
                     <Button
-                      className="flex gap-2 bg-transparent font-normal px-1 min-h-4 !pointer-coarse:after:min-h-4 h-5 w-fit z-10 !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60 border border-foreground/15"
                       variant="outline"
+                      className="flex gap-2 bg-transparent font-normal px-1 min-h-4 !pointer-coarse:after:min-h-4 h-5 w-fit z-10 shadow-none! [:hover,[data-pressed]]:bg-foreground/5 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60 border border-foreground/15"
                     >
                       <Ellipsis />
                     </Button>
@@ -138,9 +138,7 @@ export default async function YourTemplateList({ teamId, page, query }) {
                 <MenuPopup
                   align="end"
                   sideOffset={5}
-                  className={
-                    " border border-foreground/30 rounded-lg w-[160px]"
-                  }
+                  className="border border-foreground/30 rounded-lg w-40"
                 >
                   <Link
                     href={`https://d4g.app/${template?.shortId}`}
@@ -148,7 +146,7 @@ export default async function YourTemplateList({ teamId, page, query }) {
                   >
                     <Button
                       variant="outline"
-                      className="data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent !shadow-none bg-transparent hover:bg-transparent w-full justify-start border-none"
+                      className="data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent shadow-none! bg-transparent hover:bg-transparent w-full justify-start border-none"
                     >
                       <ArrowUpRight className="w-4 h-4" /> Open Template
                     </Button>

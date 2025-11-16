@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { formatDistanceToNow } from "date-fns";
-import { FileX, SearchX, X } from "lucide-react";
+import { FileX, SearchX, X, Link as LinkIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -12,6 +12,7 @@ import FileMenuBox from "./FileMenuBox";
 import FileIconDisplay from "./FileIconDisplay";
 import UploadFileButton from "./UploadFileButton";
 import RagStatusDisplay from "./RagStatusDisplay";
+import ScrapeStatusDisplay from "./ScrapeStatusDisplay";
 
 import { formatFileSize } from "@/lib/utils";
 
@@ -45,7 +46,7 @@ const getFilesData = async (page) => {
     }
 
     const data = await response.json();
-    console.log("Fetched files data:", data);
+
     return data;
   } catch (error) {
     console.error("Error fetching files:", error);
@@ -53,7 +54,7 @@ const getFilesData = async (page) => {
   }
 };
 
-export default async function FileList({ page, query }) {
+const FileList = async ({ page, query }) => {
   const filesData = await getFilesData(page);
 
   if (!filesData || !filesData.success) {
@@ -151,8 +152,8 @@ export default async function FileList({ page, query }) {
 
                 <div className="flex flex-col gap-0.5 flex-1 min-w-0">
                   <p
-                    className="font-medium text-sm truncate"
                     title={file.fileName}
+                    className="font-medium text-sm truncate"
                   >
                     {file.fileName}
                   </p>
@@ -173,7 +174,9 @@ export default async function FileList({ page, query }) {
                   fileKey={file.fileKey}
                   fileName={file.fileName}
                   ragStatus={file.ragStatus}
+                  sourceUrl={file.sourceUrl}
                   ragTableName={file.ragTableName}
+                  scrapeStatus={file.scrapeStatus}
                 />
               </div>
             </div>
@@ -181,16 +184,46 @@ export default async function FileList({ page, query }) {
             <Separator className="my-2 bg-foreground/15" />
 
             <div className="flex justify-between items-center -mt-2 -mb-1">
-              <p className="text-[10px] text-foreground/70">
-                Bucket: {file.bucket || "upload"}
-              </p>
+              <div className="flex items-center gap-3">
+                <p className="text-[10px] text-foreground/70">
+                  Bucket: {file.bucket || "upload"}
+                </p>
 
-              {file.ragStatus && (
-                <RagStatusDisplay
-                  fileKey={file.fileKey}
-                  ragStatus={file.ragStatus}
-                />
-              )}
+                {file.sourceUrl && (
+                  <>
+                    <span className="text-[10px] text-foreground/30">•</span>
+                    <div className="flex items-center gap-1.5">
+                      <LinkIcon className="w-3 h-3 text-foreground/50" />
+
+                      <Link
+                        href={file.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[10px] text-foreground/70 hover:text-foreground/90 hover:underline truncate max-w-[200px]"
+                        title={file.sourceUrl}
+                      >
+                        {file.sourceUrl}
+                      </Link>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3">
+                {file.scrapeStatus && (
+                  <ScrapeStatusDisplay
+                    fileKey={file.fileKey}
+                    scrapeStatus={file.scrapeStatus}
+                  />
+                )}
+
+                {file.ragStatus && (
+                  <RagStatusDisplay
+                    fileKey={file.fileKey}
+                    ragStatus={file.ragStatus}
+                  />
+                )}
+              </div>
             </div>
           </div>
         );
@@ -208,4 +241,6 @@ export default async function FileList({ page, query }) {
       )}
     </>
   );
-}
+};
+
+export default FileList;

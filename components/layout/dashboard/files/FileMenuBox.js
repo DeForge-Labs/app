@@ -1,20 +1,11 @@
 "use client";
 
-import {
-  Eye,
-  Edit,
-  Trash2,
-  Download,
-  Database,
-  MoreVertical,
-} from "lucide-react";
-import axios from "axios";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { Eye, Edit, Trash2, Download, Database, Ellipsis } from "lucide-react";
 
 import {
   Menu,
-  MenuItem,
   MenuPopup,
   MenuTrigger,
   MenuSeparator,
@@ -25,66 +16,60 @@ import EditFileDialog from "./EditFileDialog";
 import DeleteFileDialog from "./DeleteFileDialog";
 import RagConversionDialog from "./RagConversionDialog";
 
-export default function FileMenuBox({
-  fileKey,
-  fileName,
-  ragStatus,
-  ragTableName,
-}) {
+const baseMenuBtn =
+  "data-highlighted:bg-foreground/5 px-2 min-h-5 font-normal rounded-sm text-xs cursor-pointer dark:bg-transparent shadow-none hover:bg-transparent w-full justify-start border-none text-foreground/80 [&_svg:not([class*='size-'])]:size-3";
+
+const FileMenuBox = ({ fileKey, fileName, ragStatus, ragTableName }) => {
   const [showRagDialog, setShowRagDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const handleDownload = async (e) => {
+  const stop = (e) => {
     e.preventDefault();
     e.stopPropagation();
+  };
 
-    try {
-      const response = await axios.post(
+  const handleDownload = useCallback(
+    async (e) => {
+      stop(e);
+
+      const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/storage/download`,
-        { fileKey },
-        { withCredentials: true }
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fileKey }),
+        }
       );
 
-      if (response.data.success) {
-        window.open(response.data.fileURL, "_blank");
-        toast.success("Download started");
-      } else {
-        toast.error(response.data.message || "Download failed");
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        toast.error(data?.message || "Download failed");
+        return;
       }
-    } catch (error) {
-      console.error("Download error:", error);
-      toast.error(error.response?.data?.message || "Failed to download file");
-    }
-  };
 
-  const handleEdit = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+      toast.success("Download started");
+      window.open(data.fileURL, "_blank");
+    },
+    [fileKey]
+  );
 
+  const handleEdit = useCallback((e) => {
+    stop(e);
     setShowEditDialog(true);
-  };
+  }, []);
 
-  const handleDelete = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
+  const handleDelete = useCallback((e) => {
+    stop(e);
     setShowDeleteDialog(true);
-  };
+  }, []);
 
-  const handleRagConversion = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
+  const handleRagConversion = useCallback((e) => {
+    stop(e);
     setShowRagDialog(true);
-  };
-
-  const handleViewRagStatus = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setShowRagDialog(true);
-  };
+  }, []);
 
   return (
     <>
@@ -92,47 +77,67 @@ export default function FileMenuBox({
         <MenuTrigger
           render={
             <Button
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8 rounded-sm hover:bg-foreground/5"
+              variant="outline"
+              className="flex gap-2 bg-transparent font-normal px-1 min-h-4 !pointer-coarse:after:min-h-4 h-5 w-fit z-10 shadow-none! [:hover,[data-pressed]]:bg-foreground/5 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60 border border-foreground/15"
             />
           }
         >
-          <MoreVertical className="h-4 w-4" />
+          <Ellipsis />
           <span className="sr-only">Open file menu</span>
         </MenuTrigger>
 
-        <MenuPopup align="end" className="w-48">
-          <MenuItem onClick={handleDownload}>
-            <Download className="mr-2 h-4 w-4" />
+        <MenuPopup
+          align="end"
+          className="border border-foreground/30 rounded-lg w-40 bg-background"
+        >
+          <Button
+            variant="outline"
+            className={baseMenuBtn}
+            onClick={handleDownload}
+          >
+            <Download className="h-4 w-4" />
             <span>Download</span>
-          </MenuItem>
+          </Button>
 
-          <MenuItem onClick={handleEdit}>
-            <Edit className="mr-2 h-4 w-4" />
+          <Button
+            variant="outline"
+            className={baseMenuBtn}
+            onClick={handleEdit}
+          >
+            <Edit className="h-4 w-4" />
             <span>Rename</span>
-          </MenuItem>
+          </Button>
 
           <MenuSeparator />
 
           {ragStatus === "done" ? (
-            <MenuItem onClick={handleViewRagStatus}>
-              <Eye className="mr-2 h-4 w-4" />
+            <Button
+              variant="outline"
+              className={baseMenuBtn}
+              onClick={handleRagConversion}
+            >
+              <Eye className="h-4 w-4" />
               <span>View RAG Status</span>
-            </MenuItem>
+            </Button>
           ) : (
-            <MenuItem onClick={handleRagConversion}>
-              <Database className="mr-2 h-4 w-4" />
+            <Button
+              variant="outline"
+              className={baseMenuBtn}
+              onClick={handleRagConversion}
+            >
+              <Database className="h-4 w-4" />
               <span>Convert to RAG</span>
-            </MenuItem>
+            </Button>
           )}
 
-          <MenuSeparator />
-
-          <MenuItem onClick={handleDelete} variant="destructive">
-            <Trash2 className="mr-2 h-4 w-4" />
+          <Button
+            variant="outline"
+            className={`${baseMenuBtn} text-destructive`}
+            onClick={handleDelete}
+          >
+            <Trash2 className="h-4 w-4" />
             <span>Delete</span>
-          </MenuItem>
+          </Button>
         </MenuPopup>
       </Menu>
 
@@ -160,4 +165,6 @@ export default function FileMenuBox({
       />
     </>
   );
-}
+};
+
+export default FileMenuBox;

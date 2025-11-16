@@ -86,7 +86,7 @@ const getFileIcon = (fileType, fileName) => {
   return File;
 };
 
-export default function FileIconDisplay({ fileName, fileType, fileUrl }) {
+export default function FileIconDisplay({ fileName, fileType }) {
   const IconComponent = getFileIcon(fileType, fileName);
 
   return (

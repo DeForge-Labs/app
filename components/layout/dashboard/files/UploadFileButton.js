@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 import UploadFileDialog from "./UploadFileDialog";
 
-export default function UploadFileButton() {
+const UploadFileButton = () => {
   const [showUploadDialog, setShowUploadDialog] = useState(false);
 
   return (
@@ -26,4 +26,6 @@ export default function UploadFileButton() {
       />
     </>
   );
-}
+};
+
+export default UploadFileButton;

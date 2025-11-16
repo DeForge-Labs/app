@@ -1,8 +1,8 @@
 "use client";
 
 import { toast } from "sonner";
-import { RefreshCw } from "lucide-react";
 import { useState, useCallback } from "react";
+import { RefreshCw, Link as LinkIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -14,13 +14,13 @@ const STATUS_COLORS = {
   default: "bg-gray-400",
 };
 
-const RagStatusDisplay = ({ fileKey }) => {
-  const [ragStatus, setRagStatus] = useState(null);
+const ScrapeStatusDisplay = ({ fileKey, scrapeStatus: initialStatus }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [scrapeStatus, setScrapeStatus] = useState(initialStatus);
 
-  const getStatusColor = ragStatus
-    ? STATUS_COLORS[ragStatus] || STATUS_COLORS.default
-    : STATUS_COLORS.default;
+  if (!scrapeStatus || scrapeStatus === "not-requested") return null;
+
+  const statusColor = STATUS_COLORS[scrapeStatus] ?? STATUS_COLORS.default;
 
   const handleRefresh = useCallback(
     async (e) => {
@@ -35,7 +35,7 @@ const RagStatusDisplay = ({ fileKey }) => {
         const res = await fetch(
           `${
             process.env.NEXT_PUBLIC_API_URL
-          }/storage/rag-status/${encodeURIComponent(fileKey)}`,
+          }/storage/scrape-status/${encodeURIComponent(fileKey)}`,
           {
             method: "GET",
             credentials: "include",
@@ -46,7 +46,7 @@ const RagStatusDisplay = ({ fileKey }) => {
         const data = await res.json().catch(() => null);
 
         if (res.ok && data?.success) {
-          setRagStatus(data.status);
+          setScrapeStatus(data.status);
           toast.success("Status refreshed");
         } else {
           toast.error(data?.message || "Failed to refresh status");
@@ -63,10 +63,12 @@ const RagStatusDisplay = ({ fileKey }) => {
 
   return (
     <div className="flex items-center gap-1.5">
-      <div className={`w-1.5 h-1.5 rounded-full ${getStatusColor}`} />
+      <LinkIcon className="w-3 h-3 text-foreground/50" />
+
+      <div className={`w-1.5 h-1.5 rounded-full ${statusColor}`} />
 
       <p className="text-[10px] text-foreground/60 capitalize">
-        RAG: {ragStatus || "Not Requested"}
+        Scrape: {scrapeStatus.replace(/-/g, " ")}
       </p>
 
       <Button
@@ -74,11 +76,11 @@ const RagStatusDisplay = ({ fileKey }) => {
         variant="ghost"
         onClick={handleRefresh}
         disabled={isRefreshing}
-        className="h-3 w-3 p-0 hover:bg-transparent"
+        className="h-2.5 w-2.5 p-0 hover:bg-transparent"
       >
         <RefreshCw
-          className={`h-2.5 w-2.5 text-foreground/60 hover:text-foreground/90 transition-colors ${
-            isRefreshing ? "animate-spin" : ""
+          className={`h-1.5 w-1.5 text-foreground/60 hover:text-foreground/90 transition-colors ${
+            isRefreshing ? " animate-spin" : ""
           }`}
         />
       </Button>
@@ -86,4 +88,4 @@ const RagStatusDisplay = ({ fileKey }) => {
   );
 };
 
-export default RagStatusDisplay;
+export default ScrapeStatusDisplay;

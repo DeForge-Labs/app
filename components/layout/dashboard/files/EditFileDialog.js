@@ -1,10 +1,9 @@
 "use client";
 
-import axios from "axios";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback } from "react";
 
 import {
   Dialog,
@@ -20,47 +19,56 @@ import { Button } from "@/components/ui/button";
 const EditFileDialog = ({ fileKey, fileName, open, onOpenChange }) => {
   const router = useRouter();
 
+  const [newFileName, setNewFileName] = useState("");
   const [isRenaming, setIsRenaming] = useState(false);
-  const [newFileName, setNewFileName] = useState(fileName);
 
   useEffect(() => {
-    if (open) {
-      setNewFileName(fileName);
-    }
-  }, [open, fileName]);
+    if (open) setNewFileName("");
+  }, [open]);
 
-  const handleRename = async () => {
-    if (!newFileName || newFileName === fileName) {
+  const handleRename = useCallback(async () => {
+    const trimmed = newFileName.trim();
+
+    if (!trimmed) {
       toast.error("Please enter a new file name");
+      return;
+    }
+
+    if (trimmed === fileName) {
+      toast.error("File name is unchanged");
       return;
     }
 
     setIsRenaming(true);
 
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/storage/rename`,
-        { fileKey, newFileName },
-        { withCredentials: true }
-      );
-
-      if (response.data.success) {
-        toast.success("File renamed successfully!");
-        onOpenChange(false);
-
-        router.refresh();
-      } else {
-        toast.error(response.data.message || "Rename failed");
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/storage/rename`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileKey, newFileName: trimmed }),
       }
-    } catch (error) {
-      console.error("Rename error:", error);
-      toast.error(
-        error.response?.data?.message || "An error occurred while renaming"
-      );
-    } finally {
+    );
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      toast.error(data?.message || "Rename failed");
       setIsRenaming(false);
+      return;
     }
-  };
+
+    toast.success("File renamed successfully!");
+
+    onOpenChange(false);
+
+    setTimeout(() => router.refresh(), 150);
+
+    setIsRenaming(false);
+  }, [fileKey, fileName, newFileName, onOpenChange, router]);
+
+  const canRename = newFileName.trim() && newFileName.trim() !== fileName;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -83,9 +91,7 @@ const EditFileDialog = ({ fileKey, fileName, open, onOpenChange }) => {
           placeholder={fileName}
           onChange={(e) => setNewFileName(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && !isRenaming) {
-              handleRename();
-            }
+            if (e.key === "Enter" && canRename && !isRenaming) handleRename();
           }}
         />
 
@@ -101,8 +107,8 @@ const EditFileDialog = ({ fileKey, fileName, open, onOpenChange }) => {
 
           <Button
             onClick={handleRename}
+            disabled={!canRename || isRenaming}
             className="bg-foreground/90 text-background text-xs"
-            disabled={isRenaming || !newFileName || newFileName === fileName}
           >
             {isRenaming ? (
               <>

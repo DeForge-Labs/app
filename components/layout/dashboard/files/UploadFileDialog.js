@@ -1,10 +1,9 @@
 "use client";
 
-import axios from "axios";
 import { toast } from "sonner";
-import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Upload, FileUp, X } from "lucide-react";
+import { useState, useRef, useCallback } from "react";
+import { Loader2, Upload, FileUp, X, Link } from "lucide-react";
 
 import {
   Dialog,
@@ -14,7 +13,11 @@ import {
   DialogContent,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/ui/tabs";
 
 import { formatFileSize } from "@/lib/utils";
 
@@ -23,248 +26,295 @@ const UploadFileDialog = ({ open, onOpenChange }) => {
 
   const fileInputRef = useRef(null);
 
-  const [isDragging, setIsDragging] = useState(false);
+  const [activeTab, setActiveTab] = useState("file");
+
   const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
 
-  const handleFileSelect = (e) => {
-    const file = e.target.files?.[0];
+  const [url, setUrl] = useState("");
+  const [deepSearch, setDeepSearch] = useState(false);
+  const [isScraping, setIsScraping] = useState(false);
 
-    if (file) {
-      setSelectedFile(file);
-    }
-  };
+  const isProcessing = isUploading || isScraping;
 
-  const handleRemoveFile = () => {
+  const resetFile = useCallback(() => {
     setSelectedFile(null);
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }, []);
 
-  const handleDragEnter = (e) => {
+  const resetUrl = useCallback(() => {
+    setUrl("");
+    setDeepSearch(false);
+  }, []);
+
+  const closeDialog = useCallback(() => {
+    if (isProcessing) return;
+
+    resetFile();
+    resetUrl();
+    setActiveTab("file");
+
+    onOpenChange(false);
+  }, [isProcessing, resetFile, resetUrl, onOpenChange]);
+
+  const handleFileSelect = useCallback((e) => {
+    const file = e.target.files?.[0];
+
+    if (file) setSelectedFile(file);
+  }, []);
+
+  const handleDrop = useCallback((e) => {
     e.preventDefault();
-    e.stopPropagation();
 
-    setIsDragging(true);
-  };
+    const file = e.dataTransfer.files?.[0];
 
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    if (file) setSelectedFile(file);
+  }, []);
 
-    setIsDragging(false);
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setIsDragging(false);
-
-    const files = e.dataTransfer.files;
-    if (files && files[0]) {
-      setSelectedFile(files[0]);
-    }
-  };
-
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      toast.error("Please select a file to upload");
-      return;
-    }
+  const handleUpload = useCallback(async () => {
+    if (!selectedFile) return toast.error("Please select a file");
 
     setIsUploading(true);
-    setUploadProgress(0);
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
 
     try {
-      const formData = new FormData();
-      formData.append("file", selectedFile);
-
-      const response = await axios.post(
+      const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/storage/upload`,
-        formData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-
-          withCredentials: true,
-
-          onUploadProgress: (progressEvent) => {
-            const progress = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setUploadProgress(progress);
-          },
+          method: "POST",
+          credentials: "include",
+          body: formData,
         }
       );
 
-      if (response.data.success) {
-        toast.success("File uploaded successfully!");
+      const data = await res.json();
 
-        setSelectedFile(null);
+      if (res.ok && data?.success) {
+        toast.success("File uploaded!");
+        closeDialog();
 
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
-        }
-
-        onOpenChange(false);
         router.refresh();
       } else {
-        toast.error(response.data.message || "Upload failed");
+        toast.error(data?.message || "Upload failed");
       }
-    } catch (error) {
-      console.error("Upload error:", error);
-      toast.error(
-        error.response?.data?.message || "An error occurred during upload"
-      );
+    } catch (err) {
+      console.error(err);
+      toast.error("Upload error");
     } finally {
       setIsUploading(false);
-      setUploadProgress(0);
     }
-  };
+  }, [selectedFile, closeDialog, router]);
 
-  const handleClose = () => {
-    if (!isUploading) {
-      setSelectedFile(null);
-      setIsDragging(false);
+  const handleScrape = useCallback(async () => {
+    if (!url.trim()) return toast.error("Please enter a URL");
 
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+    try {
+      new URL(url);
+    } catch {
+      return toast.error("Invalid URL");
+    }
+
+    setIsScraping(true);
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/storage/scrape-url`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: url.trim(), deepSearch }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok && data?.success) {
+        toast.success("Scraping started!");
+        closeDialog();
+
+        router.refresh();
+      } else {
+        toast.error(data?.message || "Scrape failed");
+        setIsScraping(false);
       }
-
-      onOpenChange(false);
+    } catch (err) {
+      console.error(err);
+      toast.error("Scrape error");
+      setIsScraping(false);
     }
-  };
+  }, [url, deepSearch, closeDialog, router]);
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent showCloseButton={!isUploading} className="sm:max-w-sm">
+    <Dialog open={open} onOpenChange={closeDialog}>
+      <DialogContent showCloseButton={!isProcessing} className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-lg font-medium opacity-80">
-            Upload File
+            Add Content
           </DialogTitle>
 
           <DialogDescription className="text-xs">
-            Choose a file to upload to your storage. Maximum file size depends
-            on your plan.
+            Upload a file or scrape a URL
           </DialogDescription>
         </DialogHeader>
 
-        <div>
-          {!selectedFile ? (
-            <div
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onDragEnter={handleDragEnter}
-              onDragLeave={handleDragLeave}
-              onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-lg p-5 text-center transition-colors cursor-pointer ${
-                isDragging
-                  ? "border-foreground/60 bg-foreground/5"
-                  : "border-foreground/20 hover:border-foreground/40"
-              }`}
-            >
-              <FileUp className="w-9 h-9 mx-auto mb-2 opacity-50" />
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList variant="default" className="w-full">
+            <TabsTab value="file" disabled={isProcessing} className="flex-1">
+              <FileUp className="h-4 w-4" />
+              File Upload
+            </TabsTab>
 
-              <p className="text-xs text-foreground/70">
-                Click to select a file or drag and drop
-              </p>
+            <TabsTab value="url" disabled={isProcessing} className="flex-1">
+              <Link className="h-4 w-4" />
+              URL Scrape
+            </TabsTab>
+          </TabsList>
 
-              <p className="text-[10px] text-foreground/50">
-                All file types supported
-              </p>
-            </div>
-          ) : (
-            <div className="border border-foreground/20 rounded-lg p-4 mt-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <FileUp className="w-8 h-8 opacity-50 shrink-0" />
+          <TabsPanel value="file" className="mt-4">
+            {!selectedFile ? (
+              <div
+                onDrop={handleDrop}
+                onDragOver={(e) => e.preventDefault()}
+                onClick={() => fileInputRef.current?.click()}
+                className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer border-foreground/20 hover:border-foreground/40"
+              >
+                <FileUp className="w-12 h-12 mx-auto mb-3 opacity-50" />
 
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium truncate">
-                      {selectedFile.name}
-                    </p>
+                <p className="text-sm text-foreground/70">Click or drag file</p>
+                <p className="text-xs text-foreground/50">
+                  All formats supported
+                </p>
+              </div>
+            ) : (
+              <div className="border border-foreground/20 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <FileUp className="w-8 h-8 opacity-50 shrink-0" />
 
-                    <p className="text-[10px] text-foreground/60">
-                      {formatFileSize(selectedFile.size)}
-                    </p>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        {selectedFile.name}
+                      </p>
+
+                      <p className="text-xs text-foreground/60">
+                        {formatFileSize(selectedFile.size)}
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                {!isUploading && (
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="shrink-0"
-                    onClick={handleRemoveFile}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
+                  {!isUploading && (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="shrink-0"
+                      onClick={resetFile}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              onChange={handleFileSelect}
+            />
+          </TabsPanel>
+
+          <TabsPanel value="url" className="mt-4">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="url" className="text-sm">
+                  Website URL
+                </Label>
+
+                <Input
+                  id="url"
+                  type="url"
+                  placeholder="https://example.com"
+                  value={url}
+                  disabled={isScraping}
+                  onChange={(e) => setUrl(e.target.value)}
+                  className="text-sm"
+                />
               </div>
 
-              {isUploading && (
-                <div className="mt-4">
-                  <div className="flex items-center justify-between text-xs text-foreground/60 mb-1">
-                    <span>Uploading...</span>
-                    <span>{uploadProgress}%</span>
-                  </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="deepSearch"
+                  checked={deepSearch}
+                  disabled={isScraping}
+                  onCheckedChange={setDeepSearch}
+                />
 
-                  <div className="w-full bg-foreground/10 rounded-full h-2">
-                    <div
-                      className="bg-foreground/70 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${uploadProgress}%` }}
-                    />
-                  </div>
-                </div>
-              )}
+                <Label htmlFor="deepSearch" className="text-sm cursor-pointer">
+                  Deep search (crawl up to 50 pages)
+                </Label>
+              </div>
+
+              <div className="bg-muted/50 rounded-lg p-3 space-y-1">
+                <p className="text-xs font-medium">Credit Cost:</p>
+                <p className="text-xs">Simple scraping: 15 credits</p>
+                <p className="text-xs">Deep search: 222 credits</p>
+              </div>
             </div>
-          )}
-
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            onChange={handleFileSelect}
-          />
-        </div>
+          </TabsPanel>
+        </Tabs>
 
         <DialogFooter>
           <Button
             variant="ghost"
             className="text-xs"
-            onClick={handleClose}
-            disabled={isUploading}
+            onClick={closeDialog}
+            disabled={isProcessing}
           >
             Cancel
           </Button>
 
-          <Button
-            onClick={handleUpload}
-            disabled={!selectedFile || isUploading}
-            className="bg-foreground/90 text-background text-xs"
-          >
-            {isUploading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Uploading...
-              </>
-            ) : (
-              <>
-                <Upload className="h-4 w-4" />
-                Upload
-              </>
-            )}
-          </Button>
+          {activeTab === "file" ? (
+            <Button
+              disabled={!selectedFile || isUploading}
+              onClick={handleUpload}
+              className="bg-foreground/90 text-background text-xs"
+            >
+              {isUploading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4" />
+                  Upload
+                </>
+              )}
+            </Button>
+          ) : (
+            <Button
+              disabled={!url.trim() || isScraping}
+              onClick={handleScrape}
+              className="bg-foreground/90 text-background text-xs"
+            >
+              {isScraping ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Starting...
+                </>
+              ) : (
+                <>
+                  <Link className="h-4 w-4" />
+                  Scrape URL
+                </>
+              )}
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
