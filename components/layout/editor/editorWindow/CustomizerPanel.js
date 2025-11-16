@@ -26,6 +26,7 @@ import SocialField from "./nodes/customizer/SocialField";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
 import useNodeLibraryStore from "@/store/useNodeLibraryStore";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 export default function CustomizerPanel() {
   const { selectedNode, deleteEdge, updateNodeData, setSelectedNode } =
@@ -139,12 +140,17 @@ export default function CustomizerPanel() {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Badge
-              variant="secondary"
-              className="text-[10px] w-fit px-2 py-1 hover:bg-foreground/10 cursor-pointer bg-foreground/5 border border-foreground/5 text-foreground/70 capitalize"
+            <Link
+              href={`https://docs.deforge.io/docs/library/nodes/${nodeType.category}/${nodeType.type}`}
+              target="_blank"
             >
-              <BookOpen className="size-3" /> Docs
-            </Badge>
+              <Badge
+                variant="secondary"
+                className="text-[10px] w-fit px-2 py-1 hover:bg-foreground/10 cursor-pointer bg-foreground/5 border border-foreground/5 text-foreground/70 capitalize"
+              >
+                <BookOpen className="size-3" /> Docs
+              </Badge>
+            </Link>
 
             <Badge
               variant="secondary"

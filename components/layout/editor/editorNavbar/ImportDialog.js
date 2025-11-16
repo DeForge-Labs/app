@@ -27,7 +27,7 @@ export default function ImportDialog({ open, setIsOpen }) {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const { setNodes, setConnections } = useWorkflowStore();
+  const { setNodes, setConnections, workflow } = useWorkflowStore();
   const { loadComponents } = useFormStore();
 
   const handleImport = () => {
@@ -35,8 +35,23 @@ export default function ImportDialog({ open, setIsOpen }) {
     reader.onload = (e) => {
       try {
         const data = JSON.parse(e.target.result);
-        setNodes(data.nodes);
-        setConnections(data.connections);
+
+        let newNodes = data.nodes.map((node) => {
+          return {
+            ...node,
+            workflowId: workflow?.id,
+          };
+        });
+
+        let newConnections = data.connections.map((connection) => {
+          return {
+            ...connection,
+            workflowId: workflow?.id,
+          };
+        });
+
+        setNodes(newNodes);
+        setConnections(newConnections);
         loadComponents(data.components);
         setIsOpen(false);
       } catch (error) {
