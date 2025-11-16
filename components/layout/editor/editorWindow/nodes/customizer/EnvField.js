@@ -61,7 +61,7 @@ export default function EnvField({ field }) {
               ref={inputRef}
             />
 
-            <div className="absolute hidden peer-focus-within:block -bottom-13 left-0 p-2 bg-card border w-[208px] border-foreground/50 rounded-sm text-[10px] text-foreground/60">
+            <div className="absolute hidden peer-focus-within:block -bottom-13 z-10 left-0 p-2 bg-card border w-[208px] border-foreground/50 rounded-sm text-[10px] text-foreground/60">
               Environment Variable needs to be saved separately to maintain
               security.
             </div>

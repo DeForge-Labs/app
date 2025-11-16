@@ -113,6 +113,7 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "Number":
@@ -125,6 +126,7 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "TextArea":
@@ -137,6 +139,7 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "select":
@@ -148,6 +151,7 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "Map":

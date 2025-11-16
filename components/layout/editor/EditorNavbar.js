@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, Code, Play, Rocket } from "lucide-react";
+import { ChevronLeft, Code, Play, Rocket, Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import OptionsMenu from "./editorNavbar/OptionsMenu";
@@ -8,9 +8,12 @@ import WorkflowCard from "./editorNavbar/WorkflowCard";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
 import { Skeleton } from "@/components/ui/skeleton";
 import ModeSwitcher from "./editorWindow/nodes/ModeSwitcher";
+import useFormStore from "@/store/useFormStore";
+import UndoButton from "./editorNavbar/UndoButton";
 
 export default function EditorNavbar() {
   const { isWorkspaceInitializing, hasUnsavedChanges } = useWorkspaceStore();
+  const { hasUnsavedChanges: hasUnsavedChangesForm } = useFormStore();
 
   return (
     <header className="sticky top-0 z-50 bg-foreground/5 relative">
@@ -33,6 +36,8 @@ export default function EditorNavbar() {
               <WorkflowCard />
             )}
           </span>
+
+          {(hasUnsavedChanges || hasUnsavedChangesForm) && <UndoButton />}
         </div>
 
         <div className="flex items-center gap-2">

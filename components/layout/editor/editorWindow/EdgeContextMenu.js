@@ -1,36 +1,34 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Button } from "@heroui/react";
 import { Trash2, X } from "lucide-react";
 
 export default function EdgeContextMenu({ x, y, edgeId, onDelete, onClose }) {
   return (
     <Card
-      className="absolute z-10 w-48 bg-background dark:bg-dark dark:border-background dark:text-background"
+      className="absolute z-10 w-40 shadow-lg py-0"
       style={{
         left: `${x}px`,
         top: `${y}px`,
       }}
     >
-      <div className="flex flex-col p-1">
-        <div className="flex items-center justify-between p-1">
-          <span className="text-xs font-medium">Connection Options</span>
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-5 w-5 rounded-md border border-black/50 dark:border-background dark:text-background"
-            onPress={onClose}
+      <div className="flex flex-col px-2 py-2 pt-1">
+        <div className="flex items-center justify-between p-2 px-0">
+          <span className="text-[10px] font-medium">Connection Options</span>
+          <div
+            className="z-20 p-1 hover:bg-foreground/5 rounded-sm cursor-pointer"
+            onClick={onClose}
           >
-            <X className="h-3 w-3 text-black/50 dark:text-background" />
-          </Button>
+            <X className="size-3" />
+          </div>
         </div>
         <Button
           variant="outline"
-          className="flex justify-start px-2 py-1.5 text-sm border border-red-500/80 text-red-500/80 mt-1.5"
-          onPress={onDelete}
+          className="flex justify-start px-2 py-1.5 text-xs [&_svg:not([class*='size-'])]:size-3 bg-red-100 text-red-500 border-red-500 hover:bg-red-50 rounded-md"
+          onClick={onDelete}
         >
-          <Trash2 className="mr-2 h-4 w-4" />
+          <Trash2 className="h-4 w-4" />
           Delete
         </Button>
       </div>
