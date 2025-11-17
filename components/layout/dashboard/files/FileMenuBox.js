@@ -1,7 +1,7 @@
 "use client";
 
-import { toast } from "sonner";
 import { useState, useCallback } from "react";
+import { toast } from "sonner";
 import { Eye, Edit, Trash2, Download, Database, Ellipsis } from "lucide-react";
 
 import {
@@ -17,7 +17,7 @@ import DeleteFileDialog from "./DeleteFileDialog";
 import RagConversionDialog from "./RagConversionDialog";
 
 const baseMenuBtn =
-  "data-highlighted:bg-foreground/5 px-2 min-h-5 font-normal rounded-sm text-xs cursor-pointer dark:bg-transparent shadow-none hover:bg-transparent w-full justify-start border-none text-foreground/80 [&_svg:not([class*='size-'])]:size-3";
+  "data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent shadow-none! bg-transparent hover:bg-transparent w-full justify-start border-none";
 
 const FileMenuBox = ({ fileKey, fileName, ragStatus, ragTableName }) => {
   const [showRagDialog, setShowRagDialog] = useState(false);
@@ -33,27 +33,48 @@ const FileMenuBox = ({ fileKey, fileName, ragStatus, ragTableName }) => {
     async (e) => {
       stop(e);
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/storage/download`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ fileKey }),
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/storage/download`,
+          {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ fileKey }),
+          }
+        );
+
+        const data = await res.json();
+
+        if (!res.ok || !data?.success) {
+          toast.error(data?.message || "Download failed");
+          return;
         }
-      );
 
-      const data = await res.json();
+        // Fetch the actual file as binary blob
+        const fileRes = await fetch(data.fileURL);
+        const blob = await fileRes.blob();
 
-      if (!res.ok || !data.success) {
-        toast.error(data?.message || "Download failed");
-        return;
+        // Create a download link
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+
+        a.style.display = "none";
+        a.href = url;
+        a.download = fileName || "download"; // fallback name
+        document.body.appendChild(a);
+        a.click();
+
+        // Cleanup
+        window.URL.revokeObjectURL(url);
+        a.remove();
+
+        toast.success("Download started");
+      } catch {
+        toast.error("Failed to download file");
       }
-
-      toast.success("Download started");
-      window.open(data.fileURL, "_blank");
     },
-    [fileKey]
+    [fileKey, fileName]
   );
 
   const handleEdit = useCallback((e) => {

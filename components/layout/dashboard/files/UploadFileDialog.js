@@ -55,6 +55,7 @@ const UploadFileDialog = ({ open, onOpenChange }) => {
     resetUrl();
     setActiveTab("file");
 
+    setIsScraping(false);
     onOpenChange(false);
   }, [isProcessing, resetFile, resetUrl, onOpenChange]);
 
@@ -161,14 +162,25 @@ const UploadFileDialog = ({ open, onOpenChange }) => {
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList variant="default" className="w-full">
-            <TabsTab value="file" disabled={isProcessing} className="flex-1">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="gap-0">
+          <TabsList
+            variant="default"
+            className="w-full bg-background [&>span]:bg-foreground/5 [&>span]:rounded-md"
+          >
+            <TabsTab
+              value="file"
+              disabled={isProcessing}
+              className="flex-1 text-xs"
+            >
               <FileUp className="h-4 w-4" />
               File Upload
             </TabsTab>
 
-            <TabsTab value="url" disabled={isProcessing} className="flex-1">
+            <TabsTab
+              value="url"
+              disabled={isProcessing}
+              className="flex-1 text-xs"
+            >
               <Link className="h-4 w-4" />
               URL Scrape
             </TabsTab>

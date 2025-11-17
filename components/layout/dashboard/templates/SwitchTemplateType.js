@@ -11,9 +11,7 @@ export default function SwitchTemplateType() {
 
   return (
     <Tabs value={isYourTemplates ? "tab-2" : "tab-1"}>
-      <TabsList
-        className={"bg-background [&>span]:bg-foreground/5 [&>span]:rounded-sm"}
-      >
+      <TabsList className="bg-background [&>span]:bg-foreground/5 [&>span]:rounded-md">
         <TabsTab
           value="tab-1"
           onClick={() => {

@@ -38,6 +38,7 @@ const DeleteFileDialog = ({ fileKey, fileName, open, onOpenChange }) => {
     if (!res.ok || !data.success) {
       toast.error(data?.message || "Delete failed");
       setIsDeleting(false);
+
       return;
     }
 
@@ -45,7 +46,7 @@ const DeleteFileDialog = ({ fileKey, fileName, open, onOpenChange }) => {
 
     onOpenChange(false);
 
-    setTimeout(() => router.refresh(), 150);
+    router.refresh();
 
     setIsDeleting(false);
   }, [fileKey, onOpenChange, router]);

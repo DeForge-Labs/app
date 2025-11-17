@@ -63,7 +63,7 @@ const EditFileDialog = ({ fileKey, fileName, open, onOpenChange }) => {
 
     onOpenChange(false);
 
-    setTimeout(() => router.refresh(), 150);
+    router.refresh();
 
     setIsRenaming(false);
   }, [fileKey, fileName, newFileName, onOpenChange, router]);
