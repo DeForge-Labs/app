@@ -74,7 +74,9 @@ const componentTypes = [
   },
 ];
 
-export default function FormMenu({ isMinimized = false, setIsMinimized }) {
+export default function FormMenu() {
+  const { formModal: isMinimized, setFormModal: setIsMinimized } =
+    useFormStore();
   const { addComponent } = useFormStore();
   const add = (componentType) => {
     addComponent({

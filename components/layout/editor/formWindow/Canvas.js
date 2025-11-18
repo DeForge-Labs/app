@@ -9,6 +9,7 @@ import LogoAnimation from "@/components/ui/LogoAnimation";
 import useFormStore from "@/store/useFormStore";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
 import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 const buttonVariants = {
   initial: {
@@ -39,6 +40,7 @@ export default function Canvas() {
     addComponent,
     selectComponent,
     reorderComponents,
+    formModal,
   } = useFormStore();
 
   const { isFormInitializing } = useWorkspaceStore();
@@ -94,7 +96,12 @@ export default function Canvas() {
     return (
       <div className="h-full absolute w-full overflow-y-auto hide-scroll">
         <div className="h-full relative w-full">
-          <div className="p-2 pl-0 min-h-full flex flex-col items-center max-w-4xl mx-auto">
+          <div
+            className={cn(
+              "p-2 pl-0 min-h-full flex flex-col items-center max-w-4xl mx-auto",
+              formModal && "pl-2"
+            )}
+          >
             {components.length === 0 ? (
               <Card className="border border-foreground/10 w-full max-w-5xl flex-1 rounded-2xl min-h-full relative">
                 <div className="absolute flex flex-col items-center justify-center bg-foreground/2 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[calc(100%-32px)] w-[calc(100%-32px)] border-2 border-foreground/30 border-dashed rounded-xl">
@@ -128,7 +135,10 @@ export default function Canvas() {
     <div className="h-full absolute w-full overflow-y-auto hide-scroll">
       <div className="h-full relative w-full">
         <div
-          className="p-2 pl-0 min-h-full flex flex-col items-center max-w-4xl mx-auto"
+          className={cn(
+            "p-2 pl-0 min-h-full flex flex-col items-center max-w-4xl mx-auto",
+            formModal && "pl-2"
+          )}
           onDragOver={handleDragOver}
           onClick={handleCanvasClick}
         >

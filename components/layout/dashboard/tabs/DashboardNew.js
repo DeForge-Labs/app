@@ -5,6 +5,7 @@ import DashboardTemplate from "./DashboardTemplate";
 import Chatbox from "./Chatbox";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import BlankWorkflowDialog from "./BlankWorkflowDialog";
 
 export default async function DashboardNew({ params }) {
   const { id } = await params;
@@ -35,13 +36,7 @@ export default async function DashboardNew({ params }) {
           <Chatbox />
 
           <div className="flex gap-2 items-center justify-center mt-2">
-            <Button
-              className="flex gap-2 bg-transparent font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 [&_svg:not([class*='size-'])]:size-3 border border-foreground/20 !px-3 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-xs justify-start text-foreground/60"
-              variant="outline"
-            >
-              <StickyNote />
-              Blank workflow
-            </Button>
+            <BlankWorkflowDialog />
 
             <Button
               className="flex gap-2 bg-transparent font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 [&_svg:not([class*='size-'])]:size-3 border border-foreground/20 !px-3 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-xs justify-start text-foreground/60"

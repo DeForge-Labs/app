@@ -58,10 +58,10 @@ export default function UndoButton() {
   return (
     <>
       <div
-        className="z-20 p-1 not-dark:hover:bg-yellow-200 rounded-sm cursor-pointer border border-yellow-500 text-yellow-700 not-dark:bg-yellow-50 dark:hover:bg-yellow-900 dark:text-yellow-200"
+        className="z-20 px-2 flex items-center ml-1 h-[28px] not-dark:hover:bg-yellow-200 rounded-sm cursor-pointer border border-yellow-500 text-yellow-700 not-dark:bg-yellow-50 dark:hover:bg-yellow-900 dark:text-yellow-200"
         onClick={() => setIsOpen(true)}
       >
-        <Undo2 className="size-3" />
+        <Undo2 className="size-3 mb-[1.5px]" />
       </div>
       <Dialog open={isOpen} onOpenChange={handleIsOpenChange}>
         <DialogPopup className={"sm:max-w-sm"}>

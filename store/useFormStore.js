@@ -49,7 +49,7 @@ const useFormStore = create((set) => ({
   hasUnsavedChanges: false,
   lastSavedState: [],
   isPreview: false,
-  isSelector: false,
+  formModal: false,
 
   addComponent: (payload) =>
     set((state) => {
@@ -164,9 +164,9 @@ const useFormStore = create((set) => ({
       isPreview,
     }),
 
-  setIsSelector: (isSelector) =>
+  setFormModal: (formModal) =>
     set({
-      isSelector,
+      formModal,
     }),
 }));
 
