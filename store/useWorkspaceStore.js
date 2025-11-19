@@ -166,6 +166,7 @@ const initialState = {
   plan: "free",
   isStatsInitializing: true,
   showCustomizerPanel: false,
+  sidePanel: "chat",
 };
 
 const useWorkflowStore = create((set, get) => ({
@@ -497,6 +498,8 @@ const useWorkflowStore = create((set, get) => ({
         hasUnsavedChanges: checkForUnsavedChanges({ ...state, ...newState }),
       };
     }),
+
+  setSidePanel: (sidePanel) => set({ sidePanel }),
 }));
 
 export default useWorkflowStore;

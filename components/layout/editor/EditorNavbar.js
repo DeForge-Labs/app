@@ -3,6 +3,7 @@
 import {
   ChevronLeft,
   Code,
+  MessageCircle,
   PanelLeftIcon,
   PanelRightIcon,
   Play,
@@ -21,7 +22,12 @@ import useChatStore from "@/store/useChatStore";
 import { cn } from "@/lib/utils";
 
 export default function EditorNavbar() {
-  const { isWorkspaceInitializing, hasUnsavedChanges } = useWorkspaceStore();
+  const {
+    isWorkspaceInitializing,
+    hasUnsavedChanges,
+    sidePanel,
+    setSidePanel,
+  } = useWorkspaceStore();
   const { hasUnsavedChanges: hasUnsavedChangesForm } = useFormStore();
   const { chatModalOpen, setChatModalOpen } = useChatStore();
 
@@ -71,20 +77,29 @@ export default function EditorNavbar() {
 
         <div className="flex items-center gap-2">
           <OptionsMenu />
-          <Button
-            variant="outline"
-            className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
-          >
-            <Code />
-            API
-          </Button>
-          <Button
-            variant="outline"
-            className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
-          >
-            <Play />
-            Run
-          </Button>
+
+          {sidePanel === "chat" && (
+            <Button
+              variant="outline"
+              className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
+              onClick={() => setSidePanel("execute")}
+            >
+              <Play />
+              Execute
+            </Button>
+          )}
+
+          {sidePanel === "execute" && (
+            <Button
+              variant="outline"
+              className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
+              onClick={() => setSidePanel("chat")}
+            >
+              <MessageCircle />
+              Chat
+            </Button>
+          )}
+
           <Button className="text-xs gap-1.5 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3 bg-foreground/90">
             <Rocket />
             Deploy
