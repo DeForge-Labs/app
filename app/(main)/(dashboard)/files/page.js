@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { LayoutGrid } from "lucide-react";
+import { File } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -27,7 +27,7 @@ const FilesPage = async ({ searchParams }) => {
     <div className="flex flex-col h-full w-full">
       <header className="flex items-center justify-between p-4 border-b border-foreground/15">
         <div className="flex gap-2">
-          <LayoutGrid size={14} className="mt-1" aria-hidden="true" />
+          <File size={14} className="mt-1" aria-hidden="true" />
 
           <div className="flex flex-col gap-0.5">
             <h1 className="text-sm font-medium">Files</h1>

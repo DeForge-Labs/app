@@ -1,7 +1,7 @@
 import Navbar from "@/components/layout/dashboard/Navbar";
 import Sidebar from "@/components/layout/dashboard/Sidebar";
 
-export default function DashboardLayout({ children, params }) {
+const DashboardLayout = ({ children, params }) => {
   return (
     <div className="flex flex-col w-screen max-h-screen h-screen overflow-hidden dark:bg-dark">
       <Navbar />
@@ -17,4 +17,6 @@ export default function DashboardLayout({ children, params }) {
       </div>
     </div>
   );
-}
+};
+
+export default DashboardLayout;

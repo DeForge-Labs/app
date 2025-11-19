@@ -185,27 +185,20 @@ const FileList = async ({ page, query }) => {
 
             <div className="flex justify-between items-center -mt-2 -mb-1">
               <div className="flex items-center gap-3">
-                <p className="text-[10px] text-foreground/70">
-                  Bucket: {file.bucket || "upload"}
-                </p>
-
                 {file.sourceUrl && (
-                  <>
-                    <span className="text-[10px] text-foreground/30">•</span>
-                    <div className="flex items-center gap-1.5">
-                      <LinkIcon className="w-3 h-3 text-foreground/50" />
+                  <div className="flex items-center gap-1.5">
+                    <LinkIcon className="w-3 h-3 text-foreground/50" />
 
-                      <Link
-                        href={file.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[10px] text-foreground/70 hover:text-foreground/90 hover:underline truncate max-w-[200px]"
-                        title={file.sourceUrl}
-                      >
-                        {file.sourceUrl}
-                      </Link>
-                    </div>
-                  </>
+                    <Link
+                      href={file.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[10px] text-foreground/70 hover:text-foreground/90 hover:underline truncate max-w-[200px]"
+                      title={file.sourceUrl}
+                    >
+                      {file.sourceUrl}
+                    </Link>
+                  </div>
                 )}
               </div>
 

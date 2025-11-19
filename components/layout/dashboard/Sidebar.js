@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { Plus, Users, Globe, Files, LayoutGrid } from "lucide-react";
+import { Plus, Users, Globe, File, LayoutGrid } from "lucide-react";
 
 import {
   Accordion,
@@ -20,7 +20,7 @@ const NAV_ITEMS = [
   { href: "/apps", icon: LayoutGrid, label: "Apps" },
   { href: "/templates", icon: Globe, label: "Templates" },
   { href: "/team", icon: Users, label: "Team" },
-  { href: "/files", icon: Files, label: "Files" },
+  { href: "/files", icon: File, label: "Files" },
 ];
 
 const SIDEBAR_BUTTON_CLASSES =

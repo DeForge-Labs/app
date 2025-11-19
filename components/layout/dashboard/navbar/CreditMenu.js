@@ -68,7 +68,7 @@ const CreditMenu = async () => {
             {credits?.credits}
           </Button>
         }
-      ></MenuTrigger>
+      />
 
       <MenuPopup
         sideOffset={10}
@@ -91,7 +91,7 @@ const CreditMenu = async () => {
 
           <BuyCreditDialog teamId={teamId} />
 
-          <Link href={"/billing"}>
+          <Link href="/billing">
             <MenuItem className="text-foreground data-highlighted:bg-foreground/5 data-highlighted:text-foreground cursor-pointer px-2.5!">
               <ExternalLink />
               {credits?.plan === "enterprise" ? "Billing" : "Upgrade Plan"}
