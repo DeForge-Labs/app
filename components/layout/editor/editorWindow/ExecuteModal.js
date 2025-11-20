@@ -19,7 +19,7 @@ export default function ExecuteModal() {
 
   return (
     <div className="w-[400px] flex flex-col pr-2">
-      <div className="flex flex-1 flex-col border border-foreground/15 bg-background rounded-md">
+      <div className="flex flex-1 flex-col border border-foreground/15 bg-background rounded-md h-full">
         <div className="flex gap-2 text-sm border-b border-foreground/15 p-4 relative z-20 shrink-0">
           <Play className="size-4 mt-1" />
           <div className="flex flex-col">
@@ -30,7 +30,7 @@ export default function ExecuteModal() {
           </div>
         </div>
 
-        <div className="flex flex-col overflow-hidden relative z-20 flex-1 min-h-0">
+        <div className="flex flex-col overflow-hidden relative z-20 flex-1 min-h-0 rounded-md">
           <div className="overflow-y-auto custom-scrollbar flex-1 min-h-0">
             <div className="space-y-2 p-4 pb-0">
               <p className="text-[10px] text-foreground/50 flex items-center gap-1">
