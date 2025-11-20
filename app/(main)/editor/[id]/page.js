@@ -1,9 +1,9 @@
 "use client";
 
-import ChatModal from "@/components/layout/editor/ChatModal";
 import EditorNavbar from "@/components/layout/editor/EditorNavbar";
 import EditorWindow from "@/components/layout/editor/EditorWindow";
-import ExecuteModal from "@/components/layout/editor/editorWindow/ExecuteModal";
+import ChatModal from "@/components/layout/editor/editorWindow/chat/ChatModal";
+import ExecuteModal from "@/components/layout/editor/ExecuteModal";
 import useChatStore from "@/store/useChatStore";
 import useWorkflowStore from "@/store/useWorkspaceStore";
 
