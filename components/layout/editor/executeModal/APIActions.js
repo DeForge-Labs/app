@@ -1,9 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Play, FlaskConical, Waypoints } from "lucide-react";
+import useExecution from "@/hooks/useExecution";
+import { Play, FlaskConical, Waypoints, Loader2 } from "lucide-react";
+import useWorkflowStore from "@/store/useWorkspaceStore";
 
 export default function APIActions() {
+  const { handleTest, handleRun } = useExecution();
+  const { executionType, isRunning } = useWorkflowStore();
+
   return (
     <div className="space-y-2 p-4">
       <p className="text-[10px] text-foreground/50 flex items-center gap-1">
@@ -11,11 +16,29 @@ export default function APIActions() {
       </p>
 
       <div className="flex items-center gap-1">
-        <Button className="flex-1 text-xs  border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3">
-          <FlaskConical /> Test
+        <Button
+          disabled={isRunning}
+          onClick={handleTest}
+          className="flex-1 text-xs  border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
+        >
+          {executionType === "test" && isRunning ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            <FlaskConical />
+          )}{" "}
+          Test
         </Button>
-        <Button className="flex-1 text-xs border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3">
-          <Play /> Run
+        <Button
+          disabled={isRunning}
+          onClick={handleRun}
+          className="flex-1 text-xs border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
+        >
+          {executionType === "raw" && isRunning ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            <Play />
+          )}{" "}
+          Run
         </Button>
       </div>
 

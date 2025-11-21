@@ -64,6 +64,7 @@ export default function useInitialize() {
     setIsWorkflowInitializing,
     setForm,
     setIsFormInitializing,
+    setSessionId,
   } = useWorkspaceStore();
 
   const { loadComponents } = useFormStore();
@@ -446,6 +447,8 @@ export default function useInitialize() {
         loadComponents(
           response.data.workspace.form.formLayout?.components || []
         );
+
+        setSessionId(Math.random().toString(36).substring(2, 9));
 
         await getEnv(response.data.workspace.workflow.id);
 

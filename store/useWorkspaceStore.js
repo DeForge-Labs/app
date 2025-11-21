@@ -167,6 +167,9 @@ const initialState = {
   isStatsInitializing: true,
   showCustomizerPanel: false,
   sidePanel: "chat",
+  isRunning: false,
+  executionType: "raw",
+  sessionId: null,
 };
 
 const useWorkflowStore = create((set, get) => ({
@@ -248,6 +251,12 @@ const useWorkflowStore = create((set, get) => ({
   setCredits: (credits) => set({ credits }),
 
   setPlan: (plan) => set({ plan }),
+
+  setIsRunning: (isRunning) => set({ isRunning }),
+
+  setExecutionType: (executionType) => set({ executionType }),
+
+  setSessionId: (sessionId) => set({ sessionId }),
 
   setPaneLeft: (paneLeft) => set({ paneLeft }),
 

@@ -3,6 +3,7 @@
 import { ArrowUpRight, Copy, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 export default function Endpoint({ workflow }) {
   return (
@@ -23,12 +24,25 @@ export default function Endpoint({ workflow }) {
         <Button
           variant="outline"
           className="flex-1 text-xs bg-background border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
+          onClick={() => {
+            navigator.clipboard.writeText(
+              `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`
+            );
+
+            toast("Endpoint copied to clipboard");
+          }}
         >
           <Copy /> Copy
         </Button>
         <Button
           variant="outline"
           className="flex-1 text-xs bg-background border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
+          onClick={() => {
+            window.open(
+              `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`,
+              "_blank"
+            );
+          }}
         >
           <ArrowUpRight /> Open
         </Button>

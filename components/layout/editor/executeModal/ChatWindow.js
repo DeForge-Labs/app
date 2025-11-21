@@ -1,20 +1,19 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import {
-  FlaskConical,
-  SendHorizonal,
-  Bot,
-  User,
-  MessageCircle,
-} from "lucide-react";
+import { FlaskConical, SendHorizonal, MessageCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import useWorkflowStore from "@/store/useWorkspaceStore";
+import axios from "axios";
+import { toast } from "sonner";
 
-export default function ChatWindow() {
+export default function ChatWindow({ triggerNodeType }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+
+  const { sessionId, workflow } = useWorkflowStore();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -24,26 +23,48 @@ export default function ChatWindow() {
     scrollToBottom();
   }, [messages]);
 
-  const simulateAIResponse = (userMessage) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const responses = [
-          "That's an interesting question! Let me help you with that.",
-          "I understand what you're asking. Here's what I think...",
-          "Great question! Based on my understanding, I would say...",
-          "Thanks for asking! Here's my perspective on that.",
-          "I'd be happy to help you with that inquiry.",
-        ];
+  const getAIResponse = async (userMessage) => {
+    if (triggerNodeType === "chatbot_trigger") {
+      const apiCall = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/chatbot/message/${workflow?.id}`,
+        {
+          Message: userMessage,
+          queryId: sessionId,
+        },
+        {
+          timeout: 300000,
+        }
+      );
 
-        const randomResponse =
-          responses[Math.floor(Math.random() * responses.length)];
-        const elaboration = ` Regarding "${userMessage.substring(0, 30)}${
-          userMessage.length > 30 ? "..." : ""
-        }", I believe this is a topic worth exploring further. Let me know if you need more details!`;
+      if (!apiCall.data.success) {
+        toast.error(apiCall.data.message);
+        return "Something went wrong";
+      }
 
-        resolve(randomResponse + elaboration);
-      }, 1500 + Math.random() * 1000);
-    });
+      const response = apiCall.data.value.Message;
+
+      return response;
+    } else {
+      const apiCall = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/widget/send/${workflow?.id}`,
+        {
+          Message: userMessage,
+          queryId: sessionId,
+        },
+        {
+          timeout: 300000,
+        }
+      );
+
+      if (!apiCall.data.success) {
+        toast.error(apiCall.data.message);
+        return "Something went wrong";
+      }
+
+      const response = apiCall.data.value.Message;
+
+      return response;
+    }
   };
 
   const handleSend = async () => {
@@ -56,7 +77,7 @@ export default function ChatWindow() {
     setIsLoading(true);
 
     try {
-      const aiResponse = await simulateAIResponse(userMessage);
+      const aiResponse = await getAIResponse(userMessage);
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: aiResponse },

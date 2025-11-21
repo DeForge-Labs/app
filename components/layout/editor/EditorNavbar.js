@@ -83,7 +83,10 @@ export default function EditorNavbar() {
             <Button
               variant="outline"
               className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
-              onClick={() => setSidePanel("execute")}
+              onClick={() => {
+                setChatModalOpen(true);
+                setSidePanel("execute");
+              }}
             >
               <Play />
               Execute
@@ -94,7 +97,10 @@ export default function EditorNavbar() {
             <Button
               variant="outline"
               className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
-              onClick={() => setSidePanel("chat")}
+              onClick={() => {
+                setChatModalOpen(true);
+                setSidePanel("chat");
+              }}
             >
               <MessageCircle />
               Chat

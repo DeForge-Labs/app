@@ -13,10 +13,18 @@ import { Form } from "@/components/ui/form";
 import useSaveWorkflow from "@/hooks/useSaveWorkflow";
 import { Info, Loader2 } from "lucide-react";
 import { Play } from "lucide-react";
+import useWorkflowStore from "@/store/useWorkspaceStore";
 
 export default function SaveDialog({ children }) {
   const { isOpen, setIsOpen, isSavingWorkflow, handleSaveWorkflow } =
     useSaveWorkflow();
+
+  const { nodes } = useWorkflowStore();
+
+  const triggerNode = nodes?.find((node) => node?.data?.category === "trigger");
+
+  const triggerNodeType = triggerNode?.type;
+
   const handleIsOpenChange = (open) => {
     if (isSavingWorkflow) {
       return;
@@ -43,18 +51,21 @@ export default function SaveDialog({ children }) {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex bg-foreground/5 rounded-md p-2 gap-2 text-xs text-foreground/50 relative overflow-hidden">
-            <Info className="size-20 mt-0.5 absolute -bottom-5 -right-5 opacity-15" />
-            <div className="flex flex-col">
-              You can execute the changes by clicking on the
-              <div className="flex items-center">
-                <Button className="text-[10px] rounded-md gap-1.5 px-2 -ml-1 [&_svg:not([class*='size-'])]:size-3 scale-70">
-                  <Play />
-                </Button>{" "}
-                play button before saving.
+          {(triggerNodeType === "cron_trigger" ||
+            triggerNodeType === undefined) && (
+            <div className="flex bg-foreground/5 rounded-md p-2 gap-2 text-xs text-foreground/50 relative overflow-hidden">
+              <Info className="size-20 mt-0.5 absolute -bottom-5 -right-5 opacity-15" />
+              <div className="flex flex-col">
+                You can execute the changes by clicking on the
+                <div className="flex items-center">
+                  <Button className="text-[10px] rounded-md gap-1.5 px-2 -ml-1 [&_svg:not([class*='size-'])]:size-3 scale-70">
+                    <Play />
+                  </Button>{" "}
+                  play button before saving.
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <DialogFooter>
             <DialogClose

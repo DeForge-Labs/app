@@ -3,6 +3,7 @@
 import { ArrowUpRight, Copy, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 export default function ChatbotEndpoint({ workflow }) {
   return (
@@ -24,12 +25,25 @@ export default function ChatbotEndpoint({ workflow }) {
           <Button
             variant="outline"
             className="flex-1 text-xs bg-background border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
+            onClick={() => {
+              navigator.clipboard.writeText(
+                `https://chat.deforge.io?workflowId=${workflow?.id}&status=test`
+              );
+
+              toast("Endpoint copied to clipboard");
+            }}
           >
             <Copy /> Copy
           </Button>
           <Button
             variant="outline"
             className="flex-1 text-xs bg-background border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
+            onClick={() => {
+              window.open(
+                `https://chat.deforge.io?workflowId=${workflow?.id}&status=test`,
+                "_blank"
+              );
+            }}
           >
             <ArrowUpRight /> Open
           </Button>

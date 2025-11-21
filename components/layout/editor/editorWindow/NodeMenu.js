@@ -20,7 +20,7 @@ import NodeLoader from "./NodeLoader";
 export default function NodeMenu() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true);
 
   const { nodeRegistry, isLoading: isNodeRegistryInitializing } =
     useNodeLibraryStore();
