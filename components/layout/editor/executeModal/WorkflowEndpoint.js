@@ -1,6 +1,7 @@
 import { Copy, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 export default function WorkflowEndpoint({ workflow }) {
   return (
@@ -21,6 +22,10 @@ export default function WorkflowEndpoint({ workflow }) {
         <Button
           variant="outline"
           className="flex-1 text-xs bg-background border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
+          onClick={() => {
+            toast("Workflow Id copied to clipboard");
+            navigator.clipboard.writeText(workflow?.id);
+          }}
         >
           <Copy /> Copy
         </Button>

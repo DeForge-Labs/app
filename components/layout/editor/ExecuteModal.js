@@ -59,7 +59,9 @@ export default function ExecuteModal() {
               )}
 
               {(triggerNodeType === "chatbot_trigger" ||
-                triggerNodeType === "widget_trigger") && <ChatbotActions />}
+                triggerNodeType === "widget_trigger") && (
+                <ChatbotActions triggerNodeType={triggerNodeType} />
+              )}
 
               {(triggerNodeType === "cron_trigger" ||
                 triggerNodeType === undefined) && <APIActions />}

@@ -2,7 +2,6 @@
 
 import { Toaster } from "sonner";
 import { Lexend_Deca } from "next/font/google";
-import { useTheme } from "next-themes";
 
 const lexendDeca = Lexend_Deca({
   subsets: ["latin"],
@@ -10,18 +9,19 @@ const lexendDeca = Lexend_Deca({
 });
 
 export default function ToasterProvider() {
-  const { resolvedTheme } = useTheme();
   return (
     <Toaster
-      position="bottom-center"
+      position="bottom-right"
       richColors
       toastOptions={{
-        className: `flex items-center justify-center text-center border border-black dark:border-background ${lexendDeca.className}`,
+        className: `flex items-center justify-center text-center border ${lexendDeca.className}`,
         style: {
-          color: resolvedTheme === "dark" ? "white" : "black",
-          backgroundColor:
-            resolvedTheme === "dark" ? "var(--dark)" : "var(--background)",
-          borderColor: resolvedTheme === "dark" ? "white" : "black",
+          backgroundColor: "var(--card)",
+          color: "var(--foreground)",
+          borderColor: "var(--muted-foreground)",
+          borderRadius: "6px",
+          fontSize: "12px",
+          padding: "15px",
         },
       }}
     />
