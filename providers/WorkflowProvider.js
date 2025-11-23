@@ -1,19 +1,15 @@
 "use client";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 import useInitialize from "@/hooks/useInitialize";
 import useSocket from "@/hooks/useSocket";
 import { useParams } from "next/navigation";
-import { useDispatch } from "react-redux";
-import { setCredits, setLogs, setPlan } from "@/redux/slice/WorkflowSlice";
 import useNodeLibraryStore from "@/store/useNodeLibraryStore";
+import useWorkflowStore from "@/store/useWorkspaceStore";
 
 export default function WorkflowProvider({ children }) {
-  const user = useSelector((state) => state.user.user);
-  const { loadWorkspaceById, loadLogs, loadStats } = useInitialize();
+  const { loadWorkspaceById, loadLogs } = useInitialize();
   const { fetchNodeRegistry, nodeRegistry } = useNodeLibraryStore();
-  const workflow = useSelector((state) => state.workflow.workflow);
-  const workspace = useSelector((state) => state.workflow.workspace);
+  const { workspace, setLogs } = useWorkflowStore();
   const {
     initializeWebSocket,
     subscribeToWorkflow,
@@ -21,7 +17,6 @@ export default function WorkflowProvider({ children }) {
     socket,
   } = useSocket();
   const params = useParams();
-  const dispatch = useDispatch();
 
   // Load node registry once on component mount
   useEffect(() => {
@@ -56,32 +51,26 @@ export default function WorkflowProvider({ children }) {
       loadLogs(workspace?.workflowId);
     }
 
-    if (workspace?.teamId) {
-      loadStats(workspace?.teamId);
-    }
-
     return () => {
-      dispatch(setLogs([]));
-      dispatch(setCredits(null));
-      dispatch(setPlan(null));
+      setLogs([]);
     };
-  }, [workspace?.workflowId, params?.id, workspace?.teamId]);
+  }, [workspace?.workflowId, params?.id]);
 
-  // Handle workflow subscription with proper cleanup
-  useEffect(() => {
-    if (workflow?.id && socket?.id) {
-      // Subscribe to the workflow
-      subscribeToWorkflow(workflow.id);
+  // // Handle workflow subscription with proper cleanup
+  // useEffect(() => {
+  //   if (workflow?.id && socket?.id) {
+  //     // Subscribe to the workflow
+  //     subscribeToWorkflow(workflow.id);
 
-      // Cleanup function to unsubscribe when component unmounts
-      // or when workflow/socket changes
-      return () => {
-        if (workflow.id) {
-          unsubscribeFromWorkflow(workflow.id);
-        }
-      };
-    }
-  }, [workflow?.id, socket?.id]);
+  //     // Cleanup function to unsubscribe when component unmounts
+  //     // or when workflow/socket changes
+  //     return () => {
+  //       if (workflow.id) {
+  //         unsubscribeFromWorkflow(workflow.id);
+  //       }
+  //     };
+  //   }
+  // }, [workflow?.id, socket?.id]);
 
   return <>{children}</>;
 }

@@ -65,6 +65,8 @@ export default function useInitialize() {
     setForm,
     setIsFormInitializing,
     setSessionId,
+    setIsLogInitializing,
+    setLogs,
   } = useWorkspaceStore();
 
   const { loadComponents } = useFormStore();
@@ -344,19 +346,16 @@ export default function useInitialize() {
 
   const loadLogs = async (workflowId) => {
     try {
-      dispatch(setIsLogInitializing(true));
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      };
+      setIsLogInitializing(true);
+
+      axios.defaults.withCredentials = true;
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/workflow/logs/${workflowId}`,
-        {},
-        { headers }
+        `${process.env.NEXT_PUBLIC_API_URL}/workflow/logs/${workflowId}`
       );
 
       if (response.data.success) {
-        dispatch(setLogs(response.data.logs));
+        setLogs(response.data.logs);
       } else {
         toast.error(response.data.message);
         if (response.data.status === 404 || response.data.status === 401) {
@@ -367,7 +366,7 @@ export default function useInitialize() {
       console.log(err);
       toast.error("Failed to load logs");
     } finally {
-      dispatch(setIsLogInitializing(false));
+      setIsLogInitializing(false);
     }
   };
 

@@ -10,6 +10,7 @@ import useWorkspaceStore from "@/store/useWorkspaceStore";
 import FormToolPanel from "./formWindow/FormToolPanel";
 import useFormStore from "@/store/useFormStore";
 import { cn } from "@/lib/utils";
+import LogWindow from "./LogWindow";
 
 export default function EditorWindow() {
   const {
@@ -38,6 +39,7 @@ export default function EditorWindow() {
             {!isFormInitializing && <FormToolPanel />}
           </div>
         )}
+        {mode === "logs" && <LogWindow />}
       </div>
 
       {showCustomizerPanel && !isWorkflowInitializing && (
