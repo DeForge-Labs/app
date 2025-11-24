@@ -9,7 +9,7 @@ import useWorkflowStore from "@/store/useWorkspaceStore";
 export default function WorkflowProvider({ children }) {
   const { loadWorkspaceById, loadLogs } = useInitialize();
   const { fetchNodeRegistry, nodeRegistry } = useNodeLibraryStore();
-  const { workspace, setLogs } = useWorkflowStore();
+  const { workspace, setLogs, workflow } = useWorkflowStore();
   const {
     initializeWebSocket,
     subscribeToWorkflow,
@@ -33,7 +33,7 @@ export default function WorkflowProvider({ children }) {
         if (!id) return;
 
         loadWorkspaceById(id);
-        // initializeWebSocket();
+        initializeWebSocket();
       } catch (error) {
         console.error("Error parsing params value:", error);
       }
@@ -56,21 +56,17 @@ export default function WorkflowProvider({ children }) {
     };
   }, [workspace?.workflowId, params?.id]);
 
-  // // Handle workflow subscription with proper cleanup
-  // useEffect(() => {
-  //   if (workflow?.id && socket?.id) {
-  //     // Subscribe to the workflow
-  //     subscribeToWorkflow(workflow.id);
+  useEffect(() => {
+    if (workflow?.id && socket?.id) {
+      subscribeToWorkflow(workflow.id);
 
-  //     // Cleanup function to unsubscribe when component unmounts
-  //     // or when workflow/socket changes
-  //     return () => {
-  //       if (workflow.id) {
-  //         unsubscribeFromWorkflow(workflow.id);
-  //       }
-  //     };
-  //   }
-  // }, [workflow?.id, socket?.id]);
+      return () => {
+        if (workflow.id) {
+          unsubscribeFromWorkflow(workflow.id);
+        }
+      };
+    }
+  }, [workflow?.id, socket?.id]);
 
   return <>{children}</>;
 }

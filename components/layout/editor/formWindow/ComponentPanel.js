@@ -18,6 +18,7 @@ import SocialField from "../editorWindow/nodes/customizer/SocialField";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
 import useNodeLibraryStore from "@/store/useNodeLibraryStore";
 import { Badge } from "@/components/ui/badge";
+import { useRef } from "react";
 
 import ComponentHolder from "./ComponentHolder";
 
@@ -28,31 +29,25 @@ export default function ComponentPanel({
   const { selectedNode, deleteEdge, updateNodeData, setSelectedNode } =
     useWorkspaceStore();
 
+  const componentPanelRef = useRef(null);
+  const [totalChildren, setTotalChildren] = useState(0);
   const { connections: edges } = useWorkspaceStore();
   const [connectedInputs, setConnectedInputs] = useState(new Map());
-  const [totalConnectedInputs, setTotalConnectedInputs] = useState([]);
   const { nodeRegistry } = useNodeLibraryStore();
   const { workflow, deleteNode, setShowCustomizerPanel } = useWorkspaceStore();
+
+  useEffect(() => {
+    if (!selectedNode || !componentPanelRef.current) return;
+    setTotalChildren(componentPanelRef.current.children.length);
+  }, [selectedNode]);
 
   useEffect(() => {
     if (!selectedNode) return;
 
     const connected = new Map();
-    const totalConnectedInputs = [];
     edges.forEach((edge) => {
       if (edge.target === selectedNode.id) {
         const inputName = edge.targetHandle?.split("-")[1];
-        const sourceName = edge.sourceHandle?.split("-")[2];
-
-        if (sourceName) {
-          totalConnectedInputs.push({
-            inputName,
-            sourceName,
-            sourceId: edge.source,
-            sourceHandle: edge.sourceHandle,
-            edgeId: edge.id,
-          });
-        }
 
         if (inputName) {
           connected.set(inputName, edge.id);
@@ -60,7 +55,6 @@ export default function ComponentPanel({
       }
     });
     setConnectedInputs(connected);
-    setTotalConnectedInputs(totalConnectedInputs);
   }, [edges, selectedNode]);
 
   if (!selectedNode) {
@@ -120,7 +114,13 @@ export default function ComponentPanel({
       <div className="flex flex-col overflow-hidden relative z-10 flex-1 min-h-0">
         <div className="overflow-y-auto custom-scrollbar flex-1 min-h-0">
           {nodeType.fields.length > 0 && (
-            <div className="flex flex-col gap-3 p-4">
+            <div className="flex flex-col gap-3 p-4" ref={componentPanelRef}>
+              {totalChildren === 0 && (
+                <p className="text-xs text-muted-foreground">
+                  No components available
+                </p>
+              )}
+
               {nodeType.fields.map((field, index) => {
                 const type = nodeType.inputs.find(
                   (i) => i.name === field.name

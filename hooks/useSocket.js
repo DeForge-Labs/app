@@ -2,16 +2,14 @@
 
 import { useState } from "react";
 import { io } from "socket.io-client";
-import { useDispatch } from "react-redux";
-import { addLog, addNewLog } from "@/redux/slice/WorkflowSlice";
+import useWorkflowStore from "@/store/useWorkspaceStore";
 
 export default function useSocket() {
   const [socket, setSocket] = useState(null);
-  const dispatch = useDispatch();
+  const { addLog, addNewLog } = useWorkflowStore();
 
   const initializeWebSocket = () => {
     if (socket) {
-      // If a socket already exists, disconnect it
       socket.disconnect();
 
       setSocket(null);
@@ -45,8 +43,8 @@ export default function useSocket() {
     });
 
     websocket.on("workflow_execution", (log) => {
-      dispatch(addLog(log));
-      dispatch(addNewLog(log));
+      addLog(log);
+      addNewLog(log);
     });
 
     websocket.on("disconnect", () => {

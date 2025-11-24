@@ -22,7 +22,7 @@ export default function EditorWindow() {
   const { formModal } = useFormStore();
 
   return (
-    <div className="flex flex-1 relative">
+    <div className="flex h-full relative">
       <div className="h-full p-2 overflow-y-auto hide-scroll absolute left-0 top-0">
         {mode === "workflow" && <NodeMenu />}
         {mode === "form" && <FormMenu />}
@@ -39,7 +39,15 @@ export default function EditorWindow() {
             {!isFormInitializing && <FormToolPanel />}
           </div>
         )}
-        {mode === "logs" && <LogWindow />}
+        {mode === "logs" && (
+          <>
+            <div className="h-full">
+              <LogWindow />
+            </div>
+
+            <ToolPanel />
+          </>
+        )}
       </div>
 
       {showCustomizerPanel && !isWorkflowInitializing && (

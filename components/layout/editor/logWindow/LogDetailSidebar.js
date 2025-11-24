@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   Sheet,
-  SheetDescription,
   SheetHeader,
   SheetPopup,
   SheetTitle,
@@ -37,7 +36,7 @@ export default function LogsDetailsSidebar({ log, onClose }) {
 
   return (
     <Sheet open={true} onOpenChange={onClose}>
-      <SheetPopup inset={false} className={"w-md max-w-md"}>
+      <SheetPopup inset={false} className={"w-xl max-w-xl"}>
         <SheetHeader className="border-b border-border px-6 py-4 flex flex-row items-center justify-between">
           <div>
             <SheetTitle className="text-sm text-foreground font-medium">
@@ -121,7 +120,7 @@ export default function LogsDetailsSidebar({ log, onClose }) {
           </button>
         </div>
 
-        <div className="flex-1 overflow-auto -mt-4">
+        <div className="flex-1 overflow-auto -mt-4 custom-scrollbar">
           {activeTab === "logs" && <LogsTimeline logs={log.logs} />}
           {activeTab === "result" && (
             <div className="p-6 py-4">

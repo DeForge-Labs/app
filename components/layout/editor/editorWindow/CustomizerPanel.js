@@ -173,7 +173,11 @@ export default function CustomizerPanel() {
 
       <div className="flex flex-col overflow-hidden relative z-10 flex-1 min-h-0">
         <div className="overflow-y-auto custom-scrollbar flex-1 min-h-0">
-          {nodeType.fields.length > 0 && (
+          {nodeType?.fields?.map((field) => {
+            if (field.type !== "social" || field.type !== "env") {
+              return field;
+            }
+          })?.length > 0 && (
             <div className="flex flex-col gap-3 p-4">
               {nodeType.fields.map((field, index) => {
                 const type = nodeType.inputs.find(

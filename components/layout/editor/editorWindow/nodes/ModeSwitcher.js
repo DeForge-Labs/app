@@ -1,9 +1,10 @@
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
 import { File, Terminal, Workflow } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export default function ModeSwitcher() {
-  const { mode, setMode } = useWorkspaceStore();
+  const { mode, setMode, newLogs } = useWorkspaceStore();
   return (
     <div>
       <Tabs value={mode}>
@@ -35,9 +36,15 @@ export default function ModeSwitcher() {
             onClick={() => {
               setMode("logs");
             }}
-            className="text-xs data-selected:text-background p-1"
+            className="text-xs data-selected:text-background p-1 relative"
           >
             <Terminal />
+            {newLogs?.length > 0 && (
+              <>
+                <div className="absolute w-2 h-2 bg-blue-500 rounded-full -top-1 -right-1"></div>
+                <div className="absolute w-2 h-2 bg-blue-500 rounded-full -top-1 -right-1 animate-ping opacity-50"></div>
+              </>
+            )}
           </TabsTab>
         </TabsList>
       </Tabs>

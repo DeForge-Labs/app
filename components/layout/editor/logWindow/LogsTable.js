@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   ChevronDown,
   ChevronRight,
-  Clock,
   SortAsc,
   SortDesc,
   Zap,
@@ -13,7 +12,12 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
-export default function LogsTable({ logs, selectedLogId, onSelectLog }) {
+export default function LogsTable({
+  logs,
+  newLogs = [],
+  selectedLogId,
+  onSelectLog,
+}) {
   const [sortBy, setSortBy] = useState("date");
 
   const calculateDuration = (startedAt, endedAt) => {
@@ -56,100 +60,105 @@ export default function LogsTable({ logs, selectedLogId, onSelectLog }) {
   });
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-auto">
-        <div className="w-full">
-          <div className="sticky top-0 grid grid-cols-[75px_100px_175px_125px_1fr_50px] gap-4 px-8 py-4 border-b border-foreground/15 text-xs text-muted-foreground">
-            <div>Type</div>
-            <div
-              className="flex items-center gap-1 cursor-pointer hover:text-foreground"
-              onClick={() => setSortBy("duration")}
-            >
-              Duration{" "}
-              {sortBy === "duration" ? (
-                <SortAsc className="size-3" />
-              ) : (
-                <ChevronDown className="size-3" />
-              )}
-            </div>
-            <div
-              className="flex items-center gap-1 cursor-pointer hover:text-foreground"
-              onClick={() => setSortBy("date")}
-            >
-              Started At{" "}
-              {sortBy === "date" ? (
-                <SortDesc className="size-3" />
-              ) : (
-                <ChevronDown className="size-3" />
-              )}
-            </div>
-            <div>Status</div>
-            <div>Log ID</div>
-            <div></div>
-          </div>
-
-          {sortedLogs.map((log) => (
-            <div
-              key={log.id}
-              onClick={() => onSelectLog(log.id)}
-              className={cn(
-                "grid grid-cols-[75px_100px_175px_125px_1fr_50px] gap-4 px-8 py-4 border-b border-foreground/15 cursor-pointer transition-colors hover:bg-card/50"
-              )}
-            >
-              <div className="flex items-center">
-                <Badge
-                  className={cn(
-                    getTypeColor(log.type),
-                    "capitalize p-0.5 px-1.5 text-[10px]"
-                  )}
-                >
-                  {log.type}
-                </Badge>
-              </div>
-
-              <div className="flex items-center text-xs">
-                <span className="flex items-center gap-1">
-                  <Zap className="size-3 text-amber-500" />
-                  {calculateDuration(log.startedAt, log.endedAt)}
-                </span>
-              </div>
-
-              <div className="flex items-center text-xs text-muted-foreground">
-                {formatDate(log.startedAt)}
-              </div>
-
-              <div className="flex items-center">
-                <Badge
-                  className={cn(
-                    getStatusColor(log.status),
-                    "capitalize p-0.5 px-1.5 text-[10px]"
-                  )}
-                >
-                  {log.status.charAt(0).toUpperCase() + log.status.slice(1)}
-                </Badge>
-              </div>
-
-              <div className="flex items-center text-sm font-mono text-muted-foreground truncate">
-                {log.id}
-              </div>
-
-              <div className="flex items-center justify-end">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onSelectLog(log.id);
-                  }}
-                  className="h-8 w-8 p-0"
-                >
-                  <ChevronRight className="size-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
+    <div className="h-full overflow-y-auto relative custom-scrollbar">
+      <div className="sticky top-0 grid grid-cols-[75px_100px_175px_125px_1fr_50px] gap-4 px-8 py-4 border-b border-foreground/15 text-xs text-muted-foreground bg-background z-10">
+        <div>Type</div>
+        <div
+          className="flex items-center gap-1 cursor-pointer hover:text-foreground"
+          onClick={() => setSortBy("duration")}
+        >
+          Duration{" "}
+          {sortBy === "duration" ? (
+            <SortAsc className="size-3" />
+          ) : (
+            <ChevronDown className="size-3" />
+          )}
         </div>
+        <div
+          className="flex items-center gap-1 cursor-pointer hover:text-foreground"
+          onClick={() => setSortBy("date")}
+        >
+          Started At{" "}
+          {sortBy === "date" ? (
+            <SortDesc className="size-3" />
+          ) : (
+            <ChevronDown className="size-3" />
+          )}
+        </div>
+        <div>Status</div>
+        <div>Log ID</div>
+        <div></div>
       </div>
+
+      {sortedLogs.map((log) => {
+        const isNew = newLogs?.some((n) => n.id === log.id);
+
+        return (
+          <div
+            key={log.id}
+            onClick={() => onSelectLog(log.id)}
+            className={cn(
+              "grid grid-cols-[75px_100px_175px_125px_1fr_50px] gap-4 px-8 py-4 border-b border-foreground/15 cursor-pointer transition-all duration-200",
+              "hover:bg-card/50",
+              isNew && "bg-blue-500/5 border-l-2 border-l-blue-500"
+            )}
+          >
+            <div className="flex items-center">
+              <Badge
+                className={cn(
+                  getTypeColor(log.type),
+                  "capitalize p-0.5 px-1.5 text-[10px]"
+                )}
+              >
+                {log.type}
+              </Badge>
+              {isNew && (
+                <div className="ml-2 w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+              )}
+            </div>
+
+            <div className="flex items-center text-xs">
+              <span className="flex items-center gap-1">
+                <Zap className="size-3 text-amber-500" />
+                {calculateDuration(log.startedAt, log.endedAt)}
+              </span>
+            </div>
+
+            <div className="flex items-center text-xs text-muted-foreground">
+              {formatDate(log.startedAt)}
+            </div>
+
+            <div className="flex items-center">
+              <Badge
+                className={cn(
+                  getStatusColor(log.status),
+                  "capitalize p-0.5 px-1.5 text-[10px]"
+                )}
+              >
+                {log.status.charAt(0).toUpperCase() + log.status.slice(1)}
+              </Badge>
+            </div>
+
+            <div className="flex items-center text-sm font-mono text-muted-foreground truncate">
+              {log.id}
+            </div>
+
+            <div className="flex items-center justify-end">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelectLog(log.id);
+                }}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronRight className="size-4" />
+              </Button>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
