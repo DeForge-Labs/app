@@ -30,7 +30,7 @@ import {
   setPlan,
 } from "@/redux/slice/WorkflowSlice";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import useEnv from "./useEnv";
@@ -54,6 +54,7 @@ export default function useInitialize() {
   const { getEnv } = useEnv();
   const { getSocial } = useSocial();
   const { getTeams, createTeam } = useTeams();
+  const pathname = usePathname();
   const {
     setWorkspace,
     setWorkflow,
@@ -432,6 +433,16 @@ export default function useInitialize() {
       );
 
       if (response.data.success) {
+        if (response.data.workspace.workflow.status === "LIVE") {
+          if (pathname === `/editor/${response.data.workspace.id}`) {
+            router.push(`/viewer/${response.data.workspace.id}`);
+          }
+        } else {
+          if (pathname === `/viewer/${response.data.workspace.id}`) {
+            router.push(`/editor/${response.data.workspace.id}`);
+          }
+        }
+
         setWorkspace(response.data.workspace);
         setWorkflow({
           workflow: response.data.workspace.workflow,

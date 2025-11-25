@@ -2,7 +2,6 @@
 
 import {
   ChevronLeft,
-  Code,
   MessageCircle,
   PanelLeftIcon,
   PanelRightIcon,
@@ -20,6 +19,7 @@ import useFormStore from "@/store/useFormStore";
 import UndoButton from "./editorNavbar/UndoButton";
 import useChatStore from "@/store/useChatStore";
 import { cn } from "@/lib/utils";
+import DeployDialog from "./editorNavbar/DeployDialog";
 
 export default function EditorNavbar() {
   const {
@@ -106,11 +106,7 @@ export default function EditorNavbar() {
               Chat
             </Button>
           )}
-
-          <Button className="text-xs gap-1.5 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3 bg-foreground/90">
-            <Rocket />
-            Deploy
-          </Button>
+          <DeployDialog />
         </div>
       </div>
     </header>
