@@ -81,10 +81,6 @@ export function GenericNode({ id, type, data }) {
 
   const handleChange = useCallback(
     (name, value) => {
-      if (workflow?.status === "LIVE") {
-        return;
-      }
-
       updateNodeData({
         nodeId: id,
         newData: { ...data, [name]: value },
@@ -394,8 +390,8 @@ export function GenericNode({ id, type, data }) {
   return (
     <Card className={`w-56 relative py-0`}>
       {workflow?.status === "LIVE" && (
-        <div className="absolute -top-2 -right-3 bg-foreground h-6 w-6 rounded-full flex items-center justify-center text-background">
-          <Lock className="h-3 w-3" />
+        <div className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-sm flex items-center justify-center bg-card z-10 border border-foreground/20">
+          <Lock className="size-2" />
         </div>
       )}
 

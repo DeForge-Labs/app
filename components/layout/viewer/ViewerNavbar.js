@@ -6,30 +6,28 @@ import {
   PanelLeftIcon,
   PanelRightIcon,
   Play,
-  Rocket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import OptionsMenu from "./editorNavbar/OptionsMenu";
-import WorkflowCard from "./editorNavbar/WorkflowCard";
+import WorkflowCard from "../editor/editorNavbar/WorkflowCard";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
 import { Skeleton } from "@/components/ui/skeleton";
-import ModeSwitcher from "./editorWindow/nodes/ModeSwitcher";
 import useFormStore from "@/store/useFormStore";
-import UndoButton from "./editorNavbar/UndoButton";
-import useChatStore from "@/store/useChatStore";
+import UndoButton from "../editor/editorNavbar/UndoButton";
 import { cn } from "@/lib/utils";
-import DeployDialog from "./editorNavbar/DeployDialog";
+import ModeSwitcher from "../editor/editorWindow/nodes/ModeSwitcher";
+import { toast } from "sonner";
+import ViewerOptionsMenu from "./ViewerOptionsMenu";
 
-export default function EditorNavbar() {
+export default function ViewerNavbar() {
   const {
     isWorkspaceInitializing,
     hasUnsavedChanges,
-    sidePanel,
     setSidePanel,
+    executeModalOpen,
+    setExecuteModalOpen,
   } = useWorkspaceStore();
   const { hasUnsavedChanges: hasUnsavedChangesForm } = useFormStore();
-  const { chatModalOpen, setChatModalOpen } = useChatStore();
 
   return (
     <header className="sticky top-0 z-50 bg-foreground/5 relative">
@@ -37,7 +35,7 @@ export default function EditorNavbar() {
         <div
           className={cn(
             "flex items-center justify-start gap-1 h-full max-w-[485px] w-full",
-            chatModalOpen ? "justify-between" : "",
+            executeModalOpen ? "justify-between" : "",
             (hasUnsavedChanges || hasUnsavedChangesForm) && "max-w-[523px]"
           )}
         >
@@ -65,48 +63,39 @@ export default function EditorNavbar() {
               size="icon"
               variant="ghost"
               className="text-xs [&_svg:not([class*='size-'])]:size-3 [&_svg:not([class*='size-'])]:opacity-50 border border-foreground/20 bg-card/30 rounded-sm h-[28px] w-7 mr-1"
-              onClick={() => setChatModalOpen(!chatModalOpen)}
+              onClick={() => setExecuteModalOpen(!executeModalOpen)}
             >
-              {chatModalOpen ? <PanelLeftIcon /> : <PanelRightIcon />}
+              {executeModalOpen ? <PanelLeftIcon /> : <PanelRightIcon />}
             </Button>
 
-            <ModeSwitcher />
+            {isWorkspaceInitializing ? (
+              <Skeleton className="w-[86px] h-[30px] rounded-sm" />
+            ) : (
+              <ModeSwitcher />
+            )}
 
             {(hasUnsavedChanges || hasUnsavedChangesForm) && <UndoButton />}
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <OptionsMenu />
+          <ViewerOptionsMenu />
 
-          {sidePanel === "chat" && (
-            <Button
-              variant="outline"
-              className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
-              onClick={() => {
-                setChatModalOpen(true);
-                setSidePanel("execute");
-              }}
-            >
-              <Play />
-              Execute
-            </Button>
-          )}
+          <Button
+            className="text-xs gap-1.5 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3 bg-foreground/90"
+            onClick={() => {
+              if (executeModalOpen) {
+                toast.info("Use the execute panel to execute the workflow");
+                return;
+              }
 
-          {sidePanel === "execute" && (
-            <Button
-              variant="outline"
-              className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
-              onClick={() => {
-                setChatModalOpen(true);
-                setSidePanel("chat");
-              }}
-            >
-              <MessageCircle />
-              Chat
-            </Button>
-          )}
-          <DeployDialog />
+              setExecuteModalOpen(true);
+              setSidePanel("execute");
+            }}
+          >
+            <Play />
+            Execute
+          </Button>
         </div>
       </div>
     </header>

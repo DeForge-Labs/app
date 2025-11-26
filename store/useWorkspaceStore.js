@@ -170,6 +170,7 @@ const initialState = {
   isRunning: false,
   executionType: "raw",
   sessionId: null,
+  executeModalOpen: false,
 };
 
 const useWorkflowStore = create((set, get) => ({
@@ -509,6 +510,8 @@ const useWorkflowStore = create((set, get) => ({
     }),
 
   setSidePanel: (sidePanel) => set({ sidePanel }),
+
+  setExecuteModalOpen: (executeModalOpen) => set({ executeModalOpen }),
 }));
 
 export default useWorkflowStore;

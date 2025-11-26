@@ -68,6 +68,7 @@ export default function useInitialize() {
     setSessionId,
     setIsLogInitializing,
     setLogs,
+    setMode,
   } = useWorkspaceStore();
 
   const { loadComponents } = useFormStore();
@@ -437,6 +438,8 @@ export default function useInitialize() {
           if (pathname === `/editor/${response.data.workspace.id}`) {
             router.push(`/viewer/${response.data.workspace.id}`);
           }
+
+          setMode(response.data?.workspace?.type?.toLowerCase());
         } else {
           if (pathname === `/viewer/${response.data.workspace.id}`) {
             router.push(`/editor/${response.data.workspace.id}`);
