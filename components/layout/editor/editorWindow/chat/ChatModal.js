@@ -390,7 +390,7 @@ const ChatModal = ({ sessionId = null }) => {
       <div className="flex-1 overflow-hidden relative">
         <div
           ref={scrollRef}
-          className="h-full overflow-y-auto px-2 py-4 space-y-4"
+          className="h-full overflow-y-auto custom-scrollbar px-2 py-4 space-y-4"
         >
           {messages.map((m) => (
             <ChatMessage

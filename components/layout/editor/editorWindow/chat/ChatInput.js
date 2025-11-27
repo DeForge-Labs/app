@@ -40,8 +40,8 @@ export default function ChatInput({ onSend, disabled }) {
         onKeyDown={handleKeyDown}
         placeholder="Ask me anything..."
         onChange={(e) => setInput(e.target.value)}
-        style={{ resize: "none", fontSize: "16px" }}
-        className="w-full border border-foreground/30 rounded-lg h-20 p-2 px-1 text-xs placeholder:text-xs"
+        style={{ resize: "none", fontSize: "12px" }}
+        className="w-full border border-foreground/30 rounded-lg p-2 px-1 text-xs placeholder:text-xs"
       />
 
       <Button
