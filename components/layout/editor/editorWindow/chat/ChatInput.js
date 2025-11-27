@@ -1,26 +1,27 @@
 "use client";
 
+import { ArrowUp } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+
 import { Button } from "@/components/ui/button";
-import { Send } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function ChatInput({ onSend, disabled }) {
-  const [input, setInput] = useState("");
   const textareaRef = useRef(null);
+  const [input, setInput] = useState("");
 
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      const scrollHeight = Math.min(textareaRef.current.scrollHeight, 100);
+      const scrollHeight = Math.min(textareaRef.current.scrollHeight, 140);
       textareaRef.current.style.height = `${scrollHeight}px`;
     }
   }, [input]);
 
   const handleSend = () => {
-    if (input.trim() && !disabled) {
-      onSend(input.trim());
-      setInput("");
-    }
+    if (!input.trim() || disabled) return;
+    onSend(input.trim());
+    setInput("");
   };
 
   const handleKeyDown = (e) => {
@@ -31,25 +32,25 @@ export default function ChatInput({ onSend, disabled }) {
   };
 
   return (
-    <div className="flex gap-2">
-      <textarea
-        ref={textareaRef}
+    <div className="flex gap-2 relative">
+      <Textarea
         value={input}
-        onChange={(e) => setInput(e.target.value)}
+        ref={textareaRef}
+        disabled={disabled}
         onKeyDown={handleKeyDown}
         placeholder="Ask me anything..."
-        disabled={disabled}
-        className="flex-1 px-3 py-2 text-sm rounded-lg border border-border/50 bg-background text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed max-h-[100px] scrollbar-hide overflow-y-scroll [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden break-words word-break"
-        rows={1}
+        onChange={(e) => setInput(e.target.value)}
+        style={{ resize: "none", fontSize: "16px" }}
+        className="w-full border border-foreground/30 rounded-lg h-20 p-2 px-1 text-xs placeholder:text-xs"
       />
+
       <Button
         onClick={handleSend}
-        disabled={disabled || !input.trim()}
-        size="sm"
-        className="mt-1 flex-shrink-0"
-        title="Send message (Enter to send, Shift+Enter for new line)"
+        disabled={disabled}
+        className="absolute bottom-2 right-2 rounded-sm p-1 min-h-0"
+        title="Send"
       >
-        <Send className="w-4 h-4" />
+        <ArrowUp className="h-3.5 w-3.5" />
       </Button>
     </div>
   );
