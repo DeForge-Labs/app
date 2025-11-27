@@ -58,10 +58,6 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
     }
 
     const handleChange = (key, value) => {
-      if (workflow?.status === "LIVE") {
-        return;
-      }
-
       updateNodeData({
         nodeId: node.id,
         newData: { ...node.data, [key]: value },

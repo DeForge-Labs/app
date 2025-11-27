@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 
 export default function useDeployWorkflow() {
   const [isDeploying, setIsDeploying] = useState(false);
-  const { workflow } = useWorkflowStore();
+  const { workflow, workspace } = useWorkflowStore();
   const router = useRouter();
 
   const handleDeployWorkflow = async (view, setIsOpen) => {
@@ -26,7 +26,7 @@ export default function useDeployWorkflow() {
         throw new Error(response.data.message);
       }
 
-      router.push(`/viewer/${workflow?.id}`);
+      router.push(`/viewer/${workspace?.id}`);
 
       setIsOpen(false);
 

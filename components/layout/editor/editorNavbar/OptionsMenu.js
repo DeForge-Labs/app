@@ -15,12 +15,15 @@ import ThemeRadioButtons from "../../dashboard/navbar/ThemeRadioButtons";
 import { useState } from "react";
 import ExportDialog from "./ExportDialog";
 import ImportDialog from "./ImportDialog";
+import PublishDialog from "./PublishDialog";
 
 export default function OptionsMenu() {
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
+  const [isPublishOpen, setIsPublishOpen] = useState(false);
   return (
     <>
+      <PublishDialog isOpen={isPublishOpen} setIsOpen={setIsPublishOpen} />
       <ExportDialog open={isExportOpen} setIsOpen={setIsExportOpen} />
       <ImportDialog open={isImportOpen} setIsOpen={setIsImportOpen} />
       <Menu>
@@ -42,7 +45,12 @@ export default function OptionsMenu() {
           <MenuGroup>
             <MenuGroupLabel>App Actions</MenuGroupLabel>
 
-            <MenuItem className="cursor-pointer">Publish</MenuItem>
+            <MenuItem
+              className="cursor-pointer"
+              onClick={() => setIsPublishOpen(true)}
+            >
+              Publish
+            </MenuItem>
 
             <MenuItem
               className="cursor-pointer"

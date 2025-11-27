@@ -59,15 +59,6 @@ export default function ViewerNavbar() {
           </div>
 
           <div className="flex items-center gap-1 h-full">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="text-xs [&_svg:not([class*='size-'])]:size-3 [&_svg:not([class*='size-'])]:opacity-50 border border-foreground/20 bg-card/30 rounded-sm h-[28px] w-7 mr-1"
-              onClick={() => setExecuteModalOpen(!executeModalOpen)}
-            >
-              {executeModalOpen ? <PanelLeftIcon /> : <PanelRightIcon />}
-            </Button>
-
             {isWorkspaceInitializing ? (
               <Skeleton className="w-[86px] h-[30px] rounded-sm" />
             ) : (

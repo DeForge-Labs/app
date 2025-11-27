@@ -12,9 +12,18 @@ import ChatbotActions from "./executeModal/ChatbotActions";
 import WorkflowEndpoint from "./executeModal/WorkflowEndpoint";
 import ChatWindow from "./executeModal/ChatWindow";
 import NodeLoader from "./editorWindow/NodeLoader";
+import { Button } from "@/components/ui/button";
+import { PanelLeftIcon } from "lucide-react";
+import useChatStore from "@/store/useChatStore";
 
 export default function ExecuteModal() {
-  const { workflow, isWorkspaceInitializing } = useWorkflowStore();
+  const {
+    workflow,
+    isWorkspaceInitializing,
+    executeModalOpen,
+    setExecuteModalOpen,
+  } = useWorkflowStore();
+  const { chatModalOpen, setChatModalOpen } = useChatStore();
   const { nodes } = useWorkflowStore();
 
   const triggerNode = nodes?.find((node) => node?.data?.category === "trigger");
@@ -24,14 +33,28 @@ export default function ExecuteModal() {
   return (
     <div className="w-[400px] flex flex-col pr-2">
       <div className="flex flex-1 flex-col border border-foreground/15 bg-background rounded-md h-full">
-        <div className="flex gap-2 text-sm border-b border-foreground/15 p-4 relative z-20 shrink-0">
-          <Play className="size-4 mt-1" />
-          <div className="flex flex-col">
-            <p>Execute</p>
-            <p className="text-xs text-muted-foreground">
-              Try your workflow and test the endpoints
-            </p>
+        <div className="flex gap-2 text-sm border-b border-foreground/15 p-4 relative z-20 shrink-0 justify-between items-center">
+          <div className="flex gap-2">
+            <Play className="size-4 mt-1" />
+            <div className="flex flex-col">
+              <p>Execute</p>
+              <p className="text-xs text-muted-foreground">
+                Try your workflow and test the endpoints
+              </p>
+            </div>
           </div>
+
+          <Button
+            size="icon"
+            variant="ghost"
+            className="text-xs [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='size-'])]:opacity-50 border border-foreground/20 bg-card/30 rounded-sm h-[28px] w-7 mr-1"
+            onClick={() => {
+              setExecuteModalOpen(false);
+              setChatModalOpen(false);
+            }}
+          >
+            <PanelLeftIcon />
+          </Button>
         </div>
 
         <div className="flex flex-col overflow-hidden relative z-20 flex-1 min-h-0 rounded-md">

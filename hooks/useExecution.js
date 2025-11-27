@@ -1,6 +1,5 @@
 "use client";
 
-import { setIsRunning, setType } from "@/redux/slice/runSlice";
 import axios from "axios";
 import { toast } from "sonner";
 import useWorkflowStore from "@/store/useWorkspaceStore";
@@ -14,10 +13,12 @@ export default function useExecution() {
       setIsRunning(true);
       setExecutionType("raw");
 
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/workflow/run/${workflow?.id}`,
-        { nodes, edges: connections }
-      );
+      const url =
+        workflow?.status === "LIVE"
+          ? `${process.env.NEXT_PUBLIC_API_URL}/workflow/live/run/${workflow?.id}`
+          : `${process.env.NEXT_PUBLIC_API_URL}/workflow/run/${workflow?.id}`;
+
+      const response = await axios.post(url, { nodes, edges: connections });
 
       if (!response.data.success) {
         toast.error(response.data.message);
@@ -37,9 +38,14 @@ export default function useExecution() {
       setIsRunning(true);
       setExecutionType("test");
 
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`
-      );
+      const url =
+        workflow?.status === "LIVE"
+          ? `${process.env.NEXT_PUBLIC_API_URL.slice(0, -4)}/live/${
+              workflow?.id
+            }`
+          : `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`;
+
+      const response = await axios.get(url);
 
       if (!response.data.success) {
         toast.error(response.data.message);

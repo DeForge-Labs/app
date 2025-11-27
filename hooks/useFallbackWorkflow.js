@@ -1,37 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import useInitialize from "./useInitialize";
 import { toast } from "sonner";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import useWorkflowStore from "@/store/useWorkspaceStore";
+import { useRouter } from "next/navigation";
 
 export default function useFallbackWorkflow() {
-  const [isOpen, setIsOpen] = useState(false);
+  const { workflow, workspace } = useWorkflowStore();
   const [isFallbacking, setIsFallbacking] = useState(false);
-  const { loadWorkflowById } = useInitialize();
-  const workflow = useSelector((state) => state.workflow.workflow);
+  const router = useRouter();
 
-  const handleFallbackWorkflow = async () => {
+  const handleFallbackWorkflow = async (setIsOpen) => {
     try {
       setIsFallbacking(true);
 
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      };
+      axios.defaults.withCredentials = true;
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/workflow/fallback/${workflow?.id}`,
-        {},
-        { headers }
+        {}
       );
 
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
 
-      loadWorkflowById(workflow?.id);
       setIsOpen(false);
+      router.push(`/editor/${workspace?.id}`);
 
       toast.success("Workflow rolled back successfully");
       return response.data;
@@ -44,8 +40,6 @@ export default function useFallbackWorkflow() {
   };
 
   return {
-    isOpen,
-    setIsOpen,
     isFallbacking,
     setIsFallbacking,
     handleFallbackWorkflow,

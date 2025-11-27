@@ -467,10 +467,9 @@ export default function useInitialize() {
 
         await getSocial(response.data.workspace.workflow.id);
       } else {
-        toast.error(response.data.message);
-        if (response.data.status === 404 || response.data.status === 401) {
-          router.push("/");
-        }
+        toast.error("Failed to load workspace");
+
+        router.push("/");
       }
     } catch (err) {
       console.log(err);

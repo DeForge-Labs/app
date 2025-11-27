@@ -107,7 +107,14 @@ export default async function AppList({ teamId, page, query }) {
             className="flex flex-col relative gap-2 border w-full border-foreground/15 rounded-sm p-4 bg-foreground/2 hover:shadow-sm transition-shadow shadow-foreground/10 max-w-[1360px]"
             key={index}
           >
-            <Link className="absolute inset-0" href={`/editor/${app?.id}`} />
+            <Link
+              className="absolute inset-0"
+              href={
+                app?.workflow?.status === "LIVE"
+                  ? `/viewer/${app.id}`
+                  : `/editor/${app.id}`
+              }
+            />
 
             <div className="flex justify-between items-center">
               <div className="flex flex-col gap-0.5">

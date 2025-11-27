@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import useInitialize from "./useInitialize";
 import axios from "axios";
 import { toast } from "sonner";
 import useWorkflowStore from "@/store/useWorkspaceStore";
@@ -10,16 +9,21 @@ import useFormStore from "@/store/useFormStore";
 export default function useSaveWorkflow() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSavingWorkflow, setIsSavingWorkflow] = useState(false);
-  const { loadWorkflowById, loadFormById } = useInitialize();
+
   const {
     nodes,
     connections,
     hasUnsavedChanges: hasUnsavedChanges,
     form,
+    setForm,
     workflow,
+    setWorkflow,
   } = useWorkflowStore();
-  const { hasUnsavedChanges: hasUnsavedChangesForm, components } =
-    useFormStore();
+  const {
+    hasUnsavedChanges: hasUnsavedChangesForm,
+    components,
+    loadComponents,
+  } = useFormStore();
 
   const handleSaveWorkflow = async () => {
     try {
@@ -33,16 +37,25 @@ export default function useSaveWorkflow() {
       axios.defaults.withCredentials = true;
 
       if (hasUnsavedChanges) {
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/workflow/save/${workflow?.id}`,
-          { nodes, edges: connections }
-        );
+        const url =
+          workflow?.status === "LIVE"
+            ? `${process.env.NEXT_PUBLIC_API_URL}/workflow/live/save/${workflow?.id}`
+            : `${process.env.NEXT_PUBLIC_API_URL}/workflow/save/${workflow?.id}`;
+
+        const response = await axios.post(url, {
+          nodes,
+          edges: workflow.status === "LIVE" ? null : connections,
+        });
 
         if (!response.data.success) {
           throw new Error(response.data.message);
         }
 
-        await loadWorkflowById(workflow?.id);
+        setWorkflow({
+          workflow: response.data.workflow,
+          nodes: response.data.workflow.nodes,
+          connections: response.data.workflow.edges,
+        });
         setIsOpen(false);
 
         toast.success(response.data.message);
@@ -63,7 +76,9 @@ export default function useSaveWorkflow() {
           throw new Error(response.data.message);
         }
 
-        await loadFormById(form?.id);
+        setForm(response.data.form);
+
+        loadComponents(response.data.form.formLayout?.components || []);
         setIsOpen(false);
 
         toast.success(response.data.message);

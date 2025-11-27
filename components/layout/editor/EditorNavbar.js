@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  ChevronLeft,
-  MessageCircle,
-  PanelLeftIcon,
-  PanelRightIcon,
-  Play,
-  Rocket,
-} from "lucide-react";
+import { ChevronLeft, MessageCircle, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import OptionsMenu from "./editorNavbar/OptionsMenu";
@@ -61,15 +54,6 @@ export default function EditorNavbar() {
           </div>
 
           <div className="flex items-center gap-1 h-full">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="text-xs [&_svg:not([class*='size-'])]:size-3 [&_svg:not([class*='size-'])]:opacity-50 border border-foreground/20 bg-card/30 rounded-sm h-[28px] w-7 mr-1"
-              onClick={() => setChatModalOpen(!chatModalOpen)}
-            >
-              {chatModalOpen ? <PanelLeftIcon /> : <PanelRightIcon />}
-            </Button>
-
             <ModeSwitcher />
 
             {(hasUnsavedChanges || hasUnsavedChangesForm) && <UndoButton />}

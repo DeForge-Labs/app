@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 export default function Endpoint({ workflow }) {
+  const rawUrl = process.env.NEXT_PUBLIC_API_URL.slice(0, -4);
   return (
     <div className="space-y-2 p-4 pb-0">
       <p className="text-[10px] text-foreground/50 flex items-center gap-1">
@@ -14,7 +15,11 @@ export default function Endpoint({ workflow }) {
 
       <Input
         variant="outline"
-        value={`${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`}
+        value={
+          workflow.status === "LIVE"
+            ? `${rawUrl}/live/${workflow?.id}`
+            : `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`
+        }
         readOnly
         className="py-1 rounded-sm border-foreground/15 bg-card dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
         style={{ fontSize: "12px" }}
@@ -26,7 +31,11 @@ export default function Endpoint({ workflow }) {
           className="flex-1 text-xs bg-background border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
           onClick={() => {
             navigator.clipboard.writeText(
-              `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`
+              `${
+                workflow.status === "LIVE"
+                  ? `${rawUrl}/live/${workflow?.id}`
+                  : `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`
+              }`
             );
 
             toast("Endpoint copied to clipboard");
@@ -39,7 +48,11 @@ export default function Endpoint({ workflow }) {
           className="flex-1 text-xs bg-background border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
           onClick={() => {
             window.open(
-              `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`,
+              `${
+                workflow.status === "LIVE"
+                  ? `${rawUrl}/live/${workflow?.id}`
+                  : `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`
+              }`,
               "_blank"
             );
           }}

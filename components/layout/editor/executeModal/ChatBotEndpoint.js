@@ -15,7 +15,11 @@ export default function ChatbotEndpoint({ workflow }) {
 
         <Input
           variant="outline"
-          value={`https://chat.deforge.io?workflowId=${workflow?.id}&status=test`}
+          value={
+            workflow.status === "LIVE"
+              ? `https://chat.deforge.io?workflowId=${workflow?.id}`
+              : `https://chat.deforge.io?workflowId=${workflow?.id}&status=test`
+          }
           readOnly
           className="py-1 rounded-sm border-foreground/15 bg-card dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
           style={{ fontSize: "12px" }}
@@ -27,7 +31,11 @@ export default function ChatbotEndpoint({ workflow }) {
             className="flex-1 text-xs bg-background border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
             onClick={() => {
               navigator.clipboard.writeText(
-                `https://chat.deforge.io?workflowId=${workflow?.id}&status=test`
+                `${
+                  workflow.status === "LIVE"
+                    ? `https://chat.deforge.io?workflowId=${workflow?.id}`
+                    : `https://chat.deforge.io?workflowId=${workflow?.id}&status=test`
+                }`
               );
 
               toast("Endpoint copied to clipboard");
@@ -40,7 +48,11 @@ export default function ChatbotEndpoint({ workflow }) {
             className="flex-1 text-xs bg-background border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
             onClick={() => {
               window.open(
-                `https://chat.deforge.io?workflowId=${workflow?.id}&status=test`,
+                `${
+                  workflow.status === "LIVE"
+                    ? `https://chat.deforge.io?workflowId=${workflow?.id}`
+                    : `https://chat.deforge.io?workflowId=${workflow?.id}&status=test`
+                }`,
                 "_blank"
               );
             }}

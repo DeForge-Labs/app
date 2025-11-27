@@ -105,11 +105,11 @@ export default function NodeMenu() {
             exit={{ scale: 0 }}
             transition={{ duration: 0.15 }}
             onClick={() => setIsMinimized(false)}
-            className="w-12 h-12 rounded-lg relative z-20 bg-background hover:bg-foreground/5 border border-foreground/15 flex items-center justify-center cursor-pointer transition-colors shadow-lg"
+            className="w-12 h-12 rounded-lg relative z-20 bg-foreground text-background flex items-center justify-center cursor-pointer transition-colors shadow-lg"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Plus className="size-5" />
+            <Plus className="size-6" />
           </motion.button>
         ) : (
           // Full Node Library

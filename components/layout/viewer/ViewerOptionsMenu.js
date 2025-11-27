@@ -13,11 +13,13 @@ import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import ThemeRadioButtons from "../dashboard/navbar/ThemeRadioButtons";
 import { useState } from "react";
+import RevertDialog from "./RevertDialog";
 
 export default function ViewerOptionsMenu() {
   const [revertDialogOpen, setRevertDialogOpen] = useState(false);
   return (
     <>
+      <RevertDialog open={revertDialogOpen} setIsOpen={setRevertDialogOpen} />
       <Menu>
         <MenuTrigger
           render={
@@ -38,7 +40,7 @@ export default function ViewerOptionsMenu() {
             <MenuGroupLabel>App Actions</MenuGroupLabel>
 
             <MenuItem
-              className="cursor-pointer"
+              className="cursor-pointer text-red-500"
               onClick={() => setRevertDialogOpen(true)}
             >
               Revert Deployment
