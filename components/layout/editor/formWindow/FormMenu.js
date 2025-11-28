@@ -12,9 +12,11 @@ import {
   Plus,
   Play,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import useFormStore from "@/store/useFormStore";
+import { useState } from "react";
+import { Separator } from "@/components/ui/separator";
 
 const componentTypes = [
   {
@@ -78,6 +80,9 @@ export default function FormMenu() {
   const { formModal: isMinimized, setFormModal: setIsMinimized } =
     useFormStore();
   const { addComponent } = useFormStore();
+
+  const [hoveredType, setHoveredType] = useState(null);
+
   const add = (componentType) => {
     addComponent({
       type: componentType.type,
@@ -91,7 +96,6 @@ export default function FormMenu() {
     <>
       <AnimatePresence mode="wait">
         {isMinimized ? (
-          // Minimized Plus Button
           <motion.button
             key="minimized"
             initial={{ scale: 0 }}
@@ -106,92 +110,95 @@ export default function FormMenu() {
             <Plus className="size-6" />
           </motion.button>
         ) : (
-          // Full Form Components Menu
           <motion.div
             key="expanded"
             layout
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: "auto", opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
             transition={{
-              scale: { duration: 0.2 },
-              opacity: { duration: 0.2 },
-              layout: { duration: 0.3, ease: "easeInOut" },
+              duration: 0.2,
+              ease: "easeInOut",
             }}
-            className="flex flex-col w-80 relative z-20 bg-card border border-foreground/15 rounded-lg overflow-hidden max-h-full"
+            className="flex flex-col relative z-20 bg-card border border-foreground/15 rounded-lg h-fit max-h-[90vh]"
           >
-            {/* Header */}
-            <motion.div
-              layout="position"
-              className="flex gap-2 text-sm border-b border-foreground/15 p-4 relative z-20 shrink-0"
-            >
-              {setIsMinimized && (
-                <div
-                  className="absolute right-2 top-2 z-20 p-1 hover:bg-foreground/5 rounded-sm cursor-pointer"
-                  onClick={() => setIsMinimized(true)}
-                >
-                  <X className="size-3" />
-                </div>
-              )}
-              <SquareMousePointer className="size-4 mt-1" />
-              <div className="flex flex-col">
-                <p>Form Components</p>
-                <p className="text-xs text-muted-foreground max-w-[200px]">
-                  Click on the component to add it to the form
-                </p>
-              </div>
-            </motion.div>
+            <div className="flex flex-col items-center py-2 px-2 gap-2">
+              <motion.button
+                whileHover={{
+                  scale: 1.1,
+                  backgroundColor: "rgba(var(--foreground), 0.1)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsMinimized(true)}
+                className="w-10 h-10 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors rounded-md"
+              >
+                <X className="size-5" />
+              </motion.button>
 
-            {/* Content Area */}
-            <motion.div
-              layout="position"
-              className="overflow-y-auto p-4 custom-scrollbar flex-1 min-h-0"
-            >
-              <div className="space-y-2">
+              <Separator />
+
+              <div className="flex flex-col gap-2 overflow-visible">
                 {componentTypes.map((component, index) => {
                   const IconComponent = component.icon;
                   return (
                     <motion.div
                       key={component.type}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{
-                        duration: 0.12,
-                        delay: index * 0.02,
-                      }}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="relative flex items-center"
+                      onMouseEnter={() => setHoveredType(component.type)}
+                      onMouseLeave={() => setHoveredType(null)}
                     >
-                      <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                      <motion.button
+                        whileHover={{
+                          scale: 1.1,
+                          backgroundColor: "rgba(var(--foreground), 0.05)",
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => add(component)}
+                        className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors ${
+                          hoveredType === component.type
+                            ? "bg-foreground/10 text-foreground"
+                            : "text-muted-foreground"
+                        }`}
                       >
-                        <Card
-                          className="hover:shadow-md bg-background transition-shadow rounded-md border-foreground/10 p-0 py-3 gap-0 cursor-pointer"
-                          onClick={() => add(component)}
-                        >
-                          <div className="flex items-center gap-2 px-4">
-                            <div className="p-2 rounded-lg bg-foreground/5">
-                              <IconComponent className="size-6 opacity-60" />
-                            </div>
-                            <div>
-                              <CardHeader className="p-0 px-2">
-                                <CardTitle className="text-xs font-medium">
-                                  {component.label}
-                                </CardTitle>
-                              </CardHeader>
-                              <CardContent className="px-2 -mt-1">
-                                <p className="text-[10px] text-muted-foreground">
-                                  {component.description}
-                                </p>
-                              </CardContent>
-                            </div>
-                          </div>
-                        </Card>
-                      </motion.div>
+                        <IconComponent className="size-5" />
+                      </motion.button>
+
+                      <AnimatePresence>
+                        {hoveredType === component.type && (
+                          <motion.div
+                            initial={{ opacity: 0, x: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, x: 15, scale: 1 }}
+                            exit={{ opacity: 0, x: 10, scale: 0.95 }}
+                            transition={{ duration: 0.15 }}
+                            className="absolute left-full top-0 z-50 ml-2 w-64 pointer-events-none"
+                          >
+                            <Card className="bg-popover border-foreground/20 shadow-xl overflow-hidden py-1">
+                              <div className="flex items-center gap-3 p-3">
+                                <div className="flex items-center justify-center p-2 rounded-lg bg-foreground/5 shrink-0">
+                                  <IconComponent className="size-5 opacity-70" />
+                                </div>
+
+                                <div className="flex flex-col gap-0.5">
+                                  <h4 className="text-sm font-semibold leading-none">
+                                    {component.label}
+                                  </h4>
+                                  <p className="text-[10px] text-muted-foreground leading-snug">
+                                    {component.description}
+                                  </p>
+                                </div>
+                              </div>
+                            </Card>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </motion.div>
                   );
                 })}
               </div>
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

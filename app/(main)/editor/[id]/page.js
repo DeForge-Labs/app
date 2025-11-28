@@ -1,6 +1,7 @@
 "use client";
 
 import EditorNavbar from "@/components/layout/editor/EditorNavbar";
+import EditorSidePanel from "@/components/layout/editor/EditorSidePanel";
 import EditorWindow from "@/components/layout/editor/EditorWindow";
 import ChatModal from "@/components/layout/editor/editorWindow/chat/ChatModal";
 import ExecuteModal from "@/components/layout/editor/ExecuteModal";
@@ -14,6 +15,7 @@ export default function EditorPage() {
     <div className="flex flex-col h-screen dark:bg-dark">
       <EditorNavbar />
       <div className="flex-1 flex bg-foreground/5 pb-2 px-2 overflow-hidden">
+        <EditorSidePanel />
         {chatModalOpen && sidePanel === "chat" && <ChatModal />}
         {chatModalOpen && sidePanel === "execute" && <ExecuteModal />}
         <div className="flex-1 flex flex-col overflow-hidden rounded-lg border border-foreground/15">

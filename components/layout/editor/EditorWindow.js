@@ -23,7 +23,7 @@ export default function EditorWindow() {
 
   return (
     <div className="flex h-full relative">
-      <div className="h-full p-2 overflow-y-auto hide-scroll absolute left-0 top-0">
+      <div className="h-full p-2  hide-scroll absolute left-0 top-0">
         {mode === "workflow" && <NodeMenu />}
         {mode === "form" && <FormMenu />}
       </div>
@@ -32,9 +32,7 @@ export default function EditorWindow() {
         {mode === "workflow" && <NodeEditor />}
         {mode === "workflow" && !isWorkflowInitializing && <ToolPanel />}
         {mode === "form" && (
-          <div
-            className={cn("ml-84 flex h-full relative", formModal && "ml-0")}
-          >
+          <div className={cn("ml-0 flex h-full relative")}>
             <Canvas />
             {!isFormInitializing && <FormToolPanel />}
           </div>

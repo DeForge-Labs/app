@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, MessageCircle, Play } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import OptionsMenu from "./editorNavbar/OptionsMenu";
@@ -15,33 +15,30 @@ import { cn } from "@/lib/utils";
 import DeployDialog from "./editorNavbar/DeployDialog";
 
 export default function EditorNavbar() {
-  const {
-    isWorkspaceInitializing,
-    hasUnsavedChanges,
-    sidePanel,
-    setSidePanel,
-  } = useWorkspaceStore();
+  const { isWorkspaceInitializing, hasUnsavedChanges } = useWorkspaceStore();
   const { hasUnsavedChanges: hasUnsavedChangesForm } = useFormStore();
-  const { chatModalOpen, setChatModalOpen } = useChatStore();
+  const { chatModalOpen } = useChatStore();
 
   return (
     <header className="sticky top-0 z-50 bg-foreground/5 relative">
       <div className="flex items-center justify-between px-2 h-[50px]">
         <div
           className={cn(
-            "flex items-center justify-start gap-1 h-full max-w-[485px] w-full",
+            "flex items-center justify-start gap-1 h-full max-w-[530px] w-full",
             chatModalOpen ? "justify-between" : "",
             (hasUnsavedChanges || hasUnsavedChangesForm) && "max-w-[523px]"
           )}
         >
           <div className="flex items-center gap-1 h-full">
-            <Link
-              href="/apps"
-              className="flex items-center ml-1 justify-center space-x-2"
-            >
-              <div className="p-1.5 w-fit rounded-sm hover:bg-foreground/5 border border-foreground/20">
-                <ChevronLeft className="text-foreground/70 size-3" />
-              </div>
+            <Link href="/apps">
+              <Button
+                variant="outline"
+                className={
+                  "w-8 ml-1 rounded-sm dark:not-disabled:not-active:not-data-pressed:before:shadow-none not-disabled:not-active:not-data-pressed:before:shadow-none border border-foreground/15"
+                }
+              >
+                <ChevronLeft className="size-[13px]" />
+              </Button>
             </Link>
 
             <span className="flex items-center gap-1 dark:text-background">
@@ -63,33 +60,6 @@ export default function EditorNavbar() {
         <div className="flex items-center gap-2">
           <OptionsMenu />
 
-          {sidePanel === "chat" && (
-            <Button
-              variant="outline"
-              className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
-              onClick={() => {
-                setChatModalOpen(true);
-                setSidePanel("execute");
-              }}
-            >
-              <Play />
-              Execute
-            </Button>
-          )}
-
-          {sidePanel === "execute" && (
-            <Button
-              variant="outline"
-              className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
-              onClick={() => {
-                setChatModalOpen(true);
-                setSidePanel("chat");
-              }}
-            >
-              <MessageCircle />
-              Chat
-            </Button>
-          )}
           <DeployDialog />
         </div>
       </div>

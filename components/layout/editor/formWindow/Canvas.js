@@ -98,8 +98,7 @@ export default function Canvas() {
         <div className="h-full relative w-full">
           <div
             className={cn(
-              "p-2 pl-0 min-h-full flex flex-col items-center max-w-4xl mx-auto",
-              formModal && "pl-2"
+              "p-2 min-h-full flex flex-col items-center max-w-4xl mx-auto"
             )}
           >
             {components.length === 0 ? (
@@ -136,8 +135,7 @@ export default function Canvas() {
       <div className="h-full relative w-full">
         <div
           className={cn(
-            "p-2 pl-0 min-h-full flex flex-col items-center max-w-4xl mx-auto",
-            formModal && "pl-2"
+            "p-2 min-h-full flex flex-col items-center max-w-4xl mx-auto"
           )}
           onDragOver={handleDragOver}
           onClick={handleCanvasClick}

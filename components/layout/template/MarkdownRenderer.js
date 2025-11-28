@@ -68,7 +68,7 @@ export default function MarkdownRenderer({ content }) {
           a: ({ href, children }) => (
             <a
               href={href}
-              className="text-primary hover:underline break-all"
+              className="text-primary underline break-all"
               target="_blank"
               rel="noopener noreferrer"
             >
