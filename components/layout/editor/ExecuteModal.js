@@ -31,7 +31,7 @@ export default function ExecuteModal() {
   const triggerNodeType = triggerNode?.type;
 
   return (
-    <div className="w-[400px] flex flex-col pr-2">
+    <div className="w-[400px] flex flex-col pr-2 h-full">
       <div className="flex flex-1 flex-col border border-foreground/15 bg-background rounded-md h-full">
         <div className="flex gap-2 text-sm border-b border-foreground/15 p-4 relative z-20 shrink-0 justify-between items-center">
           <div className="flex gap-2">

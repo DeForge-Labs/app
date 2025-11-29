@@ -47,6 +47,7 @@ import useTeams from "./useTeams";
 import { loadComponents } from "@/redux/slice/formSlice";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
 import useFormStore from "@/store/useFormStore";
+import useChatStore from "@/store/useChatStore";
 
 export default function useInitialize() {
   const dispatch = useDispatch();
@@ -72,6 +73,8 @@ export default function useInitialize() {
   } = useWorkspaceStore();
 
   const { loadComponents } = useFormStore();
+
+  const { setIsChatInitializing, setMessages } = useChatStore();
 
   const loadUser = async (force = true, token = null) => {
     dispatch(setIsInitializing(true));
@@ -372,6 +375,32 @@ export default function useInitialize() {
     }
   };
 
+  const loadChats = async (workflowId) => {
+    try {
+      setIsChatInitializing(true);
+
+      axios.defaults.withCredentials = true;
+
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/chat/history/${workflowId}?page=1&limit=10`
+      );
+
+      if (response.data.success) {
+        setMessages(response.data?.messages || []);
+      } else {
+        toast.error(response.data.message);
+        if (response.data.status === 404 || response.data.status === 401) {
+          router.push("/");
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to load chats");
+    } finally {
+      setIsChatInitializing(false);
+    }
+  };
+
   const loadMembers = async (teamId) => {
     try {
       dispatch(setIsMembersInitializing(true));
@@ -531,5 +560,6 @@ export default function useInitialize() {
     loadDefaultTemplates,
     loadFormById,
     loadStats,
+    loadChats,
   };
 }

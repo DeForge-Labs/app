@@ -7,7 +7,7 @@ import useNodeLibraryStore from "@/store/useNodeLibraryStore";
 import useWorkflowStore from "@/store/useWorkspaceStore";
 
 export default function WorkflowProvider({ children }) {
-  const { loadWorkspaceById, loadLogs } = useInitialize();
+  const { loadWorkspaceById, loadLogs, loadChats } = useInitialize();
   const { fetchNodeRegistry, nodeRegistry } = useNodeLibraryStore();
   const { workspace, setLogs, workflow } = useWorkflowStore();
   const {
@@ -49,6 +49,7 @@ export default function WorkflowProvider({ children }) {
 
     if (workspace?.workflowId) {
       loadLogs(workspace?.workflowId);
+      loadChats(workspace?.workflowId);
     }
 
     return () => {

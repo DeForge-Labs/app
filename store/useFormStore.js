@@ -159,6 +159,21 @@ const useFormStore = create((set) => ({
       hasUnsavedChanges: false,
     }),
 
+  setComponents: (components) =>
+    set((state) => {
+      const updatedComponents = components.map((component, index) => ({
+        ...component,
+        order: index,
+      }));
+
+      const isSame = deepCompareComponents(updatedComponents, state.components);
+
+      return {
+        components: updatedComponents,
+        hasUnsavedChanges: !isSame,
+      };
+    }),
+
   setIsPreview: (isPreview) =>
     set({
       isPreview,

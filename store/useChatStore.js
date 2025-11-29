@@ -10,6 +10,8 @@ const initialState = {
   currentPage: 1,
   totalMessages: 4,
   workflowJSON: null,
+  isChatInitializing: true,
+  chatMode: "build",
 };
 
 const useChatStore = create((set) => ({
@@ -57,7 +59,9 @@ const useChatStore = create((set) => ({
   setChatModalOpen: (open) => set({ chatModalOpen: open }),
   setHasMoreMessages: (hasMore) => set({ hasMoreMessages: hasMore }),
 
+  setIsChatInitializing: (loading) => set({ isChatInitializing: loading }),
   setWorkflowJSON: (workflow) => set({ workflowJSON: workflow }),
+  setChatMode: (mode) => set({ chatMode: mode }),
 }));
 
 export default useChatStore;

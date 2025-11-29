@@ -1,419 +1,335 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
-import ChatMessage from "./ChatMessage";
+import { useRef, useState, useEffect } from "react";
+import UserMessage from "./UserMessage";
+import AssistantMessage from "./AssistantMessage";
+import AssistantMessageLoading from "./AssistantMessageLoading";
 import ChatInput from "./ChatInput";
-import ThinkingBubble from "./ThinkingBubble";
 
 import useChatStore from "@/store/useChatStore";
-import useSocket from "@/hooks/useSocket";
-
-import { Loader2 } from "lucide-react";
 import useWorkflowStore from "@/store/useWorkspaceStore";
+import useFormStore from "@/store/useFormStore";
+import { Button } from "@/components/ui/button";
+import { MessageCircle, PanelLeftIcon } from "lucide-react";
+import ChatLoader from "./ChatLoader";
 
 const API_BASE =
   (typeof process !== "undefined" && process.env.NEXT_PUBLIC_API_URL) ||
   "http://localhost:8000/api";
 
-const NEAR_BOTTOM_THRESHOLD = 150;
-
-const ChatModal = ({ sessionId = null }) => {
+const ChatModal = () => {
   const scrollRef = useRef(null);
+  const { setChatModalOpen } = useChatStore();
 
-  const { messages, addMessage, updateMessage, setMessages, setWorkflowJSON } =
-    useChatStore();
-  const { workflow } = useWorkflowStore();
+  const {
+    messages,
+    addMessage,
+    updateMessage,
+    isChatInitializing,
+    setIsLoading,
+    chatMode,
+  } = useChatStore();
 
+  const {
+    workflow,
+    isWorkspaceInitializing,
+    setNodes,
+    setConnections,
+    setMode,
+    nodes,
+    connections,
+  } = useWorkflowStore();
   const workflowId = workflow?.id;
-
-  const { socket, subscribeToWorkflow, unsubscribeFromWorkflow } = useSocket();
+  const { setComponents, components } = useFormStore();
 
   const [isResponding, setIsResponding] = useState(false);
-  const [thinkingActive, setThinkingActive] = useState(false);
-  const [currentAssistantId, setCurrentAssistantId] = useState(null);
-  const [streamController, setStreamController] = useState(null);
 
-  const shouldAutoScrollRef = useRef(true);
-
-  /* -----------------------------------------------------
-     🟦 1. Socket subscription (NO initializeWebSocket)
-  ----------------------------------------------------- */
-  useEffect(() => {
-    if (!socket) return;
-
-    console.log("%c[ChatModal] Socket ready, subscribing...", "color: #4ade80");
-
-    subscribeToWorkflow(workflowId);
-
-    const handleWorkflow = (payload) => {
-      if (payload?.workflowJSON) {
-        setWorkflowJSON(payload.workflowJSON);
-      }
-    };
-
-    socket.on("workflow_generation", handleWorkflow);
-
-    return () => {
-      try {
-        socket.off("workflow_generation", handleWorkflow);
-        unsubscribeFromWorkflow(workflowId);
-      } catch (_) {}
-    };
-  }, [
-    socket,
-    workflowId,
-    subscribeToWorkflow,
-    unsubscribeFromWorkflow,
-    setWorkflowJSON,
-  ]);
-
-  /* -----------------------------------------------------
-     🟦 2. Load initial chat history
-  ----------------------------------------------------- */
-  useEffect(() => {
-    let mounted = true;
-
-    (async () => {
-      try {
-        if (!workflowId) return;
-
-        const token = localStorage.getItem("token");
-
-        const res = await fetch(
-          `${API_BASE}/chat/history/${workflowId}?page=1&limit=10`,
-          {
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-          }
-        );
-
-        if (!res.ok) return;
-
-        const data = await res.json();
-
-        if (!mounted) return;
-
-        const history = (data.messages || []).map((m, i) => ({
-          id: `hist-${i}-${m.timestamp}`,
-          type: m.role === "assistant" ? "assistant" : "user",
-          content: m.content,
-          timestamp: new Date(m.timestamp),
-        }));
-
-        setMessages(history);
-      } catch (err) {
-        console.error("[ChatModal] Failed loading history", err);
-      }
-    })();
-
-    return () => (mounted = false);
-  }, [workflowId, setMessages]);
-
-  /* -----------------------------------------------------
-     🟦 3. Smooth autoscroll
-  ----------------------------------------------------- */
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    if (!shouldAutoScrollRef.current) return;
-
-    requestAnimationFrame(() => {
-      el.scrollTop = el.scrollHeight;
-    });
-  }, [messages.length]);
+  const scrollToBottom = (behavior = "smooth") => {
+    if (scrollRef.current) {
+      setTimeout(() => {
+        scrollRef.current.scrollTo({
+          top: scrollRef.current.scrollHeight,
+          behavior: behavior,
+        });
+      }, 0);
+    }
+  };
 
   useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const onScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = el;
-      const nearBottom =
-        scrollHeight - scrollTop - clientHeight < NEAR_BOTTOM_THRESHOLD;
-      shouldAutoScrollRef.current = nearBottom;
-    };
-
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
+    setTimeout(() => {
+      scrollToBottom("instant");
+    }, 100);
   }, []);
 
-  /* -----------------------------------------------------
-     🟦 4. Create streaming assistant message placeholder
-  ----------------------------------------------------- */
-  const createAssistantStreamingMessage = useCallback(() => {
-    const id = `tmp-${Date.now()}`;
-    addMessage({
-      id,
-      type: "assistant",
-      content: "",
-      timestamp: new Date(),
-      streaming: true,
-      error: false,
-    });
-    return id;
-  }, [addMessage]);
+  useEffect(() => {
+    scrollToBottom("smooth");
+  }, [messages.length]);
 
-  /* -----------------------------------------------------
-     🟦 5. Handle sending message
-  ----------------------------------------------------- */
-  const handleSendMessage = async (content) => {
+  const handleSendMessage = async (inputContent) => {
+    if (!inputContent.trim()) return;
     addMessage({
-      id: `u-${Date.now()}`,
-      type: "user",
-      content,
-      timestamp: new Date(),
+      role: "user",
+      content: { type: "text", content: inputContent },
+      timestamp: new Date().toISOString(),
     });
 
-    const assistantId = createAssistantStreamingMessage();
-    setCurrentAssistantId(assistantId);
+    const assistantMsgId = crypto.randomUUID();
+    addMessage({
+      id: assistantMsgId,
+      role: "assistant",
+      content: [],
+      timestamp: new Date().toISOString(),
+      creditsUsed: 0,
+      isStreaming: true,
+    });
+
+    setIsLoading(true);
     setIsResponding(true);
-    setThinkingActive(true);
 
     try {
-      const controller = await startStream({
-        assistantId,
-        userMessage: content,
+      await startStream({
+        assistantId: assistantMsgId,
+        userMessage: inputContent,
         workflowId,
-        sessionId,
       });
-
-      setStreamController(controller);
-    } catch (err) {
-      updateMessage(assistantId, {
-        streaming: false,
-        error: true,
-        content: "Failed to start streaming.",
-      });
-
+    } catch (error) {
+      console.error("Stream Error:", error);
+      updateMessage(assistantMsgId, (prev) => ({
+        content: [
+          ...prev.content,
+          {
+            type: "content",
+            content: "\n\n**Error:** Failed to connect to the assistant.",
+          },
+        ],
+        isStreaming: false,
+      }));
+    } finally {
+      setIsLoading(false);
       setIsResponding(false);
-      setThinkingActive(false);
     }
   };
 
-  /* -----------------------------------------------------
-     🟦 6. Retry logic
-  ----------------------------------------------------- */
-  const handleRetry = async (assistantMessageId) => {
-    const index = messages.findIndex((m) => m.id === assistantMessageId);
-    if (index === -1) return;
-
-    let previousUserContent = "";
-    for (let i = index - 1; i >= 0; i--) {
-      if (messages[i].type === "user") {
-        previousUserContent = messages[i].content;
-        break;
-      }
-    }
-
-    updateMessage(assistantMessageId, {
-      streaming: true,
-      error: false,
-      content: "",
-      timestamp: new Date(),
-    });
-
-    setCurrentAssistantId(assistantMessageId);
-    setIsResponding(true);
-    setThinkingActive(true);
-
-    try {
-      const ctrl = await startStream({
-        assistantId: assistantMessageId,
-        userMessage: previousUserContent,
-        workflowId,
-        sessionId,
-      });
-
-      setStreamController(ctrl);
-    } catch (err) {
-      updateMessage(assistantMessageId, {
-        streaming: false,
-        error: true,
-        content: "Retry failed.",
-      });
-
-      setIsResponding(false);
-      setThinkingActive(false);
-    }
-  };
-
-  /* -----------------------------------------------------
-     🟦 7. Streaming: POST /chat/completion
-         Parses "data: {json}\n\n" chunks
-  ----------------------------------------------------- */
-  const startStream = async ({
-    assistantId,
-    workflowId,
-    userMessage,
-    sessionId,
-  }) => {
+  const startStream = async ({ assistantId, workflowId, userMessage }) => {
     const abortController = new AbortController();
-    const token = localStorage.getItem("token");
 
     const res = await fetch(`${API_BASE}/chat/completion`, {
       method: "POST",
       signal: abortController.signal,
       headers: {
         "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       credentials: "include",
       body: JSON.stringify({
         workflowId,
         userMessage,
-        sessionId: sessionId || `session-${Date.now()}`,
-        workflowJSON: {},
+        workflowJSON: {
+          nodes: nodes || [],
+          connections: connections || [],
+          components: components || [],
+        },
+        mode: chatMode,
         modelName: "minimax/minimax-m2",
       }),
     });
 
-    if (!res.ok) {
-      throw new Error("Failed streaming start");
-    }
+    if (!res.ok) throw new Error("Failed streaming start");
 
     const reader = res.body.getReader();
     const decoder = new TextDecoder("utf-8");
     let buffer = "";
 
-    const pump = async () => {
-      try {
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
 
-          buffer += decoder.decode(value, { stream: true });
+      buffer += decoder.decode(value, { stream: true });
 
-          let idx;
-          while ((idx = buffer.indexOf("\n\n")) !== -1) {
-            const raw = buffer.slice(0, idx).trim();
-            buffer = buffer.slice(idx + 2);
+      let idx;
+      while ((idx = buffer.indexOf("\n\n")) !== -1) {
+        const raw = buffer.slice(0, idx).trim();
+        buffer = buffer.slice(idx + 2);
 
-            for (const line of raw.split("\n")) {
-              if (!line.startsWith("data:")) continue;
+        const lines = raw.split("\n");
+        for (const line of lines) {
+          if (!line.startsWith("data:")) continue;
+          const jsonStr = line.replace("data:", "").trim();
+          if (jsonStr === "[DONE]") continue;
 
-              const json = line.replace("data:", "").trim();
-              try {
-                handleChunk(JSON.parse(json), assistantId);
-              } catch (e) {
-                handleChunk(
-                  { type: "error", message: "Bad JSON" },
-                  assistantId
-                );
-              }
-            }
+          try {
+            const data = JSON.parse(jsonStr);
+            handleStreamAction(assistantId, data);
+          } catch (e) {
+            console.error("Bad JSON in stream:", e);
           }
         }
-
-        if (buffer.trim()) {
-          try {
-            handleChunk(
-              JSON.parse(buffer.replace("data:", "").trim()),
-              assistantId
-            );
-          } catch (_) {}
-        }
-
-        handleChunk({ type: "completion" }, assistantId);
-      } catch (err) {
-        handleChunk({ type: "error", message: err.message }, assistantId);
       }
-    };
+    }
 
-    pump();
+    if (buffer.trim()) {
+      try {
+        const cleanBuffer = buffer.replace("data:", "").trim();
+        if (cleanBuffer && cleanBuffer !== "[DONE]") {
+          handleStreamAction(assistantId, JSON.parse(cleanBuffer));
+        }
+      } catch (_) {}
+    }
 
-    return {
-      abort: () => abortController.abort(),
-    };
+    handleStreamAction(assistantId, { type: "completion" });
   };
 
-  /* -----------------------------------------------------
-     🟦 8. Handle each chunk
-  ----------------------------------------------------- */
-  const handleChunk = useCallback(
-    (event, assistantId) => {
-      if (!event?.type) return;
+  const handleStreamAction = (msgId, data) => {
+    if (!data.type) return;
 
-      if (event.type === "content") {
-        updateMessage(assistantId, (prev) => ({
-          content: (prev.content || "") + event.content,
+    let nodes = [];
+    let connections = [];
+    let components = [];
+
+    switch (data.type) {
+      case "tool":
+      case "context":
+        updateMessage(msgId, (prev) => ({
+          content: [
+            ...prev.content,
+            { type: data.type, content: data.content },
+          ],
         }));
-      }
+        scrollToBottom("smooth");
+        break;
 
-      if (event.type === "workflowJSON") {
-        try {
-          setWorkflowJSON(JSON.parse(event.data));
-        } catch (_) {}
-      }
-
-      if (event.type === "completion") {
-        updateMessage(assistantId, { streaming: false });
-        setIsResponding(false);
-        setThinkingActive(false);
-      }
-
-      if (event.type === "error") {
-        updateMessage(assistantId, {
-          streaming: false,
-          error: true,
-          content: event.message || "Stream error",
+      case "content":
+        updateMessage(msgId, (prev) => {
+          const lastIdx = prev.content.length - 1;
+          const lastItem = prev.content[lastIdx];
+          if (lastItem && lastItem.type === "content") {
+            const newContentList = [...prev.content];
+            newContentList[lastIdx] = {
+              ...lastItem,
+              content: lastItem.content + data.content,
+            };
+            return { content: newContentList };
+          }
+          return {
+            content: [
+              ...prev.content,
+              { type: "content", content: data.content },
+            ],
+          };
         });
-        setIsResponding(false);
-        setThinkingActive(false);
-      }
-    },
-    [updateMessage, setWorkflowJSON]
-  );
+        scrollToBottom("smooth");
+        break;
 
-  /* -----------------------------------------------------
-     🟦 9. UI
-  ----------------------------------------------------- */
+      case "workflow_editor":
+        setMode("workflow");
+
+        nodes = data.data.nodes;
+        connections = data.data.connections;
+        components = data.data.components;
+        setNodes(nodes);
+        setConnections(connections);
+        setComponents(components);
+
+        break;
+
+      case "workflow_form":
+        setMode("form");
+        nodes = data.data.nodes;
+        connections = data.data.connections;
+        components = data.data.components;
+        setNodes(nodes);
+        setConnections(connections);
+        setComponents(components);
+
+        break;
+
+      case "workflow_json":
+        const workflowJSON = JSON.parse(data.data);
+        setNodes(workflowJSON.nodes);
+        setConnections(workflowJSON.connections);
+        setComponents(workflowJSON.components);
+
+        break;
+
+      case "completion":
+        updateMessage(msgId, { isStreaming: false });
+        break;
+
+      case "error":
+        updateMessage(msgId, (prev) => ({
+          content: [
+            ...prev.content,
+            { type: "content", content: `\n> Error: ${data.message}` },
+          ],
+          isStreaming: false,
+        }));
+        scrollToBottom("smooth");
+        break;
+
+      default:
+        console.warn("Unknown stream type:", data.type);
+    }
+  };
+
   return (
-    <div className="w-[400px] flex flex-col overflow-hidden">
-      {/* Header */}
-      <div className="px-2 py-3 border-b border-border/50">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-sm font-semibold">Chat</h2>
-            <p className="text-xs text-muted-foreground">
-              Ask anything about your project
-            </p>
-          </div>
-
-          {thinkingActive && <ThinkingBubble active />}
-        </div>
-      </div>
-
-      {/* Messages */}
-      <div className="flex-1 overflow-hidden relative">
-        <div
-          ref={scrollRef}
-          className="h-full overflow-y-auto custom-scrollbar px-2 py-4 space-y-4"
-        >
-          {messages.map((m) => (
-            <ChatMessage
-              key={m.id}
-              message={m}
-              onRetry={() => handleRetry(m.id)}
-            />
-          ))}
-
-          {isResponding && (
-            <div className="flex gap-4 items-center">
-              <Loader2 className="w-4 h-4 animate-spin text-primary" />
-              <span className="text-xs text-muted-foreground">
-                Assistant is writing…
-              </span>
+    <div className="w-[400px] flex flex-col pr-2 h-full">
+      <div className="flex flex-1 flex-col border border-foreground/15 bg-background rounded-md h-full">
+        <div className="flex gap-2 text-sm border-b border-foreground/15 p-4 relative z-20 shrink-0 justify-between items-center">
+          <div className="flex gap-2">
+            <MessageCircle className="size-4 mt-1" />
+            <div className="flex flex-col">
+              <p>Chat</p>
+              <p className="text-xs text-muted-foreground">
+                Build your workflows using Assistant
+              </p>
             </div>
-          )}
+          </div>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="text-xs [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='size-'])]:opacity-50 border border-foreground/20 bg-card/30 rounded-sm h-[28px] w-7 mr-1"
+            onClick={() => setChatModalOpen(false)}
+          >
+            <PanelLeftIcon />
+          </Button>
         </div>
-      </div>
 
-      {/* Input */}
-      <div className="border-t p-2">
-        <ChatInput onSend={handleSendMessage} disabled={isResponding} />
+        <div className="flex-1 overflow-hidden relative">
+          {isWorkspaceInitializing || isChatInitializing ? (
+            <ChatLoader />
+          ) : null}
+          <div
+            ref={scrollRef}
+            className="h-full overflow-y-auto custom-scrollbar px-2 py-4 space-y-4 scroll-smooth"
+          >
+            {messages?.map((message) => {
+              const key = message.id || Math.random();
+
+              if (message?.role === "user") {
+                return <UserMessage key={key} message={message} />;
+              }
+
+              if (message?.role === "assistant") {
+                if (message.isStreaming) {
+                  return (
+                    <AssistantMessageLoading key={key} message={message} />
+                  );
+                }
+                return <AssistantMessage key={key} message={message} />;
+              }
+              return null;
+            })}
+          </div>
+        </div>
+
+        <div className="">
+          <ChatInput
+            onSend={handleSendMessage}
+            isLoading={isResponding}
+            disabled={
+              isResponding || isWorkspaceInitializing || isChatInitializing
+            }
+          />
+        </div>
       </div>
     </div>
   );
