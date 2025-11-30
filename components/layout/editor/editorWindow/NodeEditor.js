@@ -15,6 +15,7 @@ import LogoAnimation from "@/components/ui/LogoAnimation";
 import { toast } from "sonner";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
 import useNodeLibraryStore from "@/store/useNodeLibraryStore";
+import useChatStore from "@/store/useChatStore";
 
 function Flow() {
   const reactFlowWrapper = useRef(null);
@@ -36,7 +37,9 @@ function Flow() {
     setShowCustomizerPanel,
   } = useWorkspaceStore();
 
-  const { project } = useReactFlow();
+  const { project, fitView } = useReactFlow();
+
+  const { isLoading, chatMode } = useChatStore();
 
   // Context menu state for nodes
   const [nodeContextMenu, setNodeContextMenu] = useState({
@@ -53,6 +56,12 @@ function Flow() {
       setNodeTypes((prev) => ({ ...prev, [node.type]: GenericNode }));
     });
   }, [nodeRegistry]);
+
+  useEffect(() => {
+    if (isLoading && chatMode === "build") {
+      fitView({ padding: 0.2, duration: 800 });
+    }
+  }, [nodes, chatMode, isLoading]);
 
   // Context menu state for edges
   const [edgeContextMenu, setEdgeContextMenu] = useState({

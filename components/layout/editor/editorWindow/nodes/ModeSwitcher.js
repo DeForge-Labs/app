@@ -1,10 +1,12 @@
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
 import { File, Terminal, Workflow } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import useChatStore from "@/store/useChatStore";
 
 export default function ModeSwitcher() {
   const { mode, setMode, newLogs } = useWorkspaceStore();
+
+  const { isLoading, chatMode } = useChatStore();
   return (
     <div>
       <Tabs value={mode}>
@@ -16,6 +18,9 @@ export default function ModeSwitcher() {
           <TabsTab
             value="workflow"
             onClick={() => {
+              if (isLoading && chatMode === "build") {
+                return;
+              }
               setMode("workflow");
             }}
             className="text-xs data-selected:text-background p-1"
@@ -25,6 +30,9 @@ export default function ModeSwitcher() {
           <TabsTab
             value="form"
             onClick={() => {
+              if (isLoading && chatMode === "build") {
+                return;
+              }
               setMode("form");
             }}
             className="text-xs data-selected:text-background p-1"
@@ -34,6 +42,9 @@ export default function ModeSwitcher() {
           <TabsTab
             value="logs"
             onClick={() => {
+              if (isLoading && chatMode === "build") {
+                return;
+              }
               setMode("logs");
             }}
             className="text-xs data-selected:text-background p-1 relative"

@@ -26,7 +26,7 @@ export default function EditorNavbar() {
           className={cn(
             "flex items-center justify-start gap-1 h-full max-w-[530px] w-full",
             chatModalOpen ? "justify-between" : "",
-            (hasUnsavedChanges || hasUnsavedChangesForm) && "max-w-[523px]"
+            (hasUnsavedChanges || hasUnsavedChangesForm) && "max-w-[568px]"
           )}
         >
           <div className="flex items-center gap-1 h-full">

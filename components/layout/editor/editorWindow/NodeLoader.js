@@ -1,6 +1,13 @@
-export default function NodeLoader() {
+import { cn } from "@/lib/utils";
+
+export default function NodeLoader({ className }) {
   return (
-    <div className="flex flex-col items-center justify-center py-12">
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center py-12",
+        className
+      )}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
