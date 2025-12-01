@@ -161,7 +161,13 @@ export default function AssistantMessage({ message }) {
         </ReactMarkdown>
       </div>
 
-      <div className="flex items-center gap-2 mt-2 border-t border-foreground/10 text-foreground pt-3">
+      <div className="text-[11px] text-foreground/50 mt-2">
+        <p>
+          Deforge can make mistakes, test your workflow before deploying it.
+        </p>
+      </div>
+
+      <div className="flex items-center gap-2 text-foreground border-t border-foreground/10 pt-2">
         <Clock className="size-[14px] opacity-60" />
         <span className="-ml-1 text-[11px] opacity-60">{timeAgo}</span>
 

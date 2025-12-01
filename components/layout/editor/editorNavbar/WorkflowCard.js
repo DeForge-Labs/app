@@ -23,7 +23,9 @@ export default function WorkflowCard() {
                 "flex gap-2 bg-transparent text-foreground font-normal w-full !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-xs justify-start"
               }
             >
-              {workspace?.name}
+              {workspace?.name?.length > 20
+                ? workspace?.name?.slice(0, 20) + "..."
+                : workspace?.name}
               <Badge
                 variant="outline"
                 className="text-[10px] p-1 px-2 bg-foreground/5 border border-foreground/5 text-foreground/70 capitalize"

@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   ChevronDown,
   ChevronRight,
+  Logs,
   SortAsc,
   SortDesc,
   Zap,
@@ -89,6 +90,17 @@ export default function LogsTable({
         <div>Log ID</div>
         <div></div>
       </div>
+
+      {sortedLogs.length === 0 ? (
+        <div className="mt-20 text-center text-muted-foreground flex flex-col w-full gap-2 text-xs items-center justify-center">
+          <div className="bg-card/70 p-3 rounded-md">
+            <Logs className="size-6" />
+          </div>
+          <p>
+            No Logs Found! Run your workflows <br /> to see logs here.
+          </p>
+        </div>
+      ) : null}
 
       {sortedLogs.map((log) => {
         const isNew = newLogs?.some((n) => n.id === log.id);

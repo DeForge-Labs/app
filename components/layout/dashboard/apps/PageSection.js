@@ -85,8 +85,8 @@ export default function PageSection({
           <PaginationPrevious
             href={buildUrl(currentPage - 1)}
             onClick={(e) => {
+              e.preventDefault();
               if (currentPage === 1) {
-                e.preventDefault();
                 return;
               }
               handlePageChange(currentPage - 1, e);
@@ -106,7 +106,10 @@ export default function PageSection({
             {typeof pageNum === "number" ? (
               <PaginationLink
                 href={buildUrl(pageNum)}
-                onClick={(e) => handlePageChange(pageNum, e)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(pageNum, e);
+                }}
                 isActive={pageNum === currentPage}
                 className={cn(
                   "text-xs data-pressed:bg-foreground/5 hover:bg-foreground/5"
@@ -124,8 +127,8 @@ export default function PageSection({
           <PaginationNext
             href={buildUrl(currentPage + 1)}
             onClick={(e) => {
+              e.preventDefault();
               if (currentPage === totalPages) {
-                e.preventDefault();
                 return;
               }
               handlePageChange(currentPage + 1, e);

@@ -118,7 +118,11 @@ export default async function AppList({ teamId, page, query }) {
 
             <div className="flex justify-between items-center">
               <div className="flex flex-col gap-0.5">
-                <p className="font-medium text-sm">{app?.name}</p>
+                <p className="font-medium text-sm">
+                  {app?.name?.length > 40
+                    ? app?.name?.slice(0, 40) + "..."
+                    : app?.name}
+                </p>
 
                 <p className="text-xs text-foreground/70">Updated {timeAgo}</p>
               </div>

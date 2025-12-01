@@ -10,7 +10,11 @@ import useChatStore from "@/store/useChatStore";
 import useWorkflowStore from "@/store/useWorkspaceStore";
 import useFormStore from "@/store/useFormStore";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, PanelLeftIcon } from "lucide-react";
+import {
+  MessageCircle,
+  MessageCircleDashedIcon,
+  PanelLeftIcon,
+} from "lucide-react";
 import ChatLoader from "./ChatLoader";
 
 const API_BASE =
@@ -28,6 +32,8 @@ const ChatModal = () => {
     isChatInitializing,
     setIsLoading,
     chatMode,
+    triggerMessage,
+    setTriggerMessage,
   } = useChatStore();
 
   const {
@@ -43,6 +49,19 @@ const ChatModal = () => {
   const { setComponents, components } = useFormStore();
 
   const [isResponding, setIsResponding] = useState(false);
+
+  useEffect(() => {
+    if (
+      !isChatInitializing &&
+      workflowId &&
+      triggerMessage &&
+      messages.length === 0
+    ) {
+      handleSendMessage(triggerMessage);
+
+      setTriggerMessage(null);
+    }
+  }, [isChatInitializing, workflowId, triggerMessage]);
 
   const scrollToBottom = (behavior = "smooth") => {
     if (scrollRef.current) {
@@ -67,9 +86,23 @@ const ChatModal = () => {
 
   const handleSendMessage = async (inputContent) => {
     if (!inputContent.trim()) return;
+
+    let model = undefined;
+    let cleanContent = inputContent;
+
+    const modelRegex = /model:\s*([^\s]+)$/i;
+
+    const match = inputContent.match(modelRegex);
+
+    if (match) {
+      model = match[1];
+
+      cleanContent = inputContent.replace(modelRegex, "").trim();
+    }
+
     addMessage({
       role: "user",
-      content: { type: "text", content: inputContent },
+      content: { type: "text", content: cleanContent },
       timestamp: new Date().toISOString(),
     });
 
@@ -89,8 +122,9 @@ const ChatModal = () => {
     try {
       await startStream({
         assistantId: assistantMsgId,
-        userMessage: inputContent,
+        userMessage: cleanContent,
         workflowId,
+        model,
       });
     } catch (error) {
       console.error("Stream Error:", error);
@@ -110,7 +144,12 @@ const ChatModal = () => {
     }
   };
 
-  const startStream = async ({ assistantId, workflowId, userMessage }) => {
+  const startStream = async ({
+    assistantId,
+    workflowId,
+    userMessage,
+    model = "minimax/minimax-m2",
+  }) => {
     const abortController = new AbortController();
 
     const res = await fetch(`${API_BASE}/chat/completion`, {
@@ -129,7 +168,7 @@ const ChatModal = () => {
           components: components || [],
         },
         mode: chatMode,
-        modelName: "minimax/minimax-m2",
+        modelName: model,
       }),
     });
 
@@ -301,6 +340,21 @@ const ChatModal = () => {
             ref={scrollRef}
             className="h-full overflow-y-auto custom-scrollbar px-2 py-4 space-y-4 scroll-smooth"
           >
+            {!isWorkspaceInitializing &&
+            !isChatInitializing &&
+            messages?.length === 0 ? (
+              <div className="absolute h-full text-center text-muted-foreground top-0 left-0 flex flex-col w-full gap-2 text-xs items-center justify-center">
+                <div className="bg-card/70 p-3 rounded-md">
+                  <MessageCircleDashedIcon className="size-6" />
+                </div>
+                <p>
+                  Start building your workflows using <br />
+                  <span className="font-semibold text-xs">
+                    Deforge Assistant
+                  </span>
+                </p>
+              </div>
+            ) : null}
             {messages?.map((message) => {
               const key = message.id || Math.random();
 

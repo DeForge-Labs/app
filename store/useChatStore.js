@@ -3,6 +3,7 @@
 import { create } from "zustand";
 
 const initialState = {
+  triggerMessage: null,
   messages: [],
   chatModalOpen: true,
   isLoading: false,
@@ -62,6 +63,8 @@ const useChatStore = create((set) => ({
   setIsChatInitializing: (loading) => set({ isChatInitializing: loading }),
   setWorkflowJSON: (workflow) => set({ workflowJSON: workflow }),
   setChatMode: (mode) => set({ chatMode: mode }),
+
+  setTriggerMessage: (message) => set({ triggerMessage: message }),
 }));
 
 export default useChatStore;

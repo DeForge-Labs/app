@@ -1,44 +1,38 @@
 "use client";
 
 import { Loader2, Search } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useState, useRef, useEffect, useCallback } from "react";
-
 import { Input } from "@/components/ui/input";
 
 const DEBOUNCE_DELAY = 500;
 
-export default function SearchSection({
-  route = "apps",
-  placeholder = "Search apps...",
-}) {
+export default function SearchSection({ placeholder = "Search apps..." }) {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const inputRef = useRef(null);
-  const timerRef = useRef(null);
-  const isFirstRender = useRef(true);
-
   const [isLoading, setIsLoading] = useState(false);
+
   const [query, setQuery] = useState(() => searchParams.get("q") || "");
 
-  useEffect(() => {
-    const urlQuery = searchParams.get("q") || "";
+  const previousUrlQuery = useRef(searchParams.get("q") || "");
+  const timerRef = useRef(null);
 
-    if (urlQuery !== query) {
-      setQuery(urlQuery);
+  useEffect(() => {
+    const currentUrlQuery = searchParams.get("q") || "";
+
+    if (currentUrlQuery !== previousUrlQuery.current) {
+      setQuery(currentUrlQuery);
+      previousUrlQuery.current = currentUrlQuery;
     }
   }, [searchParams]);
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
+    const currentUrlQuery = searchParams.get("q") || "";
+    if (query === currentUrlQuery) return;
 
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
+    if (timerRef.current) clearTimeout(timerRef.current);
 
     setIsLoading(true);
 
@@ -53,21 +47,19 @@ export default function SearchSection({
 
       newParams.delete("p");
 
+      previousUrlQuery.current = query.trim();
+
       const queryString = newParams.toString();
-      const url = `/${route}${queryString ? `?${queryString}` : ""}`;
+      const url = `${pathname}${queryString ? `?${queryString}` : ""}`;
 
       router.push(url, { scroll: false });
       setIsLoading(false);
     }, DEBOUNCE_DELAY);
 
-    // Cleanup
     return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        setIsLoading(false);
-      }
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [query, router, route, searchParams]);
+  }, [query, pathname, router, searchParams]);
 
   const handleChange = useCallback((e) => {
     setQuery(e.target.value);
@@ -87,11 +79,10 @@ export default function SearchSection({
       <Input
         type="search"
         value={query}
-        ref={inputRef}
         onChange={handleChange}
         aria-label={placeholder}
         placeholder={placeholder}
-        className="w-full px-0 border-0 shadow-none has-focus-visible:border-ring has-focus-visible:ring-0 not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none ring-0 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
+        className="w-full px-0 border-0 shadow-none focus-visible:ring-0"
       />
     </div>
   );
