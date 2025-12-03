@@ -8,7 +8,7 @@ import useExecution from "@/hooks/useExecution";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
-export default function RunButton() {
+export default function RunButton({ isTemplate = false }) {
   const { nodes, setSidePanel, setExecuteModalOpen } = useWorkflowStore();
   const { setChatModalOpen } = useChatStore();
 
@@ -88,6 +88,9 @@ export default function RunButton() {
     <Button
       className="py-0 rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3"
       onClick={() => {
+        if (isTemplate) {
+          return;
+        }
         handleRun();
       }}
       disabled={isRunning}

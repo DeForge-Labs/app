@@ -82,7 +82,7 @@ export default function SearchSection({ placeholder = "Search apps..." }) {
         onChange={handleChange}
         aria-label={placeholder}
         placeholder={placeholder}
-        className="w-full px-0 border-0 shadow-none focus-visible:ring-0"
+        className="w-full px-0 border-0 shadow-none focus-visible:ring-0 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
       />
     </div>
   );

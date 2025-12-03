@@ -18,12 +18,10 @@ export default function WorkflowProvider({ children }) {
   } = useSocket();
   const params = useParams();
 
-  // Load node registry once on component mount
   useEffect(() => {
     fetchNodeRegistry();
   }, []);
 
-  // Load workflow when user, params, and nodeRegistry are available
   useEffect(() => {
     if (nodeRegistry && nodeRegistry.length > 0) {
       if (!params?.id) return;

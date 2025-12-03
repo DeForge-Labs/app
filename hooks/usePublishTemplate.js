@@ -4,10 +4,13 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import useWorkflowStore from "@/store/useWorkspaceStore";
+import { useRouter } from "next/navigation";
 
 export default function usePublishTemplate() {
   const [isPublishingTemplate, setIsPublishingTemplate] = useState(false);
   const { workspace } = useWorkflowStore();
+
+  const router = useRouter();
 
   const handlePublishTemplate = async (
     name,
@@ -44,7 +47,7 @@ export default function usePublishTemplate() {
 
       toast.success("Template published successfully");
 
-      window.open(`/template/${response.data.template.id}`, "_blank");
+      router.push(`/templates/${response.data.template.id}`);
 
       return response.data;
     } catch (error) {

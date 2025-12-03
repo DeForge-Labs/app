@@ -355,7 +355,6 @@ function Flow() {
           }}
         >
           <Background />
-          {/* <Controls position="top-left" /> */}
         </ReactFlow>
 
         {nodeContextMenu.visible && nodeContextMenu.nodeId && (

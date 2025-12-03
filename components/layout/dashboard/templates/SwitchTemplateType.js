@@ -15,9 +15,7 @@ export default function SwitchTemplateType() {
         <TabsTab
           value="tab-1"
           onClick={() => {
-            if (isYourTemplates) {
-              router.push(`/templates`);
-            }
+            router.push(`/templates`);
           }}
           className="text-xs"
         >
@@ -26,9 +24,7 @@ export default function SwitchTemplateType() {
         <TabsTab
           value="tab-2"
           onClick={() => {
-            if (!isYourTemplates) {
-              router.push(`/templates/published`);
-            }
+            router.push(`/templates/published`);
           }}
           className="text-xs"
         >

@@ -15,7 +15,7 @@ import useConnectSocial from "@/hooks/useConnectSocial";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
 import { Button } from "@/components/ui/button";
 
-export default function SocialField({ field }) {
+export default function SocialField({ field, isTemplate = false }) {
   const {
     handleConnectSocial,
     isOpen,
@@ -47,14 +47,15 @@ export default function SocialField({ field }) {
           )}
         </div>
         <div className="flex gap-2 items-center">
-          {workflowSocial && !workflowSocial[field.name.toLowerCase()] ? (
+          {isTemplate ||
+          (workflowSocial && !workflowSocial[field.name.toLowerCase()]) ? (
             <Button
               size="md"
               className="px-2 text-xs text-background bg-foreground/90 w-full h-9 rounded-sm"
               onClick={() => {
                 setIsOpen(true);
               }}
-              disabled={workflow?.status === "LIVE"}
+              disabled={workflow?.status === "LIVE" || isTemplate}
             >
               Connect
             </Button>
@@ -65,7 +66,7 @@ export default function SocialField({ field }) {
               onClick={() => {
                 setIsOpen(true);
               }}
-              disabled={workflow?.status === "LIVE"}
+              disabled={workflow?.status === "LIVE" || isTemplate}
             >
               Disconnect
             </Button>
@@ -129,71 +130,6 @@ export default function SocialField({ field }) {
           </Form>
         </DialogPopup>
       </Dialog>
-
-      {/* <Modal
-        isOpen={isOpen}
-        className="border border-black bg-background p-1 dark:border-background dark:text-background dark:bg-dark"
-        onClose={() => setIsOpen(false)}
-        closeButton={<div></div>}
-        isDismissable={!isConnecting}
-        isKeyboardDismissDisabled={isConnecting}
-        hideCloseButton={isConnecting}
-      >
-        <ModalContent>
-          <ModalHeader>
-            <h3 className="text-xl font-medium">
-              {workflowSocial && workflowSocial[field.name.toLowerCase()]
-                ? "Disconnect Social"
-                : "Connect Social"}
-            </h3>
-          </ModalHeader>
-          <ModalBody className="-mt-3">
-            <p>
-              Are you sure you want to{" "}
-              {workflowSocial && workflowSocial[field.name.toLowerCase()]
-                ? "disconnect"
-                : "connect"}{" "}
-              this social account
-              <span className="text-black mx-1 font-semibold font-mono dark:text-background">
-                {field.name}
-              </span>
-              ?
-            </p>
-          </ModalBody>
-          <ModalFooter className="-mt-1 flex w-full gap-2">
-            <Button
-              variant="outline"
-              className="w-fit rounded-lg border border-black/80 p-4 dark:border-background dark:text-background"
-              onPress={() => setIsOpen(false)}
-              isDisabled={isConnecting}
-            >
-              Cancel
-            </Button>
-            <Button
-              className="w-fit rounded-lg p-4 bg-black/80 text-background dark:bg-background dark:text-black"
-              onPress={() => {
-                if (
-                  workflowSocial &&
-                  workflowSocial[field.name.toLowerCase()]
-                ) {
-                  handleDisconnectSocial(field.name.toLowerCase());
-                } else {
-                  handleConnectSocial(field.name.toLowerCase());
-                }
-              }}
-              isDisabled={isConnecting}
-            >
-              {isConnecting ? (
-                <Loader2 className="animate-spin text-background dark:text-black" />
-              ) : workflowSocial && workflowSocial[field.name.toLowerCase()] ? (
-                "Disconnect"
-              ) : (
-                "Connect"
-              )}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal> */}
     </>
   );
 }

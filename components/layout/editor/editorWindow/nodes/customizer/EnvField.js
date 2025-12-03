@@ -18,7 +18,7 @@ import { Save, Loader2 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
 
-export default function EnvField({ field }) {
+export default function EnvField({ field, isTemplate = false }) {
   const { handleSaveEnv, isOpen, setIsOpen, isSavingEnv } = useSaveEnv();
   const [value, setValue] = useState("");
   const { workflowEnv, workflow } = useWorkspaceStore();
@@ -77,7 +77,7 @@ export default function EnvField({ field }) {
                   onClick={() => {
                     setIsOpen(true);
                   }}
-                  disabled={!value || workflow?.status === "LIVE"}
+                  disabled={!value || workflow?.status === "LIVE" || isTemplate}
                 >
                   {value && (
                     <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-yellow-500"></div>
