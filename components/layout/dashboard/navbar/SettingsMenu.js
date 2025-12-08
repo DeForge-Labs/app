@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import LogoutDialog from "./LogoutDialog";
 import ThemeRadioButtons from "./ThemeRadioButtons";
 
-export default async function SettingsMenu() {
+export default async function SettingsMenu({ isTemplate = false }) {
   return (
     <Menu>
       <MenuTrigger
@@ -63,10 +63,13 @@ export default async function SettingsMenu() {
           <MenuGroupLabel>Theme</MenuGroupLabel>
           <ThemeRadioButtons />
         </MenuGroup>
+        {!isTemplate && (
+          <>
+            <MenuSeparator className="bg-foreground/10" />
 
-        <MenuSeparator className="bg-foreground/10" />
-
-        <LogoutDialog />
+            <LogoutDialog />
+          </>
+        )}
       </MenuPopup>
     </Menu>
   );

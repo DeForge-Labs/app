@@ -2,7 +2,6 @@ import ErrorDialog from "@/components/ui/ErrorDialog";
 import { redirect } from "next/navigation";
 import {
   Breadcrumb,
-  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
@@ -17,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import TemplateViewer from "./TemplateViewer";
+import OpenButton from "./OpenButton";
+import ShareDialog from "./ShareDialog";
 
 export default async function TemplatePage({ id }) {
   const getNodeLibrary = async () => {
@@ -124,26 +125,20 @@ export default async function TemplatePage({ id }) {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant={"outline"}
-            className="text-xs rounded-sm gap-1.5 px-3 [&_svg:not([class*='size-'])]:size-3 border border-foreground/50 shadow-md"
-          >
-            <SquareArrowOutUpRightIcon />
-            Share
-          </Button>
+          <ShareDialog
+            shortId={template?.shortId}
+            children={
+              <Button
+                variant={"outline"}
+                className="text-xs rounded-sm gap-1.5 px-3 [&_svg:not([class*='size-'])]:size-3 border border-foreground/50 shadow-md"
+              >
+                <SquareArrowOutUpRightIcon />
+                Share
+              </Button>
+            }
+          />
 
-          <Button className="text-xs rounded-sm gap-1.5 px-3 [&_svg:not([class*='size-'])]:size-3 border border-foreground/50 shadow-[#8754ff] shadow-md">
-            Open in{" "}
-            <span>
-              <Image
-                src="/logo/logo-white.svg"
-                alt="Deforge"
-                width={14}
-                height={14}
-                className="dark:invert ml-[1px]"
-              />
-            </span>
-          </Button>
+          <OpenButton />
         </div>
       </div>
 
@@ -166,7 +161,7 @@ export default async function TemplatePage({ id }) {
           {template?.category}
         </Badge>
 
-        <Separator className="mt-4 mb-2" />
+        <Separator className="mt-4 mb-2 bg-foreground/20" />
 
         <p className="text-[12px] text-muted-foreground pb-6">
           Published at {new Date(template?.createdAt).toLocaleString()}

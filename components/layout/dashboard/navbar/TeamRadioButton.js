@@ -11,7 +11,7 @@ const TeamRadioButton = ({ team }) => {
 
   const updateTeamId = async () => {
     await updateLastTeamIdCookie(team?.teamId);
-    router.push("/dashboard");
+    router.refresh();
   };
 
   return (

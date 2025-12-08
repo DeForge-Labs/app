@@ -1,5 +1,8 @@
 "use client";
 
+import Image from "next/image";
+import { checkIfLogin } from "@/actions/checkIfLoggedIn";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogClose,
@@ -8,16 +11,18 @@ import {
   DialogPopup,
   DialogTitle,
   DialogDescription,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import useUseTemplate from "@/hooks/useUseTemplate";
+import { useParams } from "next/navigation";
 
-export default function UseTemplateDialog({ templateId }) {
+export default function OpenButton() {
   const [isOpen, setIsOpen] = useState(false);
+
+  const params = useParams();
 
   const { isUsingTemplate, handleUseTemplate } = useUseTemplate(setIsOpen);
 
@@ -26,25 +31,39 @@ export default function UseTemplateDialog({ templateId }) {
       setIsOpen(open);
     }
   };
-
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={handleIsOpenChange}>
-        <DialogTrigger
-          render={
-            <Button
-              variant="outline"
-              className="data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent !shadow-none bg-transparent hover:bg-transparent w-full justify-start border-none"
-            >
-              <Plus className="w-4 h-4" /> Use Template
-            </Button>
+      <Button
+        className="text-xs rounded-sm gap-1.5 px-3 [&_svg:not([class*='size-'])]:size-3 border border-foreground/50 shadow-[#8754ff] shadow-md"
+        onClick={async () => {
+          const isLoggedIn = await checkIfLogin();
+
+          if (!isLoggedIn) {
+            toast("Please Sign In to use this template");
+            return;
           }
-        />
+
+          handleIsOpenChange(true);
+        }}
+      >
+        Open in{" "}
+        <span>
+          <Image
+            src="/logo/logo-white.svg"
+            alt="Deforge"
+            width={14}
+            height={14}
+            className="dark:invert ml-[1px]"
+          />
+        </span>
+      </Button>
+
+      <Dialog open={isOpen} onOpenChange={handleIsOpenChange}>
         <DialogPopup className="sm:max-w-sm">
           <Form
             onSubmit={(e) => {
               e.preventDefault();
-              handleUseTemplate(templateId);
+              handleUseTemplate(params?.id);
             }}
           >
             <DialogHeader>

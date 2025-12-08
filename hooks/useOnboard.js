@@ -78,9 +78,13 @@ export default function useOnboard() {
    * Handles post-authentication navigation
    */
   const handlePostAuthNavigation = useCallback(
-    (lastTeamId) => {
+    (lastTeamId, embedded) => {
       const destination = lastTeamId ? ROUTES.DASHBOARD : ROUTES.CREATE_TEAM;
-      router.push(destination);
+      if (embedded && lastTeamId) {
+        router.refresh();
+      } else {
+        router.push(destination);
+      }
     },
     [router]
   );
@@ -154,7 +158,7 @@ export default function useOnboard() {
         if (data.success) {
           toast.success("Login successful");
 
-          handlePostAuthNavigation(data.lastTeamId);
+          handlePostAuthNavigation(data.lastTeamId, embedded);
         } else {
           toast.error(data.message || "Verification failed");
         }
@@ -207,7 +211,7 @@ export default function useOnboard() {
 
         if (data.success) {
           toast.success("Sign up successful");
-          handlePostAuthNavigation(data.lastTeamId);
+          handlePostAuthNavigation(data.lastTeamId, embedded);
         } else {
           toast.error(data.message || "Sign up failed");
         }

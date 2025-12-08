@@ -5,7 +5,7 @@ import { File, Workflow } from "lucide-react";
 
 export default function ViewerNav({ defaultView, view, setView }) {
   return (
-    <div className="flex items-center justify-center p-2 px-4">
+    <div className="flex items-center justify-center p-2 px-4 border-b border-foreground/15">
       <Tabs defaultValue={defaultView} value={view} onValueChange={setView}>
         <TabsList
           className={

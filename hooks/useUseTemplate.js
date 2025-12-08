@@ -3,11 +3,13 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function useUseTemplate(setIsOpen) {
   const [isUsingTemplate, setIsUsingTemplate] = useState(false);
+  const router = useRouter();
 
-  const handleUseTemplate = async (teamId, templateId) => {
+  const handleUseTemplate = async (templateId) => {
     try {
       setIsUsingTemplate(true);
 
@@ -25,6 +27,9 @@ export default function useUseTemplate(setIsOpen) {
       setIsOpen(false);
 
       toast.success("Template duplicated successfully");
+
+      router.push(`/viewer/${response.data.workspace.id}`);
+
       return response.data;
     } catch (error) {
       console.log(error);

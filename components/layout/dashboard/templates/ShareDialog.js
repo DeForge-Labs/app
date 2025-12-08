@@ -17,19 +17,23 @@ import { Share } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 
-export default function ShareDialog({ shortId }) {
+export default function ShareDialog({ shortId, children }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger
           render={
-            <Button
-              variant="outline"
-              className="data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent !shadow-none bg-transparent hover:bg-transparent w-full justify-start border-none"
-            >
-              <Share className="w-4 h-4" /> Share
-            </Button>
+            children ? (
+              children
+            ) : (
+              <Button
+                variant="outline"
+                className="data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent !shadow-none bg-transparent hover:bg-transparent w-full justify-start border-none"
+              >
+                <Share className="w-4 h-4" /> Share
+              </Button>
+            )
           }
         />
 

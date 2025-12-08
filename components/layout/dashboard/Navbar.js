@@ -49,7 +49,7 @@ const Navbar = () => {
           <CreditMenu />
         </Suspense>
 
-        <SettingsMenu />
+        <SettingsMenu isTemplate={false} />
       </div>
     </header>
   );

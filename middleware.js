@@ -6,6 +6,7 @@ const unprotectedRoutes = [
   "/privacy",
   "/ToS",
   "/server-not-found",
+  "/template",
 ];
 
 export async function middleware(req) {

@@ -97,7 +97,7 @@ export default function LogsTable({
             <Logs className="size-6" />
           </div>
           <p>
-            No Logs Found! Run your workflows <br /> to see logs here.
+            No Logs Found! Run your workflow <br /> to see logs here.
           </p>
         </div>
       ) : null}
