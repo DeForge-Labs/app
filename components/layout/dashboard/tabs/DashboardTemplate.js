@@ -40,7 +40,7 @@ export default async function DashboardTemplate({ teamId }) {
   const templates = popularTemplates?.templates;
 
   return (
-    <div className="w-[90%] lg:w-[80%] flex flex-col gap-4 z-20 mt-20">
+    <div className="max-w-[1390px] w-full flex flex-col gap-4 z-20 mt-20">
       <div className="flex w-full justify-between lg:items-center flex-col gap-2 lg:flex-row">
         <div className="flex flex-col gap-1">
           <p className="text-sm font-semibold">Popular Templates</p>
@@ -66,27 +66,32 @@ export default async function DashboardTemplate({ teamId }) {
                   <div className="rounded-sm p-4 bg-foreground/10 w-fit">
                     <DynamicIcon
                       name={template.iconId}
-                      className="size-4 opacity-80"
+                      className="size-6 opacity-80"
                     />
                   </div>
-                  <p className="text-sm font-semibold"> {template?.name}</p>
+                  <p className="text-sm font-semibold">
+                    {" "}
+                    {template?.name?.length > 30
+                      ? template?.name?.substring(0, 30) + "..."
+                      : template?.name}
+                  </p>
                 </CardTitle>
               </CardHeader>
               <CardContent className="-mt-6 flex flex-col flex-1 justify-between">
-                <p className="text-xs text-foreground/60 line-clamp-4">
+                <p className="text-xs text-foreground/60 line-clamp-3">
                   {template?.description}
                 </p>
 
                 <div className="flex gap-2 flex-wrap">
-                  <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 border bg-transparent text-foreground/60 border-foreground/60 ">
+                  <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 opacity-80">
                     {template?.category}
                   </Badge>
 
-                  <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 border bg-transparent text-foreground/60 border-foreground/60">
+                  <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 opacity-80">
                     <GitBranch className="size-3" /> {template?.totalClones}
                   </Badge>
 
-                  <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 bg-transparent text-foreground/60">
+                  <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 bg-transparent text-foreground/60 opacity-90">
                     <User className="size-3" /> {template?.author}
                   </Badge>
                 </div>

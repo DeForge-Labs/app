@@ -6,8 +6,9 @@ const unprotectedRoutes = [
   "/privacy",
   "/ToS",
   "/server-not-found",
-  "/template",
 ];
+
+const semiProtectedRoutes = ["/template"];
 
 export async function middleware(req) {
   const { pathname } = req.nextUrl;
@@ -22,6 +23,15 @@ export async function middleware(req) {
     if (pathname === "/") {
       return NextResponse.next();
     }
+
+    if (semiProtectedRoutes.some((route) => pathname.startsWith(route))) {
+      const response = NextResponse.next();
+
+      response.headers.set("X-User-Status", "inactive");
+
+      return response;
+    }
+
     return NextResponse.redirect(new URL("/", req.url));
   }
 
@@ -32,6 +42,15 @@ export async function middleware(req) {
       if (pathname === "/") {
         return NextResponse.next();
       }
+
+      if (semiProtectedRoutes.some((route) => pathname.startsWith(route))) {
+        const response = NextResponse.next();
+
+        response.headers.set("X-User-Status", "inactive");
+
+        return response;
+      }
+
       const redirectResponse = NextResponse.redirect(new URL("/", req.url));
       return redirectResponse;
     }
@@ -46,7 +65,11 @@ export async function middleware(req) {
       }
     }
 
-    return NextResponse.next();
+    const response = NextResponse.next();
+
+    response.headers.set("X-User-Status", "active");
+
+    return response;
   } catch (error) {
     console.error("Authentication error:", error);
     const redirectResponse = NextResponse.redirect(new URL("/", req.url));

@@ -3,8 +3,6 @@ import { Suspense } from "react";
 import Logo from "@/components/ui/Logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import FeedbackDialog from "../dashboard/navbar/FeedbackDialog";
-import SettingsMenu from "../dashboard/navbar/SettingsMenu";
 import TemplateTeamMenu from "./TemplateTeamMenu";
 
 const Navbar = () => {

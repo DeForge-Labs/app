@@ -11,7 +11,6 @@ import { Ellipsis } from "lucide-react";
 import ShareDialog from "./ShareDialog";
 import UseTemplateDialog from "./UseTemplateDialog";
 import RevertDialog from "./RevertDialog";
-import ErrorDialog from "@/components/ui/ErrorDialog";
 
 export default async function YourTemplateList({ teamId, page, query }) {
   const getTemplates = async () => {
@@ -52,7 +51,7 @@ export default async function YourTemplateList({ teamId, page, query }) {
   }
 
   if (!templatesData?.success) {
-    return <ErrorDialog error={templatesData?.message} />;
+    return redirect("/dashboard");
   }
 
   const templates = templatesData.templates;

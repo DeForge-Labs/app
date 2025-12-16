@@ -61,9 +61,9 @@ export default async function GlobalTemplateList({ teamId, page, query }) {
 
   return (
     <>
-      <div className="w-full max-w-[1390px]">
+      <div className="w-full max-w-[1390px] px-4">
         {templates.length === 0 && query && (
-          <div className="flex flex-col items-center justify-center h-full bg-foreground/2 w-full max-w-[1360px] border border-foreground/15 border-dashed rounded-sm p-4 py-6 gap-2">
+          <div className="flex flex-col items-center justify-center h-full bg-foreground/2 w-full max-w-[1390px] border border-foreground/15 border-dashed rounded-sm p-4 py-6 gap-2 ">
             <div className="p-4 bg-background rounded-sm border border-foreground/15">
               <SearchX className="w-5 h-5 opacity-70" />
             </div>
@@ -81,7 +81,7 @@ export default async function GlobalTemplateList({ teamId, page, query }) {
         )}
 
         {templates.length === 0 && !query && (
-          <div className="flex flex-col items-center justify-center h-full bg-foreground/2 w-full max-w-[1360px] border border-foreground/15 border-dashed rounded-sm p-4 py-6 gap-2">
+          <div className="flex flex-col items-center justify-center h-full bg-foreground/2 w-full max-w-[1390px] border border-foreground/15 border-dashed rounded-sm p-4 py-6 gap-2">
             <div className="p-4 bg-background rounded-sm border border-foreground/15">
               <GlobeLock className="w-5 h-5 opacity-70" />
             </div>
@@ -90,7 +90,7 @@ export default async function GlobalTemplateList({ teamId, page, query }) {
             </p>
           </div>
         )}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {templates.map((template, index) => (
             <Link href={`/templates/${template.id}`} key={index}>
               <Card className="hover:border hover:border-foreground/20 cursor-pointer">
@@ -99,27 +99,32 @@ export default async function GlobalTemplateList({ teamId, page, query }) {
                     <div className="rounded-sm p-4 bg-foreground/10 w-fit">
                       <DynamicIcon
                         name={template.iconId}
-                        className="size-4 opacity-80"
+                        className="size-6 opacity-80"
                       />
                     </div>
-                    <p className="text-sm font-semibold"> {template?.name}</p>
+                    <p className="text-sm font-semibold">
+                      {" "}
+                      {template?.name?.length > 30
+                        ? template?.name?.substring(0, 30) + "..."
+                        : template?.name}
+                    </p>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="-mt-6 flex flex-col flex-1 justify-between">
-                  <p className="text-xs text-foreground/60 line-clamp-4">
+                  <p className="text-xs text-foreground/60 line-clamp-3">
                     {template?.description}
                   </p>
 
                   <div className="flex gap-2 flex-wrap">
-                    <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 border bg-transparent text-foreground/60 border-foreground/60 ">
+                    <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 opacity-80">
                       {template?.category}
                     </Badge>
 
-                    <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 border bg-transparent text-foreground/60 border-foreground/60">
+                    <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 opacity-80">
                       <GitBranch className="size-3" /> {template?.totalClones}
                     </Badge>
 
-                    <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 bg-transparent text-foreground/60 ">
+                    <Badge className="mt-4 w-fit text-[10px] p-1 py-0.5 bg-transparent text-foreground/60 opacity-90">
                       <User className="size-3" /> {template?.author}
                     </Badge>
                   </div>

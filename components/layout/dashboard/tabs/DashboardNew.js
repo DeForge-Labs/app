@@ -58,7 +58,7 @@ export default async function DashboardNew({ params }) {
 
         <Suspense
           fallback={
-            <div className="w-[90%] lg:w-[80%] flex flex-col gap-4 z-20 mt-20">
+            <div className="max-w-[1390px] w-full flex flex-col gap-4 z-20 mt-20">
               <div className="flex w-full justify-between lg:items-center flex-col gap-2 lg:flex-row">
                 <div className="flex flex-col gap-1">
                   <p className="text-sm font-semibold">Popular Templates</p>

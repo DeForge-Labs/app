@@ -107,7 +107,7 @@ export default async function TemplatePage({ id }) {
       </Breadcrumb>
 
       <div className="flex justify-between items-end gap-2">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-semibold">
             {template?.name?.length > 30
               ? template?.name?.slice(0, 30) + "..."
@@ -161,11 +161,27 @@ export default async function TemplatePage({ id }) {
           {template?.category}
         </Badge>
 
-        <Separator className="mt-4 mb-2 bg-foreground/20" />
-
-        <p className="text-[12px] text-muted-foreground pb-6">
-          Published at {new Date(template?.createdAt).toLocaleString()}
+        <p className="text-[12px] text-muted-foreground  mt-4">
+          Published on {new Date(template?.createdAt).getDate()}/
+          {new Date(template?.createdAt).getMonth() + 1}/
+          {new Date(template?.createdAt).getFullYear()}
         </p>
+
+        <Separator className="mt-3 mb-2 bg-foreground/20" />
+
+        <div className="flex items-center pb-6">
+          <p className="text-[12px] text-muted-foreground">Powered by</p>
+
+          <Image
+            src="/logo/logo-black.svg"
+            alt="Deforge Logo"
+            width={14}
+            height={14}
+            className="ml-2 dark:invert"
+          />
+
+          <p className="text-[14px] font-bold ml-1">Deforge</p>
+        </div>
       </div>
     </>
   );

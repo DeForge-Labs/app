@@ -19,6 +19,7 @@ import TeamMenuList from "../dashboard/navbar/TeamMenuList";
 import FeedbackDialog from "../dashboard/navbar/FeedbackDialog";
 import SettingsMenu from "../dashboard/navbar/SettingsMenu";
 import LoginDialog from "./LoginDialog";
+import { headers } from "next/headers";
 
 const getTeamData = async () => {
   try {
@@ -48,6 +49,23 @@ const getTeamData = async () => {
 };
 
 const TemplateTeamMenu = async () => {
+  const headersList = await headers();
+  const userStatus = headersList.get("x-user-status");
+
+  if (userStatus !== "active") {
+    return (
+      <div className="flex items-center gap-2 justify-between w-full">
+        <p className="text-lg font-bold text-foreground">Deforge</p>
+
+        <div className="flex items-center gap-2">
+          <FeedbackDialog />
+          <SettingsMenu isTemplate />
+          <LoginDialog />
+        </div>
+      </div>
+    );
+  }
+
   const teamData = await getTeamData();
 
   if (!teamData) {

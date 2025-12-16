@@ -39,7 +39,7 @@ export default function OpenButton() {
           const isLoggedIn = await checkIfLogin();
 
           if (!isLoggedIn) {
-            toast("Please Sign In to use this template");
+            toast("Sign In to use this template");
             return;
           }
 
