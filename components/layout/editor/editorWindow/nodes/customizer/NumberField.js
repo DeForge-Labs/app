@@ -1,6 +1,5 @@
 "use client";
 
-import { Input } from "@heroui/react";
 import TypeBadge from "./common/TypeBadge";
 import DisconnectButton from "./common/DisconnectButton";
 import {

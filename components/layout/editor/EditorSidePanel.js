@@ -13,10 +13,10 @@ import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import { useTheme } from "next-themes";
 import useWorkflowStore from "@/store/useWorkspaceStore";
 import useChatStore from "@/store/useChatStore";
-import { useState } from "react";
 import PublishDialog from "./editorNavbar/PublishDialog";
 import ExportDialog from "./editorNavbar/ExportDialog";
 import ImportDialog from "./editorNavbar/ImportDialog";
+import { useEffect, useState } from "react";
 
 export default function EditorSidePanel() {
   const { theme, setTheme } = useTheme();
@@ -25,6 +25,11 @@ export default function EditorSidePanel() {
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isPublishOpen, setIsPublishOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const buttonMap = [
     {
@@ -136,41 +141,37 @@ export default function EditorSidePanel() {
           ))}
         </div>
 
-        <Tabs orientation="vertical" value={theme}>
-          <TabsList
-            className={
-              "bg-background border border-foreground/20 w-[32px] [&>span]:bg-foreground/90 [&>span]:mb-[1px] [&>span]:ml-[1px] dark:[&>span]:bg-foreground/90 [&>span]:rounded-sm rounded-sm p-[1px]"
-            }
-          >
-            <TabsTab
-              value="light"
-              onClick={() => {
-                setTheme("light");
-              }}
-              className="text-xs data-selected:text-background p-1 pl-[5px]"
+        {mounted && (
+          <Tabs orientation="vertical" value={theme}>
+            <TabsList
+              className={
+                "bg-background border border-foreground/20 w-[32px] [&>span]:bg-foreground/90 [&>span]:mb-[1px] [&>span]:ml-[1px] dark:[&>span]:bg-foreground/90 [&>span]:rounded-sm rounded-sm p-[1px]"
+              }
             >
-              <Sun />
-            </TabsTab>
-            <TabsTab
-              value="dark"
-              onClick={() => {
-                setTheme("dark");
-              }}
-              className="text-xs data-selected:text-background p-1 pl-[5px]"
-            >
-              <Moon />
-            </TabsTab>
-            <TabsTab
-              value="system"
-              onClick={() => {
-                setTheme("system");
-              }}
-              className="text-xs data-selected:text-background p-1 relative pl-[5px]"
-            >
-              <Monitor />
-            </TabsTab>
-          </TabsList>
-        </Tabs>
+              <TabsTab
+                value="light"
+                onClick={() => setTheme("light")}
+                className="text-xs data-selected:text-background p-1 pl-[5px]"
+              >
+                <Sun className="size-4" />
+              </TabsTab>
+              <TabsTab
+                value="dark"
+                onClick={() => setTheme("dark")}
+                className="text-xs data-selected:text-background p-1 pl-[5px]"
+              >
+                <Moon className="size-4" />
+              </TabsTab>
+              <TabsTab
+                value="system"
+                onClick={() => setTheme("system")}
+                className="text-xs data-selected:text-background p-1 relative pl-[5px]"
+              >
+                <Monitor className="size-4" />
+              </TabsTab>
+            </TabsList>
+          </Tabs>
+        )}
       </div>
     </>
   );

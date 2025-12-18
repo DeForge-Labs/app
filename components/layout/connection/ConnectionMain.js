@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 import useSocial from "@/hooks/useSocial";
 import Logo from "@/components/ui/Logo";
 

@@ -21,17 +21,15 @@ export default function TextField({
   const { selectedHandle } = useWorkspaceStore();
   const { resolvedTheme } = useTheme();
 
-  // Store cursor position before re-render
   const handleInputChange = (e) => {
     cursorPositionRef.current = e.target.selectionStart;
     handleChange(field.name, e.target.value);
   };
 
-  // Restore cursor position after re-render
   useEffect(() => {
     if (inputRef.current && cursorPositionRef.current !== null) {
       const input = inputRef.current;
-      // For HeroUI Input, we might need to access the actual input element
+
       const actualInput = input.querySelector("input") || input;
       if (actualInput && actualInput.setSelectionRange) {
         actualInput.setSelectionRange(

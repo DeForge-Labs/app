@@ -2,7 +2,7 @@
 
 import { Handle, Position } from "reactflow";
 import getColorByType from "@/lib/color-profile";
-import { useSelector } from "react-redux";
+import useWorkspaceStore from "@/store/useWorkspaceStore";
 import { useTheme } from "next-themes";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -16,7 +16,7 @@ export default function CheckBoxField({
   isConnected,
   isSameNode,
 }) {
-  const selectedHandle = useSelector((state) => state.workflow?.selectedHandle);
+  const { selectedHandle } = useWorkspaceStore();
   const { resolvedTheme } = useTheme();
 
   return (

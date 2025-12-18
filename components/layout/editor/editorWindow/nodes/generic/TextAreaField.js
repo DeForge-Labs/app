@@ -21,17 +21,15 @@ export default function TextAreaField({
   const { selectedHandle } = useWorkspaceStore();
   const { resolvedTheme } = useTheme();
 
-  // Store cursor position before re-render
   const handleTextareaChange = (e) => {
     cursorPositionRef.current = e.target.selectionStart;
     handleChange(field.name, e.target.value);
   };
 
-  // Restore cursor position after re-render
   useEffect(() => {
     if (textareaRef.current && cursorPositionRef.current !== null) {
       const textarea = textareaRef.current;
-      // For HeroUI Textarea, we might need to access the actual textarea element
+
       const actualTextarea = textarea.querySelector("textarea") || textarea;
       if (actualTextarea && actualTextarea.setSelectionRange) {
         actualTextarea.setSelectionRange(

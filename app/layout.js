@@ -4,7 +4,6 @@ import "./globals.css";
 
 import { ThemeProvider } from "next-themes";
 
-import ReduxProvider from "@/providers/ReduxProvider";
 import ToasterProvider from "@/providers/ToasterProvider";
 
 import Script from "next/script";
@@ -21,17 +20,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${lexendDeca.className} antialiased`}
-        suppressHydrationWarning
-      >
-        <ReduxProvider>
-          <ThemeProvider attribute="class">
-            <ToasterProvider />
-            {children}
-          </ThemeProvider>
-        </ReduxProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${lexendDeca.className} antialiased`}>
+        <ThemeProvider attribute="class">
+          <ToasterProvider />
+          {children}
+        </ThemeProvider>
       </body>
 
       <Script src="https://scripts.simpleanalyticscdn.com/latest.js" />
