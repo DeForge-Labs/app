@@ -27,6 +27,7 @@ import useWorkspaceStore from "@/store/useWorkspaceStore";
 import useNodeLibraryStore from "@/store/useNodeLibraryStore";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import KnowledgeBaseField from "./nodes/customizer/KnowledgeBaseField";
 
 export default function CustomizerPanel() {
   const { selectedNode, deleteEdge, updateNodeData, setSelectedNode } =
@@ -345,6 +346,21 @@ export default function CustomizerPanel() {
                   case "slider":
                     return (
                       <SliderField
+                        field={field}
+                        key={index}
+                        isInput={isInput}
+                        isConnected={isConnected}
+                        selectedNode={selectedNode}
+                        handleChange={handleChange}
+                        handleDisconnect={handleDisconnect}
+                        nodeType={nodeType}
+                      />
+                    );
+
+                  case "KnowledgeBase":
+                  case "knowledgebase":
+                    return (
+                      <KnowledgeBaseField
                         field={field}
                         key={index}
                         isInput={isInput}

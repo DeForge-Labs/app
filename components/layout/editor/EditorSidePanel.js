@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Download,
-  File,
+  Globe,
   MessageCircle,
   Monitor,
   Moon,
@@ -118,7 +118,7 @@ export default function EditorSidePanel() {
           }
           onClick={() => setIsPublishOpen(true)}
         >
-          <File className="size-[13px]" />
+          <Globe className="size-[13px]" />
         </Button>
       ),
     },

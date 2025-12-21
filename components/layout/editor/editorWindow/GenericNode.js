@@ -21,6 +21,7 @@ import ArrayField from "./nodes/generic/ArrayField";
 import CheckBoxField from "./nodes/generic/CheckBoxField";
 import DateTimeField from "./nodes/generic/DateTimeField";
 import SliderField from "./nodes/generic/SliderField";
+import KnowledgeBaseField from "./nodes/generic/KnowledgeBaseField";
 import { useTheme } from "next-themes";
 import useNodeLibraryStore from "@/store/useNodeLibraryStore";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
@@ -290,6 +291,22 @@ export function GenericNode({ id, type, data }) {
       case "slider":
         return (
           <SliderField
+            key={index}
+            field={field}
+            nodeType={nodeType}
+            isDisabled={isDisabled}
+            currentValue={currentValue}
+            handleChange={handleChange}
+            matchingInput={matchingInput}
+            isConnected={isConnected}
+            isSameNode={selectedNodeId === id}
+          />
+        );
+
+      case "KnowledgeBase":
+      case "knowledgebase":
+        return (
+          <KnowledgeBaseField
             key={index}
             field={field}
             nodeType={nodeType}

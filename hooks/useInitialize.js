@@ -16,7 +16,7 @@ export default function useInitialize() {
   const {
     setWorkspace,
     setWorkflow,
-
+    setSelectedNode,
     setIsWorkspaceInitializing,
     setTeam,
     setIsWorkflowInitializing,
