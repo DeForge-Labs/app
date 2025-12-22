@@ -52,7 +52,7 @@ export default function Chatbox() {
 
   const onSubmit = () => {
     if (!prompt.trim() || isCreatingWorkflow) return;
-    handleCreateWorkflow(prompt, "blank", true);
+    handleCreateWorkflow(prompt, "blank", true, true);
   };
 
   const handleKeyDown = (e) => {

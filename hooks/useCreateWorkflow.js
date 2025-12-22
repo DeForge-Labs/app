@@ -15,7 +15,8 @@ export default function useWorkflow() {
   const handleCreateWorkflow = async (
     name,
     templateId = "blank",
-    trigger = false
+    trigger = false,
+    chatPrompt = false,
   ) => {
     try {
       setIsCreatingWorkflow(true);
@@ -24,7 +25,7 @@ export default function useWorkflow() {
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/workspace/create`,
-        { name, templateId }
+        { name, templateId, chatPrompt }
       );
 
       if (!response.data.success) {
