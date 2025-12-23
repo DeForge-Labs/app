@@ -22,6 +22,7 @@ import SliderField from "../editorWindow/nodes/customizer/SliderField";
 import SocialField from "../editorWindow/nodes/customizer/SocialField";
 import EnvField from "../editorWindow/nodes/customizer/EnvField";
 import MapField from "../editorWindow/nodes/customizer/MapField";
+import KnowledgeBaseField from "../editorWindow/nodes/customizer/KnowledgeBaseField";
 import useNodeLibraryStore from "@/store/useNodeLibraryStore";
 import useFormStore from "@/store/useFormStore";
 import useWorkflowStore from "@/store/useWorkspaceStore";
@@ -447,6 +448,19 @@ export default function ComponentRenderer({
       case "slider":
         return (
           <SliderField
+            field={selectedField}
+            key={index}
+            isInput={isInput}
+            isConnected={isConnected}
+            selectedNode={node}
+            handleChange={handleChange}
+            nodeType={nodeTypes}
+          />
+        );
+      case "KnowledgeBase":
+      case "knowledgebase":
+        return (
+          <KnowledgeBaseField
             field={selectedField}
             key={index}
             isInput={isInput}

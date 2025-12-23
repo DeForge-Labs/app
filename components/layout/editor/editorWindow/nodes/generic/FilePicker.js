@@ -25,7 +25,12 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-export default function FilePicker({ field, onChange, value }) {
+export default function FilePicker({
+  field,
+  onChange,
+  value,
+  isTemplate = false,
+}) {
   const {
     files,
     loading,
@@ -46,6 +51,9 @@ export default function FilePicker({ field, onChange, value }) {
   });
 
   const handleOpenChange = (open) => {
+    if (isTemplate) {
+      return;
+    }
     setOpen(open);
   };
 
@@ -80,7 +88,7 @@ export default function FilePicker({ field, onChange, value }) {
                   <div className="flex flex-col gap-0.5 flex-1 min-w-0">
                     <p
                       title={value.fileName}
-                      className="font-medium text-[10px] truncate"
+                      className="font-medium text-[10px] truncate text-left"
                     >
                       {value.fileName}
                     </p>
@@ -152,9 +160,9 @@ export default function FilePicker({ field, onChange, value }) {
               </div>
             )}
 
-            <div className="flex-1 overflow-y-auto h-full relative hide-scroll mt-3">
+            <div className="flex-1 overflow-y-auto h-full relative hide-scroll mt-2">
               {!loading && files.length > 0 && (
-                <div className="flex flex-col gap-3 w-full absolute top-0 left-0">
+                <div className="flex flex-col gap-3 w-full absolute top-0 left-0 py-2">
                   {files.map((file, index) => {
                     const createdAt = new Date(file.createdAt || Date.now());
 

@@ -18,6 +18,7 @@ import useWorkflowStore from "@/store/useWorkspaceStore";
 import useNodeLibraryStore from "@/store/useNodeLibraryStore";
 import MarkdownRenderer from "../../template/MarkdownRenderer";
 import RunButton from "./RunButton";
+import KnowledgeBaseField from "../editorWindow/nodes/customizer/KnowledgeBaseField";
 
 export default function PreviewRenderer({ component, isTemplate = false }) {
   const renderNodeComponent = () => {
@@ -200,6 +201,19 @@ export default function PreviewRenderer({ component, isTemplate = false }) {
             selectedNode={node}
             handleChange={handleChange}
             nodeType={nodeTypes}
+          />
+        );
+      case "KnowledgeBase":
+      case "knowledgebase":
+        return (
+          <KnowledgeBaseField
+            field={selectedField}
+            key={component.id}
+            isInput={isInput}
+            isConnected={isConnected}
+            selectedNode={node}
+            handleChange={handleChange}
+            isTemplate={isTemplate}
           />
         );
       case "social":

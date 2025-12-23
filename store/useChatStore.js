@@ -65,6 +65,8 @@ const useChatStore = create((set) => ({
   setChatMode: (mode) => set({ chatMode: mode }),
 
   setTriggerMessage: (message) => set({ triggerMessage: message }),
+
+  resetChatState: () => set(initialState),
 }));
 
 export default useChatStore;

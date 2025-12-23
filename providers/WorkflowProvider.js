@@ -5,11 +5,16 @@ import useSocket from "@/hooks/useSocket";
 import { useParams } from "next/navigation";
 import useNodeLibraryStore from "@/store/useNodeLibraryStore";
 import useWorkflowStore from "@/store/useWorkspaceStore";
+import useChatStore from "@/store/useChatStore";
+import useFormStore from "@/store/useFormStore";
 
 export default function WorkflowProvider({ children }) {
   const { loadWorkspaceById, loadLogs, loadChats } = useInitialize();
   const { fetchNodeRegistry, nodeRegistry } = useNodeLibraryStore();
-  const { workspace, setLogs, workflow } = useWorkflowStore();
+  const { workspace, setLogs, workflow, resetWorkspaceState } =
+    useWorkflowStore();
+  const { resetChatState } = useChatStore();
+  const { resetFormState } = useFormStore();
   const {
     initializeWebSocket,
     subscribeToWorkflow,
@@ -19,6 +24,9 @@ export default function WorkflowProvider({ children }) {
   const params = useParams();
 
   useEffect(() => {
+    resetWorkspaceState();
+    resetChatState();
+    resetFormState();
     fetchNodeRegistry();
   }, []);
 

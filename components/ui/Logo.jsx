@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const Logo = ({
   size = 50,
-  href = "/",
+  href = null,
   alt = "Logo",
   className = "",
   padding = "p-4",

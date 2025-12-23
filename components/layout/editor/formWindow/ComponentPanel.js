@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { useRef } from "react";
 
 import ComponentHolder from "./ComponentHolder";
+import KnowledgeBaseField from "../editorWindow/nodes/customizer/KnowledgeBaseField";
 
 export default function ComponentPanel({
   selectedComponent,
@@ -394,6 +395,36 @@ export default function ComponentPanel({
                       </ComponentHolder>
                     );
 
+                  case "KnowledgeBase":
+                  case "knowledgebase":
+                    return (
+                      <ComponentHolder
+                        key={index}
+                        onClick={() => {
+                          setSelectedComponent({
+                            name: field.name,
+                            type: field.type,
+                            nodeId: selectedNode.id,
+                          });
+                        }}
+                        isSelected={
+                          selectedComponent?.name === field.name &&
+                          selectedComponent?.type === field.type &&
+                          selectedComponent?.nodeId === selectedNode.id
+                        }
+                      >
+                        <KnowledgeBaseField
+                          field={field}
+                          key={index}
+                          isInput={isInput}
+                          isConnected={isConnected}
+                          selectedNode={selectedNode}
+                          handleChange={handleChange}
+                          handleDisconnect={handleDisconnect}
+                          nodeType={nodeType}
+                        />
+                      </ComponentHolder>
+                    );
                   default:
                     return null;
                 }

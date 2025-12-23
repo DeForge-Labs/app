@@ -7,6 +7,8 @@ import UpgradeWindow from "./UpgradeWindow";
 import ErrorDialog from "@/components/ui/ErrorDialog";
 
 export default async function PlanBalance({ teamId }) {
+  const cookieStore = await cookies();
+
   const plans = [
     {
       id: "free",
@@ -48,7 +50,6 @@ export default async function PlanBalance({ teamId }) {
 
   const getCredits = async () => {
     try {
-      const cookieStore = await cookies();
       const allCookies = cookieStore.getAll();
 
       const cookieHeader = allCookies

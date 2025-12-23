@@ -157,7 +157,7 @@ export default function FormMenu() {
                         }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => add(component)}
-                        className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors ${
+                        className={`w-10 h-10 flex items-center justify-center rounded-md transition-colors hover:cursor-pointer ${
                           hoveredType === component.type
                             ? "bg-foreground/10 text-foreground"
                             : "text-muted-foreground"

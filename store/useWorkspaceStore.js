@@ -512,6 +512,8 @@ const useWorkflowStore = create((set, get) => ({
   setSidePanel: (sidePanel) => set({ sidePanel }),
 
   setExecuteModalOpen: (executeModalOpen) => set({ executeModalOpen }),
+
+  resetWorkspaceState: () => set(initialState),
 }));
 
 export default useWorkflowStore;

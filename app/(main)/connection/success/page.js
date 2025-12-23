@@ -114,9 +114,9 @@ export default function ConnectionSuccess() {
           <div className="text-2xl font-bold text-foreground ">
             {isSuccess ? "Success!" : "Error"}
           </div>
-          <div className="text-sm text-gray-500 text-foreground">{message}</div>
+          <div className="text-sm text-foreground">{message}</div>
 
-          <div className="text-sm text-gray-500 text-foreground">
+          <div className="text-sm text-foreground">
             {isProcessing ? (
               <>
                 <p>Processing...</p>

@@ -10,6 +10,8 @@ import IconDialog from "./IconDialog";
 import { Plus } from "lucide-react";
 import PageSection from "./PageSection";
 import ErrorDialog from "@/components/ui/ErrorDialog";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export default async function AppList({ teamId, page, query }) {
   const getApps = async () => {
@@ -118,11 +120,24 @@ export default async function AppList({ teamId, page, query }) {
 
             <div className="flex justify-between items-center">
               <div className="flex flex-col gap-0.5">
-                <p className="font-medium text-sm">
-                  {app?.name?.length > 40
-                    ? app?.name?.slice(0, 40) + "..."
-                    : app?.name}
-                </p>
+                <div className="group relative w-fit">
+                  <p
+                    className={cn(
+                      "font-medium text-sm ",
+                      app?.name?.length > 40 && "cursor-help"
+                    )}
+                  >
+                    {app?.name?.length > 40
+                      ? app?.name?.slice(0, 40) + "..."
+                      : app?.name}
+                  </p>
+
+                  {app?.name?.length > 40 && (
+                    <span className="pointer-events-none absolute left-0 -top-8 w-max max-w-xs scale-0 rounded-lg bg-background p-2 px-3 text-xs text-foreground/90 border border-foreground/15 transition-all group-hover:scale-100 z-50">
+                      {app?.name}
+                    </span>
+                  )}
+                </div>
 
                 <p className="text-xs text-foreground/70">Updated {timeAgo}</p>
               </div>
@@ -140,11 +155,19 @@ export default async function AppList({ teamId, page, query }) {
                 })}
               </p>
 
-              <MenuBox
-                appId={app.id}
-                appName={app.name}
-                isFavorite={app.isFavorite}
-              />
+              <div className="flex items-center gap-2">
+                {app.workflow?.status === "LIVE" && (
+                  <Badge className="text-[10px] py-0 px-1 rounded-[4px]">
+                    Published
+                  </Badge>
+                )}
+
+                <MenuBox
+                  appId={app.id}
+                  appName={app.name}
+                  isFavorite={app.isFavorite}
+                />
+              </div>
             </div>
           </div>
         );

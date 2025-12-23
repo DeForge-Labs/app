@@ -2,12 +2,9 @@ import FilePicker from "../generic/FilePicker";
 
 export default function KnowledgeBaseField({
   field,
-  isInput,
-  isConnected,
   selectedNode,
   handleChange,
-  handleDisconnect,
-  nodeType,
+  isTemplate = false,
 }) {
   return (
     <>
@@ -20,6 +17,7 @@ export default function KnowledgeBaseField({
             field={field}
             onChange={handleChange}
             value={selectedNode.data[field.name]}
+            isTemplate={isTemplate}
           />
         </div>
       </div>

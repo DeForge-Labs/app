@@ -11,9 +11,10 @@ import ErrorDialog from "@/components/ui/ErrorDialog";
 import RemoveMemberButton from "./RemoveMemberButton";
 
 export default async function TeamMembers({ id }) {
+  const cookieStore = await cookies();
+
   const getTeamMembers = async () => {
     try {
-      const cookieStore = await cookies();
       const allCookies = cookieStore.getAll();
 
       const cookieHeader = allCookies

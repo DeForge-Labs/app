@@ -43,13 +43,17 @@ const deepCompareComponents = (current, saved) => {
   return true;
 };
 
-const useFormStore = create((set) => ({
+const initialState = {
   components: [],
   selectedComponentId: null,
   hasUnsavedChanges: false,
   lastSavedState: [],
   isPreview: false,
   formModal: false,
+};
+
+const useFormStore = create((set) => ({
+  ...initialState,
 
   addComponent: (payload) =>
     set((state) => {
@@ -183,6 +187,8 @@ const useFormStore = create((set) => ({
     set({
       formModal,
     }),
+
+  resetFormState: () => set(initialState),
 }));
 
 export default useFormStore;

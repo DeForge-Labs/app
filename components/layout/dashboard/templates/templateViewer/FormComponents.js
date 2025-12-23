@@ -16,6 +16,7 @@ import EnvField from "@/components/layout/editor/editorWindow/nodes/customizer/E
 import MapField from "@/components/layout/editor/editorWindow/nodes/customizer/MapField";
 import RunButton from "@/components/layout/editor/formWindow/RunButton";
 import MarkdownRenderer from "@/components/layout/template/MarkdownRenderer";
+import KnowledgeBaseField from "@/components/layout/editor/editorWindow/nodes/customizer/KnowledgeBaseField";
 
 export default function FormComponents({
   component,
@@ -195,10 +196,22 @@ export default function FormComponents({
             nodeType={nodeTypes}
           />
         );
+      case "KnowledgeBase":
+      case "knowledgebase":
+        return (
+          <KnowledgeBaseField
+            field={selectedField}
+            key={component.id}
+            selectedNode={node}
+            handleChange={handleChange}
+            isTemplate={true}
+          />
+        );
       case "social":
         return (
           <SocialField
             field={selectedField}
+            selectedNode={node}
             key={component.id}
             isTemplate={true}
           />

@@ -24,6 +24,7 @@ import { useTheme } from "next-themes";
 import useWorkspaceStore from "@/store/useWorkspaceStore";
 import { Badge } from "@/components/ui/badge";
 import { useNodeViewerStore } from "./ViewerContext";
+import KnowledgeBaseField from "@/components/layout/editor/editorWindow/nodes/generic/KnowledgeBaseField";
 
 export default function ViewerGenericNode({ id, type, data }) {
   const edges = useEdges();
@@ -287,6 +288,20 @@ export default function ViewerGenericNode({ id, type, data }) {
             matchingInput={matchingInput}
             isConnected={isConnected}
             isSameNode={false}
+          />
+        );
+
+      case "KnowledgeBase":
+      case "knowledgebase":
+        return (
+          <KnowledgeBaseField
+            field={field}
+            key={index}
+            isConnected={isConnected}
+            handleChange={handleChange}
+            nodeType={nodeType}
+            currentValue={currentValue}
+            isTemplate={true}
           />
         );
 
