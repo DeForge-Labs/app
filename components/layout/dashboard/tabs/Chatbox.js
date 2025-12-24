@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowUp, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import useWorkflow from "@/hooks/useCreateWorkflow";
+import { useSearchParams } from "next/navigation";
 
 export default function Chatbox() {
   const placeholders = [
@@ -19,6 +20,7 @@ export default function Chatbox() {
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [prompt, setPrompt] = useState("");
+  const searchParams = useSearchParams();
 
   const { isCreatingWorkflow, handleCreateWorkflow } = useWorkflow();
 
@@ -49,6 +51,11 @@ export default function Chatbox() {
 
     return () => clearTimeout(timeout);
   }, [charIndex, isDeleting, placeholderIndex, placeholders]);
+
+  useEffect(() => {
+    const prompt = searchParams.get("prompt");
+    if (prompt) setPrompt(prompt);
+  }, [searchParams]);
 
   const onSubmit = () => {
     if (!prompt.trim() || isCreatingWorkflow) return;

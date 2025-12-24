@@ -4,6 +4,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 // Validation schemas
 const usernameSchema = z
@@ -37,6 +38,7 @@ const ROUTES = {
 
 export default function useOnboard() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   /**
    * Makes an API request with standardized error handling
@@ -79,14 +81,15 @@ export default function useOnboard() {
    */
   const handlePostAuthNavigation = useCallback(
     (lastTeamId, embedded) => {
+      const prompt = searchParams.get("prompt");
       const destination = lastTeamId ? ROUTES.DASHBOARD : ROUTES.CREATE_TEAM;
       if (embedded && lastTeamId) {
         router.refresh();
       } else {
-        router.push(destination);
+        router.push(destination + (prompt ? `?prompt=${prompt}` : ""));
       }
     },
-    [router]
+    [router, searchParams]
   );
 
   /**

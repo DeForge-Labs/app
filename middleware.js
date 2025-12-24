@@ -11,7 +11,7 @@ const unprotectedRoutes = [
 const semiProtectedRoutes = ["/template"];
 
 export async function middleware(req) {
-  const { pathname } = req.nextUrl;
+  const { pathname, search } = req.nextUrl;
   const token = req.cookies.get("token");
   const lastTeamId = req.cookies.get("lastTeamId");
 
@@ -20,60 +20,50 @@ export async function middleware(req) {
   }
 
   if (!token) {
-    if (pathname === "/") {
-      return NextResponse.next();
-    }
+    if (pathname === "/") return NextResponse.next();
 
     if (semiProtectedRoutes.some((route) => pathname.startsWith(route))) {
       const response = NextResponse.next();
-
       response.headers.set("X-User-Status", "inactive");
-
       return response;
     }
 
-    return NextResponse.redirect(new URL("/", req.url));
+    const loginUrl = new URL("/", req.url);
+    if (search) {
+      loginUrl.search = search;
+    }
+    return NextResponse.redirect(loginUrl);
   }
 
   try {
     const { payload } = await verifyToken(`Bearer ${token.value}`);
 
     if (!payload) {
-      if (pathname === "/") {
-        return NextResponse.next();
-      }
+      if (pathname === "/") return NextResponse.next();
 
-      if (semiProtectedRoutes.some((route) => pathname.startsWith(route))) {
-        const response = NextResponse.next();
-
-        response.headers.set("X-User-Status", "inactive");
-
-        return response;
-      }
-
-      const redirectResponse = NextResponse.redirect(new URL("/", req.url));
-      return redirectResponse;
+      const loginUrl = new URL("/", req.url);
+      if (search) loginUrl.search = search;
+      return NextResponse.redirect(loginUrl);
     }
 
     if (pathname === "/" && lastTeamId) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      const dashboardUrl = new URL("/dashboard", req.url);
+      if (search) dashboardUrl.search = search;
+      return NextResponse.redirect(dashboardUrl);
     }
 
-    if (!lastTeamId) {
-      if (pathname !== "/teams") {
-        return NextResponse.redirect(new URL("/teams", req.url));
-      }
+    if (!lastTeamId && pathname !== "/teams") {
+      const teamsUrl = new URL("/teams", req.url);
+      if (search) teamsUrl.search = search;
+      return NextResponse.redirect(teamsUrl);
     }
 
     const response = NextResponse.next();
-
     response.headers.set("X-User-Status", "active");
-
     return response;
   } catch (error) {
     console.error("Authentication error:", error);
-    const redirectResponse = NextResponse.redirect(new URL("/", req.url));
-    return redirectResponse;
+    return NextResponse.redirect(new URL("/", req.url));
   }
 }
 
