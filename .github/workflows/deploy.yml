@@ -34,7 +34,7 @@ jobs:
 
               cd DeforgeProd/app
               git pull
-              bun install
-              bun run build
-              pm2 reload "Deforge Prod App"
+              /root/.bun/bin/bun install
+              /root/.bun/bin/bun run build
+              /root/.nvm/versions/node/v22.21.1/bin/pm2 reload "Deforge Prod App"
           '"
