@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input, Button } from "@heroui/react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function MapFieldEditor({ value, onChange, disabled = false }) {
   const [newKey, setNewKey] = useState("");
@@ -41,31 +42,33 @@ export default function MapFieldEditor({ value, onChange, disabled = false }) {
     <div className="space-y-2">
       {/* Existing key-value pairs */}
       {entries.length > 0 && !disabled ? (
-        <Card className="border-dashed border-black/50 shadow-none dark:border-background dark:text-background">
+        <Card className="border-dashed border-foreground/50 shadow-none py-0 rounded-sm before:shadow-none">
           <CardContent className="p-2 space-y-2">
             {entries.map(([key, val]) => (
               <div key={key} className="flex items-center gap-2">
                 <Input
                   value={key}
                   disabled
-                  className="flex-1 bg-muted text-xs border border-black/50 rounded-lg dark:border-background dark:text-background"
+                  style={{ fontSize: "12px" }}
+                  className="flex-1 rounded-sm dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
                   variant="outline"
                 />
                 <Input
                   value={val}
                   onChange={(e) => handleUpdateValue(key, e.target.value)}
-                  className="flex-1 text-xs border border-black/50 rounded-lg dark:border-background dark:text-background"
+                  className="flex-1 rounded-sm dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
                   variant="outline"
+                  style={{ fontSize: "12px" }}
                   disabled={disabled}
                 />
                 {!disabled && (
                   <Button
                     variant="outline"
                     size="icon"
-                    onPress={() => handleRemoveEntry(key)}
-                    className="h-full bg-black/80 rounded-full p-2 dark:bg-background dark:text-black"
+                    onClick={() => handleRemoveEntry(key)}
+                    className="h-[30px]"
                   >
-                    <Trash2 className="h-2 w-2 text-background dark:text-black" />
+                    <Trash2 className="size-3 text-red-400" />
                   </Button>
                 )}
               </div>
@@ -74,14 +77,14 @@ export default function MapFieldEditor({ value, onChange, disabled = false }) {
         </Card>
       ) : (
         !disabled && (
-          <div className="text-xs border border-dashed border-black/50 rounded-md text-center p-2 dark:border-background dark:text-background">
-            No entries yet. Add a key-value pair below.
+          <div className="text-[10px] border border-dashed border-foreground/50 rounded-md text-center p-2 ">
+            No entries yet. Add a key-value pair in the input fields below.
           </div>
         )
       )}
 
       {disabled && (
-        <div className="text-xs border border-dashed border-black/50 rounded-md text-center p-2 dark:border-background dark:text-background">
+        <div className="text-[10px] border border-dashed border-border rounded-md text-center p-2 ">
           Entries are disabled, node is connected to input.
         </div>
       )}
@@ -94,23 +97,25 @@ export default function MapFieldEditor({ value, onChange, disabled = false }) {
             onChange={(e) => setNewKey(e.target.value)}
             placeholder="Key"
             variant="outline"
-            className="flex-1 border border-black/50 rounded-lg dark:border-background dark:text-background"
+            style={{ fontSize: "12px" }}
+            className="flex-1 rounded-sm dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
           />
           <Input
             value={newValue}
             onChange={(e) => setNewValue(e.target.value)}
             placeholder="Value"
             variant="outline"
-            className="flex-1 border border-black/50 rounded-lg dark:border-background dark:text-background"
+            style={{ fontSize: "12px" }}
+            className="flex-1 rounded-sm dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
           />
           <Button
-            variant="outline"
+            variant="ghost"
+            className="rounded-sm bg-foreground/5 hover:bg-foreground/10 border border-foreground/15 h-[30px]"
             size="icon"
-            onPress={handleAddEntry}
-            className="h-full bg-black/80 rounded-full p-1 dark:bg-background dark:text-black"
+            onClick={handleAddEntry}
             disabled={!newKey.trim()}
           >
-            <Plus className="h-3 w-3 text-background dark:text-black" />
+            <Plus className="size-3" />
           </Button>
         </div>
       )}

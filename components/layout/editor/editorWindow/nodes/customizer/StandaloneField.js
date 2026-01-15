@@ -1,7 +1,8 @@
 "use client";
 
-import { Button } from "@heroui/react";
-import { Link2Off } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import TypeBadge from "./common/TypeBadge";
+import DisconnectButton from "./common/DisconnectButton";
 
 export default function StandaloneField({
   input,
@@ -9,30 +10,23 @@ export default function StandaloneField({
   handleDisconnect,
 }) {
   return (
-    <div key={input.name} className="space-y-2">
-      <div className="flex justify-between items-center dark:text-background dark:border-background">
-        <div className="text-sm font-medium capitalize dark:text-background">
+    <div key={input.name} className="space-y-1">
+      <div className="flex justify-between items-center">
+        <div className="text-xs font-medium text-foreground/80 capitalize flex items-center gap-1">
           {input.name}
-          <span className="ml-2 text-xs text-black/50 dark:text-background">
-            (Input: {input.type})
-          </span>
+          <TypeBadge type={input.type} />
         </div>
         {isConnected && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-6 px-2 text-xs bg-black/80 text-background dark:bg-background dark:text-black"
-            onPress={() => handleDisconnect(input.name)}
-          >
-            <Link2Off className="h-3 w-3 mr-1" />
-            Disconnect
-          </Button>
+          <DisconnectButton handleDisconnect={handleDisconnect} input={input} />
         )}
       </div>
-      <div className="h-10 border border-black/50 rounded-md bg-black/5 text-xs flex items-center justify-between px-3 dark:border-background dark:text-background">
+      <Badge
+        variant="outline"
+        className="text-xs px-2 py-1 bg-foreground/5 w-full flex justify-between items-center border border-foreground/5 text-foreground/70 capitalize"
+      >
         <span>{isConnected ? "Connected" : "Not connected"}</span>
-        <span className="text-black/60 dark:text-background">{input.type}</span>
-      </div>
+        <span className="text-xs">{input.type}</span>
+      </Badge>
     </div>
   );
 }

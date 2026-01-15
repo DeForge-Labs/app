@@ -2,34 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useSelector } from "react-redux";
 import axios from "axios";
 
 export default function useInviteMember() {
   const [isOpen, setIsOpen] = useState(false);
   const [isInviting, setIsInviting] = useState(false);
-  const [role, setRole] = useState("VIEWER");
-  const team = useSelector((state) => state.team.team);
+  const [role, setRole] = useState(null);
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [invitation, setInvitation] = useState(null);
 
-  useEffect(() => {
-    if (!isOpen) {
-      setInvitation(null);
-    }
-  }, [isOpen]);
-
-  const handleInviteMember = async () => {
+  const handleInviteMember = async (teamId) => {
     try {
       setIsInviting(true);
 
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      };
+      axios.defaults.withCredentials = true;
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/teams/invite`,
-        { role, teamId: team?.id },
-        { headers }
+        { role }
       );
 
       if (!response.data.success) {
@@ -37,6 +27,8 @@ export default function useInviteMember() {
       }
 
       setInvitation(response.data.invitation);
+
+      setIsInviteOpen(true);
 
       toast.success("Code Generated successfully");
     } catch (error) {
@@ -55,6 +47,8 @@ export default function useInviteMember() {
     role,
     setRole,
     invitation,
+    isInviteOpen,
+    setIsInviteOpen,
     handleInviteMember,
   };
 }

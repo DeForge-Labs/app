@@ -1,178 +1,122 @@
-"use client";
-
-import { Button } from "@heroui/react";
-import {
-  Activity,
-  Grid2X2,
-  Headset,
-  Layers,
-  LayoutTemplate,
-  StickyNote,
-  Users,
-  Zap,
-  Bug,
-  FileCode2,
-} from "lucide-react";
-import Image from "next/image";
-import LogoutButton from "./LogoutButton";
-import { setTab } from "@/redux/slice/TeamSlice";
-import { cn } from "@/lib/utils";
-import { useParams, usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import { Suspense } from "react";
+import { Plus, Users, Globe, File, LayoutGrid } from "lucide-react";
 
-export default function Sidebar() {
-  const router = useRouter();
-  const params = useParams();
-  const pathname = usePathname();
+import {
+  Accordion,
+  AccordionItem,
+  AccordionPanel,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 
+import RecentApps from "./sidebar/RecentApps";
+import SearchButton from "./sidebar/SeachButton";
+import FavoriteApps from "./sidebar/FavoriteApps";
+
+const NAV_ITEMS = [
+  { href: "/apps", icon: LayoutGrid, label: "Apps" },
+  { href: "/templates", icon: Globe, label: "Templates" },
+  { href: "/team", icon: Users, label: "Team" },
+  { href: "/files", icon: File, label: "Files" },
+];
+
+const SIDEBAR_BUTTON_CLASSES =
+  "flex gap-2 bg-transparent font-normal w-full shadow-none [:hover,[data-pressed]]:bg-foreground/5 dark:bg-transparent rounded-sm border-0 not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-sm justify-start text-foreground/60";
+
+function NavLink({ href, icon: Icon, label }) {
   return (
-    <div className="lg:w-80 w-64 border-r bg-black/5 dark:bg-white/5 border-black/50 relative overflow-y-auto hide-scroll dark:border-background dark:text-background p-3 px-0 flex flex-col">
-      <div className="flex items-center gap-2 p-4 pt-2 px-6 pb-0">
-        <Image
-          src="/logo/logo-black.svg"
-          alt="Logo"
-          width={24}
-          height={24}
-          className="dark:invert"
-        />
-        <span className="font-bold inline-block text-3xl dark:text-background">
-          Deforge
-        </span>
-      </div>
+    <Link href={href} className="w-full">
+      <Button variant="outline" className={SIDEBAR_BUTTON_CLASSES}>
+        <Icon />
+        {label}
+      </Button>
+    </Link>
+  );
+}
 
-      <div className="flex flex-col flex-1 justify-between px-4 pt-2">
-        <div className="flex flex-col mt-3">
-          <Button
-            size="md"
-            className={cn(
-              "text-md transition-colors bg-transparent text-black dark:text-background justify-start",
-              pathname === `/dashboard/${params.id}`
-                ? "bg-black/80 text-background dark:bg-background dark:text-black"
-                : "hover:bg-black/5 hover:dark:bg-white/5"
-            )}
-            onPress={() => {
-              if (pathname === `/dashboard/${params.id}`) return;
-              router.push(`/dashboard/${params.id}`);
-            }}
-          >
-            <Grid2X2 size={20} />
-            Dashboard
-          </Button>
+function LoadingSkeleton() {
+  return (
+    <div className="flex flex-col gap-2">
+      {[...Array(3)].map((_, i) => (
+        <Skeleton key={i} className="w-full h-9" />
+      ))}
+    </div>
+  );
+}
 
-          <Button
-            size="md"
-            className={cn(
-              "text-md transition-colors bg-transparent text-black dark:text-background justify-start",
-              pathname === `/workspaces/${params.id}`
-                ? "bg-black/80 text-background dark:bg-background dark:text-black"
-                : "hover:bg-black/5 hover:dark:bg-white/5"
-            )}
-            onPress={() => {
-              if (pathname === `/workspaces/${params.id}`) return;
-              router.push(`/workspaces/${params.id}`);
-            }}
-          >
-            <Zap size={20} />
-            Workspaces
-          </Button>
+function AccordionSection({ title, children }) {
+  return (
+    <Accordion className="w-full">
+      <AccordionItem>
+        <AccordionTrigger
+          className="font-normal text-foreground/60 text-xs py-0"
+          size="xs"
+        >
+          {title}
+        </AccordionTrigger>
 
-          <Button
-            size="md"
-            className={cn(
-              "text-md transition-colors bg-transparent text-black dark:text-background justify-start",
-              pathname === `/published/${params.id}`
-                ? "bg-black/80 text-background dark:bg-background dark:text-black"
-                : "hover:bg-black/5 hover:dark:bg-white/5"
-            )}
-            onPress={() => {
-              if (pathname === `/published/${params.id}`) return;
-              router.push(`/published/${params.id}`);
-            }}
-          >
-            <LayoutTemplate size={20} />
-            Published
-          </Button>
+        <AccordionPanel className="mt-2">
+          <Suspense fallback={<LoadingSkeleton />}>{children}</Suspense>
+        </AccordionPanel>
+      </AccordionItem>
+    </Accordion>
+  );
+}
 
+const Sidebar = ({ params }) => {
+  return (
+    <div className="w-60 bg-foreground/5 relative overflow-y-auto hide-scroll p-2 px-0 flex flex-col">
+      <div className="flex flex-col justify-between p-2 py-0 h-full flex-1 gap-0.5 relative">
+        <Link href="/dashboard" className="w-full">
           <Button
-            size="md"
-            className={cn(
-              "text-md transition-colors bg-transparent text-black dark:text-background justify-start",
-              pathname === `/forms/${params.id}`
-                ? "bg-black/80 text-background dark:bg-background dark:text-black"
-                : "hover:bg-black/5 hover:dark:bg-white/5"
-            )}
-            onPress={() => {
-              if (pathname === `/forms/${params.id}`) return;
-              router.push(`/forms/${params.id}`);
-            }}
+            variant="outline"
+            className="flex gap-2 font-normal text-xs border border-foreground/20 rounded-sm w-full"
           >
-            <FileCode2 size={20} />
-            Forms
+            <Plus />
+            New App
           </Button>
+        </Link>
 
-          <Button
-            size="md"
-            className={cn(
-              "text-md transition-colors bg-transparent text-black dark:text-background justify-start",
-              pathname === `/usage/${params.id}`
-                ? "bg-black/80 text-background dark:bg-background dark:text-black"
-                : "hover:bg-black/5 hover:dark:bg-white/5"
-            )}
-            onPress={() => {
-              if (pathname === `/usage/${params.id}`) return;
-              router.push(`/usage/${params.id}`);
-            }}
-          >
-            <Activity size={20} />
-            Billing
-          </Button>
+        <SearchButton />
 
-          <Button
-            size="md"
-            className={cn(
-              "text-md transition-colors bg-transparent text-black dark:text-background justify-start",
-              pathname === `/manage/${params.id}`
-                ? "bg-black/80 text-background dark:bg-background dark:text-black"
-                : "hover:bg-black/5 hover:dark:bg-white/5"
-            )}
-            onPress={() => {
-              if (pathname === `/manage/${params.id}`) return;
-              router.push(`/manage/${params.id}`);
-            }}
-          >
-            <Users size={20} />
-            Team
-          </Button>
+        {NAV_ITEMS.map((item) => (
+          <NavLink key={item.href} {...item} />
+        ))}
+
+        <div className="px-2 my-2">
+          <Separator
+            orientation="horizontal"
+            className="bg-foreground/10 w-[80%]"
+          />
         </div>
 
-        <div className="flex flex-col gap-3 px-4 pb-4">
-          <div
-            className="flex gap-1 items-center hover:cursor-pointer hover:text-black/80 dark:hover:text-background"
-            onClick={() => window.open("https://docs.deforge.io", "_blank")}
-          >
-            <StickyNote className="w-4 h-4" />
-            <p className="text-sm">Docs</p>
-          </div>
-          <Link
-            href="mailto:contact@deforge.io"
-            className="flex gap-1 items-center hover:cursor-pointer hover:text-black/80 dark:hover:text-background dark:text-background"
-          >
-            <Headset className="w-4 h-4" />
-            <p className="text-sm">Contact Us</p>
-          </Link>
-          <div
-            className="flex gap-1 items-center hover:cursor-pointer hover:text-black/80 dark:hover:text-background pb-2"
-            onClick={() =>
-              window.open("https://app.youform.com/forms/1xejylht", "_blank")
-            }
-          >
-            <Bug className="w-4 h-4" />
-            <p className="text-sm">Report Bug</p>
-          </div>
+        <div className="relative flex-1">
+          <div className="px-2 absolute h-full w-full overflow-hidden overflow-y-auto hide-scroll flex flex-col gap-2">
+            <AccordionSection title="Favourites">
+              <FavoriteApps params={params} />
+            </AccordionSection>
 
-          <LogoutButton />
+            <AccordionSection title="Recent Apps">
+              <RecentApps params={params} />
+            </AccordionSection>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col mx-2 px-2 p-2 bg-foreground/5 rounded-sm border border-foreground/20 space-y-1">
+        <div className="font-semibold text-foreground/50 text-[10px]">
+          New Update
+        </div>
+
+        <div className="text-xs text-foreground/70">
+          Full UI Overhaul and Chat to Create AI Agents
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default Sidebar;

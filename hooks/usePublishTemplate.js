@@ -3,48 +3,51 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import useWorkflowStore from "@/store/useWorkspaceStore";
 import { useRouter } from "next/navigation";
 
 export default function usePublishTemplate() {
-  const [isTemplateOpen, setIsTemplateOpen] = useState(false);
   const [isPublishingTemplate, setIsPublishingTemplate] = useState(false);
+  const { workspace } = useWorkflowStore();
+
   const router = useRouter();
 
   const handlePublishTemplate = async (
     name,
     description,
     category,
-    tags,
+    type,
     selectedIcon,
-    visibility,
     author,
-    workspaceId,
-    teamId
+    setIsOpen
   ) => {
     try {
       setIsPublishingTemplate(true);
 
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      };
+      axios.defaults.withCredentials = true;
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/template/publish/${workspaceId}`,
-        { name, description, category, tags, selectedIcon, visibility, author },
-        { headers }
+        `${process.env.NEXT_PUBLIC_API_URL}/template/publish/${workspace?.id}`,
+        {
+          name,
+          description,
+          category,
+          type,
+          selectedIcon,
+          visibility: "LISTED",
+          author,
+        }
       );
 
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
 
-      setIsTemplateOpen(false);
+      setIsOpen(false);
 
       toast.success("Template published successfully");
 
-      router.push(`/dashboard/${teamId}`);
-
-      window.open(`/template/${response.data.template.id}`, "_blank");
+      router.push(`/templates/${response.data.template.id}`);
 
       return response.data;
     } catch (error) {
@@ -56,8 +59,6 @@ export default function usePublishTemplate() {
   };
 
   return {
-    isTemplateOpen,
-    setIsTemplateOpen,
     isPublishingTemplate,
     setIsPublishingTemplate,
     handlePublishTemplate,

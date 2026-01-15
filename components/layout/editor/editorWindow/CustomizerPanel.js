@@ -1,12 +1,14 @@
 "use client";
 
-import { useDispatch, useSelector } from "react-redux";
-import { updateNodeData, deleteEdge } from "@/redux/slice/WorkflowSlice";
-import { Button } from "@heroui/react";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Coins, Lock, StickyNote } from "lucide-react";
-import { getNodeTypeByType, isArrayType } from "@/lib/node-registry";
+import {
+  BookOpen,
+  CircleDot,
+  ShieldAlert,
+  ShieldUser,
+  Trash,
+  X,
+} from "lucide-react";
+import { getNodeTypeByType } from "@/lib/node-registry";
 import { useEffect, useState } from "react";
 import EnvField from "./nodes/customizer/EnvField";
 import TextField from "./nodes/customizer/TextField";
@@ -21,17 +23,20 @@ import CheckBoxField from "./nodes/customizer/CheckBoxField";
 import DateTimeField from "./nodes/customizer/DateTimeField";
 import SliderField from "./nodes/customizer/SliderField";
 import SocialField from "./nodes/customizer/SocialField";
+import useWorkspaceStore from "@/store/useWorkspaceStore";
+import useNodeLibraryStore from "@/store/useNodeLibraryStore";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import KnowledgeBaseField from "./nodes/customizer/KnowledgeBaseField";
 
 export default function CustomizerPanel() {
-  const dispatch = useDispatch();
-  const selectedNode = useSelector((state) => state.workflow?.selectedNode);
-  const edges = useSelector((state) => state.workflow?.connections || []);
+  const { selectedNode, deleteEdge, updateNodeData, setSelectedNode } =
+    useWorkspaceStore();
+  const { connections: edges } = useWorkspaceStore();
   const [connectedInputs, setConnectedInputs] = useState(new Map());
   const [totalConnectedInputs, setTotalConnectedInputs] = useState([]);
-  const nodeRegistry = useSelector(
-    (state) => state.library?.nodeRegistry || []
-  );
-  const workflow = useSelector((state) => state.workflow?.workflow || null);
+  const { nodeRegistry } = useNodeLibraryStore();
+  const { workflow, deleteNode, setShowCustomizerPanel } = useWorkspaceStore();
 
   useEffect(() => {
     if (!selectedNode) return;
@@ -64,38 +69,25 @@ export default function CustomizerPanel() {
   }, [edges, selectedNode]);
 
   if (!selectedNode) {
-    return (
-      <div className="flex h-full items-center justify-center text-center text-muted-foreground p-4 opacity-50">
-        <div>
-          <p>Select a node to customize its properties</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   // Get the node type definition
   const nodeType = getNodeTypeByType(selectedNode.type, nodeRegistry);
 
   if (!nodeType) {
-    return (
-      <div className="flex h-full items-center justify-center text-center text-muted-foreground p-4 opacity-50">
-        <div>
-          <p>Unknown node type: {selectedNode.type}</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   const handleChange = (key, value) => {
     if (workflow?.status === "LIVE") {
       return;
     }
-    dispatch(
-      updateNodeData({
-        nodeId: selectedNode.id,
-        newData: { ...selectedNode.data, [key]: value },
-      })
-    );
+
+    updateNodeData({
+      nodeId: selectedNode.id,
+      newData: { ...selectedNode.data, [key]: value },
+    });
   };
 
   const handleDisconnect = (inputName) => {
@@ -104,7 +96,7 @@ export default function CustomizerPanel() {
     }
     const edgeId = connectedInputs.get(inputName);
     if (edgeId) {
-      dispatch(deleteEdge(edgeId));
+      deleteEdge(edgeId);
     }
   };
 
@@ -112,7 +104,7 @@ export default function CustomizerPanel() {
     if (workflow?.status === "LIVE") {
       return;
     }
-    dispatch(deleteEdge(edgeId));
+    deleteEdge(edgeId);
   };
 
   const handleDisconnectAll = (inputName) => {
@@ -123,321 +115,351 @@ export default function CustomizerPanel() {
       (input) => input.inputName === inputName
     );
     edgeIds.forEach((edgeId) => {
-      dispatch(deleteEdge(edgeId.edgeId));
+      deleteEdge(edgeId.edgeId);
     });
   };
 
   return (
-    <div className="space-y-4 absolute p-4 w-full">
-      <div className="flex items-center justify-between dark:text-background dark:border-background">
-        <div className="font-semibold dark:text-background">
-          Node Properties
+    <div className="flex flex-col w-72 bg-card border border-foreground/15 rounded-lg overflow-hidden max-h-full relative z-20">
+      <div className="flex flex-col gap-2 text-sm border-b border-foreground/15 p-4 relative z-10 shrink-0">
+        <div
+          className="absolute right-2 top-2 z-10 p-1 hover:bg-foreground/5 rounded-sm cursor-pointer"
+          onClick={() => {
+            setShowCustomizerPanel(false);
+            setSelectedNode(null);
+          }}
+        >
+          <X className="size-3" />
         </div>
-        {workflow?.status === "LIVE" && (
-          <div className="bg-black h-6 w-6 rounded-full flex items-center justify-center text-background dark:bg-background dark:text-black">
-            <Lock className="h-3 w-3" />
-          </div>
-        )}
-      </div>
-      <Card className="border-black/50 dark:border-background dark:bg-zinc-900">
-        <CardHeader className="p-4 pb-2">
-          <CardTitle className="text-sm flex flex-col gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              className="border border-black/50 text-xs dark:border-background dark:text-background"
-              onPress={() =>
-                window.open(
-                  "https://docs.deforge.io/docs/nodes/" + nodeType.type,
-                  "_blank"
-                )
-              }
+
+        <div className="flex flex-col">
+          <p>{nodeType?.title}</p>
+          <p className="text-xs text-muted-foreground max-w-64">
+            {nodeType?.desc}
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Link
+              href={`https://docs.deforge.io/docs/library/nodes/${nodeType.category}/${nodeType.type}`}
+              target="_blank"
             >
-              <StickyNote className="h-3 w-3" />
-              Docs
-            </Button>
+              <Badge
+                variant="secondary"
+                className="text-[10px] w-fit px-2 py-1 hover:bg-foreground/10 cursor-pointer bg-foreground/5 border border-foreground/5 text-foreground/70 capitalize"
+              >
+                <BookOpen className="size-3" /> Docs
+              </Badge>
+            </Link>
 
-            {nodeType.title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-4 pt-0">
-          <div className="space-y-4">
-            {/* Node label */}
-            <div className="-mt-1">
-              <div className="text-[10px]">{nodeType.desc}</div>
-            </div>
-
-            {/* Show all fields based on node type */}
-            {nodeType.fields.map((field, index) => {
-              const handleId = `input-${field.name}-${field.type}`;
-
-              // 1. Get the actual connection objects for this specific field
-              const connectionsForThisField = edges.filter(
-                (edge) =>
-                  edge.target === selectedNode.id &&
-                  edge.targetHandle === handleId
-              );
-
-              // 2. The connection count is just the length of that array
-              const totalValidConnections = connectionsForThisField.length;
-
-              // 3. The connection status is based on the count
-              const isConnected = totalValidConnections > 0;
-
-              // Your existing logic for these is fine
-              const matchingInput = nodeType.inputs.find(
-                (input) => input.name === field.name
-              );
-              const isInput = !!matchingInput;
-
-              // Render the field based on its type
-              switch (field.type) {
-                case "Text":
-                case "text":
-                  return (
-                    <TextField
-                      key={index}
-                      field={field}
-                      isInput={isInput}
-                      isConnected={isConnected}
-                      selectedNode={selectedNode}
-                      handleChange={handleChange}
-                      handleDisconnect={handleDisconnect}
-                      nodeType={nodeType}
-                    />
-                  );
-
-                case "Number":
-                case "number":
-                  return (
-                    <NumberField
-                      key={index}
-                      field={field}
-                      isInput={isInput}
-                      isConnected={isConnected}
-                      selectedNode={selectedNode}
-                      handleChange={handleChange}
-                      handleDisconnect={handleDisconnect}
-                      nodeType={nodeType}
-                    />
-                  );
-
-                case "TextArea":
-                case "textarea":
-                  return (
-                    <TextAreaField
-                      key={index}
-                      field={field}
-                      isInput={isInput}
-                      isConnected={isConnected}
-                      selectedNode={selectedNode}
-                      handleChange={handleChange}
-                      handleDisconnect={handleDisconnect}
-                      nodeType={nodeType}
-                    />
-                  );
-
-                case "select":
-                  return (
-                    <SelectField
-                      key={index}
-                      field={field}
-                      isInput={isInput}
-                      isConnected={isConnected}
-                      selectedNode={selectedNode}
-                      handleChange={handleChange}
-                      handleDisconnect={handleDisconnect}
-                      nodeType={nodeType}
-                    />
-                  );
-
-                case "JSON[]":
-                case "json[]":
-                  return (
-                    <ArrayField
-                      field={field}
-                      key={index}
-                      totalValidConnections={connectionsForThisField}
-                      handleDisconnectAll={handleDisconnectAll}
-                      handleDisconnectExact={handleDisconnectExact}
-                    />
-                  );
-
-                case "Text[]":
-                case "text[]":
-                  return (
-                    <ArrayField
-                      field={field}
-                      key={index}
-                      totalValidConnections={connectionsForThisField}
-                      handleDisconnectAll={handleDisconnectAll}
-                      handleDisconnectExact={handleDisconnectExact}
-                    />
-                  );
-
-                case "Tool[]":
-                case "tool[]":
-                  return (
-                    <ArrayField
-                      field={field}
-                      key={index}
-                      totalValidConnections={connectionsForThisField}
-                      handleDisconnectAll={handleDisconnectAll}
-                      handleDisconnectExact={handleDisconnectExact}
-                    />
-                  );
-
-                case "Map":
-                case "map":
-                  return (
-                    <MapField
-                      field={field}
-                      key={index}
-                      isInput={isInput}
-                      isConnected={isConnected}
-                      selectedNode={selectedNode}
-                      handleChange={handleChange}
-                      handleDisconnect={handleDisconnect}
-                      nodeType={nodeType}
-                    />
-                  );
-
-                case "CheckBox":
-                case "checkbox":
-                  return (
-                    <CheckBoxField
-                      field={field}
-                      key={index}
-                      isInput={isInput}
-                      isConnected={isConnected}
-                      selectedNode={selectedNode}
-                      handleChange={handleChange}
-                      handleDisconnect={handleDisconnect}
-                      nodeType={nodeType}
-                    />
-                  );
-
-                case "Date":
-                case "date":
-                  return (
-                    <DateTimeField
-                      field={field}
-                      key={index}
-                      isInput={isInput}
-                      isConnected={isConnected}
-                      selectedNode={selectedNode}
-                      handleChange={handleChange}
-                      handleDisconnect={handleDisconnect}
-                      nodeType={nodeType}
-                    />
-                  );
-
-                case "Slider":
-                case "slider":
-                  return (
-                    <SliderField
-                      field={field}
-                      key={index}
-                      isInput={isInput}
-                      isConnected={isConnected}
-                      selectedNode={selectedNode}
-                      handleChange={handleChange}
-                      handleDisconnect={handleDisconnect}
-                      nodeType={nodeType}
-                    />
-                  );
-
-                default:
-                  return null;
-              }
-            })}
-
-            {/* Show standalone inputs that don't have corresponding fields */}
-            {nodeType.inputs
-              .filter(
-                (input) =>
-                  !nodeType.fields.some((field) => field.name === input.name)
-              )
-              .map((input, index) => {
-                const isConnected = connectedInputs.has(input.name);
-
-                return (
-                  <StandaloneField
-                    key={index}
-                    input={input}
-                    isConnected={isConnected}
-                    handleDisconnect={handleDisconnect}
-                  />
-                );
-              })}
+            <Badge
+              variant="secondary"
+              onClick={() => deleteNode(selectedNode.id)}
+              className="text-[10px] w-fit px-2 hover:bg-foreground/10 cursor-pointer py-1 bg-foreground/5 border border-foreground/5 text-foreground/70 capitalize"
+            >
+              <Trash className="size-3" /> Delete
+            </Badge>
           </div>
-        </CardContent>
-      </Card>
 
-      {nodeType.fields.some((field) => field.type === "env") && (
-        <Card className="border border-black/50 shadow-none dark:bg-zinc-900 dark:border-background dark:text-background">
-          <CardHeader className="p-4 pb-0">
-            <CardTitle className="text-sm dark:text-background">
-              Environment Variables
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 flex flex-col gap-4">
-            {nodeType.fields.map((field, index) => {
-              return (
-                field.type === "env" && <EnvField key={index} field={field} />
-              );
-            })}
-          </CardContent>
-        </Card>
-      )}
+          <Badge
+            variant="secondary"
+            className="text-[10px] w-fit px-2 py-1 bg-foreground/5 border border-foreground/5 text-foreground/70 capitalize"
+          >
+            <CircleDot className="size-3" />{" "}
+            {nodeType?.credit ? nodeType.credit : "0"}
+          </Badge>
+        </div>
+      </div>
 
-      {nodeType.fields.some((field) => field.type === "social") && (
-        <Card className="border border-black/50 dark:bg-zinc-900 shadow-none dark:border-background dark:text-background">
-          <CardHeader className="p-4 pb-0">
-            <CardTitle className="text-sm">Connections</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4">
-            {nodeType.fields.map((field, index) => {
-              return (
-                field.type === "social" && (
-                  <SocialField key={index} field={field} />
+      <div className="flex flex-col overflow-hidden relative z-10 flex-1 min-h-0">
+        <div className="overflow-y-auto custom-scrollbar flex-1 min-h-0">
+          {nodeType?.fields?.map((field) => {
+            if (field.type !== "social" || field.type !== "env") {
+              return field;
+            }
+          })?.length > 0 && (
+            <div className="flex flex-col gap-3 p-4">
+              {nodeType.fields.map((field, index) => {
+                const type = nodeType.inputs.find(
+                  (i) => i.name === field.name
+                )?.type;
+                const handleId = `input-${field.name}-${type}`;
+
+                const connectionsForThisField = edges.filter(
+                  (edge) =>
+                    edge.target === selectedNode.id &&
+                    edge.targetHandle === handleId
+                );
+
+                const totalValidConnections = connectionsForThisField.length;
+
+                const isConnected = totalValidConnections > 0;
+
+                const matchingInput = nodeType.inputs.find(
+                  (input) => input.name === field.name
+                );
+                const isInput = !!matchingInput;
+
+                switch (field.type) {
+                  case "Text":
+                  case "text":
+                    return (
+                      <TextField
+                        key={index}
+                        field={field}
+                        isInput={isInput}
+                        isConnected={isConnected}
+                        selectedNode={selectedNode}
+                        handleChange={handleChange}
+                        handleDisconnect={handleDisconnect}
+                        nodeType={nodeType}
+                      />
+                    );
+
+                  case "Number":
+                  case "number":
+                    return (
+                      <NumberField
+                        key={index}
+                        field={field}
+                        isInput={isInput}
+                        isConnected={isConnected}
+                        selectedNode={selectedNode}
+                        handleChange={handleChange}
+                        handleDisconnect={handleDisconnect}
+                        nodeType={nodeType}
+                      />
+                    );
+
+                  case "TextArea":
+                  case "textarea":
+                    return (
+                      <TextAreaField
+                        key={index}
+                        field={field}
+                        isInput={isInput}
+                        isConnected={isConnected}
+                        selectedNode={selectedNode}
+                        handleChange={handleChange}
+                        handleDisconnect={handleDisconnect}
+                        nodeType={nodeType}
+                      />
+                    );
+
+                  case "select":
+                    return (
+                      <SelectField
+                        key={index}
+                        field={field}
+                        isInput={isInput}
+                        isConnected={isConnected}
+                        selectedNode={selectedNode}
+                        handleChange={handleChange}
+                        handleDisconnect={handleDisconnect}
+                        nodeType={nodeType}
+                      />
+                    );
+
+                  case "JSON[]":
+                  case "json[]":
+                    return (
+                      <ArrayField
+                        field={field}
+                        key={index}
+                        totalValidConnections={connectionsForThisField}
+                        handleDisconnectAll={handleDisconnectAll}
+                        handleDisconnectExact={handleDisconnectExact}
+                      />
+                    );
+
+                  case "Text[]":
+                  case "text[]":
+                    return (
+                      <ArrayField
+                        field={field}
+                        key={index}
+                        totalValidConnections={connectionsForThisField}
+                        handleDisconnectAll={handleDisconnectAll}
+                        handleDisconnectExact={handleDisconnectExact}
+                      />
+                    );
+
+                  case "Tool[]":
+                  case "tool[]":
+                    return (
+                      <ArrayField
+                        field={field}
+                        key={index}
+                        totalValidConnections={connectionsForThisField}
+                        handleDisconnectAll={handleDisconnectAll}
+                        handleDisconnectExact={handleDisconnectExact}
+                      />
+                    );
+
+                  case "Map":
+                  case "map":
+                    return (
+                      <MapField
+                        field={field}
+                        key={index}
+                        isInput={isInput}
+                        isConnected={isConnected}
+                        selectedNode={selectedNode}
+                        handleChange={handleChange}
+                        handleDisconnect={handleDisconnect}
+                        nodeType={nodeType}
+                      />
+                    );
+
+                  case "CheckBox":
+                  case "checkbox":
+                    return (
+                      <CheckBoxField
+                        field={field}
+                        key={index}
+                        isInput={isInput}
+                        isConnected={isConnected}
+                        selectedNode={selectedNode}
+                        handleChange={handleChange}
+                        handleDisconnect={handleDisconnect}
+                        nodeType={nodeType}
+                      />
+                    );
+
+                  case "Date":
+                  case "date":
+                    return (
+                      <DateTimeField
+                        field={field}
+                        key={index}
+                        isInput={isInput}
+                        isConnected={isConnected}
+                        selectedNode={selectedNode}
+                        handleChange={handleChange}
+                        handleDisconnect={handleDisconnect}
+                        nodeType={nodeType}
+                      />
+                    );
+
+                  case "Slider":
+                  case "slider":
+                    return (
+                      <SliderField
+                        field={field}
+                        key={index}
+                        isInput={isInput}
+                        isConnected={isConnected}
+                        selectedNode={selectedNode}
+                        handleChange={handleChange}
+                        handleDisconnect={handleDisconnect}
+                        nodeType={nodeType}
+                      />
+                    );
+
+                  case "KnowledgeBase":
+                  case "knowledgebase":
+                    return (
+                      <KnowledgeBaseField
+                        field={field}
+                        key={index}
+                        isInput={isInput}
+                        isConnected={isConnected}
+                        selectedNode={selectedNode}
+                        handleChange={handleChange}
+                        handleDisconnect={handleDisconnect}
+                        nodeType={nodeType}
+                      />
+                    );
+
+                  default:
+                    return null;
+                }
+              })}
+
+              {nodeType.inputs
+                .filter(
+                  (input) =>
+                    !nodeType.fields.some((field) => field.name === input.name)
                 )
-              );
-            })}
-          </CardContent>
-        </Card>
-      )}
+                .map((input, index) => {
+                  const isConnected = connectedInputs.has(input.name);
 
-      {nodeType.outputs.length > 0 && (
-        <Card className="border border-black/50 shadow-none dark:bg-zinc-900 dark:border-background dark:text-background">
-          <CardContent className="p-4 pt-0 ">
-            <div className="mt-4">
-              <h3 className="text-sm font-semibold mb-3">Outputs</h3>
-              <div className="space-y-2">
-                {nodeType.outputs.map((output) => (
-                  <OutputField key={output.name} output={output} />
-                ))}
+                  return (
+                    <StandaloneField
+                      key={index}
+                      input={input}
+                      isConnected={isConnected}
+                      handleDisconnect={handleDisconnect}
+                    />
+                  );
+                })}
+            </div>
+          )}
+
+          {nodeType.fields.some((field) => field.type === "env") && (
+            <div className="flex flex-col gap-2 p-4 border-t border-foreground/15">
+              {nodeType.fields.some((field) => field.type === "env") && (
+                <div className="">
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] px-1.5 py-0.5 h-5 bg-red-200 dark:bg-red-700 w-fit flex justify-between items-center border mb-4 border-red-200 dark:border-red-700 text-red-700 dark:text-red-200 capitalize"
+                  >
+                    <ShieldAlert className="" />
+                    Environment Variables
+                  </Badge>
+                  <div className="flex flex-col gap-4">
+                    {nodeType.fields.map((field, index) => {
+                      return (
+                        field.type === "env" && (
+                          <EnvField key={index} field={field} />
+                        )
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {nodeType.fields.some((field) => field.type === "social") && (
+            <div className="flex flex-col gap-2 p-4 border-t border-foreground/15">
+              {nodeType.fields.some((field) => field.type === "social") && (
+                <div className="">
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] px-1.5 py-0.5 h-5 bg-blue-200 dark:bg-blue-700 w-fit flex justify-between items-center border mb-4 border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-200 capitalize"
+                  >
+                    <ShieldUser className="" />
+                    Social Connections
+                  </Badge>
+
+                  {nodeType.fields.map((field, index) => {
+                    return (
+                      field.type === "social" && (
+                        <SocialField key={index} field={field} />
+                      )
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {nodeType.outputs.length > 0 && (
+            <div className="flex flex-col gap-2 p-4 border-t border-foreground/15">
+              <div className="">
+                <h3 className="text-sm mb-3">Outputs</h3>
+                <div className="space-y-2">
+                  {nodeType.outputs.map((output) => (
+                    <OutputField key={output.name} output={output} />
+                  ))}
+                </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Render minimum credit requirement */}
-      <Card className="border border-black/50 shadow-none dark:bg-zinc-900 dark:border-background dark:text-background">
-        <CardContent className="p-4 pt-0 ">
-          <div className="mt-4">
-            <h3 className="text-sm font-semibold mb-3">Required Balance</h3>
-            <p className="text-xs text-black/60 dark:text-background -mt-2">
-              Minimum balance required to run this node
-            </p>
-            <div className="flex items-center gap-2 font-bold text-2xl mt-3">
-              <Coins className="h-6 w-6" />
-              <span>{nodeType?.credit ? nodeType.credit : "0"}</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

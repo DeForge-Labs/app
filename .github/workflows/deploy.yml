@@ -29,9 +29,12 @@ jobs:
           ssh -p ${{ secrets.VPS_PORT }} -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa "${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}" bash -c "'
               set -eo pipefail
 
-              cd app
+              export BUN_INSTALL="$HOME/.bun"
+              export PATH="$BUN_INSTALL/bin:$PATH"
+
+              cd DeforgeProd/app
               git pull
-              npm install
-              npm run build
-              pm2 restart 24
+              bun install
+              bun run build
+              pm2 reload "Deforge Prod App"
           '"

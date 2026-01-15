@@ -1,26 +1,34 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
-  updateComponent,
-  deleteComponent,
-  selectComponent,
-} from "@/redux/slice/formSlice";
-import { Button, Input } from "@heroui/react";
-import { Trash2, Edit3, GripVertical, Save, AlertCircle } from "lucide-react";
+  Trash2,
+  Edit3,
+  GripVertical,
+  Save,
+  AlertCircle,
+  Workflow,
+} from "lucide-react";
 import { getNodeTypeByType } from "@/lib/node-registry";
-import TextField from "./componentRenderer/TextField";
-import { updateNodeData } from "@/redux/slice/WorkflowSlice";
-import NumberField from "./componentRenderer/NumberField";
-import TextAreaField from "./componentRenderer/TextAreaField";
-import SelectField from "./componentRenderer/SelectField";
-import MapField from "./componentRenderer/MapFields";
-import CheckBoxField from "./componentRenderer/CheckBoxField";
-import DateTimeField from "./componentRenderer/DateTimeField";
-import SliderField from "./componentRenderer/SliderField";
-import SocialField from "./componentRenderer/SocialField";
-import EnvField from "./componentRenderer/EnvField";
+import TextField from "../editorWindow/nodes/customizer/TextField";
+import NumberField from "../editorWindow/nodes/customizer/NumberField";
+import TextAreaField from "../editorWindow/nodes/customizer/TextAreaField";
+import SelectField from "../editorWindow/nodes/customizer/SelectField";
+import CheckBoxField from "../editorWindow/nodes/customizer/CheckBoxField";
+import DateTimeField from "../editorWindow/nodes/customizer/DateTimeField";
+import SliderField from "../editorWindow/nodes/customizer/SliderField";
+import SocialField from "../editorWindow/nodes/customizer/SocialField";
+import EnvField from "../editorWindow/nodes/customizer/EnvField";
+import MapField from "../editorWindow/nodes/customizer/MapField";
+import KnowledgeBaseField from "../editorWindow/nodes/customizer/KnowledgeBaseField";
+import useNodeLibraryStore from "@/store/useNodeLibraryStore";
+import useFormStore from "@/store/useFormStore";
+import useWorkflowStore from "@/store/useWorkspaceStore";
+import MarkdownRenderer from "../../template/MarkdownRenderer";
+import SelectComponentButton from "./SelectComponentButton";
+import RunButton from "./RunButton";
 
 export default function ComponentRenderer({
   component,
@@ -30,13 +38,14 @@ export default function ComponentRenderer({
   draggedIndex,
   setDraggedIndex,
 }) {
-  const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(component.content);
   const [editUrl, setEditUrl] = useState(component.url || "");
   const [dragOverIndex, setDragOverIndex] = useState(null);
   const inputRef = useRef(null);
   const editingContainerRef = useRef(null);
+  const { updateNodeData } = useWorkflowStore();
+  const { updateComponent, deleteComponent, selectComponent } = useFormStore();
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -47,12 +56,12 @@ export default function ComponentRenderer({
 
   const handleClick = (e) => {
     e.stopPropagation();
-    dispatch(selectComponent(component.id));
+    selectComponent(component.id);
   };
 
   const handleDoubleClick = (e) => {
     e.stopPropagation();
-    if (component.type !== "divider" && component.component !== "component") {
+    if (component.type !== "divider" && component.type !== "component") {
       setIsEditing(true);
     }
   };
@@ -62,7 +71,7 @@ export default function ComponentRenderer({
     if (component.type === "link") {
       updates.url = editUrl;
     }
-    dispatch(updateComponent(updates));
+    updateComponent(updates);
     setIsEditing(false);
   };
 
@@ -100,7 +109,7 @@ export default function ComponentRenderer({
   };
 
   const handleDelete = (e) => {
-    dispatch(deleteComponent(component.id));
+    deleteComponent(component.id);
   };
 
   // Drag and drop handlers
@@ -157,7 +166,8 @@ export default function ComponentRenderer({
               onBlur={handleBlur}
               onKeyDown={handleKeyDown}
               placeholder="Link text"
-              className="font-medium border rounded-lg border-black/50 dark:border-background dark:text-background"
+              className="rounded-sm border border-foreground/50 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
+              style={{ fontSize: "12px" }}
             />
             <Input
               value={editUrl}
@@ -165,22 +175,23 @@ export default function ComponentRenderer({
               onBlur={handleBlur}
               onKeyDown={handleKeyDown}
               placeholder="https://example.com"
-              className="text-sm border rounded-lg border-black/50 dark:border-background dark:text-background"
+              className="rounded-sm border border-foreground/50 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
+              style={{ fontSize: "12px" }}
             />
             <div className="flex gap-2 mt-1">
               <Button
                 size="sm"
-                className="bg-dark text-background dark:bg-background dark:text-dark"
-                onPress={handleSave}
+                className="rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3"
+                onClick={handleSave}
               >
-                <Save className="w-3 h-3" />
+                <Save />
                 Save
               </Button>
               <Button
                 size="sm"
                 variant="outline"
-                onPress={handleCancel}
-                className="border border-black/50 dark:border-background dark:text-background"
+                onClick={handleCancel}
+                className="rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3 border border-foreground/20"
               >
                 Cancel
               </Button>
@@ -198,7 +209,7 @@ export default function ComponentRenderer({
           onChange={(e) => setEditContent(e.target.value)}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          className="w-full bg-transparent border-none outline-none resize-none dark:text-background"
+          className="w-full bg-transparent border-none outline-none resize-none text-foreground"
           style={{
             fontSize:
               component.type === "heading1"
@@ -221,28 +232,24 @@ export default function ComponentRenderer({
     switch (component.type) {
       case "heading1":
         return (
-          <h1 className="text-4xl font-bold text-dark dark:text-background">
+          <h1 className="text-4xl font-bold text-foreground">
             {component.content}
           </h1>
         );
       case "heading2":
         return (
-          <h2 className="text-2xl font-bold text-dark dark:text-background">
+          <h2 className="text-2xl font-bold text-foreground">
             {component.content}
           </h2>
         );
       case "heading3":
         return (
-          <h3 className="text-xl font-bold text-dark dark:text-background">
+          <h3 className="text-xl font-bold text-foreground">
             {component.content}
           </h3>
         );
       case "paragraph":
-        return (
-          <p className="text-dark dark:text-background leading-relaxed whitespace-pre-wrap">
-            {component.content}
-          </p>
-        );
+        return <MarkdownRenderer content={component.content} />;
       case "link":
         return (
           <a
@@ -257,31 +264,31 @@ export default function ComponentRenderer({
       case "divider":
         return (
           <hr
-            className={"border-dark dark:border-background"}
+            className={"border-foreground"}
             style={{
-              marginTop: isSelected ? "0.5rem" : "0",
-              marginBottom: isSelected ? "0.5rem" : "0",
-              marginRight: isSelected ? "2.75rem" : "0",
+              marginTop: isSelected ? "0.6rem" : "0.4rem",
+              marginBottom: isSelected ? "0.6rem" : "0.4rem",
             }}
           />
         );
+      case "run":
+        return <RunButton />;
       default:
         return null;
     }
   };
 
   const renderNodeComponent = () => {
-    const nodes = useSelector((state) => state.workflow.nodes);
-    const edges = useSelector((state) => state.workflow.connections || []);
-    const nodeRegistry = useSelector(
-      (state) => state.library?.nodeRegistry || []
-    );
+    const { nodes, connections: edges, workflow } = useWorkflowStore();
+
+    const { nodeRegistry } = useNodeLibraryStore();
     const node =
-      nodes && nodes.find((node) => node.id === component?.id?.split("|")[0]);
+      nodes && nodes.find((node) => node.id === component?.content?.nodeId);
+
     const nodeTypes = node && getNodeTypeByType(node?.type, nodeRegistry);
     const selectedField =
       nodeTypes &&
-      nodeTypes?.fields.find((field) => field.name === component.name);
+      nodeTypes?.fields.find((field) => field.name === component.content?.name);
 
     const matchingInput =
       nodeTypes &&
@@ -290,37 +297,6 @@ export default function ComponentRenderer({
     const isInput = !!matchingInput;
 
     const [connectedInputs, setConnectedInputs] = useState(new Map());
-    const workflow = useSelector((state) => state.workflow?.workflow);
-    const dispatch = useDispatch();
-
-    if (!node) {
-      return (
-        <div className="pr-7">
-          <div
-            className={`h-full flex gap-2 text-xs items-center justify-center border w-fit border-red-500 rounded-lg p-2 ${
-              isSelected ? "-mt-2" : ""
-            }`}
-          >
-            <AlertCircle className="w-4 h-4 text-red-500" />
-            <div className="text-red-500">
-              Node is either deleted or not found, Please remove the Component
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    const handleChange = (key, value) => {
-      if (workflow?.status === "LIVE") {
-        return;
-      }
-      dispatch(
-        updateNodeData({
-          nodeId: node.id,
-          newData: { ...node.data, [key]: value },
-        })
-      );
-    };
 
     useEffect(() => {
       if (!node) return;
@@ -338,6 +314,25 @@ export default function ComponentRenderer({
       });
       setConnectedInputs(connected);
     }, [edges, node]);
+
+    if (!node) {
+      return (
+        <div className="pr-7">
+          <SelectComponentButton component={component} />
+        </div>
+      );
+    }
+
+    const handleChange = (key, value) => {
+      if (workflow?.status === "LIVE") {
+        return;
+      }
+
+      updateNodeData({
+        nodeId: node.id,
+        newData: { ...node.data, [key]: value },
+      });
+    };
 
     const isConnected = connectedInputs.has(selectedField?.name);
 
@@ -369,6 +364,7 @@ export default function ComponentRenderer({
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "Number":
@@ -381,6 +377,7 @@ export default function ComponentRenderer({
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "TextArea":
@@ -393,6 +390,7 @@ export default function ComponentRenderer({
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "select":
@@ -404,6 +402,7 @@ export default function ComponentRenderer({
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "Map":
@@ -416,6 +415,7 @@ export default function ComponentRenderer({
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "CheckBox":
@@ -428,6 +428,7 @@ export default function ComponentRenderer({
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "Date":
@@ -440,6 +441,7 @@ export default function ComponentRenderer({
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "Slider":
@@ -452,6 +454,20 @@ export default function ComponentRenderer({
             isConnected={isConnected}
             selectedNode={node}
             handleChange={handleChange}
+            nodeType={nodeTypes}
+          />
+        );
+      case "KnowledgeBase":
+      case "knowledgebase":
+        return (
+          <KnowledgeBaseField
+            field={selectedField}
+            key={index}
+            isInput={isInput}
+            isConnected={isConnected}
+            selectedNode={node}
+            handleChange={handleChange}
+            nodeType={nodeTypes}
           />
         );
       case "social":
@@ -469,14 +485,12 @@ export default function ComponentRenderer({
 
   return (
     <div
-      className={`relative group rounded-lg transition-all duration-200 ${
+      className={`relative group rounded-sm transition-all duration-200 group border border-transparent ${
         isSelected
-          ? "ring-1 ring-black/50 dark:ring-white bg-black/5 dark:bg-white/5 min-h-12"
-          : "hover:bg-black/5 dark:hover:bg-white/5"
+          ? "bg-foreground/4 border-foreground/10 min-h-12"
+          : "hover:bg-foreground/5 hover:border-foreground/10"
       } ${isDragging ? "opacity-50 scale-95 shadow-lg" : ""} ${
-        isDropTarget
-          ? "ring-1 ring-black/50 dark:ring-white bg-black/5 dark:bg-white/5"
-          : ""
+        isDropTarget ? "ring-1 ring-foreground/10" : ""
       }`}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
@@ -497,41 +511,49 @@ export default function ComponentRenderer({
           </div>
         )}
 
-        {component.component !== "component" && (
+        {component.type === "run" && (
+          <div className={isSelected ? "ml-8" : ""}>{renderComponent()}</div>
+        )}
+
+        {component.type !== "component" && component.type !== "run" && (
           <div className={isSelected ? "ml-8 mb-[10px]" : ""}>
             {renderComponent()}
           </div>
         )}
 
-        {component.component === "component" && (
-          <div className={isSelected ? "ml-8 mt-2" : ""}>
+        {component.type === "component" && (
+          <div className={isSelected ? "ml-8" : ""}>
             {renderNodeComponent()}
           </div>
         )}
 
         {/* Action buttons */}
-        {isSelected && !isEditing && (
-          <div className="absolute top-2 right-2 flex gap-1 opacity-100 transition-opacity">
+        {!isEditing && (
+          <div className="absolute -top-4 right-2 gap-1 opacity-90 transition-opacity hidden group-hover:flex">
             {component.type !== "divider" &&
-              component.component !== "component" && (
+              component.type !== "component" &&
+              component.type !== "run" && (
                 <Button
-                  variant="outline"
-                  size="icon"
-                  className="border-black/80 border p-2 rounded-lg dark:border-background dark:text-background"
-                  onPress={(e) => {
+                  className="py-0 rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3"
+                  onClick={(e) => {
                     setIsEditing(true);
                   }}
                 >
-                  <Edit3 className="w-3 h-3" />
+                  <Edit3 /> Edit
                 </Button>
               )}
+
+            {component.type === "component" && component.content?.nodeId && (
+              <SelectComponentButton
+                component={component}
+                text="Edit Component"
+              />
+            )}
             <Button
-              variant="outline"
-              size="icon"
-              className="border-black/80 border p-2 rounded-lg dark:border-background dark:text-background"
-              onPress={handleDelete}
+              className="border-black/80 py-0 border rounded-sm text-[10px] [&_svg:not([class*='size-'])]:size-3"
+              onClick={handleDelete}
             >
-              <Trash2 className="w-3 h-3" />
+              <Trash2 /> Delete
             </Button>
           </div>
         )}
@@ -540,7 +562,8 @@ export default function ComponentRenderer({
         {isSelected &&
           !isEditing &&
           component.type !== "divider" &&
-          component.component !== "component" && (
+          component.type !== "component" &&
+          component.type !== "run" && (
             <div className="absolute bottom-2 left-12 text-xs text-black/50 dark:text-white/50 opacity-100 transition-opacity">
               Double-click to edit
             </div>
@@ -551,7 +574,8 @@ export default function ComponentRenderer({
           component.type !== "divider" &&
           component.type !== "link" &&
           component.type !== "paragraph" &&
-          component.component !== "component" && (
+          component.type !== "component" &&
+          component.type !== "run" && (
             <div className="absolute bottom-2 left-12 text-xs text-black/50 dark:text-white/50 opacity-100 transition-opacity">
               Click Enter to save
             </div>
@@ -560,7 +584,8 @@ export default function ComponentRenderer({
         {isSelected &&
           isEditing &&
           component.type === "paragraph" &&
-          component.component !== "component" && (
+          component.component !== "component" &&
+          component.type !== "run" && (
             <div className="absolute bottom-2 left-12 text-xs text-black/50 dark:text-white/50 opacity-100 transition-opacity">
               Click Outside to save
             </div>

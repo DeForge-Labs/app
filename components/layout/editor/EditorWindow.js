@@ -3,45 +3,79 @@
 import NodeMenu from "./editorWindow/NodeMenu";
 import NodeEditor from "./editorWindow/NodeEditor";
 import CustomizerPanel from "./editorWindow/CustomizerPanel";
-import { useSelector } from "react-redux";
 import ToolPanel from "./ToolPanel";
-import DeploymentTab from "./editorWindow/DeploymentTab";
 import FormMenu from "./formWindow/FormMenu";
 import Canvas from "./formWindow/Canvas";
-import SmallEditor from "./formWindow/SmallEditor";
-import NodePanel from "./formWindow/NodePanel";
+import useWorkspaceStore from "@/store/useWorkspaceStore";
+import FormToolPanel from "./formWindow/FormToolPanel";
+import useChatStore from "@/store/useChatStore";
+import { cn } from "@/lib/utils";
+import LogWindow from "./LogWindow";
+import WorkflowLoader from "./editorWindow/chat/WorkflowLoader";
 
 export default function EditorWindow() {
-  const paneLeft = useSelector((state) => state.workflow.paneLeft);
-  const paneRight = useSelector((state) => state.workflow.paneRight);
-  const panel = useSelector((state) => state.workflow.panel);
-  const mode = useSelector((state) => state.workflow.mode);
-  const isSelector = useSelector((state) => state.form.isSelector);
+  const {
+    showCustomizerPanel,
+    mode,
+    isWorkflowInitializing,
+    isFormInitializing,
+  } = useWorkspaceStore();
+  const { isLoading, chatMode } = useChatStore();
 
   return (
-    <div className="flex flex-1">
-      {paneLeft && (
-        <div className="lg:w-80 w-64 border-r bg-black/5 border-black/50 relative overflow-y-auto hide-scroll dark:border-background dark:text-background">
+    <div className="flex h-full relative">
+      {isLoading && chatMode === "build" ? (
+        <></>
+      ) : (
+        <div className="h-full p-2  hide-scroll absolute left-0 top-0">
           {mode === "workflow" && <NodeMenu />}
           {mode === "form" && <FormMenu />}
         </div>
       )}
 
-      <div className="flex-1 relative flex flex-col">
-        {panel === 1 && mode === "workflow" && <NodeEditor />}
-        {panel === 1 && mode === "form" && !isSelector && <Canvas />}
-        {panel === 1 && mode === "form" && isSelector && <SmallEditor />}
-        {panel === 2 && <DeploymentTab />}
+      <div className="flex-1 relative flex flex-col z-10 bg-background">
+        {mode === "workflow" && <NodeEditor />}
+        {isLoading && chatMode === "build" ? (
+          <></>
+        ) : mode === "workflow" && !isWorkflowInitializing ? (
+          <ToolPanel />
+        ) : (
+          <></>
+        )}
+        {mode === "form" && (
+          <div className={cn("ml-0 flex h-full relative")}>
+            <Canvas />
+            {isLoading && chatMode === "build" ? (
+              <></>
+            ) : isFormInitializing ? (
+              <></>
+            ) : (
+              <FormToolPanel />
+            )}
+          </div>
+        )}
+        {mode === "logs" && (
+          <>
+            <div className="h-full">
+              <LogWindow />
+            </div>
 
-        <ToolPanel />
+            {isLoading && chatMode === "build" ? <></> : <ToolPanel />}
+          </>
+        )}
       </div>
 
-      {paneRight && (
-        <div className="lg:w-80 w-64 border-l bg-black/5 border-black/50 relative overflow-y-auto hide-scroll dark:border-background dark:text-background">
+      {isLoading && chatMode === "build" ? (
+        <></>
+      ) : showCustomizerPanel && !isWorkflowInitializing ? (
+        <div className="h-full p-2 overflow-y-auto hide-scroll absolute right-0">
           {mode === "workflow" && <CustomizerPanel />}
-          {mode === "form" && <NodePanel />}
         </div>
+      ) : (
+        <></>
       )}
+
+      {isLoading && chatMode === "build" ? <WorkflowLoader /> : <></>}
     </div>
   );
 }

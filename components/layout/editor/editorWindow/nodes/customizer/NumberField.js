@@ -1,8 +1,14 @@
 "use client";
 
-import { Button } from "@heroui/react";
-import { Input } from "@heroui/react";
-import { Link2Off } from "lucide-react";
+import TypeBadge from "./common/TypeBadge";
+import DisconnectButton from "./common/DisconnectButton";
+import {
+  NumberField as NumField,
+  NumberFieldDecrement,
+  NumberFieldGroup,
+  NumberFieldIncrement,
+  NumberFieldInput,
+} from "@/components/ui/number-field";
 
 export default function NumberField({
   field,
@@ -11,45 +17,51 @@ export default function NumberField({
   selectedNode,
   handleChange,
   handleDisconnect,
-  nodeType,
 }) {
   return (
-    <div key={field.name} className="space-y-2">
-      <div className="flex justify-between items-center dark:text-background dark:border-background">
-        <div className="text-sm font-medium dark:text-background">
+    <div key={field.name} className="space-y-1">
+      <div className="flex justify-between items-center">
+        <div className="text-xs font-medium text-foreground/80 capitalize flex items-center gap-1">
           {field.name}
-          {isInput && (
-            <span className="ml-2 text-xs text-black/50 dark:text-background">
-              {nodeType.inputs.find((i) => i.name === field.name)?.type}
-            </span>
-          )}
+          {isInput && <TypeBadge type={field.type} />}
         </div>
         {isInput && isConnected && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-6 px-2 text-xs bg-black/80 text-background dark:bg-background dark:text-black"
-            onPress={() => handleDisconnect(field.name)}
-          >
-            <Link2Off className="h-3 w-3 mr-1" />
-            Disconnect
-          </Button>
+          <DisconnectButton handleDisconnect={handleDisconnect} input={field} />
         )}
       </div>
-      <Input
-        id={field.name}
-        type="number"
-        value={selectedNode.data[field.name] || field.value}
-        onChange={(e) =>
-          handleChange(field.name, Number.parseFloat(e.target.value))
-        }
-        placeholder={field.value?.toString()}
-        className="mt-2 border border-black/50 rounded-lg dark:border-background dark:text-background"
-        variant="outline"
-        disabled={isInput && isConnected}
-      />
 
-      <div className="text-[10px]">{field.desc}</div>
+      <NumField
+        defaultValue={0}
+        className="mt-1"
+        disabled={isInput && isConnected}
+        placeholder={field.value?.toString()}
+        onChange={(e) => handleChange(field.name, Number(e.target.value))}
+        value={selectedNode.data[field.name] || field.value}
+      >
+        <NumberFieldGroup className="rounded-sm dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none">
+          <NumberFieldDecrement
+            onClick={() =>
+              handleChange(
+                field.name,
+                Number(selectedNode.data[field.name] || field.value) - 1
+              )
+            }
+            className="rounded-l-sm scale-95"
+          />
+          <NumberFieldInput />
+          <NumberFieldIncrement
+            onClick={() =>
+              handleChange(
+                field.name,
+                Number(selectedNode.data[field.name] || field.value) + 1
+              )
+            }
+            className="rounded-r-sm scale-95"
+          />
+        </NumberFieldGroup>
+      </NumField>
+
+      <div className="text-[10px] text-foreground/60">{field.desc}</div>
     </div>
   );
 }

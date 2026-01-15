@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@heroui/react";
-import { Link2Off } from "lucide-react";
 import MapFieldEditor from "../../MapFieldEditor";
+import TypeBadge from "./common/TypeBadge";
+import DisconnectButton from "./common/DisconnectButton";
 
 export default function MapField({
   field,
@@ -14,26 +14,18 @@ export default function MapField({
   nodeType,
 }) {
   return (
-    <div key={field.name} className="space-y-2">
-      <div className="flex justify-between items-center dark:text-background dark:border-background">
-        <div className="text-sm font-medium capitalize dark:text-background">
+    <div key={field.name} className="space-y-1">
+      <div className="flex justify-between items-center">
+        <div className="text-xs font-medium text-foreground/80 capitalize flex items-center gap-1">
           {field.name}
           {isInput && (
-            <span className="ml-2 text-xs text-black/50 dark:text-background">
-              {nodeType.inputs.find((i) => i.name === field.name)?.type}
-            </span>
+            <TypeBadge
+              type={nodeType.inputs.find((i) => i.name === field.name)?.type}
+            />
           )}
         </div>
         {isInput && isConnected && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-6 px-2 text-xs bg-black/80 text-background dark:bg-background dark:text-black"
-            onPress={() => handleDisconnect(field.name)}
-          >
-            <Link2Off className="h-3 w-3 mr-1" />
-            Disconnect
-          </Button>
+          <DisconnectButton handleDisconnect={handleDisconnect} input={field} />
         )}
       </div>
       <MapFieldEditor
@@ -42,7 +34,7 @@ export default function MapField({
         disabled={isInput && isConnected}
       />
 
-      <div className="text-[10px]">{field.desc}</div>
+      <div className="text-[10px] text-foreground/60">{field.desc}</div>
     </div>
   );
 }

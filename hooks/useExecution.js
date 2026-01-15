@@ -1,30 +1,24 @@
 "use client";
 
-import { setIsRunning, setType } from "@/redux/slice/runSlice";
-import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "sonner";
+import useWorkflowStore from "@/store/useWorkspaceStore";
 
 export default function useExecution() {
-  const dispatch = useDispatch();
-  const workflow = useSelector((state) => state.workflow.workflow);
-  const nodes = useSelector((state) => state.workflow.nodes);
-  const connections = useSelector((state) => state.workflow.connections);
+  const { nodes, connections, workflow, setIsRunning, setExecutionType } =
+    useWorkflowStore();
 
   const handleRun = async () => {
     try {
-      dispatch(setIsRunning(true));
-      dispatch(setType("raw"));
+      setIsRunning(true);
+      setExecutionType("raw");
 
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      };
+      const url =
+        workflow?.status === "LIVE"
+          ? `${process.env.NEXT_PUBLIC_API_URL}/workflow/live/run/${workflow?.id}`
+          : `${process.env.NEXT_PUBLIC_API_URL}/workflow/run/${workflow?.id}`;
 
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/workflow/run/${workflow?.id}`,
-        { nodes, edges: connections },
-        { headers }
-      );
+      const response = await axios.post(url, { nodes, edges: connections });
 
       if (!response.data.success) {
         toast.error(response.data.message);
@@ -35,18 +29,23 @@ export default function useExecution() {
     } catch (err) {
       console.log(err);
     } finally {
-      dispatch(setIsRunning(false));
+      setIsRunning(false);
     }
   };
 
   const handleTest = async () => {
     try {
-      dispatch(setIsRunning(true));
-      dispatch(setType("test"));
+      setIsRunning(true);
+      setExecutionType("test");
 
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`
-      );
+      const url =
+        workflow?.status === "LIVE"
+          ? `${process.env.NEXT_PUBLIC_API_URL.slice(0, -4)}/live/${
+              workflow?.id
+            }`
+          : `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`;
+
+      const response = await axios.get(url);
 
       if (!response.data.success) {
         toast.error(response.data.message);
@@ -57,14 +56,14 @@ export default function useExecution() {
     } catch (err) {
       console.log(err);
     } finally {
-      dispatch(setIsRunning(false));
+      setIsRunning(false);
     }
   };
 
   const handleRunLive = async () => {
     try {
-      dispatch(setIsRunning(true));
-      dispatch(setType("live"));
+      setIsRunning(true);
+      setExecutionType("live");
 
       const url = process.env.NEXT_PUBLIC_API_URL.slice(0, -4);
 
@@ -79,7 +78,7 @@ export default function useExecution() {
     } catch (err) {
       console.log(err);
     } finally {
-      dispatch(setIsRunning(false));
+      setIsRunning(false);
     }
   };
 

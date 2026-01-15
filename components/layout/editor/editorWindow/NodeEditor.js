@@ -3,42 +3,43 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactFlow, {
   Background,
-  Controls,
   ReactFlowProvider,
   useReactFlow,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  onNodesChange,
-  onEdgesChange,
-  setSelectedNode,
-  addNode,
-  connectNodes,
-  deleteNode,
-  duplicateNode,
-  deleteEdge,
-  setSelectedHandle,
-  setSelectedNodeId,
-} from "@/redux/slice/WorkflowSlice";
 import { getNodeTypeByType } from "@/lib/node-registry";
 import NodeContextMenu from "./NodeContextMenu";
 import EdgeContextMenu from "./EdgeContextMenu";
 import { GenericNode } from "./GenericNode";
 import LogoAnimation from "@/components/ui/LogoAnimation";
 import { toast } from "sonner";
+import useWorkspaceStore from "@/store/useWorkspaceStore";
+import useNodeLibraryStore from "@/store/useNodeLibraryStore";
+import useChatStore from "@/store/useChatStore";
 
 function Flow() {
   const reactFlowWrapper = useRef(null);
-  const dispatch = useDispatch();
-  const nodes = useSelector((state) => state.workflow?.nodes || []);
-  const edges = useSelector((state) => state.workflow?.connections || []);
-  const nodeRegistry = useSelector(
-    (state) => state.library?.nodeRegistry || []
-  );
-  const workflow = useSelector((state) => state.workflow?.workflow || null);
+  const { nodeRegistry } = useNodeLibraryStore();
+  const {
+    workflow,
+    nodes,
+    connections: edges,
+    onNodesChange,
+    onEdgesChange,
+    setSelectedNode,
+    addNode,
+    connectNodes,
+    deleteNode,
+    duplicateNode,
+    deleteEdge,
+    setSelectedHandle,
+    setSelectedNodeId,
+    setShowCustomizerPanel,
+  } = useWorkspaceStore();
 
-  const { project } = useReactFlow();
+  const { project, fitView } = useReactFlow();
+
+  const { isLoading, chatMode } = useChatStore();
 
   // Context menu state for nodes
   const [nodeContextMenu, setNodeContextMenu] = useState({
@@ -55,6 +56,12 @@ function Flow() {
       setNodeTypes((prev) => ({ ...prev, [node.type]: GenericNode }));
     });
   }, [nodeRegistry]);
+
+  useEffect(() => {
+    if (isLoading && chatMode === "build") {
+      fitView({ padding: 0.2, duration: 800 });
+    }
+  }, [nodes, chatMode, isLoading]);
 
   // Context menu state for edges
   const [edgeContextMenu, setEdgeContextMenu] = useState({
@@ -102,7 +109,7 @@ function Flow() {
       const isArrayInput = inputType.endsWith("[]");
 
       // Check if the target handle already has a connection - now using latest edges
-      const targetHandleAlreadyConnected = edges.some(
+      const targetHandleAlreadyConnected = edges?.some(
         (edge) =>
           edge.target === connection.target &&
           edge.targetHandle === connection.targetHandle
@@ -138,13 +145,13 @@ function Flow() {
     (connection) => {
       // Validate connection before adding it
       if (isValidConnection(connection)) {
-        dispatch(connectNodes(connection));
+        connectNodes(connection);
       } else {
         console.warn("Invalid connection: types do not match");
         // Optionally show a notification to the user
       }
     },
-    [dispatch, isValidConnection]
+    [isValidConnection]
   );
 
   const onDragOver = useCallback((event) => {
@@ -153,13 +160,13 @@ function Flow() {
   }, []);
 
   const onConnectStart = useCallback((event, connection) => {
-    dispatch(setSelectedHandle(connection.handleId));
-    dispatch(setSelectedNodeId(connection.nodeId));
+    setSelectedHandle(connection.handleId);
+    setSelectedNodeId(connection.nodeId);
   }, []);
 
   const onConnectEnd = useCallback((event) => {
-    dispatch(setSelectedHandle(null));
-    dispatch(setSelectedNodeId(null));
+    setSelectedHandle(null);
+    setSelectedNodeId(null);
   }, []);
 
   const onDrop = useCallback(
@@ -226,26 +233,25 @@ function Flow() {
         }
       }
 
-      dispatch(
-        addNode({
-          type,
-          position,
-          data,
-          nodeRegistry,
-        })
-      );
+      addNode({
+        type,
+        position,
+        data,
+        nodeRegistry,
+      });
     },
-    [project, dispatch, workflow]
+    [project, workflow]
   );
 
   const onNodeClick = useCallback(
     (_, node) => {
-      dispatch(setSelectedNode(node));
+      setSelectedNode(node);
+      setShowCustomizerPanel(true);
       // Hide context menus if they're open
       setNodeContextMenu({ ...nodeContextMenu, visible: false });
       setEdgeContextMenu({ ...edgeContextMenu, visible: false });
     },
-    [dispatch, nodeContextMenu, edgeContextMenu]
+    [nodeContextMenu, edgeContextMenu]
   );
 
   const onNodeContextMenu = useCallback(
@@ -278,9 +284,9 @@ function Flow() {
       setEdgeContextMenu({ ...edgeContextMenu, visible: false });
 
       // Set the selected node
-      dispatch(setSelectedNode(node));
+      setSelectedNode(node);
     },
-    [dispatch, edgeContextMenu, workflow]
+    [edgeContextMenu, workflow]
   );
 
   const onEdgeContextMenu = useCallback(
@@ -317,6 +323,8 @@ function Flow() {
 
   // Hide context menus when clicking on the canvas
   const onPaneClick = useCallback(() => {
+    setShowCustomizerPanel(false);
+    setSelectedNode(null);
     setNodeContextMenu({ ...nodeContextMenu, visible: false });
     setEdgeContextMenu({ ...edgeContextMenu, visible: false });
   }, [nodeContextMenu, edgeContextMenu]);
@@ -327,8 +335,8 @@ function Flow() {
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          onNodesChange={(changes) => dispatch(onNodesChange(changes))}
-          onEdgesChange={(changes) => dispatch(onEdgesChange(changes))}
+          onNodesChange={(changes) => onNodesChange(changes)}
+          onEdgesChange={(changes) => onEdgesChange(changes)}
           onConnect={onConnect}
           onDrop={onDrop}
           onDragOver={onDragOver}
@@ -347,7 +355,6 @@ function Flow() {
           }}
         >
           <Background />
-          <Controls position="top-left" />
         </ReactFlow>
 
         {nodeContextMenu.visible && nodeContextMenu.nodeId && (
@@ -356,11 +363,11 @@ function Flow() {
             y={nodeContextMenu.y}
             nodeId={nodeContextMenu.nodeId}
             onDelete={() => {
-              dispatch(deleteNode(nodeContextMenu.nodeId));
+              deleteNode(nodeContextMenu.nodeId);
               setNodeContextMenu({ ...nodeContextMenu, visible: false });
             }}
             onDuplicate={() => {
-              dispatch(duplicateNode(nodeContextMenu.nodeId));
+              duplicateNode(nodeContextMenu.nodeId);
               setNodeContextMenu({ ...nodeContextMenu, visible: false });
             }}
             onClose={() =>
@@ -375,7 +382,7 @@ function Flow() {
             y={edgeContextMenu.y}
             edgeId={edgeContextMenu.edgeId}
             onDelete={() => {
-              dispatch(deleteEdge(edgeContextMenu.edgeId));
+              deleteEdge(edgeContextMenu.edgeId);
               setEdgeContextMenu({ ...edgeContextMenu, visible: false });
             }}
             onClose={() =>
@@ -389,9 +396,7 @@ function Flow() {
 }
 
 export default function NodeEditor() {
-  const isWorkflowInitializing = useSelector(
-    (state) => state.workflow.isWorkflowInitializing
-  );
+  const { isWorkflowInitializing } = useWorkspaceStore();
 
   if (isWorkflowInitializing) {
     return <LogoAnimation opacity={0.5} />;

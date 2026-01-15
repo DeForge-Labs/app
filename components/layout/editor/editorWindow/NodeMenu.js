@@ -2,24 +2,28 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
-import { Button, Input } from "@heroui/react";
 import { Badge } from "@/components/ui/badge";
-import { useSelector } from "react-redux";
 import {
-  Loader2,
   TriangleAlert,
   X,
-  ChevronDown,
+  ChevronLeft,
   ChevronRight,
+  SquareMousePointer,
+  Search,
+  Plus,
 } from "lucide-react";
+import useNodeLibraryStore from "@/store/useNodeLibraryStore";
+import { Input } from "@/components/ui/input";
+import { motion, AnimatePresence } from "framer-motion";
+import NodeLoader from "./NodeLoader";
 
 export default function NodeMenu() {
-  const nodeRegistry = useSelector((state) => state.library.nodeRegistry) || [];
   const [searchTerm, setSearchTerm] = useState("");
-  const [collapsedCategories, setCollapsedCategories] = useState(new Set());
-  const isNodeRegistryInitializing = useSelector(
-    (state) => state.library.isNodeRegistryInitializing
-  );
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isMinimized, setIsMinimized] = useState(true);
+
+  const { nodeRegistry, isLoading: isNodeRegistryInitializing } =
+    useNodeLibraryStore();
 
   const filteredNodes = nodeRegistry.filter((node) => {
     const matchesSearch =
@@ -45,28 +49,21 @@ export default function NodeMenu() {
   // Sort categories for consistent display
   const sortedCategories = Object.keys(categorizedNodes).sort();
 
-  const toggleCategory = (category) => {
-    const newCollapsed = new Set(collapsedCategories);
-    if (newCollapsed.has(category)) {
-      newCollapsed.delete(category);
-    } else {
-      newCollapsed.add(category);
-    }
-    setCollapsedCategories(newCollapsed);
+  const openCategory = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const closeCategory = () => {
+    setSelectedCategory(null);
   };
 
   const onDragStart = (event, nodeType) => {
-    // Store the full node type data as JSON
     event.dataTransfer.setData("application/reactflow", nodeType.type);
-
-    // Also store the full node definition for use when creating the node
     event.dataTransfer.setData(
       "application/node-definition",
       JSON.stringify(nodeType)
     );
-
     event.dataTransfer.setData("application/node-category", nodeType.category);
-
     event.dataTransfer.effectAllowed = "move";
   };
 
@@ -74,140 +71,359 @@ export default function NodeMenu() {
     return category.charAt(0).toUpperCase() + category.slice(1);
   };
 
+  // When searching, show all categories expanded with filtered nodes
+  const isSearching = searchTerm.length > 0;
+
   return (
-    <div className="flex flex-col gap-4 absolute p-4 w-full">
-      <h2 className="font-semibold text-xl dark:text-background">
-        Node Library
-      </h2>
-      <Input
-        placeholder="Search nodes..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className=" border border-black/50 rounded-lg w-full dark:border-background dark:text-background"
-        variant="outline"
-        isClearable
-        onClear={() => setSearchTerm("")}
-      />
-
-      <div className="space-y-2">
-        {sortedCategories.map((category) => {
-          const isCollapsed = collapsedCategories.has(category);
-          const categoryNodes = categorizedNodes[category];
-
-          return (
-            <div key={category} className={`rounded-lg -mt-2`}>
-              {/* Category Header */}
+    <>
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: hsl(var(--foreground) / 0.2);
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: hsl(var(--foreground) / 0.3);
+        }
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: hsl(var(--foreground) / 0.2) transparent;
+        }
+      `}</style>
+      <AnimatePresence mode="wait">
+        {isMinimized ? (
+          // Minimized Plus Button
+          <motion.button
+            key="minimized"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            transition={{ duration: 0.15 }}
+            onClick={() => setIsMinimized(false)}
+            className="w-12 h-12 rounded-lg relative z-20 bg-foreground text-background flex items-center justify-center cursor-pointer transition-colors shadow-lg"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Plus className="size-6" />
+          </motion.button>
+        ) : (
+          // Full Node Library
+          <motion.div
+            key="expanded"
+            layout
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            transition={{
+              scale: { duration: 0.2 },
+              opacity: { duration: 0.2 },
+              layout: { duration: 0.3, ease: "easeInOut" },
+            }}
+            className="flex flex-col w-80 relative z-20 bg-card border border-foreground/15 rounded-lg overflow-hidden max-h-full"
+          >
+            {/* Header */}
+            <motion.div
+              layout="position"
+              className="flex gap-2 text-sm border-b border-foreground/15 p-4 relative z-20 shrink-0"
+            >
               <div
-                className="flex items-center justify-between p-3 mb-2 px-0 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:border-background dark:text-background "
-                onClick={() => toggleCategory(category)}
+                className="absolute right-2 top-2 z-20 p-1 hover:bg-foreground/5 rounded-sm cursor-pointer"
+                onClick={() => setIsMinimized(true)}
               >
-                <div className="flex items-center space-x-2 px-2">
-                  {isCollapsed ? (
-                    <ChevronRight className="h-4 w-4 dark:text-background" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 dark:text-background" />
-                  )}
-                  <h3 className="font-medium text-sm dark:text-background">
-                    {getCategoryDisplayName(category)}
-                  </h3>
-                  <Badge
-                    variant="secondary"
-                    className="text-xs bg-black/10 dark:bg-white/10 text-black dark:text-black border-none hover:bg-black/5 dark:border-background dark:text-background"
-                  >
-                    {categoryNodes.length}
-                  </Badge>
-                </div>
+                <X className="size-3" />
               </div>
+              <SquareMousePointer className="size-4 mt-1" />
+              <div className="flex flex-col">
+                <p>Node Library</p>
+                <p className="text-xs text-muted-foreground">
+                  Drag and drop nodes to create your workflow
+                </p>
+              </div>
+            </motion.div>
 
-              {/* Category Content */}
-              {!isCollapsed && (
-                <div className=" space-y-2">
-                  {categoryNodes.map((node) => (
-                    <Card
-                      key={node.type}
-                      className="cursor-grab bg-background border rounded-lg border-black/50 hover:shadow-md dark:border-background dark:text-background dark:bg-zinc-900"
-                      draggable
-                      onDragStart={(e) => onDragStart(e, node)}
+            {/* Search Bar */}
+            <motion.div
+              layout="position"
+              className="flex items-center justify-between px-4 py-2 border-b border-foreground/15 gap-2 z-20 shrink-0"
+            >
+              <Search className="w-4 h-4 opacity-50" />
+              <Input
+                placeholder="Search nodes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-0 border-0 shadow-none has-focus-visible:border-ring has-focus-visible:ring-[0px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none ring-0 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
+              />
+              {searchTerm && (
+                <X
+                  className="w-4 h-4 opacity-50 cursor-pointer hover:opacity-100"
+                  onClick={() => setSearchTerm("")}
+                />
+              )}
+            </motion.div>
+
+            {/* Content Area */}
+            <motion.div
+              layout="position"
+              className="flex flex-col overflow-hidden relative z-20 flex-1 min-h-0"
+            >
+              {isNodeRegistryInitializing ? (
+                <NodeLoader />
+              ) : filteredNodes.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center px-4">
+                  <div className="rounded-full bg-foreground/10 p-4 mb-4">
+                    <TriangleAlert className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-sm font-medium">No nodes found</h3>
+                  <p className="text-xs text-muted-foreground mt-2 max-w-md">
+                    No nodes match your search criteria.
+                  </p>
+                  <button
+                    onClick={() => setSearchTerm("")}
+                    className="mt-4 px-4 py-2 text-xs bg-foreground/10 hover:bg-foreground/20 rounded-md transition-colors"
+                  >
+                    Clear Search
+                  </button>
+                </div>
+              ) : (
+                <AnimatePresence mode="wait">
+                  {isSearching ? (
+                    // Search Results View - Show all matching nodes grouped by category
+                    <motion.div
+                      key="search-view"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.15 }}
+                      className="overflow-y-auto p-4 space-y-4 custom-scrollbar flex-1 min-h-0"
                     >
-                      <CardHeader className="p-3 opacity-90">
-                        <CardTitle className="flex items-center text-sm dark:text-background">
-                          {node.title}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-3 pt-0 opacity-90">
-                        <p className="text-xs text-muted-foreground mb-2 dark:text-background">
-                          {node.desc}
-                        </p>
-                        <div className="flex flex-wrap gap-1 opacity-90">
-                          {node.tags.map((tag) => (
+                      {sortedCategories.map((category) => (
+                        <motion.div key={category} layout>
+                          {/* Category Header */}
+                          <div className="flex items-center gap-2 mb-2 relative">
+                            <div className="w-3 border-foreground/15 border-t-2 border-l-2 rounded-tl-sm h-3 absolute top-1.5 left-0.5"></div>
+                            <h3 className="text-xs font-normal ml-5">
+                              {getCategoryDisplayName(category)}
+                            </h3>
                             <Badge
-                              key={tag}
-                              className="text-xs border-black/50 border bg-transparent text-black hover:bg-black/5 dark:border-background dark:text-background"
+                              variant="secondary"
+                              className="text-[10px] px-1 py-0 bg-foreground/5 border border-foreground/5 text-foreground/70 capitalize"
                             >
-                              {tag}
+                              {categorizedNodes[category].length}
                             </Badge>
-                          ))}
+                          </div>
+
+                          {/* Category Nodes */}
+                          <div className="grid grid-cols-1 gap-2">
+                            {categorizedNodes[category].map((node, index) => (
+                              <motion.div
+                                key={node.type}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{
+                                  duration: 0.12,
+                                  delay: index * 0.02,
+                                }}
+                              >
+                                <Card
+                                  className="cursor-grab hover:shadow-md bg-background transition-shadow rounded-md border-foreground/10 p-0 py-3 gap-0"
+                                  draggable
+                                  onDragStart={(e) => onDragStart(e, node)}
+                                >
+                                  <CardHeader className="p-0 px-3">
+                                    <CardTitle className="text-xs font-medium">
+                                      {node.title}
+                                    </CardTitle>
+                                  </CardHeader>
+                                  <CardContent className="px-3">
+                                    <p className="text-[10px] text-muted-foreground mb-2">
+                                      {node.desc}
+                                    </p>
+                                    <div className="flex flex-wrap gap-1">
+                                      {node.tags.map((tag) => (
+                                        <Badge
+                                          key={tag}
+                                          variant="outline"
+                                          className="text-[10px] px-1 py-0 bg-foreground/5 border border-foreground/5 text-foreground/70 capitalize"
+                                        >
+                                          {tag}
+                                        </Badge>
+                                      ))}
+                                      {node.diff && (
+                                        <Badge
+                                          className="text-[10px] px-1 py-0 bg-foreground/5 border border-foreground/5 text-foreground/70 capitalize"
+                                          style={{
+                                            backgroundColor:
+                                              node.diff === "easy"
+                                                ? "#C8E6C9"
+                                                : node.diff === "medium"
+                                                ? "#FDD8AE"
+                                                : "#FBC2C4",
+                                            color:
+                                              node.diff === "easy"
+                                                ? "#1B5E20"
+                                                : node.diff === "medium"
+                                                ? "#855C00"
+                                                : "#C62828",
+                                          }}
+                                        >
+                                          {node.diff}
+                                        </Badge>
+                                      )}
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              </motion.div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  ) : selectedCategory ? (
+                    // Category Detail View with Back Button
+                    <motion.div
+                      key="category-detail"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.15 }}
+                      className="flex flex-col flex-1 min-h-0"
+                    >
+                      {/* Back Button Header */}
+                      <motion.div
+                        layout="position"
+                        className="flex items-center gap-2 p-4 border-b border-foreground/15 shrink-0"
+                      >
+                        <button
+                          onClick={closeCategory}
+                          className="p-1 hover:bg-foreground/10 rounded-sm transition-colors cursor-pointer"
+                        >
+                          <ChevronLeft className="size-3" />
+                        </button>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-xs font-medium">
+                            {getCategoryDisplayName(selectedCategory)}
+                          </h3>
                           <Badge
-                            className="text-xs"
-                            style={{
-                              backgroundColor:
-                                node.diff === "easy"
-                                  ? "#C8E6C9"
-                                  : node.diff === "medium"
-                                  ? "#FDD8AE"
-                                  : "#FBC2C4",
-                              color:
-                                node.diff === "easy"
-                                  ? "#1B5E20"
-                                  : node.diff === "medium"
-                                  ? "#855C00"
-                                  : "#855C00",
-                            }}
+                            variant="secondary"
+                            className="text-[10px] px-1 bg-foreground/5 border border-foreground/5 text-foreground/70 capitalize"
                           >
-                            {node.diff}
+                            {categorizedNodes[selectedCategory]?.length || 0}
                           </Badge>
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                      </motion.div>
+
+                      {/* Category Nodes */}
+                      <div className="overflow-y-auto p-4 custom-scrollbar flex-1 min-h-0">
+                        <div className="grid grid-cols-1 gap-2">
+                          {categorizedNodes[selectedCategory]?.map(
+                            (node, index) => (
+                              <motion.div key={node.type}>
+                                <Card
+                                  className="cursor-grab hover:shadow-md bg-background transition-shadow rounded-md border-foreground/10 p-0 py-3 gap-0"
+                                  draggable
+                                  onDragStart={(e) => onDragStart(e, node)}
+                                >
+                                  <CardHeader className="p-0 px-3">
+                                    <CardTitle className="text-xs font-medium">
+                                      {node.title}
+                                    </CardTitle>
+                                  </CardHeader>
+                                  <CardContent className="px-3">
+                                    <p className="text-[10px] text-muted-foreground mb-2">
+                                      {node.desc}
+                                    </p>
+                                    <div className="flex flex-wrap gap-1">
+                                      {node.tags.map((tag) => (
+                                        <Badge
+                                          key={tag}
+                                          variant="outline"
+                                          className="text-[10px] px-1 py-0 bg-foreground/5 border border-foreground/5 text-foreground/70 capitalize"
+                                        >
+                                          {tag}
+                                        </Badge>
+                                      ))}
+                                      {node.diff && (
+                                        <Badge
+                                          className="text-[10px] px-1 py-0 bg-foreground/5 border border-foreground/5 text-foreground/70 capitalize"
+                                          style={{
+                                            backgroundColor:
+                                              node.diff === "easy"
+                                                ? "#C8E6C9"
+                                                : node.diff === "medium"
+                                                ? "#FDD8AE"
+                                                : "#FBC2C4",
+                                            color:
+                                              node.diff === "easy"
+                                                ? "#1B5E20"
+                                                : node.diff === "medium"
+                                                ? "#855C00"
+                                                : "#C62828",
+                                          }}
+                                        >
+                                          {node.diff}
+                                        </Badge>
+                                      )}
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              </motion.div>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    // Category Grid View
+                    <motion.div
+                      key="grid-view"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ duration: 0.15 }}
+                      className="overflow-y-auto p-4 custom-scrollbar flex-1 min-h-0"
+                    >
+                      <div className="grid grid-cols-2 gap-2">
+                        {sortedCategories.map((category, index) => (
+                          <motion.div
+                            key={category}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.12, delay: index * 0.02 }}
+                          >
+                            <motion.div
+                              className="w-full p-3 bg-foreground/5 border border-foreground/10 rounded-md flex justify-between cursor-pointer hover:bg-foreground/10 transition-colors"
+                              onClick={() => openCategory(category)}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              <div className="flex flex-col">
+                                <p className="text-xs flex items-center gap-1">
+                                  {getCategoryDisplayName(category)}
+                                </p>
+
+                                <div className="text-[10px] text-muted-foreground">
+                                  Contains {categorizedNodes[category].length}{" "}
+                                  nodes
+                                </div>
+                              </div>
+                              <ChevronRight className="size-3 mt-1" />
+                            </motion.div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               )}
-            </div>
-          );
-        })}
-
-        {isNodeRegistryInitializing && (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Loader2 className="h-5 w-5 text-black animate-spin dark:text-background" />
-          </div>
+            </motion.div>
+          </motion.div>
         )}
-
-        {filteredNodes.length === 0 && !isNodeRegistryInitializing && (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="rounded-full bg-black/10 p-4 mb-4 dark:bg-white/10">
-              <TriangleAlert className="h-5 w-5 text-black dark:text-background" />
-            </div>
-            <h3 className="text-sm font-medium dark:text-background">
-              No nodes found
-            </h3>
-            <p className="text-xs text-muted-foreground mt-2 max-w-md mb-2 dark:text-background">
-              No nodes match your search criteria.
-            </p>
-
-            <Button
-              variant="outline"
-              size="md"
-              className="bg-black/80 rounded-lg text-background text-xs dark:bg-background dark:text-black"
-              onPress={() => {
-                setSearchTerm("");
-              }}
-            >
-              <X size={16} />
-              Clear Search
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
+      </AnimatePresence>
+    </>
   );
 }

@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@heroui/react";
-import { Slider } from "@heroui/react";
-import { Link2Off } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Slider, SliderValue } from "@/components/ui/slider";
+
+import DisconnectButton from "./common/DisconnectButton";
+import TypeBadge from "./common/TypeBadge";
 
 export default function SliderField({
   field,
@@ -14,36 +14,25 @@ export default function SliderField({
   handleDisconnect,
   nodeType,
 }) {
-  const [value, setValue] = useState(selectedNode.data[field.name] || 0);
-
-  useEffect(() => {
-    setValue(selectedNode.data[field.name] || 0);
-  }, [selectedNode.data[field.name]]);
-
   return (
-    <div key={field.name} className="space-y-2">
-      <div className="flex justify-between items-center dark:text-background dark:border-background">
-        <div className="text-sm font-medium capitalize dark:text-background">
+    <div key={field.name} className="">
+      <div className="flex justify-between items-center">
+        <div className="text-xs font-medium text-foreground/80 capitalize flex items-center gap-1">
           {field.name}
           {isInput && (
-            <span className="ml-1 text-xs text-black/50 dark:text-background">
-              {nodeType.inputs.find((i) => i.name === field.name)?.type}
-            </span>
+            <TypeBadge
+              type={
+                nodeType.inputs.find((i) => i.name === field.name)?.type ||
+                "any"
+              }
+            />
           )}
         </div>
         {isInput && isConnected && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-6 px-2 text-xs bg-black/80 text-background dark:bg-background dark:text-black"
-            onPress={() => handleDisconnect(field.name)}
-          >
-            <Link2Off className="h-3 w-3" />
-            Disconnect
-          </Button>
+          <DisconnectButton handleDisconnect={handleDisconnect} input={field} />
         )}
       </div>
-      <Slider
+      {/* <Slider
         value={selectedNode.data[field.name] || 0}
         onChange={(value) => {
           setValue(value);
@@ -91,8 +80,25 @@ export default function SliderField({
             "data-[fill-end=true]:border-e-black/80 data-[fill-start=true]:border-s-black/80 border-s-black/80 dark:border-s-background",
         }}
         isDisabled={isInput && isConnected}
-      />
-      <div className="text-[10px]">{field.desc}</div>
+      /> */}
+
+      <Slider
+        value={selectedNode.data[field.name] || 0}
+        defaultValue={field.value}
+        onValueChange={(value) => {
+          handleChange(field.name, value);
+        }}
+        max={field.max}
+        min={field.min}
+        step={field.step}
+        disabled={isInput && isConnected}
+      >
+        <div className="mb-2 flex items-center justify-between gap-1">
+          <div></div>
+          <SliderValue className="text-[10px] text-foreground/80" />
+        </div>
+      </Slider>
+      <div className="text-[10px] text-foreground/60 mt-2">{field.desc}</div>
     </div>
   );
 }

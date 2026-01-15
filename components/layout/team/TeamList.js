@@ -1,94 +1,74 @@
-"use client";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cookies } from "next/headers";
+import Link from "next/link";
+import TeamButton from "./TeamButton";
+import ErrorDialog from "@/components/ui/ErrorDialog";
 
-import useTeams from "@/hooks/useTeams";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { useState } from "react";
-import { toast } from "sonner";
-import { Button } from "@heroui/react";
-import { Loader2, Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
-
-export default function TeamList() {
-  const { getTeams } = useTeams();
-  const [teams, setTeams] = useState([]);
-  const [isFetching, setIsFetching] = useState(true);
-  const user = useSelector((state) => state.user.user);
-  const router = useRouter();
-
-  const handleGetTeams = async () => {
-    setIsFetching(true);
+export default async function TeamList() {
+  const getAllTeams = async () => {
     try {
-      const teams = await getTeams();
-      setTeams(teams);
+      const cookieStore = await cookies();
+      const allCookies = cookieStore.getAll();
+
+      const cookieHeader = allCookies
+        .map((cookie) => `${cookie.name}=${cookie.value}`)
+        .join("; ");
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/teams/list`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            cookie: cookieHeader,
+          },
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+
+      return data;
     } catch (error) {
-      toast.error("Failed to get teams");
       console.log(error);
-    } finally {
-      setIsFetching(false);
+      return null;
     }
   };
 
-  useEffect(() => {
-    if (!user) return;
-    handleGetTeams();
-  }, [user]);
+  const teamsData = await getAllTeams();
+
+  if (!teamsData) {
+    return <ErrorDialog error="Failed to fetch teams" />;
+  }
+
+  const teams = teamsData.teams;
 
   return (
-    <>
-      <p className="mt-5 text-sm dark:text-background">Your Teams</p>
-      <div className="h-[350px] relative w-full mt-3 overflow-hidden dark:text-background">
-        {isFetching ? (
-          <div className="flex items-center justify-center h-full">
-            <Loader2 className="animate-spin" />
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2 overflow-y-auto h-full hide-scroll">
-            {!teams ||
-              (teams?.length === 0 && (
-                <p className="flex items-center justify-center h-full text-center text-black/60 dark:text-background">
-                  No teams found
-                </p>
-              ))}
-            {teams &&
-              teams.map((team) => (
-                <Button
-                  key={team.teamId}
-                  className="w-full mb-2 rounded-xl py-9 px-4 border border-black/40 justify-between dark:border-background dark:text-background"
-                  variant="outline"
-                  onPress={() => {
-                    router.push(`/dashboard/${team.teamId}`);
-                    localStorage.setItem(`team_${user.id}`, team.teamId);
-                  }}
-                >
-                  <div className="flex flex-col items-start">
-                    <p className="font-semibold text-black/80 text-lg dark:text-background">
-                      {team.team.name.length > 15
-                        ? team.team.name.slice(0, 15) + "..."
-                        : team.team.name}
-                    </p>
-                    <p className="text-black/60 text-xs dark:text-background">
-                      Joined at {new Date(team.joinedAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="flex items-center capitalize bg-black/70 p-2 py-1 rounded-md text-xs text-[var(--primary)] dark:bg-background dark:text-black">
-                    {team.role.toLowerCase()}
-                  </div>
-                </Button>
-              ))}
-          </div>
-        )}
+    <div className="flex flex-col rounded-lg mt-4 border border-black/10 shadow-md bg-background dark:bg-foreground/5 dark:border-white/10">
+      <div className="px-4 border-b border-black/10 dark:border-white/10 py-4">
+        <p className="text-xs dark:text-foreground">Your Teams</p>
+      </div>
+      <div className="h-[350px] relative w-full overflow-hidden dark:text-foreground">
+        <div className="flex flex-col overflow-y-auto h-full hide-scroll">
+          {!teams ||
+            (teams?.length === 0 && (
+              <p className="flex items-center justify-center h-full text-center text-black/60 dark:text-foreground">
+                No teams found
+              </p>
+            ))}
+          {teams &&
+            teams.map((team) => <TeamButton key={team.teamId} team={team} />)}
+        </div>
       </div>
 
-      <Button
-        className="w-full mt-3 rounded-full p-7 border border-black/40 dark:border-background dark:text-background"
-        variant="outline"
-        onPress={() => {
-          router.push("/team/create");
-        }}
-      >
-        <Plus className="mr-2" /> Create or Join Team
-      </Button>
-    </>
+      <Link href="/teams/create" className="w-full">
+        <Button
+          className="h-11 flex-1 dark:bg-transparent before:rounded-t-none w-full dark:border-white/10 border-t py-3 border-x-0 border-b-0 border-black/10 text-info items-start justify-start px-4 rounded-b-lg rounded-t-none text-xs"
+          variant="outline"
+        >
+          <Plus className="h-3 w-3" /> Create or Join Team
+        </Button>
+      </Link>
+    </div>
   );
 }

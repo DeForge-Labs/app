@@ -1,9 +1,8 @@
 "use client";
-
 import { Handle, Position } from "reactflow";
 import {
+  SelectPopup,
   Select,
-  SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -18,29 +17,36 @@ export default function SelectField({
   handleChange,
   matchingInput,
 }) {
+  const items = field.options.map((option) => ({
+    value: option,
+    label: option,
+  }));
+
+  const selectedItem =
+    items.find((item) => item.value === (currentValue || field.value)) || null;
+
   return (
-    <div key={field.name} className="mb-2 relative">
-      <div className="text-xs font-medium mb-1 capitalize">{field.name}</div>
-      <div className="flex items-center relative">
+    <div key={field.name} className="mb-2 relative nodrag nopan">
+      <div className="text-[10px] text-foreground/80 font-medium capitalize">
+        {field.name}
+      </div>
+      <div className="flex items-center mt-0.5">
         <Select
-          value={currentValue || field.value}
-          onValueChange={(value) => handleChange(field.name, value)}
+          items={items}
+          value={selectedItem}
+          onValueChange={(item) => handleChange(field.name, item.value)}
           disabled={isDisabled}
         >
-          <SelectTrigger className="text-xs border border-black/50 rounded-lg dark:border-background dark:text-background">
-            <SelectValue placeholder={field.value} />
+          <SelectTrigger className="rounded-sm before:rounded-sm">
+            <SelectValue className="text-[12px]" />
           </SelectTrigger>
-          <SelectContent className="text-xs border border-black/50 rounded-lg bg-background dark:bg-dark dark:border-background">
-            {field.options?.map((option) => (
-              <SelectItem
-                key={option}
-                value={option}
-                className="hover:bg-black/5 rounded-md dark:hover:bg-white/5 dark:text-background"
-              >
-                {option}
+          <SelectPopup alignItemWithTrigger={false}>
+            {items.map((option, index) => (
+              <SelectItem key={index} value={option}>
+                {option.label}
               </SelectItem>
             ))}
-          </SelectContent>
+          </SelectPopup>
         </Select>
       </div>
     </div>

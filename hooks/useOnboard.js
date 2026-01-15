@@ -1,197 +1,261 @@
-import axios from "axios";
-import { toast } from "sonner";
+"use client";
+
 import { z } from "zod";
-import useTeams from "./useTeams";
+import { toast } from "sonner";
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import useInitialize from "./useInitialize";
+import { useSearchParams } from "next/navigation";
+
+// Validation schemas
+const usernameSchema = z
+  .string()
+  .min(3, "Username must be at least 3 characters")
+  .max(20, "Username must be at most 20 characters");
+const emailSchema = z.string().email("Please enter a valid email");
+const otpSchema = z.string().length(6, "Please enter a valid 6-digit OTP");
+
+// API endpoints
+const API_ENDPOINTS = {
+  REQUEST_LOGIN: {
+    url: `${process.env.NEXT_PUBLIC_API_URL}/request/login`,
+    requiresCredentials: false,
+  },
+  VERIFY_LOGIN: {
+    url: `${process.env.NEXT_PUBLIC_API_URL}/verify/login`,
+    requiresCredentials: true,
+  },
+  VERIFY_SIGNUP: {
+    url: `${process.env.NEXT_PUBLIC_API_URL}/verify/signup`,
+    requiresCredentials: true,
+  },
+};
+
+// Default navigation routes
+const ROUTES = {
+  DASHBOARD: "/dashboard",
+  CREATE_TEAM: "/team/create",
+};
 
 export default function useOnboard() {
-  const { getTeams } = useTeams();
   const router = useRouter();
-  const { loadUser, loadUserAndTeams } = useInitialize();
-  const { createTeam } = useTeams();
+  const searchParams = useSearchParams();
 
-  const requestLogin = async (
-    email,
-    setIsOTPWindow,
-    setIsRequestingLogin,
-    setIsSignUp
-  ) => {
-    try {
+  /**
+   * Makes an API request with standardized error handling
+   */
+  const makeApiRequest = useCallback(
+    async (endpointConfig, body, customOptions = {}) => {
+      try {
+        const url =
+          typeof endpointConfig === "string"
+            ? endpointConfig
+            : endpointConfig.url;
+        const requiresCredentials =
+          typeof endpointConfig === "object" &&
+          endpointConfig.requiresCredentials;
+
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          ...(requiresCredentials && { credentials: "include" }),
+          ...customOptions,
+          body: JSON.stringify(body),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+      } catch (error) {
+        console.error("API request failed:", error);
+        throw error;
+      }
+    },
+    []
+  );
+  /**
+   * Handles post-authentication navigation
+   */
+  const handlePostAuthNavigation = useCallback(
+    (lastTeamId, embedded) => {
+      const prompt = searchParams.get("prompt");
+      const destination = lastTeamId ? ROUTES.DASHBOARD : ROUTES.CREATE_TEAM;
+      if (embedded && lastTeamId) {
+        router.refresh();
+      } else {
+        router.push(destination + (prompt ? `?prompt=${prompt}` : ""));
+      }
+    },
+    [router, searchParams]
+  );
+
+  /**
+   * Validates input with Zod schema
+   */
+  const validateInput = (schema, value, errorMessage) => {
+    const result = schema.safeParse(value);
+
+    if (!result.success) {
+      const message = result.error.errors[0]?.message || errorMessage;
+      toast.error(message);
+
+      return false;
+    }
+
+    return true;
+  };
+
+  /**
+   * Request login/signup OTP
+   */
+  const requestLogin = useCallback(
+    async (email, setIsOTPWindow, setIsRequestingLogin, setIsSignUp) => {
+      if (!validateInput(emailSchema, email, "Please enter a valid email")) {
+        return;
+      }
+
       setIsRequestingLogin(true);
 
-      const emailSchema = z.string().email();
-      const result = emailSchema.safeParse(email);
+      try {
+        const data = await makeApiRequest(API_ENDPOINTS.REQUEST_LOGIN, {
+          email,
+        });
 
-      if (!result.success) {
-        toast("Please enter a valid email");
-        setIsRequestingLogin(false);
-        return;
-      }
+        if (data.success) {
+          setIsOTPWindow(true);
+          setIsSignUp(data.isSignup);
 
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/request/login`,
-        { email }
-      );
-      if (response.data.success) {
-        setIsOTPWindow(true);
-        setIsRequestingLogin(false);
-        setIsSignUp(response.data.isSignup);
-      } else {
-        toast(response.data.message);
-        setIsRequestingLogin(false);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to send OTP");
-      setIsRequestingLogin(false);
-    }
-  };
-
-  const verifyLogin = async (email, otp, setIsVerifying, embedded) => {
-    try {
-      setIsVerifying(true);
-
-      if (otp.length !== 6) {
-        toast("Please enter a valid OTP");
-        setIsVerifying(false);
-        return;
-      }
-
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/verify/login`,
-        { email, code: otp }
-      );
-      if (response.data.success) {
-        toast.success("Login successful");
-
-        localStorage.setItem("token", response.data.token);
-
-        if (embedded) {
-          await loadUserAndTeams(response.data.token);
-          return;
-        }
-
-        const user = await loadUser(false, response.data.token);
-
-        try {
-          const teams = await getTeams(response.data.token);
-
-          if (teams.length === 0) {
-            router.push("/team/create");
-          } else {
-            const lastTeamId = localStorage.getItem(`team_${user.id}`);
-
-            if (lastTeamId) {
-              if (lastTeamId in teams) {
-                router.push(`/dashboard/${lastTeamId}`);
-              } else {
-                router.push(`/dashboard/${teams[0].teamId}`);
-                localStorage.setItem(`team_${user.id}`, teams[0].teamId);
-              }
-            } else {
-              router.push(`/dashboard/${teams[0].teamId}`);
-            }
-          }
-        } catch (error) {
-          toast.error("Failed to get teams");
-          router.push("/");
-        }
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to verify OTP");
-    } finally {
-      setIsVerifying(false);
-    }
-  };
-
-  const verifySignUp = async (
-    email,
-    otp,
-    username,
-    setIsVerifying,
-    referralCode,
-    embedded
-  ) => {
-    try {
-      setIsVerifying(true);
-
-      const usernameSchema = z.string().min(3).max(20);
-      const result = usernameSchema.safeParse(username);
-
-      if (!result.success) {
-        toast("Please enter a valid username");
-        setIsVerifying(false);
-        return;
-      }
-
-      if (otp.length !== 6) {
-        toast("Please enter a valid OTP");
-        setIsVerifying(false);
-        return;
-      }
-
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/verify/signup`,
-        { email, code: otp, username, referralCode }
-      );
-      if (response.data.success) {
-        toast.success("Sign up successful");
-
-        localStorage.setItem("token", response.data.token);
-
-        if (embedded) {
-          await loadUserAndTeams(response.data.token);
-          return;
-        }
-
-        await loadUser(false, response.data.token);
-
-        const teamResponse = await createTeam("My Team", response.data.token);
-
-        if (teamResponse.success) {
-          router.push(`/dashboard/${teamResponse.team.id}`);
+          toast.success("OTP sent successfully");
         } else {
-          toast.error(teamResponse.message);
-          router.push("/team/create");
+          toast.error(data.message || "Failed to send OTP");
         }
-      } else {
-        toast.error(response.data.message);
+      } catch (error) {
+        toast.error("Failed to send OTP. Please try again.");
+      } finally {
+        setIsRequestingLogin(false);
       }
-    } catch (error) {
-      toast.error("Failed to verify OTP");
-    } finally {
-      setIsVerifying(false);
-    }
-  };
+    },
+    [makeApiRequest]
+  );
 
-  const resend = async (email, setIsResending, setTimeout) => {
-    try {
+  /**
+   * Verify login OTP
+   */
+  const verifyLogin = useCallback(
+    async (email, otp, setIsVerifying, embedded = false) => {
+      if (!validateInput(otpSchema, otp, "Please enter a valid 6-digit OTP")) {
+        return;
+      }
+
+      setIsVerifying(true);
+
+      try {
+        const data = await makeApiRequest(API_ENDPOINTS.VERIFY_LOGIN, {
+          email,
+          code: otp,
+        });
+
+        if (data.success) {
+          toast.success("Login successful");
+
+          handlePostAuthNavigation(data.lastTeamId, embedded);
+        } else {
+          toast.error(data.message || "Verification failed");
+        }
+      } catch (error) {
+        toast.error("Failed to verify OTP. Please try again.");
+      } finally {
+        setIsVerifying(false);
+      }
+    },
+    [makeApiRequest, handlePostAuthNavigation]
+  );
+
+  /**
+   * Verify signup OTP
+   */
+  const verifySignUp = useCallback(
+    async (
+      email,
+      otp,
+      username,
+      setIsVerifying,
+      referralCode = "",
+      embedded = false
+    ) => {
+      // Validate username
+      if (
+        !validateInput(
+          usernameSchema,
+          username,
+          "Please enter a valid username"
+        )
+      ) {
+        return;
+      }
+
+      // Validate OTP
+      if (!validateInput(otpSchema, otp, "Please enter a valid 6-digit OTP")) {
+        return;
+      }
+
+      setIsVerifying(true);
+
+      try {
+        const data = await makeApiRequest(API_ENDPOINTS.VERIFY_SIGNUP, {
+          email,
+          code: otp,
+          username,
+          referralCode,
+        });
+
+        if (data.success) {
+          toast.success("Sign up successful");
+          handlePostAuthNavigation(data.lastTeamId, embedded);
+        } else {
+          toast.error(data.message || "Sign up failed");
+        }
+      } catch (error) {
+        toast.error("Failed to verify OTP. Please try again.");
+      } finally {
+        setIsVerifying(false);
+      }
+    },
+    [makeApiRequest, handlePostAuthNavigation]
+  );
+
+  /**
+   * Resend OTP
+   */
+  const resend = useCallback(
+    async (email, setIsResending, setTimeout) => {
       setIsResending(true);
 
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/request/login`,
-        { email }
-      );
-      if (response.data.success) {
-        toast.success("OTP sent successfully");
-        setTimeout(20);
-      } else {
-        toast.error(response.data.message);
+      try {
+        const data = await makeApiRequest(API_ENDPOINTS.REQUEST_LOGIN, {
+          email,
+        });
+
+        if (data.success) {
+          toast.success("OTP sent successfully");
+          setTimeout(20);
+        } else {
+          toast.error(data.message || "Failed to resend OTP");
+        }
+      } catch (error) {
+        toast.error("Failed to resend OTP. Please try again.");
+      } finally {
+        setIsResending(false);
       }
-    } catch (error) {
-      toast.error("Failed to send OTP");
-    } finally {
-      setIsResending(false);
-    }
-  };
+    },
+    [makeApiRequest]
+  );
 
   return {
     requestLogin,
-
     verifyLogin,
     verifySignUp,
     resend,

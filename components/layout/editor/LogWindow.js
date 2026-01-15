@@ -1,235 +1,70 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  ChevronUp,
-  ChevronDown,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Terminal,
-  Loader,
-} from "lucide-react";
+import useWorkflowStore from "@/store/useWorkspaceStore";
+import { Terminal } from "lucide-react";
+import LogLoader from "./logWindow/LogLoader";
+import LogsTable from "./logWindow/LogsTable";
+import { useState } from "react";
+import LogsDetailsSidebar from "./logWindow/LogDetailSidebar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@heroui/react";
-import { useDispatch, useSelector } from "react-redux";
-import { removeNewLog } from "@/redux/slice/WorkflowSlice";
-import JsonViewer from "./JSONViewer";
-import LogViewer from "./LogViewer";
-import { cn } from "@/lib/utils";
-import StatsWindow from "./StatsWindow";
 
-export default function ExecutionLogsPanel({ isForm = false }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [selectedExecution, setSelectedExecution] = useState(null);
-  const logs = useSelector((state) => state.workflow.logs);
-  const isLogInitializing = useSelector(
-    (state) => state.workflow.isLogInitializing
-  );
-  const newLogs = useSelector((state) => state.workflow.newLogs);
-  const dispatch = useDispatch();
+export default function LogsWindow() {
+  const { isLogInitializing, logs, newLogs, removeNewLog } = useWorkflowStore();
+  const [selectedLogId, setSelectedLogId] = useState(null);
 
-  // Get the selected execution details
-  const execution = logs.find((exec) => exec.id === selectedExecution);
+  const selectedLog = logs?.find((log) => log.id === selectedLogId);
 
-  useEffect(() => {
-    if (isLogInitializing) {
-      setIsExpanded(false);
-      setSelectedExecution(null);
+  const handleSelectLog = (id) => {
+    setSelectedLogId(id);
+
+    if (newLogs?.some((log) => log.id === id)) {
+      const log = newLogs.find((log) => log.id === id);
+
+      removeNewLog(log);
     }
-  }, [isLogInitializing]);
+  };
 
   return (
-    <div
-      className={cn(
-        ` bg-background transition-all duration-300 z-10 dark:bg-dark dark:border-background dark:text-background`,
-        isExpanded ? "h-80" : "h-12"
-      )}
-    >
-      {/* Header bar */}
-      <div
-        className={cn(
-          "flex items-center justify-between bg-black/5 border-black/50 border-t px-4 h-12 border-b  cursor-pointer dark:bg-dark dark:border-background dark:text-background",
-          isForm ? "rounded-t-lg border-x max-w-5xl mx-auto" : ""
-        )}
-        onClick={() => {
-          if (!isLogInitializing) {
-            setIsExpanded(!isExpanded);
-          } else {
-            setIsExpanded(false);
-          }
-        }}
-      >
-        <div className="flex items-center dark:text-background">
-          {isLogInitializing ? (
-            <Loader className="h-4 w-4 mr-2 animate-spin" />
-          ) : (
-            <Terminal className="h-4 w-4 mr-2" />
-          )}
-          <span className="font-medium text-sm">Execution Logs</span>
-
-          {newLogs.length > 0 && (
-            <Badge className="ml-2 text-xs px-1.5 py-0 opacity-70 bg-blue-400 text-white capitalize">
-              {newLogs.length}
-            </Badge>
-          )}
+    <div className="flex flex-1 flex-col bg-background rounded-md h-full">
+      <div className="flex gap-2 text-sm border-b border-foreground/15 p-4 relative z-20 shrink-0 items-center justify-between">
+        <div className="flex gap-2">
+          <Terminal className="size-4 mt-0.75" />
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <p className="font-medium">Execution Logs</p>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              View execution logs of your workflow and get live updates
+            </p>
+          </div>
         </div>
-        <Button
-          variant="outline"
-          size="icon"
-          className="dark:text-background"
-          onPress={() => {
-            if (!isLogInitializing) {
-              setIsExpanded(!isExpanded);
-            } else {
-              setIsExpanded(false);
-              dispatch(removeNewLog());
-            }
-          }}
-        >
-          {isExpanded ? (
-            <ChevronDown className="h-4 w-4" />
-          ) : (
-            <ChevronUp className="h-4 w-4" />
-          )}
-        </Button>
+        {newLogs?.length > 0 && (
+          <Badge className="ml-2 text-[10px] px-1.5 py-0 h-5 bg-blue-500 hover:bg-blue-600 text-white border-0">
+            {newLogs.length} New
+          </Badge>
+        )}
       </div>
 
-      {/* Expanded content */}
-      {isExpanded && (
-        <div
-          className={cn(
-            "flex h-[calc(100%-3rem)] overflow-hidden",
-            isForm
-              ? "border-x border-black/50 dark:border-background max-w-5xl mx-auto"
-              : ""
-          )}
-        >
-          {/* Executions list */}
-          <div className="w-64 border-r border-black/20 overflow-y-auto py-2 dark:border-background">
-            <h3 className="text-sm font-medium pb-2 pl-2 border-b border-black/20 dark:border-background">
-              Recent Executions
-            </h3>
-            {logs.map((exec) => {
-              const isNewLog =
-                newLogs.filter((log) => log.id === exec.id).length > 0;
-              return (
-                <div
-                  key={exec.id}
-                  className={`p-2 cursor-pointer hover:bg-muted border-b border-black/20 dark:border-background ${
-                    selectedExecution === exec.id ? "bg-black/5" : ""
-                  } ${isNewLog ? "bg-yellow-500/20" : ""}`}
-                  onClick={() => {
-                    dispatch(removeNewLog(exec));
-                    setSelectedExecution(exec.id);
-                  }}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium">
-                      {new Date(exec.startedAt).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                    <Badge
-                      className="text-xs px-1.5 py-0 opacity-70 capitalize"
-                      style={{
-                        backgroundColor:
-                          exec.status === "completed"
-                            ? "#22c55d"
-                            : exec.status === "failed"
-                            ? "#ef4444"
-                            : "#f97316",
-                      }}
-                    >
-                      {exec.status}
-                    </Badge>
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {exec.status === "completed"
-                      ? `Processed ${exec.result.nodesProcessed} nodes`
-                      : `Failed: ${exec.result.error}`}
-                  </div>
-                </div>
-              );
-            })}
+      <div className="flex flex-col overflow-hidden relative z-20 flex-1 min-h-0 rounded-md">
+        {isLogInitializing ? (
+          <div className="flex items-center justify-center flex-1 min-h-0">
+            <LogLoader />
           </div>
-
-          {/* Execution details */}
-          <div className="flex-1 overflow-hidden flex flex-col dark:border-background">
-            {execution ? (
-              <>
-                <div className="p-3 border-b border-black/20 dark:border-background">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <Clock className="h-4 w-4 mr-1" />
-                      <span className="text-sm">
-                        Started:{" "}
-                        {new Date(execution.startedAt).toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex items-center">
-                      {execution.status === "completed" ? (
-                        <span className="flex items-center text-green-500 text-sm">
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Completed
-                        </span>
-                      ) : (
-                        <span className="flex items-center text-red-500 text-sm">
-                          <XCircle className="h-4 w-4 mr-1" />
-                          Failed
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center mt-1 gap-2">
-                    {execution.status === "completed" && (
-                      <div className="text-xs">
-                        Processing time: {execution.result.processingTime}
-                      </div>
-                    )}
-
-                    <Badge
-                      className="text-xs capitalize"
-                      style={{
-                        backgroundColor:
-                          execution.type === "live"
-                            ? "#C8E6C9"
-                            : execution.type === "test"
-                            ? "#FDD8AE"
-                            : "#FBC2C4",
-                        color:
-                          execution.type === "live"
-                            ? "#1B5E20"
-                            : execution.type === "test"
-                            ? "#855C00"
-                            : "#855C00",
-                      }}
-                    >
-                      {execution.type}
-                    </Badge>
-                  </div>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-3">
-                  <LogViewer
-                    logs={execution.logs}
-                    totalCredits={execution.totalCredits}
-                  />
-
-                  <JsonViewer data={execution.result} />
-                  <StatsWindow stats={execution.stats} />
-                </div>
-              </>
-            ) : (
-              <div className="flex items-center justify-center h-full opacity-50">
-                Select an execution to view details
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+        ) : (
+          <LogsTable
+            logs={logs}
+            newLogs={newLogs}
+            selectedLogId={selectedLogId}
+            onSelectLog={handleSelectLog}
+          />
+        )}{" "}
+        {selectedLog && (
+          <LogsDetailsSidebar
+            log={selectedLog}
+            onClose={() => setSelectedLogId(null)}
+          />
+        )}
+      </div>
     </div>
   );
 }

@@ -2,8 +2,9 @@
 
 import { Handle, Position } from "reactflow";
 import getColorByType from "@/lib/color-profile";
-import { useSelector } from "react-redux";
 import { useTheme } from "next-themes";
+import useWorkspaceStore from "@/store/useWorkspaceStore";
+import { Badge } from "@/components/ui/badge";
 
 export default function StandaloneField({
   input,
@@ -12,12 +13,14 @@ export default function StandaloneField({
   isSameNode,
 }) {
   const isConnected = connectedInputs.has(input.name);
-  const selectedHandle = useSelector((state) => state.workflow?.selectedHandle);
+  const { selectedHandle } = useWorkspaceStore();
   const { resolvedTheme } = useTheme();
 
   return (
     <div key={input.name} className="mb-2 relative">
-      <div className="text-xs font-medium mb-1">{input.name}</div>
+      <div className="text-[10px] font-medium text-foreground/80 mb-1">
+        {input.name}
+      </div>
       <div className="flex items-center">
         <div className="relative">
           <Handle
@@ -35,7 +38,7 @@ export default function StandaloneField({
           />
 
           <div
-            className={`w-2 h-2 -left-[16.5px] -top-[12.2px] rounded-full rotate-45 absolute border-opacity-50 ${
+            className={`w-2 h-2 -left-[16.2px] -top-[12.2px] rounded-full rotate-45 absolute border-opacity-50 ${
               selectedHandle?.split("-")[0] === "output" &&
               selectedHandle?.split("-")[2]?.toLowerCase() ===
                 (input?.type.toLowerCase() || "any") &&
@@ -57,7 +60,7 @@ export default function StandaloneField({
             !isConnected &&
             !isSameNode && (
               <div
-                className={`w-2 h-2 -left-[16.5px] -top-[12.2px] rounded-full rotate-45 absolute border-opacity-50 `}
+                className={`w-2 h-2 -left-[16.2px] -top-[12.2px] rounded-full rotate-45 absolute border-opacity-50 `}
                 style={{
                   backgroundColor: getColorByType(input?.type.toLowerCase()),
                   borderColor: resolvedTheme === "dark" ? "white" : "black",
@@ -66,12 +69,13 @@ export default function StandaloneField({
               ></div>
             )}
         </div>
-        <div className="h-8 border border-black/50 rounded-md bg-black/5 text-xs flex items-center justify-between w-full px-2 dark:border-background dark:text-background">
+        <Badge
+          variant="outline"
+          className="text-[10px] px-2 py-1 bg-foreground/5 w-full flex justify-between items-center border border-foreground/5 text-foreground/70 capitalize"
+        >
           <span>{isConnected ? "Connected" : "Not connected"}</span>
-          <span className="text-xs text-black/60 dark:text-background">
-            {input.type}
-          </span>
-        </div>
+          <span className="text-[10px]">{input.type}</span>
+        </Badge>
       </div>
     </div>
   );

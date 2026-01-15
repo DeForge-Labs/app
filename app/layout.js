@@ -2,10 +2,8 @@ import { Lexend_Deca } from "next/font/google";
 
 import "./globals.css";
 
-import UiProvider from "@/providers/UiProvider";
-
-import ReduxProvider from "@/providers/ReduxProvider";
 import { ThemeProvider } from "next-themes";
+
 import ToasterProvider from "@/providers/ToasterProvider";
 
 import Script from "next/script";
@@ -22,24 +20,14 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <script
-        async
-        src="https://scripts.simpleanalyticscdn.com/latest.js"
-      ></script>
-      <body
-        className={`${lexendDeca.className} antialiased`}
-        suppressHydrationWarning
-      >
-        <ReduxProvider>
-          <ThemeProvider attribute="class">
-            <UiProvider>
-              <ToasterProvider />
-              {children}
-            </UiProvider>
-          </ThemeProvider>
-        </ReduxProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${lexendDeca.className} antialiased`}>
+        <ThemeProvider attribute="class">
+          <ToasterProvider />
+          {children}
+        </ThemeProvider>
       </body>
+
       <Script src="https://scripts.simpleanalyticscdn.com/latest.js" />
     </html>
   );

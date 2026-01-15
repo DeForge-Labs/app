@@ -1,59 +1,124 @@
 "use client";
-import { DatePicker } from "@heroui/react";
 import { CalendarDateTime } from "@internationalized/date";
+import { ChevronDownIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { useState, useEffect } from "react";
 
 export default function DateTimePicker({ value, onChange, isDisabled }) {
-  const calendarDateTime = value
-    ? new CalendarDateTime(
+  const [open, setOpen] = useState(false);
+  const [date, setDate] = useState(undefined);
+  const [time, setTime] = useState("10:30:00");
+
+  useEffect(() => {
+    if (value) {
+      const jsDate = new Date(
         value.year,
-        value.month,
+        value.month - 1,
         value.day,
         value.hour,
         value.minute,
-        value.second,
-        value.millisecond
-      )
-    : null;
+        value.second
+      );
+      setDate(jsDate);
+
+      const timeString = `${String(value.hour).padStart(2, "0")}:${String(
+        value.minute
+      ).padStart(2, "0")}:${String(value.second).padStart(2, "0")}`;
+      setTime(timeString);
+    }
+  }, [value]);
+
+  const handleDateSelect = (selectedDate) => {
+    if (!selectedDate) return;
+
+    setDate(selectedDate);
+    setOpen(false);
+
+    const [hours, minutes, seconds] = time.split(":").map(Number);
+
+    const newDateTime = new CalendarDateTime(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth() + 1,
+      selectedDate.getDate(),
+      hours || 0,
+      minutes || 0,
+      seconds || 0
+    );
+
+    onChange?.(newDateTime);
+  };
+
+  const handleTimeChange = (e) => {
+    const newTime = e.target.value;
+    setTime(newTime);
+
+    if (!date) return;
+
+    const [hours, minutes, seconds] = newTime.split(":").map(Number);
+
+    const newDateTime = new CalendarDateTime(
+      date.getFullYear(),
+      date.getMonth() + 1,
+      date.getDate(),
+      hours || 0,
+      minutes || 0,
+      seconds || 0
+    );
+
+    onChange?.(newDateTime);
+  };
 
   return (
-    <DatePicker
-      granularity="minute"
-      className="max-w-xs"
-      classNames={{
-        base: "rounded-lg [&>div]:rounded-lg border border-black [&>div]:focus-within:hover:bg-transparent dark:border-background dark:text-background",
-        inputWrapper:
-          "bg-transparent dark:text-background dark:bg-zinc-900 dark:text-background",
-        innerWrapper: "dark:text-background",
-        segment:
-          "dark:text-background dark:data-[editable=true]:text-background",
-      }}
-      color="secondary"
-      calendarProps={{
-        classNames: {
-          headerWrapper: "bg-background",
-          header: "[&>span]:text-black",
-          gridHeader: "bg-background",
-          gridHeaderCell: "text-black/60",
-          base: "border border-black rounded-xl bg-background overflow-hidden text-black",
-          cell: "[&>span]:text-black [&>span]:hover:text-black",
-          cellSelected: "[&>span]:text-white [&>span]:bg-black",
-          cellToday: "border-black",
-          cellDisabled: "[&>span]:text-black/50",
-          nextButton: "text-black",
-          prevButton: "text-black",
-        },
-      }}
-      timeInputProps={{
-        color: "secondary",
-        classNames: {
-          input: "rounded-xl border border-black",
-          base: "text-black [&>div]:text-black [&>div]:rounded-lg [&>div]:border [&>div]:border-black [&>div]:focus-within:hover:bg-background",
-          label: "text-black",
-        },
-      }}
-      isDisabled={isDisabled}
-      value={calendarDateTime}
-      onChange={onChange}
-    />
+    <div className="flex gap-2">
+      <div className="flex-1 flex flex-col gap-1">
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger
+            render={
+              <Button
+                variant="outline"
+                id="date-picker"
+                disabled={isDisabled}
+                className="flex-1 text-[10px] gap-1 dark:not-disabled:not-active:not-data-pressed:before:shadow-none not-disabled:not-active:not-data-pressed:before:shadow-none rounded-sm font-normal [&_svg:not([class*='size-'])]:size-3"
+              >
+                {date ? date.toLocaleDateString() : "Select date"}
+                <ChevronDownIcon />
+              </Button>
+            }
+          ></PopoverTrigger>
+          <PopoverContent
+            className="w-auto overflow-hidden [&>div]:p-0"
+            align="start"
+          >
+            <Calendar
+              mode="single"
+              selected={date}
+              captionLayout="dropdown"
+              className="w-64"
+              onSelect={handleDateSelect}
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+      <div className="flex-1 flex flex-col gap-2">
+        <Input
+          type="time"
+          id="time-picker"
+          step="1"
+          value={time}
+          onChange={handleTimeChange}
+          style={{ fontSize: "10px", textAlign: "center" }}
+          disabled={isDisabled}
+          className="rounded-sm [&>input]:px-1 h-full dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+        />
+      </div>
+    </div>
   );
 }

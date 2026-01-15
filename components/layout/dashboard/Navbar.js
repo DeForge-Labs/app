@@ -1,51 +1,58 @@
-"use client";
+import { Suspense } from "react";
+import { CircleDot } from "lucide-react";
 
-import { Loader2 } from "lucide-react";
-import { useSelector } from "react-redux";
-import ThemeChanger from "./ThemeChanger";
-import { Button } from "@heroui/react";
-import { useRouter } from "next/navigation";
-import { Users } from "lucide-react";
-import CreateWorkflowButton from "./CreateWorkflowButton";
+import Logo from "@/components/ui/Logo";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 
-export default function Navbar() {
-  const router = useRouter();
-  const isTeamInitializing = useSelector(
-    (state) => state.team.isTeamInitializing
-  );
-  const team = useSelector((state) => state.team.team);
+import TeamMenu from "./navbar/TeamMenu";
+import CreditMenu from "./navbar/CreditMenu";
+import SettingsMenu from "./navbar/SettingsMenu";
+import FeedbackDialog from "./navbar/FeedbackDialog";
+
+const Navbar = () => {
   return (
-    <header className="sticky top-0 z-50 border-b border-black/50 dark:border-background bg-black/5 dark:bg-white/5">
-      <div className="flex items-center justify-between h-14 px-6">
-        <div className="flex items-center gap-2">
-          <span className="text-md font-semibold mt-0.5 flex items-center gap-1 dark:text-background">
-            {isTeamInitializing ? (
-              <Loader2 className="animate-spin w-4 h-4" />
-            ) : (
-              <>
-                <p>{team?.name}</p>
-              </>
-            )}
-          </span>
-        </div>
+    <header className="sticky top-0 z-50 bg-foreground/5 flex items-center justify-between px-2 h-12">
+      <div className="flex items-center gap-4 h-full">
+        <Logo
+          size={16}
+          padding="p-1.5"
+          shadow="shadow-md"
+          rounded="rounded-sm"
+        />
 
-        <div className="flex items-center gap-2">
-          <ThemeChanger />
-          <Button
-            variant="outline"
-            size="md"
-            className="border border-black/50 h-9 rounded-lg text-black/80 text-xs dark:text-background dark:border-background"
-            onPress={() => {
-              router.push(`/team`);
-            }}
-          >
-            <Users size={16} />
-            Teams
-          </Button>
+        <Separator orientation="vertical" className="bg-foreground/10 h-5" />
 
-          <CreateWorkflowButton />
-        </div>
+        <span className="flex items-center gap-1 dark:text-background">
+          <Suspense fallback={<Skeleton className="w-32 h-7" />}>
+            <TeamMenu />
+          </Suspense>
+        </span>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <FeedbackDialog />
+
+        <Suspense
+          fallback={
+            <Button
+              disabled
+              variant="outline"
+              className="text-xs bg-background border gap-1.5 border-foreground/20 rounded-sm [&_svg:not([class*='size-'])]:size-3"
+            >
+              <CircleDot />
+              <Skeleton className="w-8 h-5" />
+            </Button>
+          }
+        >
+          <CreditMenu />
+        </Suspense>
+
+        <SettingsMenu isTemplate={false} />
       </div>
     </header>
   );
-}
+};
+
+export default Navbar;

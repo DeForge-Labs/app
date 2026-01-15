@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@heroui/react";
-import { Checkbox } from "@heroui/react";
-import { Link2Off } from "lucide-react";
+import TypeBadge from "./common/TypeBadge";
+import DisconnectButton from "./common/DisconnectButton";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function CheckBoxField({
   field,
@@ -16,41 +16,34 @@ export default function CheckBoxField({
   return (
     <div key={field.name} className="space-y-1">
       <div className="flex justify-between items-center">
-        <div className="text-sm font-medium capitalize dark:text-background">
+        <div className="text-xs font-medium text-foreground/80 capitalize flex items-center gap-1">
           {field.name}
           {isInput && (
-            <span className="ml-2 text-xs text-black/50 dark:text-background">
-              {nodeType.inputs.find((i) => i.name === field.name)?.type}
-            </span>
+            <TypeBadge
+              type={
+                nodeType.inputs.find((i) => i.name === field.name)?.type ||
+                "any"
+              }
+            />
           )}
         </div>
         {isInput && isConnected && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-6 px-2 text-xs bg-black/80 text-background"
-            onPress={() => handleDisconnect(field.name)}
-          >
-            <Link2Off className="h-3 w-3 mr-1" />
-            Disconnect
-          </Button>
+          <DisconnectButton handleDisconnect={handleDisconnect} input={field} />
         )}
       </div>
-      <Checkbox
-        isDisabled={isInput && isConnected}
-        isSelected={selectedNode.data[field.name] || false}
-        onValueChange={(value) => handleChange(field.name, value)}
-        className=""
-        classNames={{
-          wrapper: "after:bg-black/80 dark:invert",
-        }}
-      >
-        <p className="text-xs font-medium text-black/80 dark:text-background">
+
+      <div className="flex items-center gap-2">
+        <Checkbox
+          disabled={isInput && isConnected}
+          checked={selectedNode.data[field.name] || false}
+          onCheckedChange={(value) => handleChange(field.name, value)}
+        />
+        <p className="text-xs font-medium text-black/80 dark:text-white/80">
           {selectedNode.data[field.name] ? "Yes" : "No"}
         </p>
-      </Checkbox>
+      </div>
 
-      <div className="text-[10px] dark:text-background">{field.desc}</div>
+      <div className="text-[10px] text-foreground/60">{field.desc}</div>
     </div>
   );
 }

@@ -1,7 +1,9 @@
 "use client";
 
-import { Button } from "@heroui/react";
 import { Link2Off } from "lucide-react";
+import DisconnectButton from "./common/DisconnectButton";
+import TypeBadge from "./common/TypeBadge";
+import { Button } from "@/components/ui/button";
 
 export default function ArrayField({
   field,
@@ -10,53 +12,49 @@ export default function ArrayField({
   handleDisconnectExact,
 }) {
   return (
-    <div key={field.name} className="space-y-2">
-      <div className="flex flex-col">
-        <div className="text-sm font-medium capitalize dark:text-background">
+    <div key={field.name} className="space-y-1">
+      <div className="flex justify-between items-center">
+        <div className="text-xs font-medium text-foreground/80 capitalize flex items-center gap-1">
           {field.name}
-          <span className="ml-2 text-xs text-black/50 dark:text-background">
-            (Array Input)
-          </span>
+          <TypeBadge type={field.type.split("[]")[0]} />
         </div>
         {totalValidConnections.length > 0 && (
-          <div className="flex items-center justify-between mt-2 mb-1">
-            <div className="text-sm">
+          <div className="flex items-center justify-between gap-2">
+            <div className="text-xs mb-0.5 text-foreground/60">
               {totalValidConnections.length} connection
               {totalValidConnections.length !== 1 ? "s" : ""}
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-6 px-2 text-xs bg-black/80 text-background dark:bg-background dark:text-black"
-              onPress={() => handleDisconnectAll(field.name)}
-            >
-              <Link2Off className="h-3 w-3 mr-1" />
-              Disconnect All
-            </Button>
+
+            <DisconnectButton
+              handleDisconnect={handleDisconnectAll}
+              input={field}
+            />
           </div>
         )}
       </div>
-      <div className="border rounded-md p-3 bg-black/5 border-black/50 text-xs dark:border-background dark:text-background">
+      <div className="border rounded-md p-3 bg-black/5 border-foreground/15 text-xs">
         <p className="">
           This is an array input that accepts multiple connections.
         </p>
         {totalValidConnections.length > 0 ? (
-          <div className="mt-2 space-y-1">
-            {/* --- THIS IS THE CORRECTED LINE --- */}
-            {/* We now map over the correctly filtered `totalValidConnections` array */}
+          <div className="mt-2 flex flex-col gap-2">
             {totalValidConnections.map((connection, index) => {
               return (
                 <div
                   key={index}
-                  className="flex justify-between items-center text-xs"
+                  className="flex justify-between items-center text-[10px] line-clamp-2"
                 >
-                  {/* You can display more info here if you want, e.g., connection.source */}
-                  <span>Connection from: {connection.source}</span>
+                  <span>
+                    Connection from: <br />{" "}
+                    {connection.source.length > 30
+                      ? connection.source.slice(0, 30) + "..."
+                      : connection.source}
+                  </span>
                   <Button
-                    variant="icon"
+                    variant="ghost"
                     size="icon"
-                    className="h-5 w-5 p-0 bg-black/80 text-background rounded-md dark:bg-background dark:text-black"
-                    onPress={() => handleDisconnectExact(connection.id)}
+                    className="text-xs [&_svg:not([class*='size-'])]:size-3 p-0 size-6 rounded-sm bg-foreground/5 border border-foreground/15 h-5 w-6"
+                    onClick={() => handleDisconnectExact(connection.id)}
                   >
                     <Link2Off className="h-3 w-3" />
                   </Button>
@@ -65,13 +63,13 @@ export default function ArrayField({
             })}
           </div>
         ) : (
-          <p className="mt-2 text-xs dark:text-background">
+          <p className="mt-2 text-[10ox] text-foreground/80">
             No connections yet.
           </p>
         )}
       </div>
 
-      <div className="text-[10px] dark:text-background">{field.desc}</div>
+      <div className="text-[10px] text-foreground/60">{field.desc}</div>
     </div>
   );
 }

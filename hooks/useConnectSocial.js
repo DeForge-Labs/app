@@ -1,14 +1,14 @@
 "use client";
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import useSocial from "./useSocial";
 import axios from "axios";
+import useWorkspaceStore from "@/store/useWorkspaceStore";
 
 export default function useConnectSocial() {
   const [isOpen, setIsOpen] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const workflow = useSelector((state) => state.workflow.workflow);
+  const { workflow } = useWorkspaceStore();
   const { getSocial } = useSocial();
 
   const openConnectionPopup = (connectionRoute) => {
