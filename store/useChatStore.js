@@ -44,7 +44,7 @@ const useChatStore = create((set) => ({
   replaceMessageId: (oldId, newId) =>
     set((state) => ({
       messages: state.messages.map((m) =>
-        m.id === oldId ? { ...m, id: newId } : m
+        m.id === oldId ? { ...m, id: newId } : m,
       ),
     })),
 
@@ -66,7 +66,10 @@ const useChatStore = create((set) => ({
 
   setTriggerMessage: (message) => set({ triggerMessage: message }),
 
-  resetChatState: () => set(initialState),
+  resetChatState: () => {
+    const { triggerMessage, ...rest } = initialState;
+    set(rest);
+  },
 }));
 
 export default useChatStore;

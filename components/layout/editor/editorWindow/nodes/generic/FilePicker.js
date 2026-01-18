@@ -141,8 +141,8 @@ export default function FilePicker({
             {!loading && files.length === 0 && (
               <div
                 className={cn(
-                  "flex flex-col items-center justify-center h-[200px] bg-foreground/2 w-full max-w-[1360px] border border-foreground/15 border-dashed rounded-sm p-4 py-6 gap-2",
-                  value && "bg-foreground/5"
+                  "flex flex-col items-center mt-4 justify-center h-[200px] bg-foreground/2 w-full max-w-[1360px] border border-foreground/15 border-dashed rounded-sm p-4 py-6 gap-2",
+                  value && "bg-foreground/5",
                 )}
               >
                 <div className="p-4 bg-background rounded-sm border border-foreground/15">
@@ -177,7 +177,7 @@ export default function FilePicker({
                         className={cn(
                           "flex flex-col relative hover:cursor-pointer gap-2 border w-full border-foreground/15 rounded-sm p-4 bg-foreground/2 hover:shadow-sm transition-shadow shadow-foreground/10 max-w-[1360px]",
                           selectedFile?.fileKey === file.fileKey &&
-                            "bg-foreground/5 border-foreground"
+                            "bg-foreground/5 border-foreground",
                         )}
                       >
                         {value && value?.fileKey === file?.fileKey && (
@@ -315,7 +315,7 @@ export default function FilePicker({
                         >
                           Go to Files
                         </Button>
-                      </div>
+                      </div>,
                     );
                     return;
                   }
