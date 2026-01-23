@@ -34,7 +34,7 @@ export default async function AppList({ teamId, page, query }) {
             cookie: cookieHeader,
           },
           credentials: "include",
-        }
+        },
       );
       const data = await response.json();
 
@@ -120,24 +120,32 @@ export default async function AppList({ teamId, page, query }) {
 
             <div className="flex justify-between items-center">
               <div className="flex flex-col gap-0.5">
-                <div className="group relative w-fit">
-                  <p
-                    className={cn(
-                      "font-medium text-sm ",
-                      app?.name?.length > 40 && "cursor-help"
-                    )}
-                  >
-                    {app?.name?.length > 40
-                      ? app?.name?.slice(0, 40) + "..."
-                      : app?.name}
-                  </p>
+                <Link
+                  href={
+                    app?.workflow?.status === "LIVE"
+                      ? `/viewer/${app.id}`
+                      : `/editor/${app.id}`
+                  }
+                >
+                  <div className="group relative w-fit">
+                    <p
+                      className={cn(
+                        "font-medium text-sm",
+                        app?.name?.length > 40 && "cursor-help",
+                      )}
+                    >
+                      {app?.name?.length > 40
+                        ? app?.name?.slice(0, 40) + "..."
+                        : app?.name}
+                    </p>
 
-                  {app?.name?.length > 40 && (
-                    <span className="pointer-events-none absolute left-0 -top-8 w-max max-w-xs scale-0 rounded-lg bg-background p-2 px-3 text-xs text-foreground/90 border border-foreground/15 transition-all group-hover:scale-100 z-50">
-                      {app?.name}
-                    </span>
-                  )}
-                </div>
+                    {app?.name?.length > 40 && (
+                      <span className="pointer-events-none absolute left-0 -top-8 w-max max-w-xs scale-0 rounded-lg bg-background p-2 px-3 text-xs text-foreground/90 border border-foreground/15 transition-all group-hover:scale-100 z-50">
+                        {app?.name}
+                      </span>
+                    )}
+                  </div>
+                </Link>
 
                 <p className="text-xs text-foreground/70">Updated {timeAgo}</p>
               </div>

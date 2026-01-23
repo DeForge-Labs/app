@@ -16,7 +16,7 @@ export default async function DashboardTemplate({ teamId }) {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       const data = await response.json();
 
@@ -60,7 +60,7 @@ export default async function DashboardTemplate({ teamId }) {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {templates.map((template, index) => (
           <Link href={`/templates/${template.id}`} key={index}>
-            <Card className="hover:border hover:border-foreground/20 cursor-pointer">
+            <Card className="hover:border hover:border-foreground/20 h-full cursor-pointer">
               <CardHeader>
                 <CardTitle className="text-sm font-semibold flex flex-col gap-3">
                   <div className="rounded-sm p-4 bg-foreground/10 w-fit">
