@@ -1,17 +1,19 @@
 "use client";
 import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/ui/menu";
 import { Button } from "@/components/ui/button";
-import { Copy, Ellipsis, Pen, Star, Trash } from "lucide-react";
+import { ArrowUpRight, Copy, Ellipsis, Pen, Star, Trash } from "lucide-react";
 import { useState } from "react";
 import RenameDialog from "./RenameDialog";
 import DuplicateDialog from "./DuplicateDialog";
 import DeleteDialog from "./DeleteDialog";
 import useFavoriteWorkspace from "@/hooks/useFavoriteWorkspace";
+import { useRouter } from "next/navigation";
 
-export default function MenuBox({ appId, appName, isFavorite }) {
+export default function MenuBox({ appId, appName, status, isFavorite }) {
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDuplicateDialogOpen, setIsDuplicateDialogOpen] = useState(false);
+  const router = useRouter();
 
   const { handleFavoriteWorkflow } = useFavoriteWorkspace();
   return (
@@ -53,6 +55,19 @@ export default function MenuBox({ appId, appName, isFavorite }) {
           sideOffset={5}
           className="border border-foreground/30 rounded-lg w-40"
         >
+          <Button
+            variant="outline"
+            onClick={() => {
+              if (status === "LIVE") {
+                router.push(`/viewer/${appId}`);
+              } else {
+                router.push(`/editor/${appId}`);
+              }
+            }}
+            className="data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent shadow-none! bg-transparent hover:bg-transparent w-full justify-start border-none"
+          >
+            <ArrowUpRight className="w-4 h-4" /> Open
+          </Button>
           <Button
             variant="outline"
             onClick={() => setIsRenameDialogOpen(true)}

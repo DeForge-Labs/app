@@ -173,6 +173,7 @@ export default async function AppList({ teamId, page, query }) {
                 <MenuBox
                   appId={app.id}
                   appName={app.name}
+                  status={app.workflow?.status}
                   isFavorite={app.isFavorite}
                 />
               </div>

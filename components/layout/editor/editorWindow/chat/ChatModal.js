@@ -24,6 +24,7 @@ const API_BASE =
 const ChatModal = () => {
   const scrollRef = useRef(null);
   const { setChatModalOpen } = useChatStore();
+  const audioRef = useRef(null);
 
   const {
     messages,
@@ -49,6 +50,10 @@ const ChatModal = () => {
   const { setComponents, components } = useFormStore();
 
   const [isResponding, setIsResponding] = useState(false);
+
+  useEffect(() => {
+    audioRef.current = new Audio("/sounds/notification.mp3");
+  }, []);
 
   useEffect(() => {
     if (
@@ -141,6 +146,12 @@ const ChatModal = () => {
     } finally {
       setIsLoading(false);
       setIsResponding(false);
+
+      if (audioRef.current) {
+        audioRef.current.play().catch((error) => {
+          console.error("Audio play failed:", error);
+        });
+      }
     }
   };
 
