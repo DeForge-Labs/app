@@ -17,7 +17,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
 import useFiles from "@/hooks/useFiles";
-import { FileQuestion, LinkIcon, Search } from "lucide-react";
+import { FileQuestion, LinkIcon, RefreshCcw, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
@@ -31,6 +31,8 @@ export default function FilePicker({
   value,
   isTemplate = false,
 }) {
+  const [open, setOpen] = useState(false);
+
   const {
     files,
     loading,
@@ -40,8 +42,8 @@ export default function FilePicker({
     page,
     setPage,
     paginationData,
-  } = useFiles();
-  const [open, setOpen] = useState(false);
+  } = useFiles(open);
+
   const [selectedFile, setSelectedFile] = useState(null);
 
   const createdAt = new Date(value?.createdAt || Date.now());
@@ -56,12 +58,6 @@ export default function FilePicker({
     }
     setOpen(open);
   };
-
-  useEffect(() => {
-    if (open) {
-      getFiles(1, query);
-    }
-  }, [open]);
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
@@ -121,13 +117,22 @@ export default function FilePicker({
           </SheetHeader>
           <div className="flex flex-col flex-1 px-6">
             <div className="flex items-center gap-2 -mt-5 mb-2">
-              <Search className="w-4 h-4 opacity-80" />
               <Input
                 placeholder="Search files..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className={""}
               />
+
+              <Button
+                className="w-fit text-xs px-2 h-full border border-foreground/15"
+                variant={"outline"}
+                size={"sm"}
+                onClick={() => getFiles(1, query)}
+              >
+                <RefreshCcw className="size-3" />
+                Refresh
+              </Button>
             </div>
 
             {loading && (

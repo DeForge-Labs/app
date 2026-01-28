@@ -39,7 +39,7 @@ export default function EmailInputStep({
       <p className="mt-3 text-xs dark:text-foreground px-4">
         By pressing "Continue", you agree to our{" "}
         <a
-          href="/ToS"
+          href="https://deforge.io/ToS"
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 hover:underline dark:text-blue-400"
@@ -48,7 +48,7 @@ export default function EmailInputStep({
         </a>{" "}
         and{" "}
         <a
-          href="/privacy"
+          href="https://deforge.io/privacy"
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 hover:underline dark:text-blue-400"

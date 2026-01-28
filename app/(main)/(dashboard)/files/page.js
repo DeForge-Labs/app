@@ -1,11 +1,13 @@
 import { Suspense } from "react";
-import { File } from "lucide-react";
+import { File, RefreshCcw } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
 import FileList from "@/components/layout/dashboard/files/FileList";
 import SearchSection from "@/components/layout/dashboard/apps/SearchSection";
 import UploadFileButton from "@/components/layout/dashboard/files/UploadFileButton";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const metadata = {
   title: "Files | Deforge.io",
@@ -38,7 +40,18 @@ const FilesPage = async ({ searchParams }) => {
           </div>
         </div>
 
-        <UploadFileButton />
+        <div className="flex items-center gap-2 h-full">
+          <Link href={"/files"}>
+            <Button
+              className="flex gap-2 font-normal text-xs border border-foreground/15 rounded-sm w-fit"
+              variant={"outline"}
+            >
+              <RefreshCcw className="size-3" />
+              Refresh
+            </Button>
+          </Link>
+          <UploadFileButton />
+        </div>
       </header>
 
       <SearchSection route="files" placeholder="Search files..." />

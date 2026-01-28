@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-export default function useFiles() {
+export default function useFiles(isOpen = true) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
@@ -11,13 +11,15 @@ export default function useFiles() {
   const [paginationData, setPaginationData] = useState(null);
 
   useEffect(() => {
+    if (!isOpen) return;
+
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
       setPage(1);
     }, 500);
 
     return () => clearTimeout(handler);
-  }, [query]);
+  }, [query, isOpen]);
 
   const getFiles = async (targetPage = 1, searchQuery = "") => {
     setLoading(true);
@@ -34,7 +36,7 @@ export default function useFiles() {
           headers: { "Content-Type": "application/json" },
           credentials: "include",
           cache: "no-store",
-        }
+        },
       );
 
       if (!response.ok) throw new Error(`Status: ${response.status}`);
@@ -50,8 +52,10 @@ export default function useFiles() {
   };
 
   useEffect(() => {
+    if (!isOpen) return;
+
     getFiles(page, debouncedQuery);
-  }, [page, debouncedQuery]);
+  }, [page, debouncedQuery, isOpen]);
 
   return {
     files,
