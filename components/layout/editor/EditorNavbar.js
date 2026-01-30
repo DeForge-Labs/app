@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import OptionsMenu from "./editorNavbar/OptionsMenu";
@@ -26,7 +26,7 @@ export default function EditorNavbar() {
           className={cn(
             "flex items-center justify-start gap-1 h-full max-w-[530px] w-full",
             chatModalOpen ? "justify-between" : "",
-            (hasUnsavedChanges || hasUnsavedChangesForm) && "max-w-[568px]"
+            (hasUnsavedChanges || hasUnsavedChangesForm) && "max-w-[568px]",
           )}
         >
           <div className="flex items-center gap-1 h-full">
@@ -60,7 +60,12 @@ export default function EditorNavbar() {
         <div className="flex items-center gap-2">
           <OptionsMenu />
 
-          <DeployDialog />
+          <DeployDialog>
+            <Button className="text-xs gap-1.5 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3 bg-foreground/90">
+              <Rocket />
+              Deploy
+            </Button>
+          </DeployDialog>
         </div>
       </div>
     </header>

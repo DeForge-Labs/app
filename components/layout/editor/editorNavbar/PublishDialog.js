@@ -36,7 +36,6 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import useDeployWorkflow from "@/hooks/useDeployWorkflow";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DynamicIcon } from "lucide-react/dynamic";
@@ -174,7 +173,7 @@ export default function PublishDialog({ isOpen, setIsOpen }) {
                       variant="outline"
                       className={cn(
                         "p-2 border border-foreground/15 bg-background rounded-sm hover:bg-foreground/5 cursor-pointer z-10",
-                        icon.name === iconId && "border-foreground"
+                        icon.name === iconId && "border-foreground",
                       )}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -325,7 +324,7 @@ export default function PublishDialog({ isOpen, setIsOpen }) {
                         view,
                         iconId,
                         author,
-                        setIsPublishOpen
+                        setIsPublishOpen,
                       );
                     }}
                     type="submit"

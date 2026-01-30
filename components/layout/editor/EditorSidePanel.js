@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import {
   Download,
-  Globe,
   MessageCircle,
   Monitor,
   Moon,
   Play,
+  Rocket,
+  Sparkles,
   Sun,
   Upload,
 } from "lucide-react";
@@ -17,6 +18,7 @@ import PublishDialog from "./editorNavbar/PublishDialog";
 import ExportDialog from "./editorNavbar/ExportDialog";
 import ImportDialog from "./editorNavbar/ImportDialog";
 import { useEffect, useState } from "react";
+import DeployDialog from "./editorNavbar/DeployDialog";
 
 export default function EditorSidePanel() {
   const { theme, setTheme } = useTheme();
@@ -118,8 +120,22 @@ export default function EditorSidePanel() {
           }
           onClick={() => setIsPublishOpen(true)}
         >
-          <Globe className="size-[13px]" />
+          <Sparkles className="size-[13px]" />
         </Button>
+      ),
+    },
+    {
+      id: "Deploy Workflow",
+      render: (
+        <DeployDialog>
+          <Button
+            className={
+              "w-8 rounded-sm  peer dark:not-disabled:not-active:not-data-pressed:before:shadow-none not-disabled:not-active:not-data-pressed:before:shadow-none border border-foreground/15"
+            }
+          >
+            <Rocket className="size-[13px]" />
+          </Button>
+        </DeployDialog>
       ),
     },
   ];

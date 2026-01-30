@@ -17,7 +17,7 @@ import { useState } from "react";
 import Logo from "@/components/ui/Logo";
 import useDeployWorkflow from "@/hooks/useDeployWorkflow";
 
-export default function DeployDialog() {
+export default function DeployDialog({ children }) {
   const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState("FORM");
   const { handleDeployWorkflow, isDeploying } = useDeployWorkflow();
@@ -29,19 +29,7 @@ export default function DeployDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleIsOpenChange}>
-      <DialogTrigger
-        render={
-          <Button
-            className="text-xs gap-1.5 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3 bg-foreground/90"
-            onClick={() => setIsOpen(true)}
-          >
-            <Rocket />
-            Deploy
-          </Button>
-        }
-      >
-        {" "}
-      </DialogTrigger>
+      <DialogTrigger render={children} />
       <DialogPopup className={"sm:max-w-sm"}>
         <Form>
           <DialogHeader>
