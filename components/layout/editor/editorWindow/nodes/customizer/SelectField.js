@@ -23,9 +23,10 @@ export default function SelectField({
     label: option,
   }));
 
-  const selectedItem = items.find(
-    (item) => item.value === (selectedNode.data[field.name] || field.value)
-  );
+  const selectedItem =
+    items.find(
+      (item) => item.value === (selectedNode.data[field.name] || field.value),
+    ) || null;
 
   return (
     <div key={field.name} className="space-y-1">
@@ -42,7 +43,7 @@ export default function SelectField({
       <Select
         items={items}
         value={selectedItem}
-        onValueChange={(item) => handleChange(field.name, item.value)}
+        onValueChange={(item) => handleChange(field.name, item?.value)}
         disabled={isInput && isConnected}
       >
         <SelectTrigger className="rounded-sm before:rounded-sm">

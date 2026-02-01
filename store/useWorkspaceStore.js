@@ -72,7 +72,7 @@ const checkForUnsavedChanges = (state) => {
     for (let i = 0; i < state.nodes.length; i++) {
       const currentNode = state.nodes[i];
       const savedNode = state.lastSavedState.nodes.find(
-        (n) => n.id === currentNode.id
+        (n) => n.id === currentNode.id,
       );
 
       if (!savedNode) return true;
@@ -101,7 +101,7 @@ const checkForUnsavedChanges = (state) => {
     for (let i = 0; i < state.connections.length; i++) {
       const currentConnection = state.connections[i];
       const savedConnection = state.lastSavedState.connections.find(
-        (c) => c.id === currentConnection.id
+        (c) => c.id === currentConnection.id,
       );
 
       if (!savedConnection) return true;
@@ -196,10 +196,12 @@ const useWorkflowStore = create((set, get) => ({
     set({ isWorkflowInitializing }),
 
   setNodes: (nodes) =>
-    set((state) => ({
-      nodes,
-      hasUnsavedChanges: checkForUnsavedChanges({ ...state, nodes }),
-    })),
+    set((state) => {
+      return {
+        nodes,
+        hasUnsavedChanges: checkForUnsavedChanges({ ...state, nodes }),
+      };
+    }),
 
   setConnections: (connections) =>
     set((state) => ({
@@ -336,7 +338,7 @@ const useWorkflowStore = create((set, get) => ({
 
       for (const key in defaultData) {
         const fieldType = nodeType.fields.find(
-          (field) => field.name === key
+          (field) => field.name === key,
         )?.type;
 
         if (
@@ -430,7 +432,7 @@ const useWorkflowStore = create((set, get) => ({
 
       const updatedNodes = state.nodes.filter((node) => node.id !== nodeId);
       const updatedConnections = state.connections.filter(
-        (edge) => edge.source !== nodeId && edge.target !== nodeId
+        (edge) => edge.source !== nodeId && edge.target !== nodeId,
       );
 
       state.showCustomizerPanel = false;
@@ -458,7 +460,7 @@ const useWorkflowStore = create((set, get) => ({
       if (!state.connections) return state;
 
       const updatedConnections = state.connections.filter(
-        (edge) => edge.id !== edgeId
+        (edge) => edge.id !== edgeId,
       );
 
       const newState = {

@@ -1,5 +1,5 @@
 "use client";
-import { Handle, Position } from "reactflow";
+
 import {
   SelectPopup,
   Select,
@@ -7,7 +7,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import getColorByType from "@/lib/color-profile";
 
 export default function SelectField({
   field,
@@ -34,7 +33,7 @@ export default function SelectField({
         <Select
           items={items}
           value={selectedItem}
-          onValueChange={(item) => handleChange(field.name, item.value)}
+          onValueChange={(item) => handleChange(field.name, item?.value)}
           disabled={isDisabled}
         >
           <SelectTrigger className="rounded-sm before:rounded-sm">
