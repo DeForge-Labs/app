@@ -35,7 +35,7 @@ export default function Endpoint({ workflow }) {
                 workflow.status === "LIVE"
                   ? `${rawUrl}/live/${workflow?.id}`
                   : `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`
-              }`
+              }`,
             );
 
             toast("Endpoint copied to clipboard");
@@ -44,8 +44,7 @@ export default function Endpoint({ workflow }) {
           <Copy /> Copy
         </Button>
         <Button
-          variant="outline"
-          className="flex-1 text-xs bg-background border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
+          className="flex-1 text-xs border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
           onClick={() => {
             window.open(
               `${
@@ -53,7 +52,7 @@ export default function Endpoint({ workflow }) {
                   ? `${rawUrl}/live/${workflow?.id}`
                   : `${process.env.NEXT_PUBLIC_API_URL}/workflow/test/${workflow?.id}`
               }`,
-              "_blank"
+              "_blank",
             );
           }}
         >

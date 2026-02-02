@@ -35,7 +35,7 @@ export default function ChatbotEndpoint({ workflow }) {
                   workflow.status === "LIVE"
                     ? `https://chat.deforge.io?workflowId=${workflow?.id}`
                     : `https://chat.deforge.io?workflowId=${workflow?.id}&status=test`
-                }`
+                }`,
               );
 
               toast("Endpoint copied to clipboard");
@@ -44,8 +44,7 @@ export default function ChatbotEndpoint({ workflow }) {
             <Copy /> Copy
           </Button>
           <Button
-            variant="outline"
-            className="flex-1 text-xs bg-background border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
+            className="flex-1 text-xs border gap-1.5 border-foreground/15 rounded-sm px-2 [&_svg:not([class*='size-'])]:size-3"
             onClick={() => {
               window.open(
                 `${
@@ -53,7 +52,7 @@ export default function ChatbotEndpoint({ workflow }) {
                     ? `https://chat.deforge.io?workflowId=${workflow?.id}`
                     : `https://chat.deforge.io?workflowId=${workflow?.id}&status=test`
                 }`,
-                "_blank"
+                "_blank",
               );
             }}
           >

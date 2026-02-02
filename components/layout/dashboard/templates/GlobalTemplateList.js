@@ -32,7 +32,7 @@ export default async function GlobalTemplateList({ teamId, page, query }) {
             cookie: cookieHeader,
           },
           credentials: "include",
-        }
+        },
       );
       const data = await response.json();
 
@@ -93,7 +93,7 @@ export default async function GlobalTemplateList({ teamId, page, query }) {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {templates.map((template, index) => (
             <Link href={`/templates/${template.id}`} key={index}>
-              <Card className="hover:border hover:border-foreground/20 cursor-pointer">
+              <Card className="hover:border hover:border-foreground/20 cursor-pointer h-full">
                 <CardHeader>
                   <CardTitle className="text-sm font-semibold flex flex-col gap-3">
                     <div className="rounded-sm p-4 bg-foreground/10 w-fit">
