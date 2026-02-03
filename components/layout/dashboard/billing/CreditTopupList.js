@@ -4,7 +4,7 @@ import { useState } from "react";
 import { CircleDot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getPackByKey } from "@/config/dodoBillingConfig";
-import { resolveDeforgeId } from "@/lib/billing/identity";
+import { resolveDeforgeIdAsync } from "@/lib/billing/identity";
 import {
   createOneTimeCheckout,
   redirectToCheckout,
@@ -23,7 +23,7 @@ export default function CreditTopupList({ items }) {
     setLoadingKey(packId);
 
     try {
-      const deforge_id = resolveDeforgeId();
+      const deforge_id = await resolveDeforgeIdAsync();
       if (!deforge_id) {
         setErrorMsg("You are not authenticated. Please refresh or sign in again.");
         setLoadingKey(null);

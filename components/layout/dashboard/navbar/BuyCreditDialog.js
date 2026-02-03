@@ -23,7 +23,7 @@ import {
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { getPackByKey } from "@/config/dodoBillingConfig";
-import { resolveDeforgeId } from "@/lib/billing/identity";
+import { resolveDeforgeIdAsync } from "@/lib/billing/identity";
 import {
   createOneTimeCheckout,
   redirectToCheckout,
@@ -56,7 +56,7 @@ const BuyCreditDialog = ({ teamId }) => {
     try {
       setIsProcessing(true);
 
-      const deforge_id = resolveDeforgeId();
+      const deforge_id = await resolveDeforgeIdAsync();
       if (!deforge_id) {
         setErrorMsg(
           "You are not authenticated. Please refresh or sign in again."

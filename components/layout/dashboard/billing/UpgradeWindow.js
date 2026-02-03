@@ -20,7 +20,7 @@ import {
   createSubscriptionCheckout,
   redirectToCheckout,
 } from "@/lib/billing/checkout";
-import { resolveDeforgeId } from "@/lib/billing/identity";
+import { resolveDeforgeIdAsync } from "@/lib/billing/identity";
 
 export default function UpgradeWindow({ currentPlan, teamId }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -85,7 +85,7 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
     try {
       setIsProcessing(true);
 
-      const deforge_id = resolveDeforgeId();
+      const deforge_id = await resolveDeforgeIdAsync();
       if (!deforge_id) {
         setErrorMsg(
           "You are not authenticated. Please refresh or sign in again."
