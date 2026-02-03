@@ -15,10 +15,18 @@ import { Form } from "@/components/ui/form";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTab } from "@/components/ui/tabs";
 import { Check } from "lucide-react";
+import { getPlanByKey } from "@/config/dodoBillingConfig";
+import {
+  createSubscriptionCheckout,
+  redirectToCheckout,
+} from "@/lib/billing/checkout";
+import { resolveDeforgeId } from "@/lib/billing/identity";
 
 export default function UpgradeWindow({ currentPlan, teamId }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(currentPlan);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const plans = [
     {
@@ -59,6 +67,64 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
     },
   ];
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (isProcessing) return;
+    setErrorMsg("");
+
+    // Only paid plan ("pro") is supported via hosted checkout
+    if (selectedPlan !== "pro") {
+      setErrorMsg(
+        selectedPlan === "enterprise"
+          ? "Please contact sales for Enterprise."
+          : "Select a paid plan to continue."
+      );
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+
+      const deforge_id = resolveDeforgeId();
+      if (!deforge_id) {
+        setErrorMsg(
+          "You are not authenticated. Please refresh or sign in again."
+        );
+        setIsProcessing(false);
+        return;
+      }
+
+      const cfg = getPlanByKey("pro");
+      if (!cfg?.plan_id) {
+        setErrorMsg(
+          "Subscription plan is not configured. Please contact support."
+        );
+        setIsProcessing(false);
+        return;
+      }
+
+      const { checkout_url } = await createSubscriptionCheckout({
+        plan_id: cfg.plan_id,
+        deforge_id,
+      });
+
+      redirectToCheckout(checkout_url);
+    } catch (err) {
+      console.error("Subscription checkout initiation failed:", err);
+      const msg =
+        (err && (err.message || err.toString())) ||
+        "Failed to start subscription checkout. Please try again.";
+      setErrorMsg(msg);
+      setIsProcessing(false);
+    }
+  };
+
+  const canSubmit =
+    selectedPlan === "pro" &&
+    currentPlan !== "enterprise" &&
+    currentPlan !== selectedPlan &&
+    !isProcessing;
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -71,7 +137,7 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
         />
 
         <DialogPopup className="sm:max-w-sm">
-          <Form onSubmit={(e) => {}}>
+          <Form onSubmit={handleSubmit}>
             <DialogHeader>
               <DialogTitle className={"text-lg font-medium opacity-80"}>
                 Upgrade Plan
@@ -163,22 +229,35 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
               </TabsContent>
             </Tabs>
 
+            {errorMsg && (
+              <div className="text-xs text-destructive mt-2" role="alert">
+                {errorMsg}
+              </div>
+            )}
+
             <DialogFooter>
               <DialogClose
-                render={<Button variant="ghost" className="text-xs" />}
+                render={
+                  <Button
+                    variant="ghost"
+                    className="text-xs"
+                    disabled={isProcessing}
+                  />
+                }
               >
                 Cancel
               </DialogClose>
               <Button
                 className="text-background rounded-md border-none text-xs"
                 type="submit"
-                disabled={
-                  currentPlan === "enterprise" ||
-                  currentPlan === selectedPlan ||
-                  selectedPlan === "free"
-                }
+                aria-disabled={!canSubmit}
+                disabled={!canSubmit}
               >
-                {selectedPlan === "enterprise" ? "Contact Us" : "Upgrade"}
+                {isProcessing
+                  ? "Processing..."
+                  : selectedPlan === "enterprise"
+                  ? "Contact Us"
+                  : "Upgrade"}
               </Button>
             </DialogFooter>
           </Form>

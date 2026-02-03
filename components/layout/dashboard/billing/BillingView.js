@@ -2,8 +2,7 @@ import { CreditCard, Info } from "lucide-react";
 import PlanBalance from "./PlanBalance";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CircleDot } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import CreditTopupList from "./CreditTopupList";
 
 export default function BillingView({ teamId }) {
   const topupPlans = [
@@ -76,32 +75,7 @@ export default function BillingView({ teamId }) {
               <PlanBalance teamId={teamId} />
             </Suspense>
 
-            <div className="flex flex-col gap-2 mt-2">
-              <p className="text-xs text-foreground/50 font-medium">
-                Credit Topup
-              </p>
-
-              {topupPlans.map((plan) => (
-                <div
-                  className="p-4 border hover:shadow-sm hover:shadow-foreground/5 hover:border-foreground/20 transition-all border-foreground/15 rounded-md flex gap-2 items-center justify-between"
-                  key={plan.id}
-                >
-                  <p className="text-sm font-medium text-foreground/50 flex items-center gap-2">
-                    <CircleDot className="size-4" /> {plan.name}
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <div className="p-1 px-2 rounded-sm border border-foreground/20">
-                      <p className="text-sm font-medium font-mono">
-                        {plan.price}
-                      </p>
-                    </div>
-                    <Button className="flex gap-2 font-normal text-xs bg-foreground/90 text-background rounded-sm w-fit">
-                      Buy
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <CreditTopupList items={topupPlans} />
           </div>
         </div>
       </div>
