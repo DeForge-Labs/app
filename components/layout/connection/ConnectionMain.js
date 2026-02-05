@@ -20,6 +20,7 @@ export default function ConnectionMain() {
     handleGoogleSheets,
     handleHubSpot,
     handleNotion,
+    handleAirtable,
   } = useSocial();
 
   const connectionTypes = [
@@ -66,6 +67,11 @@ export default function ConnectionMain() {
     {
       name: "Notion",
       key: "notion",
+      type: "redirect",
+    },
+    {
+      name: "Airtable",
+      key: "airtable",
       type: "redirect",
     },
   ];
@@ -250,6 +256,25 @@ export default function ConnectionMain() {
     } else if (connectionType.key === "notion") {
       try {
         const response = await handleNotion(workflowId);
+
+        if (!response.data.success) {
+          throw new Error(response.data.message);
+        }
+
+        window.location.href = response.data.authURL;
+      } catch (error) {
+        console.log(error);
+        window.opener.postMessage(
+          {
+            type: "SOCIAL_AUTH_ERROR",
+            message: error.message,
+          },
+          window.location.origin,
+        );
+      }
+    } else if (connectionType.key === "airtable") {
+      try {
+        const response = await handleAirtable(workflowId);
 
         if (!response.data.success) {
           throw new Error(response.data.message);

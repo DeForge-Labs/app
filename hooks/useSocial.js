@@ -161,6 +161,21 @@ export default function useSocial() {
     return response;
   };
 
+  const handleAirtable = async (workflowId) => {
+    axios.defaults.withCredentials = true;
+
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/workflow/connectSocial/${workflowId}?social=airtable`,
+      {},
+    );
+
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+
+    return response;
+  };
+
   return {
     handleYouTube,
     handleTwitter,
@@ -171,6 +186,7 @@ export default function useSocial() {
     handleGoogleSheets,
     handleHubSpot,
     handleNotion,
+    handleAirtable,
     getSocial,
   };
 }
