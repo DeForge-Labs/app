@@ -72,19 +72,21 @@ const RagStatusDisplay = ({ fileKey, initialRagStatus }) => {
         RAG: {ragStatus || "Not Requested"}
       </p>
 
-      <Button
-        size="icon"
-        variant="ghost"
-        onClick={handleRefresh}
-        disabled={isRefreshing}
-        className="h-3 w-3 p-0 hover:bg-transparent"
-      >
-        <RefreshCw
-          className={`h-2.5 w-2.5 text-foreground/60 hover:text-foreground/90 transition-colors ${
-            isRefreshing ? "animate-spin" : ""
-          }`}
-        />
-      </Button>
+      {ragStatus !== "done" && (
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+          className="h-3 w-3 p-0 hover:bg-transparent"
+        >
+          <RefreshCw
+            className={`h-2.5 w-2.5 text-foreground/60 hover:text-foreground/90 transition-colors ${
+              isRefreshing ? "animate-spin" : ""
+            }`}
+          />
+        </Button>
+      )}
     </div>
   );
 };
