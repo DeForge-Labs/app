@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import {
   Dialog,
@@ -38,10 +38,8 @@ const RagConversionDialog = ({
 
   const [ragTableName, setRagTableName] = useState(initialRagTableName);
   const [ragStatus, setRagStatus] = useState(
-    initialRagStatus || "not-requested"
+    initialRagStatus || "not-requested",
   );
-
-  const intervalRef = useRef(null);
 
   const statusInfo = useMemo(
     () =>
@@ -86,14 +84,14 @@ const RagConversionDialog = ({
           label: "Failed",
           description: "Conversion failed. You can try again.",
         },
-      }[ragStatus] || {
+      })[ragStatus] || {
         icon: Database,
         color: "text-gray-500",
         bg: "bg-gray-100 dark:bg-gray-800",
         label: "Not Converted",
         description: "This file has not been converted to RAG database yet.",
-      }),
-    [ragStatus]
+      },
+    [ragStatus],
   );
 
   const StatusIcon = statusInfo.icon;
@@ -102,38 +100,11 @@ const RagConversionDialog = ({
     if (open) {
       setRagStatus(initialRagStatus || "not-requested");
       setRagTableName(initialRagTableName);
-
       refreshStatus();
     } else {
-      cleanupPolling();
       setLoading(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, initialRagStatus, initialRagTableName]);
-
-  useEffect(() => {
-    if (!open) return;
-
-    if (ragStatus === "queued" || ragStatus === "processing") {
-      startPolling();
-    } else {
-      cleanupPolling();
-    }
-
-    return cleanupPolling;
-  }, [ragStatus, open]);
-
-  const cleanupPolling = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  };
-
-  const startPolling = () => {
-    if (intervalRef.current) return;
-    intervalRef.current = setInterval(refreshStatus, 5000);
-  };
 
   const fetchJson = async (input, init = {}) => {
     const res = await fetch(input, init);
@@ -166,14 +137,18 @@ const RagConversionDialog = ({
         headers: { "Content-Type": "application/json" },
       });
 
-      if (ok && data?.success) {
-        const { status, tableName } = data;
+      if (ok && data && (data.success || data.status)) {
+        const { status, tableName, message } = data;
 
         setRagStatus(status);
         if (tableName) setRagTableName(tableName);
 
+        if (status === "failed" && message) {
+          // Optional: Display the error message from the backend in a toast
+          toast.error(message);
+        }
+
         if (status === "done" || status === "failed") {
-          cleanupPolling();
           router.refresh();
         }
       }
@@ -201,21 +176,19 @@ const RagConversionDialog = ({
 
       if (ok && data?.success) {
         const { status } = data;
-
         setRagStatus(status);
 
-        toast.success("Conversion started! This may take a few minutes.");
-
-        if (status === "queued" || status === "processing") {
-          startPolling();
-        }
+        toast.success(
+          ragStatus === "failed"
+            ? "Retry submitted! Check status shortly."
+            : "Conversion started! Click 'Refresh Status' to check progress.",
+        );
 
         router.refresh();
       } else {
         toast.error(data?.message || "Conversion request failed");
       }
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error("Conversion error:", error);
       toast.error("An error occurred while starting conversion");
     } finally {
@@ -318,6 +291,7 @@ const RagConversionDialog = ({
                 Close
               </Button>
 
+              {/* Initial Convert Button */}
               {ragStatus === "not-requested" && (
                 <Button
                   onClick={handleConvert}
@@ -336,11 +310,12 @@ const RagConversionDialog = ({
                 </Button>
               )}
 
+              {/* Refresh Button - Shows for Queued, Processing, OR Failed */}
               {(ragStatus === "queued" || ragStatus === "processing") && (
                 <Button
                   variant="outline"
                   className="text-xs"
-                  disabled={checking}
+                  disabled={checking || converting}
                   onClick={refreshStatus}
                 >
                   {checking ? (
@@ -353,9 +328,10 @@ const RagConversionDialog = ({
                 </Button>
               )}
 
+              {/* Retry Button - Only shows when Failed */}
               {ragStatus === "failed" && (
                 <Button
-                  disabled={converting}
+                  disabled={converting || checking}
                   onClick={handleConvert}
                   className="bg-foreground/90 text-background text-xs"
                 >

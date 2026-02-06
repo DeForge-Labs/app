@@ -38,7 +38,7 @@ const getFilesData = async (page) => {
         },
         credentials: "include",
         cache: "no-store",
-      }
+      },
     );
 
     if (!response.ok) {
@@ -76,7 +76,7 @@ const FileList = async ({ page, query }) => {
 
   if (query) {
     files = files.filter((file) =>
-      file.fileName.toLowerCase().includes(query.toLowerCase())
+      file.fileName.toLowerCase().includes(query.toLowerCase()),
     );
   }
 
@@ -213,7 +213,7 @@ const FileList = async ({ page, query }) => {
                 {file.ragStatus && (
                   <RagStatusDisplay
                     fileKey={file.fileKey}
-                    ragStatus={file.ragStatus}
+                    initialRagStatus={file.ragStatus}
                   />
                 )}
               </div>

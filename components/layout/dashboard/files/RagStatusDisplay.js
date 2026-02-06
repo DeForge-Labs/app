@@ -14,8 +14,10 @@ const STATUS_COLORS = {
   default: "bg-gray-400",
 };
 
-const RagStatusDisplay = ({ fileKey }) => {
-  const [ragStatus, setRagStatus] = useState(null);
+const RagStatusDisplay = ({ fileKey, initialRagStatus }) => {
+  const [ragStatus, setRagStatus] = useState(
+    initialRagStatus || "not-requested",
+  );
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const getStatusColor = ragStatus
@@ -40,7 +42,7 @@ const RagStatusDisplay = ({ fileKey }) => {
             method: "GET",
             credentials: "include",
             cache: "no-store",
-          }
+          },
         );
 
         const data = await res.json().catch(() => null);
@@ -49,6 +51,7 @@ const RagStatusDisplay = ({ fileKey }) => {
           setRagStatus(data.status);
           toast.success("Status refreshed");
         } else {
+          setRagStatus(data?.status || "not-requested");
           toast.error(data?.message || "Failed to refresh status");
         }
       } catch (err) {
@@ -58,7 +61,7 @@ const RagStatusDisplay = ({ fileKey }) => {
         setIsRefreshing(false);
       }
     },
-    [fileKey]
+    [fileKey],
   );
 
   return (

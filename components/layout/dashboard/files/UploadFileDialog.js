@@ -88,7 +88,7 @@ const UploadFileDialog = ({ open, onOpenChange }) => {
           method: "POST",
           credentials: "include",
           body: formData,
-        }
+        },
       );
 
       const data = await res.json();
@@ -128,7 +128,7 @@ const UploadFileDialog = ({ open, onOpenChange }) => {
           credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ url: url.trim(), deepSearch }),
-        }
+        },
       );
 
       const data = await res.json();
@@ -208,7 +208,7 @@ const UploadFileDialog = ({ open, onOpenChange }) => {
                     <FileUp className="w-8 h-8 opacity-50 shrink-0" />
 
                     <div className="min-w-0">
-                      <p className="text-sm font-medium truncate">
+                      <p className="text-sm font-medium truncate max-w-[250px]">
                         {selectedFile.name}
                       </p>
 
