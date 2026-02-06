@@ -37,11 +37,16 @@ const RagStatusDisplay = ({ fileKey, initialRagStatus }) => {
         const res = await fetch(
           `${
             process.env.NEXT_PUBLIC_API_URL
-          }/storage/rag-status/${encodeURIComponent(fileKey)}`,
+          }/storage/rag-status/${encodeURIComponent(fileKey)}?t=${Date.now()}`,
           {
             method: "GET",
             credentials: "include",
             cache: "no-store",
+            headers: {
+              Pragma: "no-cache",
+              "Cache-Control": "no-cache, no-store, must-revalidate",
+              "Content-Type": "application/json",
+            },
           },
         );
 

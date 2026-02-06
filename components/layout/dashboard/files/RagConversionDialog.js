@@ -128,13 +128,17 @@ const RagConversionDialog = ({
     try {
       const url = `${
         process.env.NEXT_PUBLIC_API_URL
-      }/storage/rag-status/${encodeURIComponent(fileKey)}`;
+      }/storage/rag-status/${encodeURIComponent(fileKey)}?t=${Date.now()}`;
 
       const { ok, data } = await fetchJson(url, {
         method: "GET",
         cache: "no-store",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          Pragma: "no-cache",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Content-Type": "application/json",
+        },
       });
 
       if (ok && data && (data.success || data.status)) {
