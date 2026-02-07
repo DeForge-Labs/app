@@ -1,7 +1,7 @@
 "use client";
 
 import { HandCoins } from "lucide-react";
-import { useState, useMemo, useTransition } from "react";
+import { useState, useMemo } from "react";
 
 import {
   Dialog,
@@ -22,6 +22,12 @@ import {
 } from "@/components/ui/select";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { getPackByKey } from "@/config/dodoBillingConfig";
+import { resolveDeforgeIdAsync } from "@/lib/billing/identity";
+import {
+  createOneTimeCheckout,
+  redirectToCheckout,
+} from "@/lib/billing/checkout";
 
 const CREDIT_PLANS = [
   { label: "500 Credits", value: "500", price: 3, displayPrice: "$3" },
@@ -34,37 +40,65 @@ const DEFAULT_PLAN = "500";
 const BuyCreditDialog = ({ teamId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(DEFAULT_PLAN);
-
-  const [isPending, startTransition] = useTransition();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const currentPlan = useMemo(
     () => CREDIT_PLANS.find((plan) => plan.value === selectedPlan),
     [selectedPlan]
   );
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleBuy = async (packId) => {
+    if (isProcessing) return;
+    setErrorMsg("");
+    setIsProcessing(true);
 
-    if (!currentPlan) return;
-
-    startTransition(async () => {
-      try {
-        console.log("Purchasing:", currentPlan);
-        setIsOpen(false);
-        setSelectedPlan(DEFAULT_PLAN);
-      } catch (error) {
-        console.error("Failed to purchase credits:", error);
+    try {
+      const deforge_id = await resolveDeforgeIdAsync();
+      if (!deforge_id) {
+        setErrorMsg("You are not authenticated. Please refresh or sign in again.");
+        setIsProcessing(false);
+        return;
       }
-    });
+
+      const cfg = getPackByKey(packId);
+      if (!cfg) {
+        setErrorMsg("Selected credit pack is not configured. Please contact support.");
+        setIsProcessing(false);
+        return;
+      }
+
+      const { product_id, total_credits, quantity = 1 } = cfg;
+      const { checkout_url } = await createOneTimeCheckout({
+        product_id,
+        total_credits,
+        quantity,
+        deforge_id,
+      });
+
+      // Do not close the dialog before redirect; if redirect fails we want to show the error.
+      redirectToCheckout(checkout_url);
+    } catch (error) {
+      console.error("Failed to initiate checkout:", error);
+      setErrorMsg(
+        (error && (error.message || error.toString())) ||
+          "Failed to start checkout. Please try again."
+      );
+      setIsProcessing(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await handleBuy(selectedPlan);
   };
 
   const handleOpenChange = (open) => {
-    if (!isPending) {
-      setIsOpen(open);
-
-      if (!open) {
-        setSelectedPlan(DEFAULT_PLAN);
-      }
+    if (isProcessing) return;
+    setIsOpen(open);
+    if (!open) {
+      setSelectedPlan(DEFAULT_PLAN);
+      setErrorMsg("");
     }
   };
 
@@ -97,7 +131,7 @@ const BuyCreditDialog = ({ teamId }) => {
           <Select
             items={CREDIT_PLANS}
             value={selectedPlan}
-            disabled={isPending}
+            disabled={isProcessing}
             onValueChange={setSelectedPlan}
           >
             <SelectTrigger aria-label="Select credit plan">
@@ -119,13 +153,19 @@ const BuyCreditDialog = ({ teamId }) => {
             </SelectPopup>
           </Select>
 
+          {errorMsg && (
+            <div className="text-xs text-destructive mt-2" role="alert">
+              {errorMsg}
+            </div>
+          )}
+
           <DialogFooter>
             <DialogClose
               render={
                 <Button
                   variant="ghost"
                   className="text-xs"
-                  disabled={isPending}
+                  disabled={isProcessing}
                 />
               }
             >
@@ -134,10 +174,11 @@ const BuyCreditDialog = ({ teamId }) => {
 
             <Button
               type="submit"
-              disabled={isPending || !currentPlan}
+              aria-disabled={isProcessing || !currentPlan}
+              disabled={isProcessing || !currentPlan}
               className="text-background rounded-md border-none text-xs"
             >
-              {isPending
+              {isProcessing
                 ? "Processing..."
                 : `Buy for ${currentPlan?.displayPrice || "$0"}`}
             </Button>
