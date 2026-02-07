@@ -48,34 +48,27 @@ const BuyCreditDialog = ({ teamId }) => {
     [selectedPlan]
   );
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleBuy = async (packId) => {
     if (isProcessing) return;
     setErrorMsg("");
+    setIsProcessing(true);
 
     try {
-      setIsProcessing(true);
-
       const deforge_id = await resolveDeforgeIdAsync();
       if (!deforge_id) {
-        setErrorMsg(
-          "You are not authenticated. Please refresh or sign in again."
-        );
+        setErrorMsg("You are not authenticated. Please refresh or sign in again.");
         setIsProcessing(false);
         return;
       }
 
-      const cfg = getPackByKey(selectedPlan);
+      const cfg = getPackByKey(packId);
       if (!cfg) {
-        setErrorMsg(
-          "Selected credit pack is not configured. Please contact support."
-        );
+        setErrorMsg("Selected credit pack is not configured. Please contact support.");
         setIsProcessing(false);
         return;
       }
 
       const { product_id, total_credits, quantity = 1 } = cfg;
-
       const { checkout_url } = await createOneTimeCheckout({
         product_id,
         total_credits,
@@ -83,10 +76,7 @@ const BuyCreditDialog = ({ teamId }) => {
         deforge_id,
       });
 
-      // Optionally close dialog just before redirect
-      setIsOpen(false);
-      setSelectedPlan(DEFAULT_PLAN);
-
+      // Do not close the dialog before redirect; if redirect fails we want to show the error.
       redirectToCheckout(checkout_url);
     } catch (error) {
       console.error("Failed to initiate checkout:", error);
@@ -96,6 +86,11 @@ const BuyCreditDialog = ({ teamId }) => {
       );
       setIsProcessing(false);
     }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await handleBuy(selectedPlan);
   };
 
   const handleOpenChange = (open) => {

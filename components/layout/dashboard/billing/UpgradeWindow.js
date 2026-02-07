@@ -34,6 +34,8 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
   const [cancelImmediate, setCancelImmediate] = useState(false); // default: cancel at period end
   const [cancelResult, setCancelResult] = useState(null);
 
+  const CONTACT_EMAIL = "contact@deforge.io";
+
   useEffect(() => {
     setSelectedPlan(currentPlan);
   }, [currentPlan]);
@@ -81,6 +83,16 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
     e.preventDefault();
     if (isProcessing) return;
     setErrorMsg("");
+
+    // Enterprise: always allow contacting sales (no auth required)
+    if (currentPlan !== "pro" && selectedPlan === "enterprise") {
+      try {
+        window.location.href = `mailto:${CONTACT_EMAIL}`;
+      } finally {
+        setIsOpen(false);
+      }
+      return;
+    }
 
     const deforge_id = resolveDeforgeId();
     if (!deforge_id) {
@@ -170,6 +182,7 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
   // State and labels
   const isPro = currentPlan === "pro";
   const isFree = currentPlan === "free";
+  const isContactUs = !isPro && selectedPlan === "enterprise";
 
   // Labels: Pro → Cancel Subscription, all others (including Free) → Upgrade
   const triggerLabel = isPro ? "Cancel Subscription" : "Upgrade";
@@ -180,7 +193,8 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
     ? "Choose how you want to proceed with the cancellation."
     : "Choose a plan to upgrade your account.";
 
-  const submitDisabled = isProcessing || (isPro ? false : selectedPlan !== "pro");
+  const submitDisabled =
+    isProcessing || (isPro ? false : !isContactUs && selectedPlan !== "pro");
   const submitLabel = isProcessing
     ? "Processing..."
     : isPro
@@ -364,14 +378,26 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
               >
                 Close
               </DialogClose>
-              <Button
-                className="text-background rounded-md border-none text-xs"
-                type="submit"
-                aria-disabled={submitDisabled}
-                disabled={submitDisabled}
-              >
-                {submitLabel}
-              </Button>
+              {isContactUs ? (
+                <Button
+                  className="text-background rounded-md border-none text-xs"
+                  render={<a />}
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  aria-label={`Email ${CONTACT_EMAIL}`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  Contact Us
+                </Button>
+              ) : (
+                <Button
+                  className="text-background rounded-md border-none text-xs"
+                  type="submit"
+                  aria-disabled={submitDisabled}
+                  disabled={submitDisabled}
+                >
+                  {submitLabel}
+                </Button>
+              )}
             </DialogFooter>
           </Form>
         </DialogPopup>
