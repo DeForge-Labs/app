@@ -66,10 +66,20 @@ export default function FilePicker({
 
   const handleCloseUploadDialog = () => {
     if (showUploadDialog) {
-      getFiles();
+      setSelectedFile(null);
+      getFiles(page, query);
     }
 
     setShowUploadDialog(false);
+  };
+
+  const handleCloseRagConversionDialog = () => {
+    if (ragConversionDialogOpen) {
+      setSelectedFile(null);
+      getFiles(page, query);
+    }
+
+    setRagConversionDialogOpen(false);
   };
 
   const handleOpenChange = (open) => {
@@ -87,13 +97,13 @@ export default function FilePicker({
       />
       <RagConversionDialog
         open={ragConversionDialogOpen}
-        onOpenChange={setRagConversionDialogOpen}
+        onOpenChange={handleCloseRagConversionDialog}
         fileKey={selectedFile?.fileKey}
         fileName={selectedFile?.fileName}
         onSuccess={() => {
           toast.success("File processed successfully");
           setRagConversionDialogOpen(false);
-          getFiles();
+          getFiles(page, query);
         }}
       />
       <Sheet open={open} onOpenChange={handleOpenChange}>
@@ -164,7 +174,10 @@ export default function FilePicker({
                   className="w-fit text-xs px-2 h-full border border-foreground/15"
                   variant={"outline"}
                   size={"sm"}
-                  onClick={() => getFiles(1, query)}
+                  onClick={() => {
+                    setSelectedFile(null);
+                    getFiles(page, query);
+                  }}
                 >
                   <RefreshCcw className="size-3" />
                   Refresh

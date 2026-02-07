@@ -100,11 +100,11 @@ const checkForUnsavedChanges = (state) => {
 
     for (let i = 0; i < state.connections.length; i++) {
       const currentConnection = state.connections[i];
-      const savedConnection = state.lastSavedState.connections.find(
-        (c) => c.id === currentConnection.id,
-      );
+      const savedConnection = state.lastSavedState.connections[i];
 
-      if (!savedConnection) return true;
+      if (!savedConnection || currentConnection.id !== savedConnection.id) {
+        return true;
+      }
 
       if (
         currentConnection.source !== savedConnection.source ||
