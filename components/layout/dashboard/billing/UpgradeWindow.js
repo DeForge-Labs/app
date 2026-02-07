@@ -268,8 +268,7 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
                       </span>
                     ) : (
                       <span>
-                        Cancellation requested immediately. You may see a downgrade shortly.
-                        Final state is confirmed by webhooks and may take a moment to reflect everywhere.
+                        Cancellation requested immediately.
                       </span>
                     )}
                   </div>
