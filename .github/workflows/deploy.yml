@@ -17,4 +17,3 @@ jobs:
           curl -X POST https://ci.deforge.io/prod/app \
           -H "x-api-key: ${{ secrets.CI_API_KEY }}" \
           -H "Content-Type: application/json"
-          '"
