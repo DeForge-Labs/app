@@ -13,7 +13,7 @@ export default function useSocial() {
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/workflow/getSocial/${workflowId}`,
-        {}
+        {},
       );
 
       setWorkflowSocial(response.data.social);
@@ -27,14 +27,11 @@ export default function useSocial() {
   };
 
   const handleYouTube = async (workflowId) => {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    };
+    axios.defaults.withCredentials = true;
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/workflow/connectSocial/${workflowId}?social=youtube`,
       {},
-      { headers }
     );
 
     if (!response.data.success) {
@@ -45,14 +42,11 @@ export default function useSocial() {
   };
 
   const handleTwitter = async (workflowId) => {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    };
+    axios.defaults.withCredentials = true;
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/workflow/connectSocial/${workflowId}?social=twitter`,
       {},
-      { headers }
     );
 
     if (!response.data.success) {
@@ -63,14 +57,11 @@ export default function useSocial() {
   };
 
   const handleLinkedIn = async (workflowId) => {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    };
+    axios.defaults.withCredentials = true;
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/workflow/connectSocial/${workflowId}?social=linkedin`,
       {},
-      { headers }
     );
 
     if (!response.data.success) {
@@ -81,14 +72,11 @@ export default function useSocial() {
   };
 
   const handleGmailTrigger = async (workflowId) => {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    };
+    axios.defaults.withCredentials = true;
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/workflow/connectSocial/${workflowId}?social=gmail_trigger`,
       {},
-      { headers }
     );
 
     if (!response.data.success) {
@@ -99,14 +87,11 @@ export default function useSocial() {
   };
 
   const handleGmailRead = async (workflowId) => {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    };
+    axios.defaults.withCredentials = true;
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/workflow/connectSocial/${workflowId}?social=gmail_read`,
       {},
-      { headers }
     );
 
     if (!response.data.success) {
@@ -117,14 +102,11 @@ export default function useSocial() {
   };
 
   const handleSlack = async (workflowId) => {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    };
+    axios.defaults.withCredentials = true;
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/workflow/connectSocial/${workflowId}?social=slack`,
       {},
-      { headers }
     );
 
     if (!response.data.success) {
@@ -135,14 +117,11 @@ export default function useSocial() {
   };
 
   const handleGoogleSheets = async (workflowId) => {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    };
+    axios.defaults.withCredentials = true;
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/workflow/connectSocial/${workflowId}?social=google_sheets`,
       {},
-      { headers }
     );
 
     if (!response.data.success) {
@@ -153,14 +132,41 @@ export default function useSocial() {
   };
 
   const handleHubSpot = async (workflowId) => {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    };
+    axios.defaults.withCredentials = true;
 
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/workflow/connectSocial/${workflowId}?social=hubspot`,
       {},
-      { headers }
+    );
+
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+
+    return response;
+  };
+
+  const handleNotion = async (workflowId) => {
+    axios.defaults.withCredentials = true;
+
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/workflow/connectSocial/${workflowId}?social=notion`,
+      {},
+    );
+
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+
+    return response;
+  };
+
+  const handleAirtable = async (workflowId) => {
+    axios.defaults.withCredentials = true;
+
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/workflow/connectSocial/${workflowId}?social=airtable`,
+      {},
     );
 
     if (!response.data.success) {
@@ -179,6 +185,8 @@ export default function useSocial() {
     handleSlack,
     handleGoogleSheets,
     handleHubSpot,
+    handleNotion,
+    handleAirtable,
     getSocial,
   };
 }

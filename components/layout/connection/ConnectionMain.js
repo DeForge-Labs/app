@@ -19,6 +19,8 @@ export default function ConnectionMain() {
     handleSlack,
     handleGoogleSheets,
     handleHubSpot,
+    handleNotion,
+    handleAirtable,
   } = useSocial();
 
   const connectionTypes = [
@@ -62,6 +64,16 @@ export default function ConnectionMain() {
       key: "hubspot",
       type: "redirect",
     },
+    {
+      name: "Notion",
+      key: "notion",
+      type: "redirect",
+    },
+    {
+      name: "Airtable",
+      key: "airtable",
+      type: "redirect",
+    },
   ];
 
   const connectionType = key
@@ -76,7 +88,7 @@ export default function ConnectionMain() {
             type: "SOCIAL_AUTH_ERROR",
             message: "Connection not found",
           },
-          window.location.origin
+          window.location.origin,
         );
       }, 3000);
     }
@@ -105,7 +117,7 @@ export default function ConnectionMain() {
             type: "SOCIAL_AUTH_ERROR",
             message: error.message,
           },
-          window.location.origin
+          window.location.origin,
         );
       }
     } else if (connectionType.key === "twitter") {
@@ -124,7 +136,7 @@ export default function ConnectionMain() {
             type: "SOCIAL_AUTH_ERROR",
             message: error.message,
           },
-          window.location.origin
+          window.location.origin,
         );
       }
     } else if (connectionType.key === "linkedin") {
@@ -143,7 +155,7 @@ export default function ConnectionMain() {
             type: "SOCIAL_AUTH_ERROR",
             message: error.message,
           },
-          window.location.origin
+          window.location.origin,
         );
       }
     } else if (connectionType.key === "gmail_trigger") {
@@ -162,7 +174,7 @@ export default function ConnectionMain() {
             type: "SOCIAL_AUTH_ERROR",
             message: error.message,
           },
-          window.location.origin
+          window.location.origin,
         );
       }
     } else if (connectionType.key === "gmail_read") {
@@ -181,7 +193,7 @@ export default function ConnectionMain() {
             type: "SOCIAL_AUTH_ERROR",
             message: error.message,
           },
-          window.location.origin
+          window.location.origin,
         );
       }
     } else if (connectionType.key === "slack") {
@@ -200,7 +212,7 @@ export default function ConnectionMain() {
             type: "SOCIAL_AUTH_ERROR",
             message: error.message,
           },
-          window.location.origin
+          window.location.origin,
         );
       }
     } else if (connectionType.key === "google_sheets") {
@@ -219,7 +231,7 @@ export default function ConnectionMain() {
             type: "SOCIAL_AUTH_ERROR",
             message: error.message,
           },
-          window.location.origin
+          window.location.origin,
         );
       }
     } else if (connectionType.key === "hubspot") {
@@ -238,7 +250,45 @@ export default function ConnectionMain() {
             type: "SOCIAL_AUTH_ERROR",
             message: error.message,
           },
-          window.location.origin
+          window.location.origin,
+        );
+      }
+    } else if (connectionType.key === "notion") {
+      try {
+        const response = await handleNotion(workflowId);
+
+        if (!response.data.success) {
+          throw new Error(response.data.message);
+        }
+
+        window.location.href = response.data.authURL;
+      } catch (error) {
+        console.log(error);
+        window.opener.postMessage(
+          {
+            type: "SOCIAL_AUTH_ERROR",
+            message: error.message,
+          },
+          window.location.origin,
+        );
+      }
+    } else if (connectionType.key === "airtable") {
+      try {
+        const response = await handleAirtable(workflowId);
+
+        if (!response.data.success) {
+          throw new Error(response.data.message);
+        }
+
+        window.location.href = response.data.authURL;
+      } catch (error) {
+        console.log(error);
+        window.opener.postMessage(
+          {
+            type: "SOCIAL_AUTH_ERROR",
+            message: error.message,
+          },
+          window.location.origin,
         );
       }
     }

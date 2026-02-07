@@ -46,7 +46,7 @@ export default function LoginDialog() {
             size={60}
             className="absolute -top-28 left-1/2 -translate-x-1/2"
           />
-          <div className="max-w-sm w-full -mt-10">
+          <div className="max-w-sm w-full -mt-5">
             <LoginForm onLoadingChange={setIsLoading} embedded />
           </div>
         </DialogPopup>
