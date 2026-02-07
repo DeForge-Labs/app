@@ -29,12 +29,14 @@ const getFilesData = async (page) => {
     const limit = 10;
 
     const response = await fetch(
-      `${process.env.API_URL}/storage/list?page=${currentPage}&limit=${limit}`,
+      `${process.env.API_URL}/storage/list?page=${currentPage}&limit=${limit}&t=${Date.now()}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           cookie: cookieHeader,
+          Pragma: "no-cache",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
         },
         credentials: "include",
         cache: "no-store",
@@ -203,19 +205,20 @@ const FileList = async ({ page, query }) => {
               </div>
 
               <div className="flex items-center gap-3">
-                {file.scrapeStatus && (
+                {file.sourceUrl && (
                   <ScrapeStatusDisplay
                     fileKey={file.fileKey}
                     scrapeStatus={file.scrapeStatus}
                   />
                 )}
 
-                {file.ragStatus && (
-                  <RagStatusDisplay
-                    fileKey={file.fileKey}
-                    initialRagStatus={file.ragStatus}
-                  />
-                )}
+                {(file.sourceUrl ? file.scrapeStatus === "done" : true) &&
+                  file.ragStatus && (
+                    <RagStatusDisplay
+                      fileKey={file.fileKey}
+                      initialRagStatus={file.ragStatus}
+                    />
+                  )}
               </div>
             </div>
           </div>

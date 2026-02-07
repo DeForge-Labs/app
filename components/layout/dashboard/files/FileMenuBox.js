@@ -19,7 +19,14 @@ import RagConversionDialog from "./RagConversionDialog";
 const baseMenuBtn =
   "data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none px-2 min-h-5 font-normal rounded-sm text-xs [&_svg:not([class*='size-'])]:size-3 dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent shadow-none! bg-transparent hover:bg-transparent w-full justify-start border-none";
 
-const FileMenuBox = ({ fileKey, fileName, ragStatus, ragTableName }) => {
+const FileMenuBox = ({
+  fileKey,
+  fileName,
+  ragStatus,
+  ragTableName,
+  sourceUrl,
+  scrapeStatus,
+}) => {
   const [showRagDialog, setShowRagDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -27,6 +34,15 @@ const FileMenuBox = ({ fileKey, fileName, ragStatus, ragTableName }) => {
   const stop = (e) => {
     e.preventDefault();
     e.stopPropagation();
+  };
+
+  const handleRagDialogOpen = () => {
+    if (sourceUrl && scrapeStatus !== "done") {
+      toast.error("Scrape not completed");
+      return;
+    }
+
+    setShowRagDialog(!showRagDialog);
   };
 
   const handleDownload = useCallback(
@@ -41,7 +57,7 @@ const FileMenuBox = ({ fileKey, fileName, ragStatus, ragTableName }) => {
             credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ fileKey }),
-          }
+          },
         );
 
         const data = await res.json();
@@ -74,7 +90,7 @@ const FileMenuBox = ({ fileKey, fileName, ragStatus, ragTableName }) => {
         toast.error("Failed to download file");
       }
     },
-    [fileKey, fileName]
+    [fileKey, fileName],
   );
 
   const handleEdit = useCallback((e) => {
@@ -87,10 +103,14 @@ const FileMenuBox = ({ fileKey, fileName, ragStatus, ragTableName }) => {
     setShowDeleteDialog(true);
   }, []);
 
-  const handleRagConversion = useCallback((e) => {
-    stop(e);
+  const handleRagConversion = () => {
+    if (sourceUrl && scrapeStatus !== "done") {
+      toast.error("Scrape not completed");
+      return;
+    }
+
     setShowRagDialog(true);
-  }, []);
+  };
 
   return (
     <>
@@ -182,7 +202,7 @@ const FileMenuBox = ({ fileKey, fileName, ragStatus, ragTableName }) => {
         ragStatus={ragStatus}
         ragTableName={ragTableName}
         open={showRagDialog}
-        onOpenChange={setShowRagDialog}
+        onOpenChange={handleRagDialogOpen}
       />
     </>
   );
