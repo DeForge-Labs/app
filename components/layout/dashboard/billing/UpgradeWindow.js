@@ -96,7 +96,9 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
 
     const deforge_id = resolveDeforgeId();
     if (!deforge_id) {
-      setErrorMsg("You are not authenticated. Please refresh or sign in again.");
+      setErrorMsg(
+        "You are not authenticated. Please refresh or sign in again.",
+      );
       return;
     }
 
@@ -146,7 +148,7 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
         setErrorMsg(
           selectedPlan === "enterprise"
             ? "Please contact sales for Enterprise."
-            : "Select the Pro plan to continue."
+            : "Select the Pro plan to continue.",
         );
         setIsProcessing(false);
         return;
@@ -154,7 +156,9 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
 
       const cfg = getPlanByKey("pro");
       if (!cfg?.plan_id) {
-        setErrorMsg("Subscription plan is not configured. Please contact support.");
+        setErrorMsg(
+          "Subscription plan is not configured. Please contact support.",
+        );
         setIsProcessing(false);
         return;
       }
@@ -172,8 +176,8 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
         (err?.status === 404
           ? "No active subscription found"
           : err?.status === 400
-          ? "Missing required information"
-          : "Couldn't cancel subscription. Please try again.");
+            ? "Missing required information"
+            : "Couldn't cancel subscription. Please try again.");
       setErrorMsg(msg);
       setIsProcessing(false);
     }
@@ -198,19 +202,17 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
   const submitLabel = isProcessing
     ? "Processing..."
     : isPro
-    ? "Confirm Cancellation"
-    : selectedPlan === "enterprise"
-    ? "Contact Us"
-    : "Upgrade";
+      ? "Confirm Cancellation"
+      : selectedPlan === "enterprise"
+        ? "Contact Us"
+        : "Upgrade";
 
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger
           render={
-            <Button
-              className="flex gap-2 font-normal text-xs bg-foreground/90 text-background rounded-sm w-fit"
-            >
+            <Button className="flex gap-2 font-normal text-xs bg-foreground/90 text-background rounded-sm w-fit">
               {triggerLabel}
             </Button>
           }
@@ -233,7 +235,7 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
                 <p className="text-xs text-foreground/70">
                   Select how you want to cancel your subscription:
                 </p>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-col">
                   <Button
                     type="button"
                     variant={cancelImmediate ? "outline" : "default"}
@@ -261,15 +263,17 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
                         Scheduled to cancel on{" "}
                         <span className="font-medium">
                           {cancelResult.next_billing_date
-                            ? new Date(cancelResult.next_billing_date).toLocaleString()
+                            ? new Date(
+                                cancelResult.next_billing_date,
+                              ).toLocaleString()
                             : "the next billing date"}
                         </span>
-                        . Benefits remain until that date. Final state is confirmed by webhooks and may take a moment to reflect everywhere.
+                        . Benefits remain until that date. Final state is
+                        confirmed by webhooks and may take a moment to reflect
+                        everywhere.
                       </span>
                     ) : (
-                      <span>
-                        Cancellation requested immediately.
-                      </span>
+                      <span>Cancellation requested immediately.</span>
                     )}
                   </div>
                 )}

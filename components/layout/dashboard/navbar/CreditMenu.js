@@ -94,7 +94,7 @@ const CreditMenu = async () => {
           <Link href="/billing">
             <MenuItem className="text-foreground data-highlighted:bg-foreground/5 data-highlighted:text-foreground cursor-pointer px-2.5!">
               <ExternalLink />
-              {credits?.plan === "enterprise" ? "Billing" : "Upgrade Plan"}
+              {credits?.plan === "pro" ? "Billing" : "Upgrade Plan"}
             </MenuItem>
           </Link>
         </MenuGroup>

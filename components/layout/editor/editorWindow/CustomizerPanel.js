@@ -80,10 +80,6 @@ export default function CustomizerPanel() {
   }
 
   const handleChange = (key, value) => {
-    if (workflow?.status === "LIVE") {
-      return;
-    }
-
     updateNodeData({
       nodeId: selectedNode.id,
       newData: { ...selectedNode.data, [key]: value },
@@ -112,7 +108,7 @@ export default function CustomizerPanel() {
       return;
     }
     const edgeIds = totalConnectedInputs.filter(
-      (input) => input.inputName === inputName
+      (input) => input.inputName === inputName,
     );
     edgeIds.forEach((edgeId) => {
       deleteEdge(edgeId.edgeId);
@@ -182,14 +178,14 @@ export default function CustomizerPanel() {
             <div className="flex flex-col gap-3 p-4">
               {nodeType.fields.map((field, index) => {
                 const type = nodeType.inputs.find(
-                  (i) => i.name === field.name
+                  (i) => i.name === field.name,
                 )?.type;
                 const handleId = `input-${field.name}-${type}`;
 
                 const connectionsForThisField = edges.filter(
                   (edge) =>
                     edge.target === selectedNode.id &&
-                    edge.targetHandle === handleId
+                    edge.targetHandle === handleId,
                 );
 
                 const totalValidConnections = connectionsForThisField.length;
@@ -197,7 +193,7 @@ export default function CustomizerPanel() {
                 const isConnected = totalValidConnections > 0;
 
                 const matchingInput = nodeType.inputs.find(
-                  (input) => input.name === field.name
+                  (input) => input.name === field.name,
                 );
                 const isInput = !!matchingInput;
 
@@ -380,7 +376,7 @@ export default function CustomizerPanel() {
               {nodeType.inputs
                 .filter(
                   (input) =>
-                    !nodeType.fields.some((field) => field.name === input.name)
+                    !nodeType.fields.some((field) => field.name === input.name),
                 )
                 .map((input, index) => {
                   const isConnected = connectedInputs.has(input.name);

@@ -34,7 +34,7 @@ export default function TextAreaField({
       if (actualTextarea && actualTextarea.setSelectionRange) {
         actualTextarea.setSelectionRange(
           cursorPositionRef.current,
-          cursorPositionRef.current
+          cursorPositionRef.current,
         );
       }
     }
@@ -73,7 +73,7 @@ export default function TextAreaField({
               }`}
               style={{
                 backgroundColor: getColorByType(
-                  matchingInput?.type.toLowerCase()
+                  matchingInput?.type.toLowerCase(),
                 ),
                 borderColor: resolvedTheme === "dark" ? "white" : "black",
                 borderWidth: "1px",
@@ -89,7 +89,7 @@ export default function TextAreaField({
                   className={`w-2 h-2 -left-[16.2px] -top-[12px] rounded-full rotate-45 absolute border-opacity-50 `}
                   style={{
                     backgroundColor: getColorByType(
-                      matchingInput?.type.toLowerCase()
+                      matchingInput?.type.toLowerCase(),
                     ),
                     borderColor: resolvedTheme === "dark" ? "white" : "black",
                     borderWidth: "1px",
