@@ -30,7 +30,7 @@ export default function NodeMenu() {
       node.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       node.desc?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       node.tags.some((tag) =>
-        tag.toLowerCase().includes(searchTerm.toLowerCase())
+        tag.toLowerCase().includes(searchTerm.toLowerCase()),
       );
 
     return matchesSearch;
@@ -61,7 +61,7 @@ export default function NodeMenu() {
     event.dataTransfer.setData("application/reactflow", nodeType.type);
     event.dataTransfer.setData(
       "application/node-definition",
-      JSON.stringify(nodeType)
+      JSON.stringify(nodeType),
     );
     event.dataTransfer.setData("application/node-category", nodeType.category);
     event.dataTransfer.effectAllowed = "move";
@@ -156,6 +156,7 @@ export default function NodeMenu() {
                 placeholder="Search nodes..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                autoFocus
                 className="w-full px-0 border-0 shadow-none has-focus-visible:border-ring has-focus-visible:ring-[0px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none ring-0 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
               />
               {searchTerm && (
@@ -261,14 +262,14 @@ export default function NodeMenu() {
                                               node.diff === "easy"
                                                 ? "#C8E6C9"
                                                 : node.diff === "medium"
-                                                ? "#FDD8AE"
-                                                : "#FBC2C4",
+                                                  ? "#FDD8AE"
+                                                  : "#FBC2C4",
                                             color:
                                               node.diff === "easy"
                                                 ? "#1B5E20"
                                                 : node.diff === "medium"
-                                                ? "#855C00"
-                                                : "#C62828",
+                                                  ? "#855C00"
+                                                  : "#C62828",
                                           }}
                                         >
                                           {node.diff}
@@ -355,14 +356,14 @@ export default function NodeMenu() {
                                               node.diff === "easy"
                                                 ? "#C8E6C9"
                                                 : node.diff === "medium"
-                                                ? "#FDD8AE"
-                                                : "#FBC2C4",
+                                                  ? "#FDD8AE"
+                                                  : "#FBC2C4",
                                             color:
                                               node.diff === "easy"
                                                 ? "#1B5E20"
                                                 : node.diff === "medium"
-                                                ? "#855C00"
-                                                : "#C62828",
+                                                  ? "#855C00"
+                                                  : "#C62828",
                                           }}
                                         >
                                           {node.diff}
@@ -372,7 +373,7 @@ export default function NodeMenu() {
                                   </CardContent>
                                 </Card>
                               </motion.div>
-                            )
+                            ),
                           )}
                         </div>
                       </div>

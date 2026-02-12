@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import TemplateViewer from "./TemplateViewer";
 import OpenButton from "./OpenButton";
 import ShareDialog from "./ShareDialog";
+import { cn } from "@/lib/utils";
 
 export default async function TemplatePage({ id }) {
   const getNodeLibrary = async () => {
@@ -46,7 +47,7 @@ export default async function TemplatePage({ id }) {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       const data = await response.json();
@@ -108,11 +109,24 @@ export default async function TemplatePage({ id }) {
 
       <div className="flex justify-between items-end gap-2">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-semibold">
-            {template?.name?.length > 30
-              ? template?.name?.slice(0, 30) + "..."
-              : template?.name}
-          </h1>
+          <div className="group relative w-fit">
+            <h1
+              className={cn(
+                "text-3xl font-semibold",
+                template?.name?.length > 30 && "cursor-help",
+              )}
+            >
+              {template?.name?.length > 30
+                ? template?.name?.slice(0, 30) + "..."
+                : template?.name}
+            </h1>
+
+            {template?.name?.length > 30 && (
+              <span className="pointer-events-none absolute left-0 -top-8 w-max max-w-xs scale-0 rounded-lg bg-background p-2 px-3 text-xs text-foreground/90 border border-foreground/15 transition-all group-hover:scale-100 z-50">
+                {template?.name}
+              </span>
+            )}
+          </div>
           <div className="flex gap-2 text-[10px] items-center">
             <Badge className="w-fit text-[10px] p-1 py-0.5">
               <GitBranch className="size-3" /> {template?.totalClones}

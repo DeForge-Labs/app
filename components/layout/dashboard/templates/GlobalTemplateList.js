@@ -10,6 +10,7 @@ import PageSection from "../apps/PageSection";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import ErrorDialog from "@/components/ui/ErrorDialog";
+import { cn } from "@/lib/utils";
 
 export default async function GlobalTemplateList({ teamId, page, query }) {
   const getGlobalTemplates = async () => {
@@ -102,12 +103,24 @@ export default async function GlobalTemplateList({ teamId, page, query }) {
                         className="size-6 opacity-80"
                       />
                     </div>
-                    <p className="text-sm font-semibold">
-                      {" "}
-                      {template?.name?.length > 30
-                        ? template?.name?.substring(0, 30) + "..."
-                        : template?.name}
-                    </p>
+                    <div className="group relative w-fit">
+                      <p
+                        className={cn(
+                          "font-medium text-sm",
+                          template?.name?.length > 30 && "cursor-help",
+                        )}
+                      >
+                        {template?.name?.length > 30
+                          ? template?.name?.slice(0, 30) + "..."
+                          : template?.name}
+                      </p>
+
+                      {template?.name?.length > 30 && (
+                        <span className="pointer-events-none absolute left-0 -top-8 w-max max-w-xs scale-0 rounded-lg bg-background p-2 px-3 text-xs text-foreground/90 border border-foreground/15 transition-all group-hover:scale-100 z-50">
+                          {template?.name}
+                        </span>
+                      )}
+                    </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="-mt-6 flex flex-col flex-1 justify-between">
