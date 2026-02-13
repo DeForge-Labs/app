@@ -8,6 +8,7 @@ import {
   Rocket,
   Sparkles,
   Sun,
+  Undo,
   Upload,
 } from "lucide-react";
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
@@ -19,15 +20,20 @@ import ExportDialog from "./editorNavbar/ExportDialog";
 import ImportDialog from "./editorNavbar/ImportDialog";
 import { useEffect, useState } from "react";
 import DeployDialog from "./editorNavbar/DeployDialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import RevertDialog from "../viewer/RevertDialog";
+import { cn } from "@/lib/utils";
 
 export default function EditorSidePanel() {
   const { theme, setTheme } = useTheme();
-  const { sidePanel, setSidePanel } = useWorkflowStore();
+  const { sidePanel, setSidePanel, workflow } = useWorkflowStore();
   const { chatModalOpen, setChatModalOpen } = useChatStore();
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isPublishOpen, setIsPublishOpen] = useState(false);
+  const [isRevertOpen, setIsRevertOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const isLive = workflow?.status === "LIVE";
 
   useEffect(() => {
     setMounted(true);
@@ -95,6 +101,7 @@ export default function EditorSidePanel() {
           <Upload className="size-[13px]" />
         </Button>
       ),
+      disabled: true,
     },
     {
       id: "Export Workspace",
@@ -109,6 +116,7 @@ export default function EditorSidePanel() {
           <Download className="size-[13px]" />
         </Button>
       ),
+      disabled: true,
     },
     {
       id: "Publish Workspace",
@@ -123,6 +131,7 @@ export default function EditorSidePanel() {
           <Sparkles className="size-[13px]" />
         </Button>
       ),
+      disabled: true,
     },
     {
       id: "Deploy Workflow",
@@ -137,19 +146,64 @@ export default function EditorSidePanel() {
           </Button>
         </DeployDialog>
       ),
+      disabled: true,
+    },
+    {
+      id: "Revert Workflow",
+      render: (
+        <Button
+          variant="outline"
+          className={
+            "w-8 rounded-sm peer dark:not-disabled:not-active:not-data-pressed:before:shadow-none not-disabled:not-active:not-data-pressed:before:shadow-none border border-foreground/15"
+          }
+          onClick={() => setIsRevertOpen(true)}
+        >
+          <Undo className="size-[13px] text-red-400" />
+        </Button>
+      ),
+      disabled: true,
+      onlyLive: true,
     },
   ];
 
   return (
     <>
-      <PublishDialog isOpen={isPublishOpen} setIsOpen={setIsPublishOpen} />
-      <ExportDialog open={isExportOpen} setIsOpen={setIsExportOpen} />
-      <ImportDialog open={isImportOpen} setIsOpen={setIsImportOpen} />
+      {!isLive && (
+        <PublishDialog isOpen={isPublishOpen} setIsOpen={setIsPublishOpen} />
+      )}
+      {!isLive && (
+        <ExportDialog open={isExportOpen} setIsOpen={setIsExportOpen} />
+      )}
+      {!isLive && (
+        <ImportDialog open={isImportOpen} setIsOpen={setIsImportOpen} />
+      )}
+      {isLive && (
+        <RevertDialog open={isRevertOpen} setIsOpen={setIsRevertOpen} />
+      )}
       <div className="w-[44px] flex flex-col justify-between pl-[3px]">
         <div className="flex flex-col gap-2">
           {buttonMap.map((button, index) => (
-            <div key={index} className="relative">
-              {button.render}
+            <div
+              key={index}
+              className={cn(
+                `relative`,
+                button?.onlyLive && workflow?.status === "LIVE" ? "-mt-8" : "",
+              )}
+            >
+              {!button?.disabled && <>{button.render}</>}
+
+              {button?.disabled && !workflow && (
+                <Skeleton className="w-8 h-8 rounded-sm" />
+              )}
+
+              {button?.disabled && workflow && workflow?.status !== "LIVE" && (
+                <>{button.render}</>
+              )}
+
+              {button?.onlyLive && workflow && workflow?.status === "LIVE" && (
+                <>{button.render}</>
+              )}
+
               <div className="absolute top-1/2 -translate-y-1/2 left-10 peer-hover:block hidden z-50 p-1 px-2 text-xs w-fit rounded-sm border border-foreground/40 bg-background text-foreground">
                 <p className="w-max font-medium">{button.id}</p>
               </div>
