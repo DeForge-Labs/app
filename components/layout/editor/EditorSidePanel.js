@@ -196,9 +196,10 @@ export default function EditorSidePanel() {
                 <Skeleton className="w-8 h-8 rounded-sm" />
               )}
 
-              {button?.disabled && workflow && workflow?.status !== "LIVE" && (
-                <>{button.render}</>
-              )}
+              {button?.disabled &&
+                !button?.onlyLive &&
+                workflow &&
+                workflow?.status !== "LIVE" && <>{button.render}</>}
 
               {button?.onlyLive && workflow && workflow?.status === "LIVE" && (
                 <>{button.render}</>
