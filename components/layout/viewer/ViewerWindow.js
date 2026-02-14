@@ -8,6 +8,8 @@ import useWorkspaceStore from "@/store/useWorkspaceStore";
 import useFormStore from "@/store/useFormStore";
 import { cn } from "@/lib/utils";
 import LogWindow from "../editor/LogWindow";
+import WorkflowLoader from "../editor/editorWindow/chat/WorkflowLoader";
+import useChatStore from "@/store/useChatStore";
 
 export default function ViewerWindow() {
   const {
@@ -17,6 +19,7 @@ export default function ViewerWindow() {
     isFormInitializing,
   } = useWorkspaceStore();
   const { formModal } = useFormStore();
+  const { isLoading, chatMode } = useChatStore();
 
   return (
     <div className="flex h-full relative">
@@ -45,6 +48,8 @@ export default function ViewerWindow() {
           {mode === "workflow" && <CustomizerPanel />}
         </div>
       )}
+
+      {isLoading && chatMode === "build" ? <WorkflowLoader /> : <></>}
     </div>
   );
 }

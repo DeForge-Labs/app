@@ -12,7 +12,7 @@ export default function WorkflowLoader() {
         }
       `}</style>
       <div className="p-2">
-        <div className="bg-card p-4 rounded-lg flex items-center gap-3">
+        <div className="bg-card p-4 rounded-lg flex items-center gap-3 border border-foreground/15">
           <NodeLoader className="py-0" />
 
           <p className="text-xs font-medium">Working on it...</p>

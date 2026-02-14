@@ -72,6 +72,11 @@ export default function ShareDialog({ shortId, children }) {
               <Button
                 className="text-background rounded-md border-none text-xs"
                 type="submit"
+                onClick={() => {
+                  navigator.clipboard.writeText(`https://d4g.app/${shortId}`);
+                  toast.success("Copied to clipboard");
+                  setIsOpen(false);
+                }}
               >
                 Copy
               </Button>
