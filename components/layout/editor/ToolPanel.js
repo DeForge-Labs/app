@@ -77,12 +77,17 @@ export default function ToolPanel() {
 
       setSidePanel("execute");
       setChatModalOpen(true);
+      setExecuteModalOpen(true);
     }
 
     if (triggerNodeType === "api_trigger") {
       toast(
         "Workflow can executed when a new API request is received or through Execute Panel",
       );
+
+      setExecuteModalOpen(true);
+      setChatModalOpen(true);
+      setSidePanel("execute");
     }
   };
 

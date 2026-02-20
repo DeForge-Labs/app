@@ -41,13 +41,13 @@ export default function FormToolPanel() {
     ) {
       if (triggerNodeType === "chatbot_trigger") {
         toast(
-          "Test your workflow by chatting with the chatbot or Execute Panel"
+          "Test your workflow by chatting with the chatbot or Execute Panel",
         );
       }
 
       if (triggerNodeType === "widget_trigger") {
         toast(
-          "Test your workflow by chatting with the widget or Execute Panel"
+          "Test your workflow by chatting with the widget or Execute Panel",
         );
       }
 
@@ -62,19 +62,19 @@ export default function FormToolPanel() {
     ) {
       if (triggerNodeType === "gmail_trigger") {
         toast(
-          "Workflow can executed when a new email is received through Gmail"
+          "Workflow can executed when a new email is received through Gmail",
         );
       }
 
       if (triggerNodeType === "slack_trigger") {
         toast(
-          "Workflow can executed when a new message is received through Slack"
+          "Workflow can executed when a new message is received through Slack",
         );
       }
 
       if (triggerNodeType === "tg_trigger") {
         toast(
-          "Workflow can executed when a new message is received through Telegram"
+          "Workflow can executed when a new message is received through Telegram",
         );
       }
 
@@ -84,8 +84,11 @@ export default function FormToolPanel() {
 
     if (triggerNodeType === "api_trigger") {
       toast(
-        "Workflow can executed when a new API request is received or through Execute Panel"
+        "Workflow can executed when a new API request is received or through Execute Panel",
       );
+
+      setSidePanel("execute");
+      setChatModalOpen(true);
     }
   };
 
@@ -120,7 +123,7 @@ export default function FormToolPanel() {
           variant={isPreview ? "outline" : "default"}
           className={cn(
             "text-[10px] w-16 rounded-md rounded-r-none gap-1.5 px-2 [&_svg:not([class*='size-'])]:size-3 border border-foreground/50 border-r-0",
-            isPreview && "bg-card"
+            isPreview && "bg-card",
           )}
           onClick={() => setIsPreview(false)}
         >
@@ -130,7 +133,7 @@ export default function FormToolPanel() {
           variant={isPreview ? "default" : "outline"}
           className={cn(
             "text-[10px] w-16 rounded-md rounded-l-none gap-1.5 px-2 [&_svg:not([class*='size-'])]:size-3 border border-foreground/50 border-l-0",
-            !isPreview && "bg-card"
+            !isPreview && "bg-card",
           )}
           onClick={() => setIsPreview(true)}
         >
