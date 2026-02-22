@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Waypoints } from "lucide-react";
 import { Mail, Slack, Send } from "lucide-react";
+import Image from "next/image";
 
 export default function ThirdPartyActions({ triggerNodeType }) {
   const typeMap = [
@@ -11,7 +12,7 @@ export default function ThirdPartyActions({ triggerNodeType }) {
       name: "Gmail Trigger",
       buttonName: "Gmail",
       link: "https://mail.google.com",
-      icon: <Mail className="size-6 opacity-50" />,
+      icon: <Mail className="size-6 opacity-70" />,
       description: (
         <>
           Workflow can only be triggered when a{" "}
@@ -25,7 +26,7 @@ export default function ThirdPartyActions({ triggerNodeType }) {
       name: "Slack Trigger",
       buttonName: "Slack",
       link: "https://slack.com/app/open",
-      icon: <Slack className="size-6 opacity-50" />,
+      icon: <Slack className="size-6 opacity-70" />,
       description: (
         <>
           Workflow can only be triggered when a new message is received through
@@ -38,11 +39,32 @@ export default function ThirdPartyActions({ triggerNodeType }) {
       name: "Telegram Trigger",
       buttonName: "Telegram",
       link: "https://web.telegram.org/",
-      icon: <Send className="size-6 opacity-50" />,
+      icon: <Send className="size-6 opacity-70" />,
       description: (
         <>
           Workflow can only be triggered when a new message is received through
           <span className="font-medium text-foreground/80"> Telegram</span>
+        </>
+      ),
+    },
+    {
+      type: "discord_trigger",
+      name: "Discord Trigger",
+      buttonName: "Discord",
+      link: "https://discord.com/app",
+      icon: (
+        <Image
+          src="/logo/discord.svg"
+          alt="Discord"
+          width={30}
+          height={30}
+          className="opacity-70"
+        />
+      ),
+      description: (
+        <>
+          Workflow can only be triggered when a new message is received through
+          <span className="font-medium text-foreground/80"> Discord</span>
         </>
       ),
     },

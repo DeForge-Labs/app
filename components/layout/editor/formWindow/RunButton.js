@@ -30,13 +30,13 @@ export default function RunButton({ isTemplate = false }) {
     ) {
       if (triggerNodeType === "chatbot_trigger") {
         toast(
-          "Test your workflow by chatting with the chatbot or Execute Panel"
+          "Test your workflow by chatting with the chatbot or Execute Panel",
         );
       }
 
       if (triggerNodeType === "widget_trigger") {
         toast(
-          "Test your workflow by chatting with the widget or Execute Panel"
+          "Test your workflow by chatting with the widget or Execute Panel",
         );
       }
 
@@ -48,23 +48,30 @@ export default function RunButton({ isTemplate = false }) {
     if (
       triggerNodeType === "gmail_trigger" ||
       triggerNodeType === "slack_trigger" ||
-      triggerNodeType === "tg_trigger"
+      triggerNodeType === "tg_trigger" ||
+      triggerNodeType === "discord_trigger"
     ) {
       if (triggerNodeType === "gmail_trigger") {
         toast(
-          "Workflow can executed when a new email is received through Gmail"
+          "Workflow can executed when a new email is received through Gmail",
         );
       }
 
       if (triggerNodeType === "slack_trigger") {
         toast(
-          "Workflow can executed when a new message is received through Slack"
+          "Workflow can executed when a new message is received through Slack",
         );
       }
 
       if (triggerNodeType === "tg_trigger") {
         toast(
-          "Workflow can executed when a new message is received through Telegram"
+          "Workflow can executed when a new message is received through Telegram",
+        );
+      }
+
+      if (triggerNodeType === "discord_trigger") {
+        toast(
+          "Workflow can executed when a new message is received through Discord",
         );
       }
 
@@ -75,7 +82,7 @@ export default function RunButton({ isTemplate = false }) {
 
     if (triggerNodeType === "api_trigger") {
       toast(
-        "Workflow can executed when a new API request is received or through Execute Panel"
+        "Workflow can executed when a new API request is received or through Execute Panel",
       );
 
       setExecuteModalOpen(true);

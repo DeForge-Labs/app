@@ -91,7 +91,8 @@ export default function ExecuteModal() {
 
               {(triggerNodeType === "gmail_trigger" ||
                 triggerNodeType === "slack_trigger" ||
-                triggerNodeType === "tg_trigger") && (
+                triggerNodeType === "tg_trigger" ||
+                triggerNodeType === "discord_trigger") && (
                 <ThirdPartyActions triggerNodeType={triggerNodeType} />
               )}
 

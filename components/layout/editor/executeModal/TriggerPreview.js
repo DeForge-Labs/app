@@ -10,6 +10,7 @@ import {
   Slack,
   Webhook,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function TriggerPreview({ triggerNode }) {
   const triggerTypes = [
@@ -111,10 +112,31 @@ export default function TriggerPreview({ triggerNode }) {
         </>
       ),
     },
+    {
+      name: "Discord Trigger",
+      value: "discord_trigger",
+      icon: (
+        <Image
+          src="/logo/discord.svg"
+          alt="Discord"
+          width={40}
+          height={40}
+          className="opacity-50 dark:invert"
+        />
+      ),
+      description: (
+        <>
+          Workflow can be triggered when a{" "}
+          <span className="font-medium text-foreground/80"> new message</span>{" "}
+          is received through{" "}
+          <span className="font-medium text-foreground/80">Discord</span>
+        </>
+      ),
+    },
   ];
 
   const triggerType = triggerTypes.find(
-    (triggerType) => triggerType.value === triggerNode?.type
+    (triggerType) => triggerType.value === triggerNode?.type,
   );
 
   return (
