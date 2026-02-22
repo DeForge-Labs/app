@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import OTPInput from "./OTPInput";
 import UsernameInput from "./UsernameInput";
 import ReferralCodeInput from "./ReferralCodeInput";
+import PasswordInput from "./PasswordInput";
 
 export default function OTPVerificationStep({
   email,
@@ -23,9 +24,18 @@ export default function OTPVerificationStep({
   onResend,
   isVerifying,
   isResending,
+  handlePasswordSubmit,
+  password,
+  setPassword,
 }) {
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (process.env.NEXT_PUBLIC_DEPLOYMENT_TYPE === "ORG") {
+      handlePasswordSubmit();
+      return;
+    }
+
     onSubmit();
   };
 
@@ -40,35 +50,43 @@ export default function OTPVerificationStep({
         <UsernameInput username={username} setUsername={setUsername} />
       )}
 
-      <p className="mt-5 text-xs dark:text-foreground px-4">
-        We sent a code to {truncatedEmail}
-      </p>
+      {process.env.NEXT_PUBLIC_DEPLOYMENT_TYPE !== "ORG" ? (
+        <>
+          <p className="mt-5 text-xs dark:text-foreground px-4">
+            We sent a code to {truncatedEmail}
+          </p>
 
-      <OTPInput otp={otp} setOtp={setOtp} />
+          <OTPInput otp={otp} setOtp={setOtp} />
 
-      <div className="mt-2 w-full px-4 text-black/60 text-xs dark:text-foreground">
-        Check spam folder if you don't receive the code.
-        <br />
-        <span
-          tabIndex={0}
-          role="button"
-          onClick={onBack}
-          className="hover:underline cursor-pointer text-info"
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              onBack();
-            }
-          }}
-        >
-          Not you?
-        </span>
-      </div>
+          <div className="mt-2 w-full px-4 text-black/60 text-xs dark:text-foreground">
+            Check spam folder if you don't receive the code.
+            <br />
+            <span
+              tabIndex={0}
+              role="button"
+              onClick={onBack}
+              className="hover:underline cursor-pointer text-info"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  onBack();
+                }
+              }}
+            >
+              Not you?
+            </span>
+          </div>
 
-      {isSignUp && (
-        <ReferralCodeInput
-          referralCode={referralCode}
-          setReferralCode={setReferralCode}
-        />
+          {isSignUp && (
+            <ReferralCodeInput
+              referralCode={referralCode}
+              setReferralCode={setReferralCode}
+            />
+          )}
+        </>
+      ) : (
+        <>
+          <PasswordInput password={password} setPassword={setPassword} />
+        </>
       )}
 
       <div className="mt-4 flex w-full">
@@ -83,6 +101,8 @@ export default function OTPVerificationStep({
             `Resend in ${timeout}`
           ) : isResending ? (
             <Loader2 className="animate-spin" />
+          ) : process.env.NEXT_PUBLIC_DEPLOYMENT_TYPE === "ORG" ? (
+            "Back"
           ) : (
             "Resend"
           )}
@@ -94,7 +114,13 @@ export default function OTPVerificationStep({
           disabled={isVerifying || isResending}
           className="flex-1 h-11 text-xs border-black/10 before:rounded-t-none dark:border-white/10 border-x-0 border-b-0 rounded-bl-none rounded-t-none text-info"
         >
-          {isVerifying ? <Loader2 className="animate-spin" /> : "Verify"}
+          {isVerifying ? (
+            <Loader2 className="animate-spin" />
+          ) : process.env.NEXT_PUBLIC_DEPLOYMENT_TYPE === "ORG" ? (
+            "Continue"
+          ) : (
+            "Verify"
+          )}
         </Button>
       </div>
     </form>

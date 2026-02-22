@@ -13,6 +13,9 @@ const usernameSchema = z
   .max(20, "Username must be at most 20 characters");
 const emailSchema = z.string().email("Please enter a valid email");
 const otpSchema = z.string().length(6, "Please enter a valid 6-digit OTP");
+const passwordSchema = z
+  .string()
+  .min(8, "Password must be at least 8 characters");
 
 // API endpoints
 const API_ENDPOINTS = {
@@ -26,6 +29,14 @@ const API_ENDPOINTS = {
   },
   VERIFY_SIGNUP: {
     url: `${process.env.NEXT_PUBLIC_API_URL}/verify/signup`,
+    requiresCredentials: true,
+  },
+  VERIFY_ORG_LOGIN: {
+    url: `${process.env.NEXT_PUBLIC_API_URL}/verify/org/login`,
+    requiresCredentials: true,
+  },
+  VERIFY_ORG_SIGNUP: {
+    url: `${process.env.NEXT_PUBLIC_API_URL}/verify/org/signup`,
     requiresCredentials: true,
   },
 };
@@ -74,7 +85,7 @@ export default function useOnboard() {
         throw error;
       }
     },
-    []
+    [],
   );
   /**
    * Handles post-authentication navigation
@@ -89,7 +100,7 @@ export default function useOnboard() {
         router.push(destination + (prompt ? `?prompt=${prompt}` : ""));
       }
     },
-    [router, searchParams]
+    [router, searchParams],
   );
 
   /**
@@ -128,7 +139,11 @@ export default function useOnboard() {
           setIsOTPWindow(true);
           setIsSignUp(data.isSignup);
 
-          toast.success("OTP sent successfully");
+          toast.success(
+            process.env.NEXT_PUBLIC_DEPLOYMENT_TYPE === "ORG"
+              ? "Welcome to Deforge!"
+              : "OTP sent successfully",
+          );
         } else {
           toast.error(data.message || "Failed to send OTP");
         }
@@ -138,7 +153,7 @@ export default function useOnboard() {
         setIsRequestingLogin(false);
       }
     },
-    [makeApiRequest]
+    [makeApiRequest],
   );
 
   /**
@@ -171,7 +186,7 @@ export default function useOnboard() {
         setIsVerifying(false);
       }
     },
-    [makeApiRequest, handlePostAuthNavigation]
+    [makeApiRequest, handlePostAuthNavigation],
   );
 
   /**
@@ -184,14 +199,14 @@ export default function useOnboard() {
       username,
       setIsVerifying,
       referralCode = "",
-      embedded = false
+      embedded = false,
     ) => {
       // Validate username
       if (
         !validateInput(
           usernameSchema,
           username,
-          "Please enter a valid username"
+          "Please enter a valid username",
         )
       ) {
         return;
@@ -224,7 +239,7 @@ export default function useOnboard() {
         setIsVerifying(false);
       }
     },
-    [makeApiRequest, handlePostAuthNavigation]
+    [makeApiRequest, handlePostAuthNavigation],
   );
 
   /**
@@ -251,7 +266,79 @@ export default function useOnboard() {
         setIsResending(false);
       }
     },
-    [makeApiRequest]
+    [makeApiRequest],
+  );
+
+  const verifyOrgLogin = useCallback(
+    async (email, password, setIsVerifying, embedded = false) => {
+      if (
+        !validateInput(
+          passwordSchema,
+          password,
+          "Please enter a valid password",
+        )
+      ) {
+        return;
+      }
+
+      setIsVerifying(true);
+
+      try {
+        const data = await makeApiRequest(API_ENDPOINTS.VERIFY_ORG_LOGIN, {
+          email,
+          password,
+        });
+
+        if (data.success) {
+          toast.success("Login successful");
+
+          handlePostAuthNavigation(data.lastTeamId, embedded);
+        } else {
+          toast.error(data.message || "Verification failed");
+        }
+      } catch (error) {
+        toast.error("Failed to verify password. Please try again.");
+      } finally {
+        setIsVerifying(false);
+      }
+    },
+    [makeApiRequest, handlePostAuthNavigation],
+  );
+
+  const verifyOrgSignUp = useCallback(
+    async (email, password, username, setIsVerifying, embedded = false) => {
+      if (
+        !validateInput(
+          passwordSchema,
+          password,
+          "Please enter a valid password",
+        )
+      ) {
+        return;
+      }
+
+      setIsVerifying(true);
+
+      try {
+        const data = await makeApiRequest(API_ENDPOINTS.VERIFY_ORG_SIGNUP, {
+          email,
+          password,
+          username,
+        });
+
+        if (data.success) {
+          toast.success("Sign up successful");
+          handlePostAuthNavigation(data.lastTeamId, embedded);
+        } else {
+          toast.error(data.message || "Sign up failed");
+        }
+      } catch (error) {
+        toast.error("Failed to verify password. Please try again.");
+      } finally {
+        setIsVerifying(false);
+      }
+    },
+    [makeApiRequest, handlePostAuthNavigation],
   );
 
   return {
@@ -259,5 +346,7 @@ export default function useOnboard() {
     verifyLogin,
     verifySignUp,
     resend,
+    verifyOrgLogin,
+    verifyOrgSignUp,
   };
 }
