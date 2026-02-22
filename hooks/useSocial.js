@@ -176,6 +176,21 @@ export default function useSocial() {
     return response;
   };
 
+  const handleDiscord = async (workflowId) => {
+    axios.defaults.withCredentials = true;
+
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/workflow/connectSocial/${workflowId}?social=discord`,
+      {},
+    );
+
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+
+    return response;
+  };
+
   return {
     handleYouTube,
     handleTwitter,
@@ -188,5 +203,6 @@ export default function useSocial() {
     handleNotion,
     handleAirtable,
     getSocial,
+    handleDiscord,
   };
 }

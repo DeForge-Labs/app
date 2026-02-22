@@ -21,6 +21,7 @@ export default function ConnectionMain() {
     handleHubSpot,
     handleNotion,
     handleAirtable,
+    handleDiscord,
   } = useSocial();
 
   const connectionTypes = [
@@ -72,6 +73,11 @@ export default function ConnectionMain() {
     {
       name: "Airtable",
       key: "airtable",
+      type: "redirect",
+    },
+    {
+      name: "Discord",
+      key: "discord",
       type: "redirect",
     },
   ];
@@ -275,6 +281,25 @@ export default function ConnectionMain() {
     } else if (connectionType.key === "airtable") {
       try {
         const response = await handleAirtable(workflowId);
+
+        if (!response.data.success) {
+          throw new Error(response.data.message);
+        }
+
+        window.location.href = response.data.authURL;
+      } catch (error) {
+        console.log(error);
+        window.opener.postMessage(
+          {
+            type: "SOCIAL_AUTH_ERROR",
+            message: error.message,
+          },
+          window.location.origin,
+        );
+      }
+    } else if (connectionType.key === "discord") {
+      try {
+        const response = await handleDiscord(workflowId);
 
         if (!response.data.success) {
           throw new Error(response.data.message);
