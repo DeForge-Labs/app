@@ -175,7 +175,7 @@ export default function CustomizerPanel() {
               return field;
             }
           })?.length > 0 && (
-            <div className="flex flex-col gap-3 p-4">
+            <div className="flex flex-col gap-3 has-[>*]:p-4">
               {nodeType.fields.map((field, index) => {
                 const type = nodeType.inputs.find(
                   (i) => i.name === field.name,

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { CircleDot, ExternalLink } from "lucide-react";
+import { CircleDot, ExternalLink, HandCoins } from "lucide-react";
 
 import BuyCreditDialog from "./BuyCreditDialog";
 
@@ -89,7 +89,15 @@ const CreditMenu = async () => {
 
           <MenuSeparator className="bg-foreground/10" />
 
-          <BuyCreditDialog teamId={teamId} />
+          <Link href="/billing">
+            <Button
+              variant="outline"
+              className="text-info data-highlighted:bg-foreground/5 not-disabled:not-active:not-data-pressed:before:shadow-none  dark:not-disabled:not-active:not-data-pressed:before:shadow-none data-highlighted:text-destructive cursor-pointer dark:bg-transparent shadow-none! bg-transparent hover:bg-transparent w-full justify-start border-none"
+            >
+              <HandCoins size={16} aria-hidden="true" />
+              Buy Credits
+            </Button>
+          </Link>
 
           <Link href="/billing">
             <MenuItem className="text-foreground data-highlighted:bg-foreground/5 data-highlighted:text-foreground cursor-pointer px-2.5!">
