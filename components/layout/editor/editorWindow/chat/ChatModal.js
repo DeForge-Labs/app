@@ -159,7 +159,7 @@ const ChatModal = () => {
     assistantId,
     workflowId,
     userMessage,
-    model = "minimax/minimax-m2",
+    model = "minimax/minimax-m2.5",
   }) => {
     const abortController = new AbortController();
 
