@@ -17,8 +17,8 @@ export default function ChatbotEndpoint({ workflow }) {
           variant="outline"
           value={
             workflow.status === "LIVE"
-              ? `https://chat.deforge.io?workflowId=${workflow?.id}`
-              : `https://chat.deforge.io?workflowId=${workflow?.id}&status=test`
+              ? `https://chat.${process.env.NEXT_PUBLIC_BASE_URL}?workflowId=${workflow?.id}`
+              : `https://chat.${process.env.NEXT_PUBLIC_BASE_URL}?workflowId=${workflow?.id}&status=test`
           }
           readOnly
           className="py-1 rounded-sm border-foreground/15 bg-card dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-none"
@@ -33,8 +33,8 @@ export default function ChatbotEndpoint({ workflow }) {
               navigator.clipboard.writeText(
                 `${
                   workflow.status === "LIVE"
-                    ? `https://chat.deforge.io?workflowId=${workflow?.id}`
-                    : `https://chat.deforge.io?workflowId=${workflow?.id}&status=test`
+                    ? `https://chat.${process.env.NEXT_PUBLIC_BASE_URL}?workflowId=${workflow?.id}`
+                    : `https://chat.${process.env.NEXT_PUBLIC_BASE_URL}?workflowId=${workflow?.id}&status=test`
                 }`,
               );
 
@@ -49,8 +49,8 @@ export default function ChatbotEndpoint({ workflow }) {
               window.open(
                 `${
                   workflow.status === "LIVE"
-                    ? `https://chat.deforge.io?workflowId=${workflow?.id}`
-                    : `https://chat.deforge.io?workflowId=${workflow?.id}&status=test`
+                    ? `https://chat.${process.env.NEXT_PUBLIC_BASE_URL}?workflowId=${workflow?.id}`
+                    : `https://chat.${process.env.NEXT_PUBLIC_BASE_URL}?workflowId=${workflow?.id}&status=test`
                 }`,
                 "_blank",
               );

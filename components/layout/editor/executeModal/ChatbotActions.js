@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 
 export default function ChatbotActions({ triggerNodeType }) {
   const widgetDocs =
-    "https://devdocs.deforge.io/docs/library/nodes/trigger/widget_trigger#how-to-use";
+    "https://docs.deforge.io/docs/library/nodes/trigger/widget_trigger";
 
-  // TODO: Add docs for chatbot trigger
-  const chatbotDocs = "";
+  const chatbotDocs =
+    "https://docs.deforge.io/docs/library/nodes/trigger/chatbot_trigger";
 
   return (
     <div className="space-y-2 p-4">
