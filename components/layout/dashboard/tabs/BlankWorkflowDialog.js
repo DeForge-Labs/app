@@ -33,7 +33,7 @@ export default function BlankWorkflowDialog() {
       <DialogTrigger
         render={
           <Button
-            className="flex gap-2 bg-transparent font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 [&_svg:not([class*='size-'])]:size-3 border border-foreground/20 !px-3 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-xs justify-start text-foreground/60"
+            className="flex gap-2 bg-blue-50 dark:bg-blue-900/20 border-blue-500 border-dashed font-normal border !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 [&_svg:not([class*='size-'])]:size-3 !px-3 rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-xs justify-start text-blue-500 dark:text-blue-500"
             variant="outline"
           >
             <StickyNote />

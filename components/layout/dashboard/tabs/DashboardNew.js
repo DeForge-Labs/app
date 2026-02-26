@@ -6,6 +6,7 @@ import Chatbox from "./Chatbox";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import BlankWorkflowDialog from "./BlankWorkflowDialog";
+import Link from "next/link";
 
 export default async function DashboardNew({ params }) {
   const { id } = await params;
@@ -38,21 +39,25 @@ export default async function DashboardNew({ params }) {
           <div className="flex gap-2 items-center justify-center mt-2">
             <BlankWorkflowDialog />
 
-            <Button
-              className="flex gap-2 bg-transparent font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 [&_svg:not([class*='size-'])]:size-3 border border-foreground/20 !px-3 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-xs justify-start text-foreground/60"
-              variant="outline"
-            >
-              <MessageCircle />
-              Customer Support
-            </Button>
+            <Link href="https://d4g.app/qOgIxz">
+              <Button
+                className="flex gap-2 bg-transparent font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 [&_svg:not([class*='size-'])]:size-3 border border-foreground/20 !px-3 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-xs justify-start text-foreground/60"
+                variant="outline"
+              >
+                <MessageCircle />
+                Customer Support
+              </Button>
+            </Link>
 
-            <Button
-              className="flex gap-2 bg-transparent font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 [&_svg:not([class*='size-'])]:size-3 border border-foreground/20 !px-3 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-xs justify-start text-foreground/60"
-              variant="outline"
-            >
-              <BriefcaseBusiness />
-              Automated Job Finder
-            </Button>
+            <Link href="https://d4g.app/meb3iZ">
+              <Button
+                className="flex gap-2 bg-transparent font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 [&_svg:not([class*='size-'])]:size-3 border border-foreground/20 !px-3 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-xs justify-start text-foreground/60"
+                variant="outline"
+              >
+                <BriefcaseBusiness />
+                Automated Job Finder
+              </Button>
+            </Link>
           </div>
         </div>
 
