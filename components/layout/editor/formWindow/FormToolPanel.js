@@ -105,7 +105,12 @@ export default function FormToolPanel() {
         <Button
           className="text-[10px] rounded-md rounded-r-none gap-1.5 px-2 [&_svg:not([class*='size-'])]:size-3"
           onClick={handleRun}
-          disabled={isRunning}
+          disabled={
+            isRunning ||
+            (triggerNodeType !== "cron_trigger" &&
+              triggerNodeType !== undefined &&
+              workflowHasUnsavedChanges)
+          }
         >
           {isRunning ? <Loader2 className="animate-spin" /> : <Play />}
         </Button>

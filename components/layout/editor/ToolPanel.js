@@ -106,10 +106,9 @@ export default function ToolPanel() {
           onClick={handleRun}
           disabled={
             isRunning ||
-            triggerNodeType === "cron_trigger" ||
-            triggerNodeType === undefined
-              ? false
-              : workflowHasUnsavedChanges
+            (triggerNodeType !== "cron_trigger" &&
+              triggerNodeType !== undefined &&
+              workflowHasUnsavedChanges)
           }
         >
           {isRunning ? <Loader2 className="animate-spin" /> : <Play />}
