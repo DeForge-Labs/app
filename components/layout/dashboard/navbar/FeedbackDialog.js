@@ -15,22 +15,63 @@ import {
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function FeedbackDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Feedback submitted:", feedback);
+    try {
+      setIsLoading(true);
 
-    setIsOpen(false);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/user/feedback`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ content: feedback }),
+          credentials: "include",
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to send feedback");
+      }
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+
+      toast.success("Feedback sent successfully");
+
+      setIsOpen(false);
+      setFeedback("");
+    } catch (error) {
+      console.error("Error sending feedback:", error);
+      toast.error("Failed to send feedback");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOpenChange = () => {
+    if (isLoading) return;
+
+    setIsOpen(!isOpen);
     setFeedback("");
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger
         render={
           <Button
@@ -67,16 +108,17 @@ export default function FeedbackDialog() {
           <DialogFooter>
             <DialogClose
               render={<Button variant="ghost" className="text-xs" />}
+              disabled={isLoading}
             >
               Cancel
             </DialogClose>
 
             <Button
               type="submit"
-              disabled={!feedback.trim()}
+              disabled={!feedback.trim() || isLoading}
               className="text-background rounded-md border-none text-xs"
             >
-              Send
+              {isLoading ? <Loader2 className="animate-spin" /> : "Send"}
             </Button>
           </DialogFooter>
         </Form>
