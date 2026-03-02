@@ -20,7 +20,7 @@ import {
   createSubscriptionCheckout,
   redirectToCheckout,
 } from "@/lib/billing/checkout";
-import { resolveDeforgeId } from "@/lib/billing/identity";
+import { resolveDeforgeIdAsync } from "@/lib/billing/identity";
 import { cancelSubscription } from "@/lib/billing/subscription";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -31,7 +31,6 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
   const [selectedPlan, setSelectedPlan] = useState(currentPlan);
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [cancelImmediate, setCancelImmediate] = useState(false); // default: cancel at period end
   const [cancelResult, setCancelResult] = useState(null);
 
   const CONTACT_EMAIL = "contact@deforge.io";
@@ -94,7 +93,7 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
       return;
     }
 
-    const deforge_id = resolveDeforgeId();
+    const deforge_id = await resolveDeforgeIdAsync();
     if (!deforge_id) {
       setErrorMsg(
         "You are not authenticated. Please refresh or sign in again.",
@@ -105,41 +104,18 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
     try {
       setIsProcessing(true);
 
-      // If user is on Pro, this dialog acts as "Cancel Subscription"
+      // If user is on Pro, this dialog acts as "Cancel Subscription" (always at period end)
       if (currentPlan === "pro") {
-        const data = await cancelSubscription({
-          // If you can surface/know subscription_id, pass it here:
-          // subscription_id,
-          deforge_id,
-          immediate: !!cancelImmediate,
-          cancel_at_period_end: !cancelImmediate,
-        });
+        const data = await cancelSubscription({ deforge_id });
 
-        // For "cancel later" (period end) → show concise confirmation and close the modal
-        if (data?.cancel_mode === "period_end") {
-          const when = data?.next_billing_date
-            ? new Date(data.next_billing_date).toLocaleString()
-            : "the next billing date";
-          toast.success(`Subscription scheduled to cancel on ${when}`);
-          router.refresh();
-          setIsProcessing(false);
-          setIsOpen(false);
-          return;
-        }
-
-        // For immediate cancellation → keep modal open and show note
+        const when = data?.next_billing_date
+          ? new Date(data.next_billing_date).toLocaleDateString()
+          : "the end of the current billing period";
+        toast.success(`Subscription will cancel on ${when}`);
         setCancelResult(data);
         router.refresh();
-
-        // Optional short polling up to ~30s to reflect webhook-driven updates
-        let elapsed = 0;
-        const iv = setInterval(() => {
-          router.refresh();
-          elapsed += 5;
-          if (elapsed >= 30) clearInterval(iv);
-        }, 5000);
-
         setIsProcessing(false);
+        setIsOpen(false);
         return;
       }
 
@@ -154,7 +130,7 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
         return;
       }
 
-      const cfg = getPlanByKey("pro");
+      const cfg = getPlanByKey("pro", process.env.NEXT_PUBLIC_ENV);
       if (!cfg?.plan_id) {
         setErrorMsg(
           "Subscription plan is not configured. Please contact support.",
@@ -194,7 +170,7 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
 
   const dialogTitle = isPro ? "Cancel Subscription" : "Upgrade Plan";
   const dialogDesc = isPro
-    ? "Choose how you want to proceed with the cancellation."
+    ? "Your subscription will remain active until the end of the current billing period."
     : "Choose a plan to upgrade your account.";
 
   const submitDisabled =
@@ -229,54 +205,14 @@ export default function UpgradeWindow({ currentPlan, teamId }) {
               </DialogDescription>
             </DialogHeader>
 
-            {/* When cancelling (current plan = pro), show confirmation choices */}
+            {/* When cancelling (current plan = pro), show period-end confirmation */}
             {isPro ? (
               <div className="flex flex-col gap-3 p-3 border border-foreground/10 rounded-md mt-2">
                 <p className="text-xs text-foreground/70">
-                  Select how you want to cancel your subscription:
+                  Your subscription will be cancelled at the end of the current
+                  billing period. You will retain access to Pro features until
+                  then.
                 </p>
-                <div className="flex gap-2 flex-col">
-                  <Button
-                    type="button"
-                    variant={cancelImmediate ? "outline" : "default"}
-                    className="text-xs"
-                    onClick={() => setCancelImmediate(false)}
-                    aria-pressed={!cancelImmediate}
-                  >
-                    Cancel at period end (recommended)
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={cancelImmediate ? "default" : "outline"}
-                    className="text-xs"
-                    onClick={() => setCancelImmediate(true)}
-                    aria-pressed={cancelImmediate}
-                  >
-                    Cancel immediately
-                  </Button>
-                </div>
-
-                {cancelResult?.success && (
-                  <div className="text-xs text-foreground/80 mt-1">
-                    {cancelResult.cancel_mode === "period_end" ? (
-                      <span>
-                        Scheduled to cancel on{" "}
-                        <span className="font-medium">
-                          {cancelResult.next_billing_date
-                            ? new Date(
-                                cancelResult.next_billing_date,
-                              ).toLocaleString()
-                            : "the next billing date"}
-                        </span>
-                        . Benefits remain until that date. Final state is
-                        confirmed by webhooks and may take a moment to reflect
-                        everywhere.
-                      </span>
-                    ) : (
-                      <span>Cancellation requested immediately.</span>
-                    )}
-                  </div>
-                )}
               </div>
             ) : (
               // Upgrade tabs remain for non-pro users

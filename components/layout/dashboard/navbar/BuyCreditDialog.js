@@ -61,7 +61,7 @@ const BuyCreditDialog = ({ teamId }) => {
         return;
       }
 
-      const cfg = getPackByKey(packId);
+      const cfg = getPackByKey(packId, process.env.NEXT_PUBLIC_ENV);
       if (!cfg) {
         setErrorMsg("Selected credit pack is not configured. Please contact support.");
         setIsProcessing(false);

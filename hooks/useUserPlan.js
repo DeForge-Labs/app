@@ -90,6 +90,10 @@ export default function useUserPlan() {
     return renewalDate.toLocaleDateString();
   };
 
+  const getIsCancelled = () => {
+    return planData?.cancelled === true;
+  };
+
   return {
     planData,
     isLoading,
@@ -98,5 +102,6 @@ export default function useUserPlan() {
     getPlanPrice,
     getPlanName,
     getRenewalDate,
+    getIsCancelled,
   };
 }

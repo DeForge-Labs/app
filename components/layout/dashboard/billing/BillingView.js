@@ -3,6 +3,7 @@ import PlanBalance from "./PlanBalance";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import CreditTopupList from "./CreditTopupList";
+import PurchaseHistory from "./PurchaseHistory";
 
 export default function BillingView({ teamId }) {
   const topupPlans = [
@@ -76,6 +77,8 @@ export default function BillingView({ teamId }) {
             </Suspense>
 
             <CreditTopupList items={topupPlans} />
+
+            <PurchaseHistory />
           </div>
         </div>
       </div>

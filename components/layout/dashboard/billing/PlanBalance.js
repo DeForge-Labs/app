@@ -73,7 +73,30 @@ export default async function PlanBalance({ teamId }) {
     }
   };
 
-  const credits = await getCredits();
+  const getPlan = async () => {
+    try {
+      const allCookies = cookieStore.getAll();
+      const cookieHeader = allCookies
+        .map((cookie) => `${cookie.name}=${cookie.value}`)
+        .join("; ");
+
+      const response = await fetch(`${process.env.API_URL}/user/plan`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: cookieHeader,
+        },
+        credentials: "include",
+      });
+      const data = await response.json();
+      return data?.success ? data : null;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const [credits, planInfo] = await Promise.all([getCredits(), getPlan()]);
 
   if (!credits) {
     redirect("/server-not-found");
@@ -125,7 +148,20 @@ export default async function PlanBalance({ teamId }) {
                 </Button>
               </Link>
               {credits?.plan !== "enterprise" && (
-                <UpgradeWindow currentPlan={credits?.plan} teamId={teamId} />
+                planInfo?.cancelled ? (
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-xs text-foreground/50">
+                      Plan will expire on{" "}
+                      <span className="font-medium text-foreground/70">
+                        {planInfo.renewal
+                          ? new Date(planInfo.renewal).toLocaleDateString()
+                          : "the end of this billing period"}
+                      </span>
+                    </span>
+                  </div>
+                ) : (
+                  <UpgradeWindow currentPlan={credits?.plan} teamId={teamId} />
+                )
               )}
             </div>
           </div>
