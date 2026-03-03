@@ -12,15 +12,18 @@ import {
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { Loader2, Rocket } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import Logo from "@/components/ui/Logo";
 import useDeployWorkflow from "@/hooks/useDeployWorkflow";
+import useWorkspaceStore from "@/store/useWorkspaceStore";
+import { toast } from "sonner";
 
 export default function DeployDialog({ children }) {
   const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState("FORM");
   const { handleDeployWorkflow, isDeploying } = useDeployWorkflow();
+  const { hasUnsavedChanges, isWorkspaceInitializing } = useWorkspaceStore();
 
   const handleIsOpenChange = (open) => {
     if (isDeploying) return;
@@ -77,8 +80,15 @@ export default function DeployDialog({ children }) {
             <Button
               className="text-background rounded-md border-none text-xs"
               type="submit"
-              onClick={() => handleDeployWorkflow(view, setIsOpen)}
-              disabled={isDeploying}
+              onClick={(e) => {
+                e.preventDefault();
+                if (hasUnsavedChanges) {
+                  toast.error("Please save your changes before deploying");
+                  return;
+                }
+                handleDeployWorkflow(view, setIsOpen);
+              }}
+              disabled={isDeploying || isWorkspaceInitializing}
             >
               {isDeploying ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

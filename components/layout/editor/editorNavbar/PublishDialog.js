@@ -40,10 +40,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DynamicIcon } from "lucide-react/dynamic";
 import usePublishTemplate from "@/hooks/usePublishTemplate";
+import useWorkspaceStore from "@/store/useWorkspaceStore";
+import { toast } from "sonner";
 
 export default function PublishDialog({ isOpen, setIsOpen }) {
   const [view, setView] = useState("FORM");
   const { handlePublishTemplate, isPublishingTemplate } = usePublishTemplate();
+  const { hasUnsavedChanges, isWorkspaceInitializing } = useWorkspaceStore();
 
   const [workflowName, setWorkflowName] = useState("");
   const [workflowDescription, setWorkflowDescription] = useState("");
@@ -317,6 +320,12 @@ export default function PublishDialog({ isOpen, setIsOpen }) {
                   <Button
                     className="bg-foreground/90 text-background rounded-md border-none text-xs"
                     onClick={() => {
+                      if (hasUnsavedChanges) {
+                        toast.error(
+                          "Please save your changes before publishing",
+                        );
+                        return;
+                      }
                       handlePublishTemplate(
                         workflowName,
                         workflowDescription,
@@ -328,7 +337,7 @@ export default function PublishDialog({ isOpen, setIsOpen }) {
                       );
                     }}
                     type="submit"
-                    disabled={isPublishingTemplate}
+                    disabled={isPublishingTemplate || isWorkspaceInitializing}
                   >
                     {isPublishingTemplate ? (
                       <Loader2 className="h-4 w-4 animate-spin" />

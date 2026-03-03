@@ -64,11 +64,8 @@ const useChatStore = create((set) => ({
   setWorkflowJSON: (workflow) => set({ workflowJSON: workflow }),
   setChatMode: (mode) => set({ chatMode: mode }),
 
-  setTriggerMessage: (message) => set({ triggerMessage: message }),
-
   resetChatState: () => {
-    const { triggerMessage, ...rest } = initialState;
-    set(rest);
+    set({ ...initialState });
   },
 }));
 

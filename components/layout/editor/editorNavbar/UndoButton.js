@@ -19,10 +19,12 @@ import useInitialize from "@/hooks/useInitialize";
 import useWorkflowStore from "@/store/useWorkspaceStore";
 import useFormStore from "@/store/useFormStore";
 import { toast } from "sonner";
+import useChatStore from "@/store/useChatStore";
 
 export default function UndoButton() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { isLoading: isChatLoading } = useChatStore();
   const { loadWorkflowById, loadFormById } = useInitialize();
   const {
     hasUnsavedChanges: hasUnsavedChangesWorkflow,
@@ -94,7 +96,7 @@ export default function UndoButton() {
               <Button
                 className="text-background rounded-md border-none text-xs"
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || isChatLoading}
               >
                 {isLoading ? <Loader2 className="animate-spin" /> : "Revert"}
               </Button>

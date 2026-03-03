@@ -4,13 +4,11 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import useChatStore from "@/store/useChatStore";
 
 export default function useWorkflow() {
   const [isOpen, setIsOpen] = useState(false);
   const [isCreatingWorkflow, setIsCreatingWorkflow] = useState(false);
   const router = useRouter();
-  const { setTriggerMessage } = useChatStore();
 
   const handleCreateWorkflow = async (
     name,
@@ -25,19 +23,21 @@ export default function useWorkflow() {
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/workspace/create`,
-        { name, templateId, chatPrompt }
+        { name, templateId, chatPrompt },
       );
 
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
 
-      router.push(`/editor/${response.data.workspace.id}`);
-      setIsOpen(false);
+      let redirectUrl = `/editor/${response.data.workspace.id}`;
 
       if (trigger) {
-        setTriggerMessage(name);
+        redirectUrl += `?prompt=${encodeURIComponent(name)}`;
       }
+
+      router.push(redirectUrl);
+      setIsOpen(false);
 
       toast.success("Workspace created successfully");
       return response.data;

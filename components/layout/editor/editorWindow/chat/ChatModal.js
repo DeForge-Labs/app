@@ -16,6 +16,7 @@ import {
   PanelLeftIcon,
 } from "lucide-react";
 import ChatLoader from "./ChatLoader";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 const API_BASE =
   (typeof process !== "undefined" && process.env.NEXT_PUBLIC_API_URL) ||
@@ -25,6 +26,9 @@ const ChatModal = () => {
   const scrollRef = useRef(null);
   const { setChatModalOpen } = useChatStore();
   const audioRef = useRef(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
 
   const {
     messages,
@@ -33,8 +37,6 @@ const ChatModal = () => {
     isChatInitializing,
     setIsLoading,
     chatMode,
-    triggerMessage,
-    setTriggerMessage,
   } = useChatStore();
 
   const {
@@ -56,17 +58,29 @@ const ChatModal = () => {
   }, []);
 
   useEffect(() => {
+    const prompt = searchParams?.get("prompt");
     if (
+      !isWorkspaceInitializing &&
       !isChatInitializing &&
       workflowId &&
-      triggerMessage &&
+      prompt &&
+      (!nodes || nodes.length === 0) &&
       messages.length === 0
     ) {
-      handleSendMessage(triggerMessage);
+      handleSendMessage(prompt);
 
-      setTriggerMessage(null);
+      router.replace(pathname, { scroll: false });
     }
-  }, [isChatInitializing, workflowId, triggerMessage]);
+  }, [
+    isWorkspaceInitializing,
+    isChatInitializing,
+    workflowId,
+    searchParams,
+    messages.length,
+    nodes,
+    router,
+    pathname,
+  ]);
 
   const scrollToBottom = (behavior = "smooth") => {
     if (scrollRef.current) {

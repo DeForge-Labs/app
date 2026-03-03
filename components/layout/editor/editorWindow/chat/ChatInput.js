@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp, Loader2 } from "lucide-react";
+import { ArrowUp, Info, Loader2 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import {
   Select,
@@ -47,6 +47,11 @@ export default function ChatInput({ onSend, disabled, isLoading }) {
 
   return (
     <div className="flex flex-col gap-2 relative">
+      <div className="flex gap-2 text-[10px] items-center text-blue-300 not-dark:text-blue-700 not-dark:bg-blue-200/20 dark:bg-blue-700/20 border-t not-dark:border-blue-400/40 dark:border-blue-400/40 p-2 -mb-2">
+        <Info className="size-7" />
+        Deforge assistant is an experimental feature and may not work as
+        expected. Please use it with caution.
+      </div>
       <Textarea
         value={input}
         ref={textareaRef}

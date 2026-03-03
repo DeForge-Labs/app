@@ -46,7 +46,7 @@ export default function Chatbox() {
           }
         }
       },
-      isDeleting ? 30 : 50
+      isDeleting ? 30 : 50,
     );
 
     return () => clearTimeout(timeout);
