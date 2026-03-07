@@ -209,6 +209,7 @@ const FileList = async ({ page, query }) => {
                   <ScrapeStatusDisplay
                     fileKey={file.fileKey}
                     scrapeStatus={file.scrapeStatus}
+                    scrapeError={file.scrapeError}
                   />
                 )}
 

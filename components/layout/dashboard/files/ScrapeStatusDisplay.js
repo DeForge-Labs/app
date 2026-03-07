@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { RefreshCw, Link as LinkIcon } from "lucide-react";
+import { RefreshCw, Link as LinkIcon, TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
@@ -13,7 +13,7 @@ const STATUS_COLORS = {
   default: "bg-gray-400",
 };
 
-const ScrapeStatusDisplay = ({ scrapeStatus }) => {
+const ScrapeStatusDisplay = ({ scrapeStatus, scrapeError }) => {
   const router = useRouter();
 
   const statusColor = STATUS_COLORS[scrapeStatus] ?? STATUS_COLORS.default;
@@ -31,6 +31,15 @@ const ScrapeStatusDisplay = ({ scrapeStatus }) => {
       <p className="text-[10px] text-foreground/60 capitalize">
         Scrape: {scrapeStatus.replace(/-/g, " ")}
       </p>
+
+      {scrapeError && (
+        <div className="group relative w-fit">
+          <TriangleAlert className="size-3 text-red-500" />
+          <span className="pointer-events-none absolute right-0 -top-8 w-max max-w-xs scale-0 rounded-lg bg-background p-2 px-3 text-xs text-foreground/90 border border-foreground/15 transition-all group-hover:scale-100 z-50">
+            {scrapeError}
+          </span>
+        </div>
+      )}
 
       <Button
         size="icon"
