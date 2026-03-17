@@ -56,7 +56,8 @@ export default function ToolPanel() {
       triggerNodeType === "gmail_trigger" ||
       triggerNodeType === "slack_trigger" ||
       triggerNodeType === "tg_trigger" ||
-      triggerNodeType === "discord_trigger"
+      triggerNodeType === "discord_trigger" ||
+      triggerNodeType === "github_trigger"
     ) {
       if (triggerNodeType === "gmail_trigger") {
         toast(
@@ -79,6 +80,12 @@ export default function ToolPanel() {
       if (triggerNodeType === "discord_trigger") {
         toast(
           "Workflow can executed when a new message is received through Discord",
+        );
+      }
+
+      if (triggerNodeType === "github_trigger") {
+        toast(
+          "Workflow can executed when a new event is received through GitHub",
         );
       }
 

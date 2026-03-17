@@ -3,6 +3,7 @@
 import {
   CirclePlay,
   Clock,
+  Github,
   Mail,
   MessageCircle,
   MessageCircleCodeIcon,
@@ -130,6 +131,19 @@ export default function TriggerPreview({ triggerNode }) {
           <span className="font-medium text-foreground/80"> new message</span>{" "}
           is received through{" "}
           <span className="font-medium text-foreground/80">Discord</span>
+        </>
+      ),
+    },
+    {
+      name: "GitHub Trigger",
+      value: "github_trigger",
+      icon: <Github className="size-8 opacity-15" />,
+      description: (
+        <>
+          Workflow can be triggered when a{" "}
+          <span className="font-medium text-foreground/80"> new event</span> is
+          received through{" "}
+          <span className="font-medium text-foreground/80">GitHub</span>
         </>
       ),
     },

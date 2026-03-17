@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Waypoints } from "lucide-react";
+import { ExternalLink, Github, Waypoints } from "lucide-react";
 import { Mail, Slack, Send } from "lucide-react";
 import Image from "next/image";
 
@@ -65,6 +65,19 @@ export default function ThirdPartyActions({ triggerNodeType }) {
         <>
           Workflow can only be triggered when a new message is received through
           <span className="font-medium text-foreground/80"> Discord</span>
+        </>
+      ),
+    },
+    {
+      type: "github_trigger",
+      name: "GitHub Trigger",
+      buttonName: "GitHub",
+      link: "https://github.com",
+      icon: <Github className="size-6 opacity-70" />,
+      description: (
+        <>
+          Workflow can only be triggered when a new event is received through
+          <span className="font-medium text-foreground/80"> GitHub</span>
         </>
       ),
     },
