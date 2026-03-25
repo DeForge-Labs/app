@@ -2,7 +2,6 @@ import { Globe } from "lucide-react";
 import SwitchTemplateType from "@/components/layout/dashboard/templates/SwitchTemplateType";
 import { headers } from "next/headers";
 import Image from "next/image";
-import FeedbackDialog from "@/components/layout/dashboard/navbar/FeedbackDialog";
 import SettingsMenu from "@/components/layout/dashboard/navbar/SettingsMenu";
 import LoginDialog from "@/components/layout/template/LoginDialog";
 import Link from "next/link";
@@ -54,7 +53,6 @@ export default async function TemplateLayout({ children }) {
 
         {!isLoggedIn && (
           <div className="flex items-center gap-2">
-            <FeedbackDialog />
             <SettingsMenu isTemplate />
             <LoginDialog />
           </div>

@@ -18,7 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import TemplateViewer from "./TemplateViewer";
 import OpenButton from "./OpenButton";
 import ShareDialog from "./ShareDialog";
-import { cn } from "@/lib/utils";
+import { cn, generateCategorySlug } from "@/lib/utils";
 
 export default async function TemplatePage({ id }) {
   const getNodeLibrary = async () => {
@@ -92,7 +92,14 @@ export default async function TemplatePage({ id }) {
           <BreadcrumbSeparator>/</BreadcrumbSeparator>
 
           <BreadcrumbItem>
-            <BreadcrumbLink className="text-[12px]">
+            <BreadcrumbLink
+              render={
+                <Link
+                  href={`/templates/categories/${generateCategorySlug(template?.category)}`}
+                />
+              }
+              className="text-[12px]"
+            >
               {template?.category}
             </BreadcrumbLink>
           </BreadcrumbItem>

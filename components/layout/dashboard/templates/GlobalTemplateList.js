@@ -12,31 +12,37 @@ import { X } from "lucide-react";
 import ErrorDialog from "@/components/ui/ErrorDialog";
 import { cn } from "@/lib/utils";
 
-export default async function GlobalTemplateList({ teamId, page, query }) {
+export default async function GlobalTemplateList({
+  teamId,
+  page,
+  query,
+  category,
+}) {
   const getGlobalTemplates = async () => {
     try {
       const cookieStore = await cookies();
       const allCookies = cookieStore.getAll();
-
       const cookieHeader = allCookies
         .map((cookie) => `${cookie.name}=${cookie.value}`)
         .join("; ");
 
-      const response = await fetch(
-        `${process.env.API_URL}/template/global?page=${page || 1}&query=${
-          query || ""
-        }&limit=12`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            cookie: cookieHeader,
-          },
-          credentials: "include",
-        },
+      const url = new URL(
+        `${process.env.API_URL}/template/global${category ? `/${category}` : ""}`,
       );
-      const data = await response.json();
+      url.searchParams.append("page", page || 1);
+      url.searchParams.append("limit", 12);
+      if (query) url.searchParams.append("query", query);
 
+      const response = await fetch(url.toString(), {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: cookieHeader,
+        },
+        credentials: "include",
+      });
+
+      const data = await response.json();
       return data;
     } catch (error) {
       console.log(error);
@@ -53,6 +59,14 @@ export default async function GlobalTemplateList({ teamId, page, query }) {
   if (!globalTemplatesData?.success) {
     return <ErrorDialog error={globalTemplatesData?.message} />;
   }
+
+  const getClearSearchUrl = () => {
+    let basePath = "/templates";
+    if (category) {
+      basePath += `/categories/${generateCategorySlug(category)}`;
+    }
+    return basePath;
+  };
 
   const templates = globalTemplatesData.templates;
 
@@ -72,9 +86,9 @@ export default async function GlobalTemplateList({ teamId, page, query }) {
               No Templates found based on your search.
             </p>
 
-            <Link href={`/templates`}>
+            <Link href={getClearSearchUrl()}>
               <Button className="flex gap-2 font-normal text-xs bg-foreground/90 text-background rounded-sm w-fit">
-                <X />
+                <X className="w-4 h-4" />
                 Clear Search
               </Button>
             </Link>

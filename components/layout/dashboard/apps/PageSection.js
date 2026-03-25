@@ -10,33 +10,33 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function PageSection({
   totalPages,
   page,
-  query,
-  teamId,
   totalWorkspaces,
-  route = "apps",
   topLimit = 10,
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   if (totalWorkspaces <= topLimit) return null;
 
   const currentPage = parseInt(page) || 1;
 
   const buildUrl = (pageNum) => {
-    const params = new URLSearchParams();
-    if (query) {
-      params.set("q", query);
-    }
+    const params = new URLSearchParams(searchParams.toString());
+
     if (pageNum > 1) {
       params.set("p", pageNum.toString());
+    } else {
+      params.delete("p");
     }
+
     const queryString = params.toString();
-    return `/${route}${queryString ? `?${queryString}` : ""}`;
+    return `${pathname}${queryString ? `?${queryString}` : ""}`;
   };
 
   const handlePageChange = (pageNum, e) => {
@@ -54,10 +54,7 @@ export default function PageSection({
       }
     } else {
       pages.push(1);
-
-      if (currentPage > 3) {
-        pages.push("ellipsis-start");
-      }
+      if (currentPage > 3) pages.push("ellipsis-start");
 
       const start = Math.max(2, currentPage - 1);
       const end = Math.min(totalPages - 1, currentPage + 1);
@@ -66,10 +63,7 @@ export default function PageSection({
         pages.push(i);
       }
 
-      if (currentPage < totalPages - 2) {
-        pages.push("ellipsis-end");
-      }
-
+      if (currentPage < totalPages - 2) pages.push("ellipsis-end");
       pages.push(totalPages);
     }
 
@@ -86,17 +80,13 @@ export default function PageSection({
             href={buildUrl(currentPage - 1)}
             onClick={(e) => {
               e.preventDefault();
-              if (currentPage === 1) {
-                return;
-              }
+              if (currentPage === 1) return;
               handlePageChange(currentPage - 1, e);
             }}
             aria-disabled={currentPage === 1}
             className={cn(
               "text-xs data-pressed:bg-foreground/5 hover:bg-foreground/5",
-              {
-                "pointer-events-none opacity-50": currentPage === 1,
-              }
+              { "pointer-events-none opacity-50": currentPage === 1 },
             )}
           />
         </PaginationItem>
@@ -112,7 +102,7 @@ export default function PageSection({
                 }}
                 isActive={pageNum === currentPage}
                 className={cn(
-                  "text-xs data-pressed:bg-foreground/5 hover:bg-foreground/5"
+                  "text-xs data-pressed:bg-foreground/5 hover:bg-foreground/5",
                 )}
               >
                 {pageNum}
@@ -128,17 +118,13 @@ export default function PageSection({
             href={buildUrl(currentPage + 1)}
             onClick={(e) => {
               e.preventDefault();
-              if (currentPage === totalPages) {
-                return;
-              }
+              if (currentPage === totalPages) return;
               handlePageChange(currentPage + 1, e);
             }}
             aria-disabled={currentPage === totalPages}
             className={cn(
               "text-xs data-pressed:bg-foreground/5 hover:bg-foreground/5",
-              {
-                "pointer-events-none opacity-50": currentPage === totalPages,
-              }
+              { "pointer-events-none opacity-50": currentPage === totalPages },
             )}
           />
         </PaginationItem>
