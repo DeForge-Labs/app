@@ -15,6 +15,10 @@ export async function middleware(req) {
   const token = req.cookies.get("token");
   const lastTeamId = req.cookies.get("lastTeamId");
 
+  const isSemiProtected = semiProtectedRoutes.some((route) =>
+    pathname.startsWith(route),
+  );
+
   if (unprotectedRoutes.some((route) => pathname.startsWith(route))) {
     return NextResponse.next();
   }
@@ -22,16 +26,14 @@ export async function middleware(req) {
   if (!token) {
     if (pathname === "/") return NextResponse.next();
 
-    if (semiProtectedRoutes.some((route) => pathname.startsWith(route))) {
+    if (isSemiProtected) {
       const response = NextResponse.next();
       response.headers.set("X-User-Status", "inactive");
       return response;
     }
 
     const loginUrl = new URL("/", req.url);
-    if (search) {
-      loginUrl.search = search;
-    }
+    if (search) loginUrl.search = search;
     return NextResponse.redirect(loginUrl);
   }
 
@@ -39,6 +41,12 @@ export async function middleware(req) {
     const { payload } = await verifyToken(`Bearer ${token.value}`);
 
     if (!payload) {
+      if (isSemiProtected) {
+        const response = NextResponse.next();
+        response.headers.set("X-User-Status", "inactive");
+        return response;
+      }
+
       if (pathname === "/") return NextResponse.next();
 
       const loginUrl = new URL("/", req.url);
@@ -63,6 +71,13 @@ export async function middleware(req) {
     return response;
   } catch (error) {
     console.error("Authentication error:", error);
+
+    if (isSemiProtected) {
+      const response = NextResponse.next();
+      response.headers.set("X-User-Status", "inactive");
+      return response;
+    }
+
     return NextResponse.redirect(new URL("/", req.url));
   }
 }
