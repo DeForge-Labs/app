@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import useWorkflow from "@/hooks/useCreateWorkflow";
 
-export default function BlankWorkflowDialog() {
+export default function BlankWorkflowDialog({ render }) {
   const { isOpen, setIsOpen, isCreatingWorkflow, handleCreateWorkflow } =
     useWorkflow();
   const [name, setName] = useState("");
@@ -30,17 +30,7 @@ export default function BlankWorkflowDialog() {
   };
   return (
     <Dialog open={isOpen} onOpenChange={handleIsOpenChange}>
-      <DialogTrigger
-        render={
-          <Button
-            className="flex gap-2 bg-blue-50 dark:bg-blue-900/20 border-blue-500 border-dashed font-normal border !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 [&_svg:not([class*='size-'])]:size-3 !px-3 rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-xs justify-start text-blue-500 dark:text-blue-500"
-            variant="outline"
-          >
-            <StickyNote />
-            Blank workflow
-          </Button>
-        }
-      ></DialogTrigger>
+      <DialogTrigger render={render}></DialogTrigger>
       <DialogPopup className={"sm:max-w-sm"}>
         <Form
           onSubmit={(e) => {

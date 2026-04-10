@@ -1,12 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { BriefcaseBusiness, MessageCircle, StickyNote } from "lucide-react";
 import Image from "next/image";
 import DashboardTemplate from "./DashboardTemplate";
 import Chatbox from "./Chatbox";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import BlankWorkflowDialog from "./BlankWorkflowDialog";
-import Link from "next/link";
+
+import SuggestedApps from "./SuggestedApps";
 
 export default async function DashboardNew({ params }) {
   const { id } = await params;
@@ -35,35 +33,13 @@ export default async function DashboardNew({ params }) {
           </p>
 
           <Chatbox />
-
-          <div className="flex gap-2 items-center justify-center mt-2">
-            <BlankWorkflowDialog />
-
-            <Link href="https://d4g.app/qOgIxz">
-              <Button
-                className="flex gap-2 bg-transparent font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 [&_svg:not([class*='size-'])]:size-3 border border-foreground/20 !px-3 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-xs justify-start text-foreground/60"
-                variant="outline"
-              >
-                <MessageCircle />
-                Customer Support
-              </Button>
-            </Link>
-
-            <Link href="https://d4g.app/meb3iZ">
-              <Button
-                className="flex gap-2 bg-transparent font-normal !shadow-none [&:is(:hover,[data-pressed])]:bg-foreground/5 [&_svg:not([class*='size-'])]:size-3 border border-foreground/20 !px-3 dark:bg-transparent rounded-sm not-disabled:not-active:not-data-pressed:before:shadow-none dark:not-disabled:not-active:not-data-pressed:before:shadow-none text-xs justify-start text-foreground/60"
-                variant="outline"
-              >
-                <BriefcaseBusiness />
-                Automated Job Finder
-              </Button>
-            </Link>
-          </div>
         </div>
+
+        <SuggestedApps />
 
         <Suspense
           fallback={
-            <div className="max-w-[1390px] w-full flex flex-col gap-4 z-20 mt-20">
+            <div className="max-w-[1390px] w-full flex flex-col gap-4 z-20 mt-10">
               <div className="flex w-full justify-between lg:items-center flex-col gap-2 lg:flex-row">
                 <div className="flex flex-col gap-1">
                   <p className="text-sm font-semibold">Popular Templates</p>

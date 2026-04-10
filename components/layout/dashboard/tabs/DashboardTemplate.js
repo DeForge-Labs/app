@@ -40,7 +40,7 @@ export default async function DashboardTemplate({ teamId }) {
   const templates = popularTemplates?.templates;
 
   return (
-    <div className="max-w-[1390px] w-full flex flex-col gap-4 z-20 mt-20">
+    <div className="max-w-[1390px] w-full flex flex-col gap-4 z-20 mt-10">
       <div className="flex w-full justify-between lg:items-center flex-col gap-2 lg:flex-row">
         <div className="flex flex-col gap-1">
           <p className="text-sm font-semibold">Popular Templates</p>

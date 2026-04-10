@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, Plus } from "lucide-react";
-import Link from "next/link";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import AppList from "@/components/layout/dashboard/apps/AppList";
 import SearchSection from "@/components/layout/dashboard/apps/SearchSection";
+import BlankWorkflowDialog from "@/components/layout/dashboard/tabs/BlankWorkflowDialog";
 
 export default async function Page({ searchParams }) {
   const { p, q } = await searchParams;
@@ -23,12 +23,14 @@ export default async function Page({ searchParams }) {
             </div>
           </div>
 
-          <Link href={`/dashboard`}>
-            <Button className="flex gap-2 font-normal text-xs bg-foreground/90 text-background rounded-sm w-fit">
-              <Plus />
-              New App
-            </Button>
-          </Link>
+          <BlankWorkflowDialog
+            render={
+              <Button className="flex gap-2 font-normal text-xs bg-foreground/90 text-background rounded-sm w-fit">
+                <Plus />
+                New App
+              </Button>
+            }
+          />
         </div>
 
         <SearchSection />
